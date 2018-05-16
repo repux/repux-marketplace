@@ -1,0 +1,52 @@
+<div *ngIf="esDataProducts">
+
+  <mat-form-field>
+    <mat-icon matPrefix>search</mat-icon>
+
+    <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Search">
+  </mat-form-field>
+
+  <div class="data-container">
+    <div class="loading-shade" *ngIf="isLoadingResults">
+      <mat-spinner *ngIf="isLoadingResults"></mat-spinner>
+    </div>
+
+    <table mat-table #table [dataSource]="dataSource" matSort (matSortChange)="sortChanged($event)">
+
+      <!-- Name Column -->
+      <ng-container matColumnDef="name">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Name </th>
+        <td mat-cell *matCellDef="let element"> {{element.source.name}} </td>
+      </ng-container>
+
+      <!-- Title Column -->
+      <ng-container matColumnDef="title">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Title </th>
+        <td mat-cell *matCellDef="let element"> {{element.source.title}} </td>
+      </ng-container>
+
+      <!-- Categories Column -->
+      <ng-container matColumnDef="category">
+        <th mat-header-cell *matHeaderCellDef> Categories </th>
+        <td mat-cell *matCellDef="let element"> {{element.source.category | array_join: ', '}} </td>
+      </ng-container>
+
+      <!-- Size Column -->
+      <ng-container matColumnDef="size">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Size </th>
+        <td mat-cell *matCellDef="let element"> <app-file-size [bytes]="element.source.size"></app-file-size> </td>
+      </ng-container>
+
+      <!-- Price Column -->
+      <ng-container matColumnDef="price">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Price </th>
+        <td mat-cell *matCellDef="let element"> <app-currency [value]="element.source.price"></app-currency> </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+    </table>
+  </div>
+
+  <mat-paginator (page)="pageChanged($event)" [length]="esDataProducts.total" [(pageSize)]="size" [pageSizeOptions]="pageSizeOptions"></mat-paginator>
+</div>
