@@ -1,0 +1,35 @@
+$shadow-color: rgba(0, 0, 0, .03);
+
+.mat-form-field, .mat-table {
+  font-size: 14px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.mat-form-field {
+  background-color: $shadow-color;
+  padding: 5px 10px 0;
+}
+
+.mat-icon {
+  margin-right: 10px;
+  position: relative;
+  top: 5px;
+}
+
+.data-container {
+  position: relative;
+}
+
+.loading-shade {
+  position: absolute;
+  top: 56px;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  background-color: $shadow-color;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
