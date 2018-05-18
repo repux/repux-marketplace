@@ -23,6 +23,8 @@ export class DataProductListComponent implements OnInit {
   public sort: string;
   public size: number;
   public from: number;
+  public currencyName: string = ` ${environment.repux.currency.defaultName} `;
+  public currencyFormat: string = environment.repux.currency.format;
 
   constructor(public dataProductListService: DataProductListService) {
     this.size = this.pageSizeOptions[0];

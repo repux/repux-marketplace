@@ -25,7 +25,8 @@ export const environment = {
     pageSizeOptions: [10, 25, 50, 100],
     currency: {
       defaultName: 'REPUX',
-      precision: 18
+      precision: 18,
+      format: '1.0-18'
     }
   }
 };

@@ -12,15 +12,11 @@ import { PipesModule } from './pipes/pipes.module';
 
 import { AppComponent } from './app.component';
 import { DataProductListComponent } from './data-product-list/data-product-list.component';
-import { FileSizeComponent } from './file-size/file-size.component';
-import { CurrencyComponent } from './currency/currency.component';
 
 @NgModule({
   declarations: [
     AppComponent,
-    DataProductListComponent,
-    FileSizeComponent,
-    CurrencyComponent
+    DataProductListComponent
   ],
   imports: [
     BrowserModule,
