@@ -6,6 +6,7 @@ import {
   MatProgressSpinnerModule,
   MatTableModule,
   MatPaginatorModule,
+  MatDialogModule,
   MatTableDataSource
 } from '@angular/material';
 import { PipesModule } from '../pipes/pipes.module';
@@ -51,6 +52,7 @@ describe('DataProductListComponent', () => {
         MatProgressSpinnerModule,
         MatTableModule,
         MatPaginatorModule,
+        MatDialogModule,
         PipesModule,
         NoopAnimationsModule
       ],
@@ -80,7 +82,11 @@ describe('DataProductListComponent', () => {
       component.from = 5;
       component.applyFilter('String to search for');
       expect(component.from).toBe(0);
-      expect(component.query).toBe('name:*string to search for* OR title:*string to search for* OR category:*string to search for*');
+      expect(component.query).toBe(
+        'name.keyword:*string to search for* OR ' +
+        'title.keyword:*string to search for* OR ' +
+        'category.keyword:*string to search for*'
+      );
     });
 
     it('should call refreshData method', () => {
@@ -110,7 +116,9 @@ describe('DataProductListComponent', () => {
     it('should set sort property sort argument has active and direction properties set', () => {
       component.sort = null;
       component.sortChanged({ active: 'name', direction: 'asc' });
-      expect(component.sort).toBe('name:asc');
+      expect(component.sort).toBe('name.keyword:asc');
+      component.sortChanged({ active: 'price', direction: 'asc' });
+      expect(component.sort).toBe('price:asc');
       component.sortChanged({ active: null, direction: 'asc' });
       expect(component.sort).toBeUndefined();
       component.sortChanged({ active: 'name', direction: '' });
@@ -205,7 +213,7 @@ describe('DataProductListComponent', () => {
       expect(firstRow.querySelector('td:nth-child(2)').textContent.trim()).toBe('test title');
       expect(firstRow.querySelector('td:nth-child(3)').textContent.trim()).toBe('test category 1, test category 2');
       expect(firstRow.querySelector('td:nth-child(4)').textContent.trim()).toBe('1.00 KB');
-      expect(firstRow.querySelector('td:nth-child(5)').textContent.trim()).toBe('REPUX 0.000000000000000001');
+      expect(firstRow.querySelector('td:nth-child(5)').textContent.trim()).toBe('REPUX 1');
     });
 
     it('should call sortChanged method when user clicks on sorting column', () => {

@@ -1,7 +1,7 @@
 <div *ngIf="esDataProducts">
 
   <mat-form-field>
-    <mat-icon matPrefix>search</mat-icon>
+    <mat-icon class="search-icon" matPrefix>search</mat-icon>
 
     <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Search">
   </mat-form-field>
@@ -50,3 +50,12 @@
 
   <mat-paginator (page)="pageChanged($event)" [length]="esDataProducts.total" [(pageSize)]="size" [pageSizeOptions]="pageSizeOptions"></mat-paginator>
 </div>
+
+<button
+  class="add-product-button"
+  mat-fab
+  (click)="openProductCreatorDialog()"
+  matTooltip="Create new product"
+  matTooltipPosition="before">
+  <mat-icon aria-label="Add file">add</mat-icon>
+</button>

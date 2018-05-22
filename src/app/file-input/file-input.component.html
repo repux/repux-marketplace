@@ -1,0 +1,8 @@
+<mat-form-field (click)="openFileBrowser()">
+  <input #fileInput type="file" (change)="onChange($event)">
+  <input matInput [placeholder]="placeholder" [required]="required" readonly [value]="fileNames" [formControl]="formControl">
+  <button matSuffix mat-raised-button color="primary" type="button">{{ multiple ? 'Choose files' : 'Choose file' }}</button>
+  <mat-error *ngIf="formControl.hasError('required')">
+    {{ placeholder }} is <strong>required</strong>
+  </mat-error>
+</mat-form-field>

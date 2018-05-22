@@ -1,0 +1,15 @@
+input[type="file"] {
+  display: none;
+}
+
+.mat-form-field {
+  width: 100%;
+}
+
+button {
+  margin-left: 10px;
+}
+
+.mat-form-field, input {
+  cursor: pointer;
+}

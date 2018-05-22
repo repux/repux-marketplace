@@ -1,0 +1,34 @@
+<mat-dialog-content>
+  <mat-toolbar color="primary">
+    <span>Current tasks</span>
+    <span class="spacer"></span>
+    <button mat-icon-button (click)="closeDialog()">
+      <mat-icon>close</mat-icon>
+    </button>
+  </mat-toolbar>
+
+  <div class="item mat-body-1" *ngFor="let task of taskManagerService.tasks">
+    <div class="row" *ngIf="!task.finished">
+      <span class="item_status">{{ task.status }}</span>
+      <span class="spacer"></span>
+      <button mat-button *ngIf="task.needsUserAction" (click)="task.callUserAction()">{{ task.userActionName }}</button>
+      <button mat-button *ngIf="task.progress < 100" (click)="task.cancel()">Cancel</button>
+    </div>
+    <div class="row" *ngIf="task.errors.length">
+      <span class="item_status">{{ task.errors[0] }}</span>
+    </div>
+    <div class="row">
+      <span class="item_name">{{ task.name }}</span>
+      <span class="spacer"></span>
+      <mat-progress-spinner
+        *ngIf="task.progress < 100 && !task.finished"
+        mode="determinate"
+        [value]="task.progress"
+        [strokeWidth]="4"
+        [diameter]="24">
+      </mat-progress-spinner>
+      <mat-icon *ngIf="task.finished && !task.errors.length">check_circle</mat-icon>
+      <mat-icon *ngIf="task.finished && task.errors.length">error</mat-icon>
+    </div>
+  </div>
+</mat-dialog-content>

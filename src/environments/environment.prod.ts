@@ -1,4 +1,4 @@
-import BigNumber from 'bignumber.js';
+import { BigNumber } from 'bignumber.js';
 
 BigNumber.config({
   DECIMAL_PLACES: 40,
@@ -26,9 +26,15 @@ export const environment = {
     currency: {
       defaultName: 'REPUX',
       precision: 18,
-      format: '1.0-18'
+      format: '1.0-18',
+      pattern: /^\d*([,\.]\d{0,18})?$/
     },
-    demoTokenContractAddress: '0x618231c15b548292abc0013da5e24bab350c86d2',
-    registryContractAddress: '0x4ca80dfaaef31c2d7c0b5974775e86bfa86a6c70'
+    demoTokenContractAddress: '0x225e1aa666d0deff793d35663066d0675fd3b6c4',
+    registryContractAddress: '0xbd83c21e6f0a9547abe908c6faa02a55512d57b4'
+  },
+  ipfs: {
+    host: '192.168.99.100',
+    port: '5001',
+    protocol: 'http'
   }
 };

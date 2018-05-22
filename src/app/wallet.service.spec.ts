@@ -1,5 +1,4 @@
-import { TestBed } from '@angular/core/testing';
-import { WalletService, WalletServiceFactory } from './wallet.service';
+import { WalletService } from './wallet.service';
 
 const balanceInWei = 1000000000000000000;
 const balanceInEther = 1;
@@ -29,23 +28,16 @@ const repuxWeb3ApiMock = {
   }
 };
 
-const WalletServiceFactoryMock = () => {
-  return new WalletService(web3Mock, repuxWeb3ApiMock);
-};
-
 let walletService;
-let walletServiceNoWeb3;
+let repuxWeb3ServiceSpy;
 
 describe('WalletService', () => {
   beforeEach(() => {
-    TestBed.configureTestingModule({
-      providers: [ {
-        provide: WalletService,
-        useFactory: WalletServiceFactoryMock
-      } ]
-    });
-
-    walletService = TestBed.get(WalletService);
+    repuxWeb3ServiceSpy = jasmine.createSpyObj(
+      'RepuxWeb3Service',
+      ['getRepuxApiInstance', 'getWeb3Instance', 'isProviderAvailable', 'isDefaultAccountAvailable']
+    );
+    walletService = new WalletService(<any> repuxWeb3ServiceSpy);
   });
 
   it('should be created', () => {
@@ -53,37 +45,36 @@ describe('WalletService', () => {
   });
 
   describe('isProviderAvailable()', () => {
-    it('should return true if wallet provider is available', () => {
+    it('should return call isProviderAvailable on repuxWeb3Service', () => {
+      repuxWeb3ServiceSpy.isProviderAvailable.and.returnValue(true);
       expect(walletService.isProviderAvailable()).toBeTruthy();
-    });
-
-    it('should return false when wallet provider is not set', () => {
-      walletServiceNoWeb3 = WalletServiceFactory();
-      expect(walletServiceNoWeb3.isProviderAvailable()).toBeFalsy();
+      expect(repuxWeb3ServiceSpy.isProviderAvailable.calls.count()).toBe(1);
     });
   });
 
   describe('isDefaultAccountAvailable()', () => {
-    it('should return true if wallet account is available', () => {
+    it('should return call isDefaultAccountAvailable on repuxWeb3Service', () => {
+      repuxWeb3ServiceSpy.isDefaultAccountAvailable.and.returnValue(true);
       expect(walletService.isDefaultAccountAvailable()).toBeTruthy();
-    });
-
-    it('should return false when wallet account is not available', () => {
-      walletServiceNoWeb3 = WalletServiceFactory();
-      expect(walletServiceNoWeb3.isDefaultAccountAvailable()).toBeFalsy();
+      expect(repuxWeb3ServiceSpy.isDefaultAccountAvailable.calls.count()).toBe(1);
     });
   });
 
   describe('getData()', () => {
     it('should return wallet data with account number and balance set', async () => {
+      repuxWeb3ServiceSpy.isDefaultAccountAvailable.and.returnValue(true);
+      repuxWeb3ServiceSpy.getRepuxApiInstance.and.returnValue(repuxWeb3ApiMock);
+      repuxWeb3ServiceSpy.getWeb3Instance.and.returnValue(web3Mock);
       const wallet = await walletService.getData();
       expect(wallet.address).toEqual(web3Mock.eth.accounts[ 0 ]);
       expect(wallet.balance).toEqual(balanceInEther);
+      expect(repuxWeb3ServiceSpy.getWeb3Instance.calls.count()).toBe(1);
+      expect(repuxWeb3ServiceSpy.getRepuxApiInstance.calls.count()).toBe(2);
     });
 
     it('should return null when no provider available', async () => {
-      walletServiceNoWeb3 = WalletServiceFactory();
-      const wallet = await walletServiceNoWeb3.getData();
+      repuxWeb3ServiceSpy.isDefaultAccountAvailable.and.returnValue(false);
+      const wallet = await walletService.getData();
       expect(wallet).toBeNull();
     });
   });
