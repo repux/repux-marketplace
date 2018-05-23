@@ -15,12 +15,34 @@
   bottom: 15px;
 }
 
-.more-button {
-  position: absolute;
-  top: 5px;
-  right: 10px;
+.dashboard-balance {
+  margin: 0 0 16px 0;
+  &__value {
+    font-size: 24px;
+  }
+
+  &__label {
+    font-size: 12px;
+    text-transform: uppercase;
+    color: #bbb;
+  }
 }
 
-.dashboard-card-content {
+.dashboard-account {
+  &__value {
+    font-size: 24px;
+  }
 
+  &__label {
+    font-size: 12px;
+    text-transform: uppercase;
+    color: #bbb;
+  }
+}
+
+.mat-card-title {
+  font-size: 20px;
+  font-weight: 500;
+  margin-left: -8px;
+  margin-right: -8px;
 }

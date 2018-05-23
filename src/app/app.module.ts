@@ -19,13 +19,15 @@ import {
   MatMenuModule,
   MatIconModule,
   MatButtonModule,
-  MatToolbarModule
+  MatToolbarModule,
+  MatTabsModule
 } from '@angular/material';
 
 @NgModule({
   declarations: [
     AppComponent,
-    DashboardComponent
+    DashboardComponent,
+    DataProductListComponent
   ],
   imports: [
     BrowserModule,
@@ -41,6 +43,7 @@ import {
     MatIconModule,
     MatButtonModule,
     MatToolbarModule,
+    MatTabsModule,
     MatSortModule,
     MatProgressSpinnerModule,
     PipesModule

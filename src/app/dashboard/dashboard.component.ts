@@ -1,28 +1,34 @@
-import { Component, Input, OnInit } from '@angular/core';
-import {Web3Service } from '../web3.service';
-import { EthereumWallet } from '../ethereum-wallet';
+import { Component, OnInit } from '@angular/core';
+
+import Wallet from '../wallet';
+import { WalletService } from '../wallet.service';
+import { environment } from '../../environments/environment';
 
 @Component({
-  selector: 'dashboard',
+  selector: 'app-dashboard',
   templateUrl: './dashboard.component.html',
   styleUrls: [ './dashboard.component.scss' ]
 })
 export class DashboardComponent implements OnInit {
-  wallet: EthereumWallet;
+
+  public currencyName = ` ${environment.repux.currency.defaultName} `;
+  public currencyFormat: string = environment.repux.currency.format;
+
+  wallet: Wallet;
 
   metaMaskStatusMessage: string;
 
-  constructor(private web3Service: Web3Service) {
+  constructor(private walletService: WalletService) {
   }
 
   ngOnInit(): void {
-    if (!this.web3Service.isWeb3Present()) {
+    if (!this.walletService.isProviderAvailable()) {
       this.metaMaskStatusMessage = 'You need a secure wallet like MetaMask to browse through Marketplace. ' +
         'As soon as the extension is installed the warning will be gone.';
       return;
     }
 
-    if (!this.web3Service.isCoinbaseAvailable()) {
+    if (!this.walletService.isDefaultAccountAvailable()) {
       this.metaMaskStatusMessage = 'You need login to MetaMask and import RepuX account.';
       return;
     }
@@ -31,7 +37,7 @@ export class DashboardComponent implements OnInit {
   }
 
   getWallet(): void {
-    this.web3Service.getWallet().then(wallet => this.wallet = wallet);
+    this.walletService.getData().then(wallet => this.wallet = wallet);
   }
 
 }
