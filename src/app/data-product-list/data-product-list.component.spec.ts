@@ -204,8 +204,8 @@ describe('DataProductListComponent', () => {
       expect(firstRow.querySelector('td:nth-child(1)').textContent.trim()).toBe('test name');
       expect(firstRow.querySelector('td:nth-child(2)').textContent.trim()).toBe('test title');
       expect(firstRow.querySelector('td:nth-child(3)').textContent.trim()).toBe('test category 1, test category 2');
-      expect(firstRow.querySelector('td:nth-child(4)').textContent.trim()).toBe('1024');
-      expect(firstRow.querySelector('td:nth-child(5)').textContent.trim()).toBe('0.000000000000000001');
+      expect(firstRow.querySelector('td:nth-child(4)').textContent.trim()).toBe('1.00 KB');
+      expect(firstRow.querySelector('td:nth-child(5)').textContent.trim()).toBe('REPUX 0.000000000000000001');
     });
 
     it('should call sortChanged method when user clicks on sorting column', () => {

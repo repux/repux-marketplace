@@ -1,7 +1,7 @@
 # RepuxMarketplace
 
 ## Installation
-Run `npm install` or `yarn` to download project dependencies.
+Run `yarn` to download project dependencies.
 
 ## IDE
 Informations below for IntelliJ IDEA apps (PHPStrom, WebStorm, etc.)

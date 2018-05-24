@@ -1,4 +1,4 @@
-import { BigNumber } from 'bignumber.js';
+import BigNumber from 'bignumber.js';
 
 BigNumber.config({
   DECIMAL_PLACES: 40,
@@ -27,6 +27,8 @@ export const environment = {
       defaultName: 'REPUX',
       precision: 18,
       format: '1.0-18'
-    }
+    },
+    demoTokenContractAddress: '0x618231c15b548292abc0013da5e24bab350c86d2',
+    registryContractAddress: '0x4ca80dfaaef31c2d7c0b5974775e86bfa86a6c70'
   }
 };
