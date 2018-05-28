@@ -208,9 +208,9 @@
     tree-kill "^1.0.0"
     webpack-sources "^1.1.0"
 
-"@repux/repux-lib@git+ssh://git@github.com:repux/repux-lib.git#v0.2.0":
-  version "0.2.0"
-  resolved "git+ssh://git@github.com:repux/repux-lib.git#7417ad098845eb0310ea865b32d5b23179816843"
+"@repux/repux-lib@git+ssh://git@github.com:repux/repux-lib.git#v0.3.0":
+  version "0.3.0"
+  resolved "git+ssh://git@github.com:repux/repux-lib.git#d7476df5557b62774238199c87557b8ab4076773"
 
 "@schematics/angular@0.6.5":
   version "0.6.5"
