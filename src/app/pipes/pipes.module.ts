@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 
 import { ArrayJoinPipe } from './array-join.pipe';
-import { FileSizePipe } from "./file-size.pipe";
+import { FileSizePipe } from './file-size.pipe';
 
 @NgModule({
   declarations: [

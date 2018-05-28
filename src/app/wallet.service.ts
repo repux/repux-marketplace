@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import Wallet from './wallet';
-import { RepuxWeb3Service } from "./repux-web3.service";
+import { RepuxWeb3Service } from './repux-web3.service';
 
 @Injectable({
   providedIn: 'root'

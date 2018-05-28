@@ -8,20 +8,6 @@ declare global {
   }
 }
 
-export function RepuxWeb3ServiceFactory() {
-  const web3Provider = window.web3;
-  let repuxWeb3Api;
-
-  if (web3Provider) {
-    repuxWeb3Api = new RepuxWeb3Api(web3Provider, {
-      REGISTRY_CONTRACT_ADDRESS: environment.repux.registryContractAddress,
-      DEMOTOKEN_CONTRACT_ADDRESS: environment.repux.demoTokenContractAddress
-    });
-  }
-
-  return new RepuxWeb3Service(web3Provider, repuxWeb3Api);
-}
-
 @Injectable({
   providedIn: 'root',
   useFactory: RepuxWeb3ServiceFactory
@@ -45,4 +31,18 @@ export class RepuxWeb3Service {
   getRepuxApiInstance(): RepuxWeb3Api {
     return this.repuxWeb3Api;
   }
+}
+
+export function RepuxWeb3ServiceFactory() {
+  const web3Provider = window.web3;
+  let repuxWeb3Api;
+
+  if (web3Provider) {
+    repuxWeb3Api = new RepuxWeb3Api(web3Provider, {
+      REGISTRY_CONTRACT_ADDRESS: environment.repux.registryContractAddress,
+      DEMOTOKEN_CONTRACT_ADDRESS: environment.repux.demoTokenContractAddress
+    });
+  }
+
+  return new RepuxWeb3Service(web3Provider, repuxWeb3Api);
 }

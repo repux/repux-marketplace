@@ -1,6 +1,6 @@
 import { Component, ElementRef, EventEmitter, OnInit, Output, ViewChild } from '@angular/core';
-import { Input } from "@angular/core";
-import { FormControl } from "@angular/forms";
+import { Input } from '@angular/core';
+import { FormControl } from '@angular/forms';
 
 @Component({
   selector: 'app-file-input',
@@ -9,10 +9,10 @@ import { FormControl } from "@angular/forms";
 })
 export class FileInputComponent implements OnInit {
   @Input() required: boolean;
-  @Input() multiple: boolean = false;
+  @Input() multiple = false;
   @Input() placeholder: string;
   @Input() @Output() value: File[];
-  @Input() fileNames: string = '';
+  @Input() fileNames = '';
   @Input() formControl: FormControl;
   @ViewChild('fileInput') fileInput: ElementRef;
 

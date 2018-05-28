@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
-import { Task } from "../tasks/task";
-import { TaskManagerComponent } from "./task-manager.component";
-import { MatDialog, MatDialogRef } from "@angular/material";
+import { Task } from '../tasks/task';
+import { TaskManagerComponent } from './task-manager.component';
+import { MatDialog, MatDialogRef } from '@angular/material';
 
 @Injectable({
   providedIn: 'root'
@@ -60,7 +60,7 @@ export class TaskManagerService {
 
     window.addEventListener('beforeunload', function(event) {
       if (self.hasUnfinishedTasks()) {
-        const confirmationMessage = "\o/";
+        const confirmationMessage = '\o/';
 
         event.returnValue = confirmationMessage;
         return confirmationMessage;

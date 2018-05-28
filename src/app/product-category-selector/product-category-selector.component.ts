@@ -1,6 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { ProductCategoryService } from "../product-category.service";
-import { FormControl } from "@angular/forms";
+import { ProductCategoryService } from '../product-category.service';
+import { FormControl } from '@angular/forms';
 
 @Component({
   selector: 'app-product-category-selector',
@@ -11,7 +11,7 @@ export class ProductCategorySelectorComponent implements OnInit {
   @Input() required: boolean;
   @Input() formControl: FormControl;
   @Input() value: string[];
-  @Input() placeholder: string = 'Categories';
+  @Input() placeholder = 'Categories';
 
   public flatCategories: string[];
 
@@ -25,6 +25,6 @@ export class ProductCategorySelectorComponent implements OnInit {
     this.productCategoryService.getFlattenCategories()
       .subscribe( result => {
         this.flatCategories = result;
-      })
+      });
   }
 }

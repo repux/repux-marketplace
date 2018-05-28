@@ -1,8 +1,7 @@
 import { FileUploadTask, STATUS } from './file-upload-task';
-import BigNumber from "bignumber.js";
-import { DataProductService } from "../data-product.service";
-import { RepuxLibService } from "../repux-lib.service";
-import { defer } from "rxjs/index";
+import BigNumber from 'bignumber.js';
+import { DataProductService } from '../data-product.service';
+import { RepuxLibService } from '../repux-lib.service';
 
 describe('FileUploadTask()', () => {
   let fileUploadTask: FileUploadTask, dataProductService, repuxLibService, fileUploader, fileUploaderUpload,
@@ -57,12 +56,12 @@ describe('FileUploadTask()', () => {
   describe('#constructor()', () => {
     it('shoud create uploader object', () => {
       const createFileUploader = jasmine.createSpy().and.returnValue(fileUploader);
-      const repuxLibService = jasmine.createSpyObj('RepuxLibService', ['getInstance']);
+      repuxLibService = jasmine.createSpyObj('RepuxLibService', ['getInstance']);
       repuxLibService.getInstance.and.returnValue({
         createFileUploader
       });
 
-      const fileUploadTask = new FileUploadTask(
+      fileUploadTask = new FileUploadTask(
         <any> publicKey,
         repuxLibService,
         dataProductService,
@@ -260,18 +259,6 @@ describe('FileUploadTask()', () => {
 
   describe('#_createMetadata()', () => {
     it('should return metadata object', () => {
-      const title = 'TITLE';
-      const shortDescription = 'SHORT_DESCRIPTION';
-      const longDescription = 'LONG_DESCRIPTION';
-      const category = ['CATEGORY'];
-      const price = new BigNumber(1);
-
-      fileUploadTask['_title'] = title;
-      fileUploadTask['_shortDescription'] = shortDescription;
-      fileUploadTask['_longDescription'] = longDescription;
-      fileUploadTask['_category'] = category;
-      fileUploadTask['_price'] = price;
-
       expect(fileUploadTask['_createMetadata']()).toEqual({
         title,
         shortDescription,

@@ -5,7 +5,7 @@ import { EsDataProduct } from '../es-data-product';
 import { MatDialog, MatPaginator, MatTableDataSource, PageEvent, Sort } from '@angular/material';
 import { environment } from '../../environments/environment';
 import { Deserializable } from '../deserializable';
-import { ProductCreatorDialogComponent } from "../product-creator-dialog/product-creator-dialog.component";
+import { ProductCreatorDialogComponent } from '../product-creator-dialog/product-creator-dialog.component';
 
 @Component({
   selector: 'app-data-product-list',
@@ -24,7 +24,7 @@ export class DataProductListComponent implements OnInit {
   public sort: string;
   public size: number;
   public from: number;
-  public currencyName: string = ` ${environment.repux.currency.defaultName} `;
+  public currencyName = ` ${environment.repux.currency.defaultName} `;
   public currencyFormat: string = environment.repux.currency.format;
   public textColumns: string[] = [
     'name',
@@ -49,7 +49,7 @@ export class DataProductListComponent implements OnInit {
   }
 
   private getColumn(columnName) {
-    if(this.textColumns.includes(columnName)) {
+    if (this.textColumns.includes(columnName)) {
       return columnName + '.keyword';
     }
 
@@ -59,7 +59,7 @@ export class DataProductListComponent implements OnInit {
   applyFilter(filterValue: string): Promise<void> {
     const search = '*' + filterValue.trim().toLowerCase() + '*';
     this.query = `${this.getColumn('name')}:${search} OR ` +
-      `${this.getColumn('title')}:${search} OR `+
+      `${this.getColumn('title')}:${search} OR ` +
       `${this.getColumn('category')}:${search}`;
 
     this.from = 0;

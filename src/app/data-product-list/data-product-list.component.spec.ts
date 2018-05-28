@@ -74,7 +74,7 @@ describe('DataProductListComponent', () => {
       const refreshData = spyOn(component, 'refreshData').and.callFake(() => {});
       component.ngOnInit();
       expect(refreshData.calls.count()).toBe(1, 'one call');
-    })
+    });
   });
 
   describe('#applyFilter()', () => {
@@ -133,7 +133,8 @@ describe('DataProductListComponent', () => {
   });
 
   describe('#refreshData()', () => {
-    it('should call getFiles method on DataProductListService instance and assign result to esDataProducts and dataSource properties', async () => {
+    it('should call getFiles method on DataProductListService instance and assign result to ' +
+      'esDataProducts and dataSource properties', async () => {
       const expectedResponse: EsResponse<Deserializable<EsDataProduct>> = {
         total: 1,
         max_score: 1,

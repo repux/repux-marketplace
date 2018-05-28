@@ -1,8 +1,8 @@
-import { Task } from "./task";
-import { BigNumber } from "bignumber.js";
-import { RepuxLibService } from "../repux-lib.service";
-import { TaskManagerService } from "../task-manager/task-manager.service";
-import { DataProductService } from "../data-product.service";
+import { Task } from './task';
+import { BigNumber } from 'bignumber.js';
+import { RepuxLibService } from '../repux-lib.service';
+import { TaskManagerService } from '../task-manager/task-manager.service';
+import { DataProductService } from '../data-product.service';
 
 export const STATUS = {
   UPLOADING: 'Uploading',
@@ -18,7 +18,7 @@ export class FileUploadTask implements Task {
   private _progress: number;
   private _result: string;
   private _errors: string[] = [];
-  private _finished: boolean = false;
+  private _finished = false;
   private _name: string;
   private _needsUserAction: boolean;
   private _userActionName: string;
@@ -75,7 +75,7 @@ export class FileUploadTask implements Task {
 
   async callUserAction(): Promise<any> {
     if (!this._needsUserAction) {
-      return
+      return;
     }
 
     try {
@@ -102,11 +102,11 @@ export class FileUploadTask implements Task {
     return Object.freeze(this._errors);
   }
 
-  get finished(): boolean{
+  get finished(): boolean {
     return this._finished;
   }
 
-  get name(): string{
+  get name(): string {
     return this._name;
   }
 

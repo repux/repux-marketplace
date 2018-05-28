@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { from, Observable, of } from 'rxjs/index'
+import { from, Observable, of } from 'rxjs/index';
 
 @Injectable({
   providedIn: 'root'
@@ -17,7 +17,7 @@ export class ProductCategoryService {
     }
 
     return this.http.get(`./assets/data-product-categories.json`);
-  };
+  }
 
   getFlattenCategories(): Observable<string[]> {
     return from(new Promise(resolve => {

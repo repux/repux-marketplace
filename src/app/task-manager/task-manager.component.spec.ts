@@ -7,7 +7,7 @@ import {
   MatProgressSpinnerModule,
   MatToolbarModule
 } from '@angular/material';
-import { ChangeDetectorRef } from "@angular/core";
+import { ChangeDetectorRef } from '@angular/core';
 
 describe('TaskManagerComponent', () => {
   let matDialogRef, changeDetectorRef, taskManagerService;

@@ -6,8 +6,8 @@ import {
   OnChanges,
   OnInit
 } from '@angular/core';
-import { MatDialogRef } from "@angular/material";
-import { TaskManagerService } from "./task-manager.service";
+import { MatDialogRef } from '@angular/material';
+import { TaskManagerService } from './task-manager.service';
 
 @Component({
   selector: 'app-task-manager',
@@ -17,7 +17,7 @@ import { TaskManagerService } from "./task-manager.service";
 })
 export class TaskManagerComponent implements OnInit, DoCheck, OnChanges {
   private _lastStatus = [];
-  private _taskManagerService:TaskManagerService = <any> {
+  private _taskManagerService: TaskManagerService = <any> {
     tasks: [],
     closeDialog: () => {}
   };
@@ -35,12 +35,12 @@ export class TaskManagerComponent implements OnInit, DoCheck, OnChanges {
   }
 
   ngOnChanges() {
-    for(let i = 0; i < this._taskManagerService.tasks.length; i++) {
+    for (let i = 0; i < this._taskManagerService.tasks.length; i++) {
       this._lastStatus[i] = {
         progress: this._taskManagerService.tasks[i].progress,
         errors: this._taskManagerService.tasks[i].errors,
         status: this._taskManagerService.tasks[i].status
-      }
+      };
     }
   }
 
@@ -50,7 +50,7 @@ export class TaskManagerComponent implements OnInit, DoCheck, OnChanges {
       return this._cd.detectChanges();
     }
 
-    for(let i = 0; i < this._taskManagerService.tasks.length; i++) {
+    for (let i = 0; i < this._taskManagerService.tasks.length; i++) {
       if (!this._lastStatus[i] ||
           this._lastStatus[i].status !== this._taskManagerService.tasks[i].status ||
           this._lastStatus[i].progress !== this._taskManagerService.tasks[i].progress ||

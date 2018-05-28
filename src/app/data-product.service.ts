@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { RepuxWeb3Service } from "./repux-web3.service";
-import BigNumber from "bignumber.js";
+import { RepuxWeb3Service } from './repux-web3.service';
+import BigNumber from 'bignumber.js';
 
 @Injectable({
   providedIn: 'root'

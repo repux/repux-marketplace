@@ -1,28 +1,28 @@
-import { ProductCategoryService } from "./product-category.service";
-import { defer } from "rxjs/index";
+import { ProductCategoryService } from './product-category.service';
+import { defer } from 'rxjs/index';
 
 describe('ProductCategoryService', () => {
   let service: ProductCategoryService;
   let httpClientSpy: { get: jasmine.Spy };
   const categories = [
     {
-      "name": "Category 1",
-      "subcategories": [
+      'name': 'Category 1',
+      'subcategories': [
         {
-          "name": "Subcategory 1",
-          "subcategories": [
+          'name': 'Subcategory 1',
+          'subcategories': [
             {
-              "name": "Sub-Subcategory 1"
+              'name': 'Sub-Subcategory 1'
             }
           ]
         },
         {
-          "name": "Subcategory 2"
+          'name': 'Subcategory 2'
         }
       ]
     },
     {
-      "name": "Category 2"
+      'name': 'Category 2'
     }
   ];
 
@@ -32,15 +32,16 @@ describe('ProductCategoryService', () => {
   });
 
   describe('#getCategories()', () => {
-    it('should call get method on http object when there are no categories and when categories exists then simple return them', async () => {
+    it('should call get method on http object when there are no categories and when categories exists ' +
+      'then simple return them', async () => {
       httpClientSpy.get.and.returnValue(defer(() => Promise.resolve(categories)));
       service.getCategories()
         .subscribe(result => {
           expect(result).toBe(categories);
 
           service.getCategories()
-            .subscribe(result => {
-              expect(result).toBe(categories);
+            .subscribe(result2 => {
+              expect(result2).toBe(categories);
             });
         });
       expect(httpClientSpy.get.calls.count()).toBe(1);

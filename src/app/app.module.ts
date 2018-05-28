@@ -9,7 +9,7 @@ import { DashboardComponent } from './dashboard/dashboard.component';
 import { DataProductListComponent } from './data-product-list/data-product-list.component';
 import { ProductCreatorDialogComponent } from './product-creator-dialog/product-creator-dialog.component';
 import { ProductCategorySelectorComponent } from './product-category-selector/product-category-selector.component';
-import { FormsModule, ReactiveFormsModule } from "@angular/forms";
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { FileInputComponent } from './file-input/file-input.component';
 import { TaskManagerComponent } from './task-manager/task-manager.component';
 import {

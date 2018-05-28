@@ -1,5 +1,5 @@
-import { DataProductService } from "./data-product.service";
-import BigNumber from "bignumber.js";
+import { DataProductService } from './data-product.service';
+import BigNumber from 'bignumber.js';
 
 describe('DataProductService', () => {
   let service: DataProductService;
@@ -56,5 +56,5 @@ describe('DataProductService', () => {
       expect(repuxWeb3ServiceSpy.isDefaultAccountAvailable.calls.count()).toBe(1);
       expect(repuxWeb3ServiceSpy.getRepuxApiInstance.calls.count()).toBe(1);
     });
-  })
+  });
 });

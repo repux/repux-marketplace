@@ -15,7 +15,7 @@ export class DataProduct implements Deserializable<DataProduct> {
 
   deserialize(input: any): DataProduct {
     Object.assign(this, input);
-    this.price = new BigNumber(input.price || "0");
+    this.price = new BigNumber(input.price || '0');
     return this;
   }
 }
