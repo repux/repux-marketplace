@@ -8,50 +8,54 @@ import { MatDialog, MatDialogRef } from "@angular/material";
 })
 export class TaskManagerService {
   private _tasks: Task[] = [];
-  private dialogRef: MatDialogRef<TaskManagerComponent>;
+  private _dialogRef: MatDialogRef<TaskManagerComponent>;
 
-  constructor(private dialog: MatDialog) {
-    this.addConfirmationPrompt();
+  constructor(private _dialog: MatDialog) {
+    this._addConfirmationPrompt();
   }
 
-  get tasks(): Task[] {
-    return this._tasks;
+  get tasks(): ReadonlyArray<Task> {
+    return Object.freeze(this._tasks);
   }
 
   addTask(task: Task) {
     task.run(this);
-    this.tasks.push(task);
+    this._tasks.push(task);
     this.openDialog();
   }
 
   onTaskEvent() {
-    if (this.dialogRef) {
-      this.dialogRef.componentInstance.ngDoCheck();
+    if (this._dialogRef) {
+      this._dialogRef.componentInstance.ngDoCheck();
     }
   }
 
   openDialog() {
-    if (this.dialogRef) {
+    if (this._dialogRef) {
       return;
     }
 
-    this.dialogRef = this.dialog.open(TaskManagerComponent, {
+    this._dialogRef = this._dialog.open(TaskManagerComponent, {
       hasBackdrop: false
     });
 
-    this.dialogRef.componentInstance.setTaskManagerService(this);
+    this._dialogRef.componentInstance.setTaskManagerService(this);
   }
 
   closeDialog() {
-    this.dialogRef.close();
-    this.dialogRef = null;
+    if (!this._dialogRef) {
+      return;
+    }
+
+    this._dialogRef.close();
+    this._dialogRef = null;
   }
 
   hasUnfinishedTasks(): boolean {
-    return this._tasks.reduce((acc, task) => acc = !task.finished ? acc + 1 : acc, 0) > 0;
+    return this._tasks.filter(task => !task.finished).length > 0;
   }
 
-  addConfirmationPrompt() {
+  private _addConfirmationPrompt() {
     const self = this;
 
     window.addEventListener('beforeunload', function(event) {

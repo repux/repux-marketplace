@@ -18,7 +18,7 @@ export const environment = {
   repux: {
     metaindexer: {
       protocol: 'http',
-      host: '192.168.99.100',
+      host: '192.168.99.101',
       port: 9201,
       searchUrl: 'repux/_search'
     },
@@ -33,7 +33,7 @@ export const environment = {
     registryContractAddress: '0xbd83c21e6f0a9547abe908c6faa02a55512d57b4'
   },
   ipfs: {
-    host: '192.168.99.100',
+    host: '192.168.99.101',
     port: '5001',
     protocol: 'http'
   }

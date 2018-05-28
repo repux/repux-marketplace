@@ -3,11 +3,11 @@ import {
   ChangeDetectorRef,
   Component,
   DoCheck,
-  Input,
   OnChanges,
   OnInit
 } from '@angular/core';
 import { MatDialogRef } from "@angular/material";
+import { TaskManagerService } from "./task-manager.service";
 
 @Component({
   selector: 'app-task-manager',
@@ -16,53 +16,60 @@ import { MatDialogRef } from "@angular/material";
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class TaskManagerComponent implements OnInit, DoCheck, OnChanges {
-  @Input() public taskManagerService = null;
-  private lastStatus = [];
+  private _lastStatus = [];
+  private _taskManagerService:TaskManagerService = <any> {
+    tasks: [],
+    closeDialog: () => {}
+  };
 
   constructor(
-    private cd: ChangeDetectorRef,
-    public dialogRef: MatDialogRef<TaskManagerComponent>
+    private _cd: ChangeDetectorRef,
+    private _dialogRef: MatDialogRef<TaskManagerComponent>
   ) { }
 
   ngOnInit() {
-    this.dialogRef.updatePosition({
+    this._dialogRef.updatePosition({
       right: '15px',
       bottom: '15px'
     });
   }
 
   ngOnChanges() {
-    for(let i = 0; i < this.taskManagerService.tasks.length; i++) {
-      this.lastStatus[i] = {
-        progress: this.taskManagerService.tasks[i].progress,
-        errors: this.taskManagerService.tasks[i].errors,
-        status: this.taskManagerService.tasks[i].status
+    for(let i = 0; i < this._taskManagerService.tasks.length; i++) {
+      this._lastStatus[i] = {
+        progress: this._taskManagerService.tasks[i].progress,
+        errors: this._taskManagerService.tasks[i].errors,
+        status: this._taskManagerService.tasks[i].status
       }
     }
   }
 
   ngDoCheck() {
-    if (this.lastStatus.length !== this.taskManagerService.tasks.length) {
-      this.cd.markForCheck();
-      return this.cd.detectChanges();
+    if (this._lastStatus.length !== this._taskManagerService.tasks.length) {
+      this._cd.markForCheck();
+      return this._cd.detectChanges();
     }
 
-    for(let i = 0; i < this.taskManagerService.tasks.length; i++) {
-      if (!this.lastStatus[i] ||
-          this.lastStatus[i].status !== this.taskManagerService.tasks[i].status ||
-          this.lastStatus[i].progress !== this.taskManagerService.tasks[i].progress ||
-          this.lastStatus[i].errors.length !== this.taskManagerService.tasks[i].errors.length) {
-        this.cd.markForCheck();
-        return this.cd.detectChanges();
+    for(let i = 0; i < this._taskManagerService.tasks.length; i++) {
+      if (!this._lastStatus[i] ||
+          this._lastStatus[i].status !== this._taskManagerService.tasks[i].status ||
+          this._lastStatus[i].progress !== this._taskManagerService.tasks[i].progress ||
+          this._lastStatus[i].errors.length !== this._taskManagerService.tasks[i].errors.length) {
+        this._cd.markForCheck();
+        return this._cd.detectChanges();
       }
     }
   }
 
   closeDialog() {
-    this.taskManagerService.closeDialog();
+    this._taskManagerService.closeDialog();
   }
 
-  setTaskManagerService(taskManagerService: any) {
-    this.taskManagerService = taskManagerService;
+  setTaskManagerService(taskManagerService: TaskManagerService) {
+    this._taskManagerService = taskManagerService;
+  }
+
+  get taskManagerService(): TaskManagerService {
+    return this._taskManagerService;
   }
 }

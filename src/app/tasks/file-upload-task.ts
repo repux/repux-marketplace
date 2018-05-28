@@ -14,7 +14,7 @@ export const STATUS = {
 };
 
 export class FileUploadTask implements Task {
-  private uploader;
+  private _uploader;
   private _progress: number;
   private _result: string;
   private _errors: string[] = [];
@@ -26,34 +26,25 @@ export class FileUploadTask implements Task {
   private _taskManagerService: TaskManagerService;
 
   constructor(
-    public publicKey: CryptoKey,
-    public repuxService: RepuxLibService,
-    public dataProductService: DataProductService,
-    public title: string,
-    public shortDescription: string,
-    public longDescription: string,
-    public category: string[],
-    public price: BigNumber,
-    public file: File
+    private _publicKey: CryptoKey,
+    private _repuxLibService: RepuxLibService,
+    private _dataProductService: DataProductService,
+    private _title: string,
+    private _shortDescription: string,
+    private _longDescription: string,
+    private _category: string[],
+    private _price: BigNumber,
+    private _file: File
   ) {
-    this._name = this.file.name;
-    this.uploader = this.repuxService.getInstance().createFileUploader();
+    this._name = this._file.name;
+    this._uploader = this._repuxLibService.getInstance().createFileUploader();
   }
 
   run(taskManagerService: TaskManagerService): void {
     this._status = STATUS.UPLOADING;
-
     this._taskManagerService = taskManagerService;
 
-    const metaData = {
-      title: this.title,
-      shortDescription: this.shortDescription,
-      longDescription: this.longDescription,
-      category: this.category,
-      price: this.price
-    };
-
-    this.uploader.upload(this.publicKey, this.file, metaData)
+    this._uploader.upload(this._publicKey, this._file, this._createMetadata())
       .on('progress', (eventType, progress) => {
         this._progress = progress * 100;
       })
@@ -75,7 +66,7 @@ export class FileUploadTask implements Task {
   }
 
   cancel(): void {
-    this.uploader.terminate();
+    this._uploader.terminate();
     this._finished = true;
     this._errors.push(STATUS.CANCELED);
     this._status = STATUS.CANCELED;
@@ -83,15 +74,15 @@ export class FileUploadTask implements Task {
   }
 
   async callUserAction(): Promise<any> {
-    if (!this.needsUserAction) {
+    if (!this._needsUserAction) {
       return
     }
-    this._needsUserAction = false;
 
     try {
+      this._needsUserAction = false;
       this._status = STATUS.PUBLICATION;
       this._taskManagerService.onTaskEvent();
-      await this.dataProductService.publishDataProduct(this._result, this.price);
+      await this._dataProductService.publishDataProduct(this._result, this._price);
       this._status = STATUS.FINISHED;
       this._finished = true;
       this._taskManagerService.onTaskEvent();
@@ -99,6 +90,7 @@ export class FileUploadTask implements Task {
       this._needsUserAction = true;
       this._status = STATUS.PUBLICATION_REJECTED;
       this._taskManagerService.onTaskEvent();
+      console.warn(error);
     }
   }
 
@@ -106,8 +98,8 @@ export class FileUploadTask implements Task {
     return this._progress;
   }
 
-  get errors(): string[] {
-    return this._errors;
+  get errors(): ReadonlyArray<string> {
+    return Object.freeze(this._errors);
   }
 
   get finished(): boolean{
@@ -128,5 +120,15 @@ export class FileUploadTask implements Task {
 
   get status(): string {
     return this._status;
+  }
+
+  _createMetadata() {
+    return {
+      title: this._title,
+      shortDescription: this._shortDescription,
+      longDescription: this._longDescription,
+      category: this._category,
+      price: this._price
+    };
   }
 }

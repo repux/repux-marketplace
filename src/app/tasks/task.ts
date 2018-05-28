@@ -5,9 +5,10 @@ export interface Task {
   cancel(): void;
   callUserAction(): void;
   name: string;
+  status: string;
   finished: boolean;
   progress: number;
-  errors: string[];
+  errors: ReadonlyArray<string>;
   needsUserAction: boolean;
   userActionName: string;
 }
