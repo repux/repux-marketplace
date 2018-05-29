@@ -13,7 +13,7 @@ BigNumber.config({
   }
 });
 
-const isProduction = ['true', '1', ''].includes('${MARKETPLACE_IS_PRODUCTION}');
+const isProduction = [ 'true', '1', '' ].includes('${MARKETPLACE_IS_PRODUCTION}');
 
 export const environment = {
   production: isProduction,
