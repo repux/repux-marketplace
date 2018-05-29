@@ -20,7 +20,7 @@ const web3Mock = {
 
 const repuxWeb3ApiMock = {
   getDefaultAccount() {
-    return web3Mock.eth.accounts[ 0 ];
+    return web3Mock.eth.accounts[0];
   },
 
   async getBalance() {
@@ -35,7 +35,7 @@ describe('WalletService', () => {
   beforeEach(() => {
     repuxWeb3ServiceSpy = jasmine.createSpyObj(
       'RepuxWeb3Service',
-      ['getRepuxApiInstance', 'getWeb3Instance', 'isProviderAvailable', 'isDefaultAccountAvailable']
+      [ 'getRepuxApiInstance', 'getWeb3Instance', 'isProviderAvailable', 'isDefaultAccountAvailable' ]
     );
     walletService = new WalletService(<any> repuxWeb3ServiceSpy);
   });

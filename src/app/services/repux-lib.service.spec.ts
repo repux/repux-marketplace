@@ -8,7 +8,7 @@ describe('RepuxLibService', () => {
   beforeEach(() => {
     ipfsServiceSpy = jasmine.createSpyObj(
       'IpfsService',
-      ['getInstance']
+      [ 'getInstance' ]
     );
     ipfsServiceSpy.getInstance.and.returnValue(ipfsInstanceMock);
     repuxLibService = new RepuxLibService(<any> ipfsServiceSpy);

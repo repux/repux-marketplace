@@ -8,7 +8,7 @@ describe('TaskManagerService', () => {
   let service: TaskManagerService;
 
   beforeEach(() => {
-    matDialogSpy = jasmine.createSpyObj('MatDialog', ['open']);
+    matDialogSpy = jasmine.createSpyObj('MatDialog', [ 'open' ]);
     service = new TaskManagerService(<any> matDialogSpy);
     window.addEventListener = () => {};
 
@@ -128,25 +128,25 @@ describe('TaskManagerService', () => {
 
   describe('#hasUnfinishedTasks()', () => {
     it('should return true if at least one task is not finished', () => {
-      service['_tasks'] = <any> [{
+      service['_tasks'] = <any> [ {
         finished: true
       }, {
         finished: false
       }, {
         finished: true
-      }];
+      } ];
 
       expect(service.hasUnfinishedTasks()).toBeTruthy();
     });
 
     it('should return false if all tasks are finished', () => {
-      service['_tasks'] = <any> [{
+      service['_tasks'] = <any> [ {
         finished: true
       }, {
         finished: true
       }, {
         finished: true
-      }];
+      } ];
 
       expect(service.hasUnfinishedTasks()).toBeFalsy();
     });

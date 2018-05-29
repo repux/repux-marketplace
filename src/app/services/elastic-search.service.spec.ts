@@ -9,7 +9,7 @@ describe('ElasticSearchService', () => {
   const type = 'data_product';
 
   beforeEach(() => {
-    httpClientSpy = jasmine.createSpyObj('HttpClient', ['get']);
+    httpClientSpy = jasmine.createSpyObj('HttpClient', [ 'get' ]);
     service = new ElasticSearchService(<any> httpClientSpy);
   });
 
@@ -30,7 +30,7 @@ describe('ElasticSearchService', () => {
     });
 
     it('should return EsResponse<EsDataProducts> containing 2 products', () => {
-      const expectedEsDataProducts = [{
+      const expectedEsDataProducts = [ {
         _index: 'repux',
         _type: type,
         _id: '1',
@@ -46,7 +46,7 @@ describe('ElasticSearchService', () => {
         _source: {
           price: 2
         }
-      }];
+      } ];
 
       const expectedResult = {
         total: 2,
@@ -54,7 +54,7 @@ describe('ElasticSearchService', () => {
         hits: expectedEsDataProducts
       };
 
-      httpClientSpy.get.and.returnValue(defer(() => Promise.resolve({hits: expectedResult})));
+      httpClientSpy.get.and.returnValue(defer(() => Promise.resolve({ hits: expectedResult })));
 
       service.search(type, '*', '', 10, 0, EsDataProduct)
         .subscribe(result => {

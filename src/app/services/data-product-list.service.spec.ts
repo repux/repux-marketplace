@@ -8,13 +8,13 @@ describe('DataProductListService', () => {
   const type = 'data_product';
 
   beforeEach(() => {
-     elasticSearchServiceSpy = jasmine.createSpyObj('ElasticSearchService', ['search']);
+     elasticSearchServiceSpy = jasmine.createSpyObj('ElasticSearchService', [ 'search' ]);
      service = new DataProductListService(<any> elasticSearchServiceSpy);
   });
 
   describe('#getFiles()', () => {
       it('should call search method on ElasticSearchService', () => {
-        const expectedEsDataProducts = [new EsDataProduct().deserialize({
+        const expectedEsDataProducts = [ new EsDataProduct().deserialize({
           _index: 'repux',
           _type: type,
           _id: '1',
@@ -30,7 +30,7 @@ describe('DataProductListService', () => {
           _source: {
             price: 2
           }
-        })];
+        }) ];
 
         const expectedResult = {
           total: 2,

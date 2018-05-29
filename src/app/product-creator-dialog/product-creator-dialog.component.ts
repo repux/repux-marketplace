@@ -13,7 +13,7 @@ import { DataProductService } from '../services/data-product.service';
 @Component({
   selector: 'app-product-creator-dialog',
   templateUrl: './product-creator-dialog.component.html',
-  styleUrls: ['./product-creator-dialog.component.scss']
+  styleUrls: [ './product-creator-dialog.component.scss' ]
 })
 export class ProductCreatorDialogComponent implements OnInit {
   public currencyName: string = environment.repux.currency.defaultName;

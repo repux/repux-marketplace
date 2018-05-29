@@ -75,4 +75,45 @@ describe('TaskManagerComponent', () => {
       expect(component[ '_lastStatus' ][ 0 ].progress).toBe(12);
     });
   });
+
+  describe('#ngDoCkeck()', () => {
+    it('should detect changes on taskManagerService.tasks', () => {
+      component['_cd'] = changeDetectorRef;
+      component.ngDoCheck();
+      expect(changeDetectorRef.markForCheck.calls.count()).toBe(0);
+      expect(changeDetectorRef.detectChanges.calls.count()).toBe(0);
+
+      component['_taskManagerService'] = <any> {
+        tasks: [ {
+          status: 'STATUS',
+          finished: false,
+          errors: [],
+          progress: 15
+        } ]
+      };
+      component.ngDoCheck();
+      expect(changeDetectorRef.markForCheck.calls.count()).toBe(1);
+      expect(changeDetectorRef.detectChanges.calls.count()).toBe(1);
+
+      component['_taskManagerService'].tasks[0].finished = true;
+      component.ngDoCheck();
+      expect(changeDetectorRef.markForCheck.calls.count()).toBe(2);
+      expect(changeDetectorRef.detectChanges.calls.count()).toBe(2);
+
+      component['_taskManagerService'].tasks[0].status = 'STATUS_2';
+      component.ngDoCheck();
+      expect(changeDetectorRef.markForCheck.calls.count()).toBe(3);
+      expect(changeDetectorRef.detectChanges.calls.count()).toBe(3);
+
+      component['_taskManagerService'].tasks[0].errors = [ 'ERROR' ];
+      component.ngDoCheck();
+      expect(changeDetectorRef.markForCheck.calls.count()).toBe(4);
+      expect(changeDetectorRef.detectChanges.calls.count()).toBe(4);
+
+      component['_taskManagerService'].tasks[0].progress = 10;
+      component.ngDoCheck();
+      expect(changeDetectorRef.markForCheck.calls.count()).toBe(5);
+      expect(changeDetectorRef.detectChanges.calls.count()).toBe(5);
+    });
+  });
 });

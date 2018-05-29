@@ -5,7 +5,7 @@ import { FormControl } from '@angular/forms';
 @Component({
   selector: 'app-product-category-selector',
   templateUrl: './product-category-selector.component.html',
-  styleUrls: ['./product-category-selector.component.scss']
+  styleUrls: [ './product-category-selector.component.scss' ]
 })
 export class ProductCategorySelectorComponent implements OnInit {
   @Input() required: boolean;

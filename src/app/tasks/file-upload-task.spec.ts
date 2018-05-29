@@ -57,7 +57,7 @@ describe('FileUploadTask()', () => {
   describe('#constructor()', () => {
     it('shoud create uploader object', () => {
       const createFileUploader = jasmine.createSpy().and.returnValue(fileUploader);
-      repuxLibService = jasmine.createSpyObj('RepuxLibService', ['getInstance']);
+      repuxLibService = jasmine.createSpyObj('RepuxLibService', [ 'getInstance' ]);
       repuxLibService.getInstance.and.returnValue({
         createFileUploader
       });

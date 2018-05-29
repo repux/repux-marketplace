@@ -2,7 +2,7 @@ import { BigNumber } from 'bignumber.js';
 
 BigNumber.config({
   DECIMAL_PLACES: 40,
-  EXPONENTIAL_AT: [-40, 40],
+  EXPONENTIAL_AT: [ -40, 40 ],
   FORMAT: {
     decimalSeparator: '.',
     groupSeparator: '',
@@ -24,7 +24,7 @@ export const environment = {
       port: 9201,
       searchUrl: 'repux/_search'
     },
-    pageSizeOptions: [10, 25, 50, 100],
+    pageSizeOptions: [ 10, 25, 50, 100 ],
     currency: {
       defaultName: 'REPUX',
       precision: 18,

@@ -10,7 +10,7 @@ describe('DataProduct', () => {
         shortDescription: 'shortDescription',
         fullDescription: 'fullDescription',
         type: 'type',
-        category: ['category1'],
+        category: [ 'category1' ],
         maxNumberOfDownloads: 100,
         price: '199.999999999999999999',
         termsOfUseType: 'termsOfUseType',
@@ -21,7 +21,7 @@ describe('DataProduct', () => {
       expect(dataProduct.title).toBe('title');
       expect(dataProduct.shortDescription).toBe('shortDescription');
       expect(dataProduct.fullDescription).toBe('fullDescription');
-      expect(dataProduct.category).toEqual(['category1']);
+      expect(dataProduct.category).toEqual([ 'category1' ]);
       expect(dataProduct.maxNumberOfDownloads).toBe(100);
       expect(dataProduct.price).toEqual(new BigNumber('199.999999999999999999'));
       expect(dataProduct.termsOfUseType).toBe('termsOfUseType');
