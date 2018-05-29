@@ -13,12 +13,14 @@ BigNumber.config({
   }
 });
 
+const isProduction = ['true', '1', ''].includes('${MARKETPLACE_IS_PRODUCTION}');
+
 export const environment = {
-  production: true,
+  production: isProduction,
   repux: {
     metaindexer: {
       protocol: 'http',
-      host: '192.168.99.101',
+      host: '${MARKETPLACE_METAINDEXER_HOST}' || '192.168.99.101',
       port: 9201,
       searchUrl: 'repux/_search'
     },
@@ -33,7 +35,7 @@ export const environment = {
     registryContractAddress: '0xbd83c21e6f0a9547abe908c6faa02a55512d57b4'
   },
   ipfs: {
-    host: '192.168.99.101',
+    host: '${MARKETPLACE_IPFS_HOST}' || '192.168.99.101',
     port: '5001',
     protocol: 'http'
   }
