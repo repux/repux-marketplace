@@ -40,3 +40,4 @@ Thumbs.db
 
 # environments configs
 !src/environments/environment.template.ts
+src/environments/environment.ts
