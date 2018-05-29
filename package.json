@@ -8,7 +8,7 @@
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e",
-    "prebuild": "eval \"echo \\\"$(cat src/environments/environment.template.ts)\\\"\" > src/environments/environment.ts"
+    "prebuild": "eval \"echo \\\"$(cat src/environments/environment.template.ts)\\\"\" > src/environments/environment.base.ts"
   },
   "private": true,
   "dependencies": {
