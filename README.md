@@ -18,6 +18,10 @@ Use TypeScript code styles settings stored in  `intellij-cs.xml`. Import using `
 ### Angular Language Service
 For better type hinting make sure that Angular Language Service is enabled in `Preferences > Languages & Frameworks > TypeScript`.
 
+## Prebuild
+
+Run `yarn prebuild` to generate environment.ts file before you build application.
+
 ## Development server
 
 Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.

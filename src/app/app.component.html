@@ -14,4 +14,9 @@
   </a>
 </nav>
 
+<mat-card
+  *ngIf="metaMaskStatusMessage"
+  class="account-info-banner">{{ metaMaskStatusMessage }}
+</mat-card>
+
 <router-outlet></router-outlet>

@@ -6,24 +6,25 @@ import {
   MatProgressSpinnerModule,
   MatTableModule,
   MatPaginatorModule,
+  MatDialogModule,
   MatTableDataSource
 } from '@angular/material';
 import { PipesModule } from '../pipes/pipes.module';
 import { Component, Input } from '@angular/core';
 import { BigNumber } from 'bignumber.js';
-import { DataProductListService } from './data-product-list.service';
+import { DataProductListService } from '../services/data-product-list.service';
 import { from as fromPromise, Observable } from 'rxjs/index';
 import { EsResponse } from '../es-response';
 import { Deserializable } from '../deserializable';
 import { EsDataProduct } from '../es-data-product';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 
-@Component({selector: 'app-currency', template: '{{value}}'})
+@Component({ selector: 'app-currency', template: '{{value}}' })
 class CurrencyStubComponent {
   @Input() value: BigNumber;
 }
 
-@Component({selector: 'app-file-size', template: '{{bytes}}'})
+@Component({ selector: 'app-file-size', template: '{{bytes}}' })
 class FileSizeStubComponent {
   @Input() bytes: number;
 }
@@ -51,12 +52,13 @@ describe('DataProductListComponent', () => {
         MatProgressSpinnerModule,
         MatTableModule,
         MatPaginatorModule,
+        MatDialogModule,
         PipesModule,
         NoopAnimationsModule
       ],
       providers: [
-        { provide: DataProductListService, useClass: DataProductListStubService}
-       ]
+        { provide: DataProductListService, useClass: DataProductListStubService }
+      ]
     })
       .compileComponents();
   }));
@@ -69,10 +71,11 @@ describe('DataProductListComponent', () => {
 
   describe('#onNgInit()', () => {
     it('should call refreshData method', () => {
-      const refreshData = spyOn(component, 'refreshData').and.callFake(() => {});
+      const refreshData = spyOn(component, 'refreshData').and.callFake(() => {
+      });
       component.ngOnInit();
       expect(refreshData.calls.count()).toBe(1, 'one call');
-    })
+    });
   });
 
   describe('#applyFilter()', () => {
@@ -80,11 +83,16 @@ describe('DataProductListComponent', () => {
       component.from = 5;
       component.applyFilter('String to search for');
       expect(component.from).toBe(0);
-      expect(component.query).toBe('name:*string to search for* OR title:*string to search for* OR category:*string to search for*');
+      expect(component.query).toBe(
+        'name.keyword:*string to search for* OR ' +
+        'title.keyword:*string to search for* OR ' +
+        'category.keyword:*string to search for*'
+      );
     });
 
     it('should call refreshData method', () => {
-      const refreshData = spyOn(component, 'refreshData').and.callFake(() => {});
+      const refreshData = spyOn(component, 'refreshData').and.callFake(() => {
+      });
       component.applyFilter('');
       expect(refreshData.calls.count()).toBe(1, 'one call');
     });
@@ -94,13 +102,14 @@ describe('DataProductListComponent', () => {
     it('should set size and from attributes basing on pageChangeEvent argument', () => {
       component.from = 0;
       component.size = 3;
-      component.pageChanged( { pageSize: 10, pageIndex: 13, length: 10 });
+      component.pageChanged({ pageSize: 10, pageIndex: 13, length: 10 });
       expect(component.size).toBe(10);
       expect(component.from).toBe(130);
     });
 
     it('should call refreshData method', () => {
-      const refreshData = spyOn(component, 'refreshData').and.callFake(() => {});
+      const refreshData = spyOn(component, 'refreshData').and.callFake(() => {
+      });
       component.pageChanged({ pageSize: 10, pageIndex: 13, length: 10 });
       expect(refreshData.calls.count()).toBe(1, 'one call');
     });
@@ -110,7 +119,9 @@ describe('DataProductListComponent', () => {
     it('should set sort property sort argument has active and direction properties set', () => {
       component.sort = null;
       component.sortChanged({ active: 'name', direction: 'asc' });
-      expect(component.sort).toBe('name:asc');
+      expect(component.sort).toBe('name.keyword:asc');
+      component.sortChanged({ active: 'price', direction: 'asc' });
+      expect(component.sort).toBe('price:asc');
       component.sortChanged({ active: null, direction: 'asc' });
       expect(component.sort).toBeUndefined();
       component.sortChanged({ active: 'name', direction: '' });
@@ -118,40 +129,42 @@ describe('DataProductListComponent', () => {
     });
 
     it('should call refreshData method', () => {
-      const refreshData = spyOn(component, 'refreshData').and.callFake(() => {});
+      const refreshData = spyOn(component, 'refreshData').and.callFake(() => {
+      });
       component.sortChanged({ active: 'name', direction: 'asc' });
       expect(refreshData.calls.count()).toBe(1, 'one call');
     });
   });
 
   describe('#refreshData()', () => {
-    it('should call getFiles method on DataProductListService instance and assign result to esDataProducts and dataSource properties', async () => {
-      const expectedResponse: EsResponse<Deserializable<EsDataProduct>> = {
-        total: 1,
-        max_score: 1,
-        hits: [new EsDataProduct().deserialize({
-          _index: '1',
-          _source: {
-            price: 1
-          }
-        })]
-      };
+    it('should call getFiles method on DataProductListService instance and assign result to esDataProducts and dataSource properties',
+      async () => {
+        const expectedResponse: EsResponse<Deserializable<EsDataProduct>> = {
+          total: 1,
+          max_score: 1,
+          hits: [ new EsDataProduct().deserialize({
+            _index: '1',
+            _source: {
+              price: 1
+            }
+          }) ]
+        };
 
-      component.query = 'QUERY';
-      component.sort = 'SORT';
-      component.size = 10;
-      component.from = 1;
-      const getFiles = spyOn(component.dataProductListService, 'getFiles').and.callFake((query, sort, size, from) => {
-        expect(query).toBe('QUERY');
-        expect(sort).toBe('SORT');
-        expect(size).toBe(10);
-        expect(from).toBe(1);
-        return fromPromise(Promise.resolve(expectedResponse));
+        component.query = 'QUERY';
+        component.sort = 'SORT';
+        component.size = 10;
+        component.from = 1;
+        const getFiles = spyOn(component.dataProductListService, 'getFiles').and.callFake((query, sort, size, from) => {
+          expect(query).toBe('QUERY');
+          expect(sort).toBe('SORT');
+          expect(size).toBe(10);
+          expect(from).toBe(1);
+          return fromPromise(Promise.resolve(expectedResponse));
+        });
+        await component.refreshData();
+        expect(getFiles.calls.count()).toBe(1, 'one call');
+        expect(component.esDataProducts).toBe(expectedResponse);
       });
-      await component.refreshData();
-      expect(getFiles.calls.count()).toBe(1, 'one call');
-      expect(component.esDataProducts).toBe(expectedResponse);
-    });
   });
 
   describe('#DOM', () => {
@@ -169,16 +182,16 @@ describe('DataProductListComponent', () => {
       component.esDataProducts = {
         total: 1,
         max_score: 1,
-        hits: [new EsDataProduct().deserialize({
+        hits: [ new EsDataProduct().deserialize({
           _index: '1',
           _source: {
             title: 'test title',
             name: 'test name',
-            category: ['test category 1', 'test category 2'],
+            category: [ 'test category 1', 'test category 2' ],
             size: 1024,
             price: 1
           }
-        })]
+        }) ]
       };
       component.dataSource = new MatTableDataSource(component.esDataProducts.hits);
       fixture.detectChanges();
@@ -205,7 +218,7 @@ describe('DataProductListComponent', () => {
       expect(firstRow.querySelector('td:nth-child(2)').textContent.trim()).toBe('test title');
       expect(firstRow.querySelector('td:nth-child(3)').textContent.trim()).toBe('test category 1, test category 2');
       expect(firstRow.querySelector('td:nth-child(4)').textContent.trim()).toBe('1.00 KB');
-      expect(firstRow.querySelector('td:nth-child(5)').textContent.trim()).toBe('REPUX 0.000000000000000001');
+      expect(firstRow.querySelector('td:nth-child(5)').textContent.trim()).toBe('REPUX 1');
     });
 
     it('should call sortChanged method when user clicks on sorting column', () => {
@@ -234,7 +247,7 @@ describe('DataProductListComponent', () => {
 
     it('should bind paginator attributes', () => {
       component.size = 13;
-      component.pageSizeOptions = [1, 3, 13, 22];
+      component.pageSizeOptions = [ 1, 3, 13, 22 ];
       fixture.detectChanges();
       const element = fixture.debugElement.nativeElement.querySelector('mat-paginator');
       expect(element.getAttribute('ng-reflect-page-size-options')).toBe('1,3,13,22');

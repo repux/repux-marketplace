@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { environment } from '../environments/environment';
+import { environment } from '../../environments/environment';
 import { Observable } from 'rxjs/index';
-import { EsResponse } from './es-response';
+import { EsResponse } from '../es-response';
 import { map } from 'rxjs/internal/operators';
 
 @Injectable({
@@ -14,7 +14,8 @@ export class ElasticSearchService<T> {
   constructor(private http: HttpClient) {
   }
 
-  search(type: string, query: string = '*', sort: string = '', size: number = 10, from: number = 0, resultEntityType: any): Observable<EsResponse<T>> {
+  search(type: string, query: string = '*', sort: string = '', size: number = 10,
+         from: number = 0, resultEntityType: any): Observable<EsResponse<T>> {
     return this.http.get(`${this.config.protocol}://${this.config.host}:${this.config.port}/${this.config.searchUrl}` +
       `?type=${type}&q=${query}&size=${size}&from=${from}&sort=${sort}`)
       .pipe(
@@ -23,5 +24,5 @@ export class ElasticSearchService<T> {
           return data.hits;
         })
       );
-  };
+  }
 }

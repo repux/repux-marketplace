@@ -1,42 +1,67 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { DataProductListService } from './data-product-list.service';
+import { DataProductListService } from '../services/data-product-list.service';
 import { EsResponse } from '../es-response';
 import { EsDataProduct } from '../es-data-product';
-import { MatPaginator, MatTableDataSource, PageEvent, Sort } from '@angular/material';
+import { MatDialog, MatPaginator, MatTableDataSource, PageEvent, Sort } from '@angular/material';
 import { environment } from '../../environments/environment';
 import { Deserializable } from '../deserializable';
+import { ProductCreatorDialogComponent } from '../product-creator-dialog/product-creator-dialog.component';
 
 @Component({
   selector: 'app-data-product-list',
   templateUrl: './data-product-list.component.html',
-  styleUrls: ['./data-product-list.component.scss']
+  styleUrls: [ './data-product-list.component.scss' ]
 })
 export class DataProductListComponent implements OnInit {
   @ViewChild(MatPaginator) paginator: MatPaginator;
 
   public esDataProducts: EsResponse<Deserializable<EsDataProduct>>;
   public dataSource: MatTableDataSource<Deserializable<EsDataProduct>>;
-  public displayedColumns = ['name', 'title', 'category', 'size', 'price'];
+  public displayedColumns = [ 'name', 'title', 'category', 'size', 'price' ];
   public pageSizeOptions = environment.repux.pageSizeOptions;
   public isLoadingResults = true;
   public query: string;
   public sort: string;
   public size: number;
   public from: number;
-  public currencyName: string = ` ${environment.repux.currency.defaultName} `;
+  public currencyName = ` ${environment.repux.currency.defaultName} `;
   public currencyFormat: string = environment.repux.currency.format;
+  public textColumns: string[] = [
+    'name',
+    'title',
+    'category',
+    'shortDescription',
+    'longDescription'
+  ];
 
-  constructor(public dataProductListService: DataProductListService) {
-    this.size = this.pageSizeOptions[0];
+  constructor(
+    public dataProductListService: DataProductListService,
+    public productCreatorDialog: MatDialog) {
+    this.size = this.pageSizeOptions[ 0 ];
+  }
+
+  openProductCreatorDialog() {
+    this.productCreatorDialog.open(ProductCreatorDialogComponent);
   }
 
   ngOnInit(): Promise<void> {
     return this.refreshData();
   }
 
+  private getColumn(columnName) {
+    if (this.textColumns.includes(columnName)) {
+      return columnName + '.keyword';
+    }
+
+    return columnName;
+  }
+
   applyFilter(filterValue: string): Promise<void> {
     const search = '*' + filterValue.trim().toLowerCase() + '*';
-    this.query = `name:${search} OR title:${search} OR category:${search}`;
+    this.query = `${this.getColumn('name')}:${search} OR ` +
+      `${this.getColumn('title')}:${search} OR ` +
+      `${this.getColumn('category')}:${search}`;
+
     this.from = 0;
     return this.refreshData();
   }
@@ -55,7 +80,7 @@ export class DataProductListComponent implements OnInit {
       return;
     }
 
-    this.sort = `${sort.active}:${sort.direction}`;
+    this.sort = `${this.getColumn(sort.active)}:${sort.direction}`;
     return this.refreshData();
   }
 

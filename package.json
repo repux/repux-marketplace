@@ -7,7 +7,8 @@
     "build": "ng build",
     "test": "ng test",
     "lint": "ng lint",
-    "e2e": "ng e2e"
+    "e2e": "ng e2e",
+    "prebuild": "eval \"echo \\\"$(cat src/environments/environment.template.ts)\\\"\" > src/environments/environment.ts"
   },
   "private": true,
   "dependencies": {
@@ -22,10 +23,10 @@
     "@angular/platform-browser": "^6.0.0",
     "@angular/platform-browser-dynamic": "^6.0.0",
     "@angular/router": "^6.0.0",
-    "bignumber.js": "7.0.1",
+    "bignumber.js": "7.0.2",
     "core-js": "^2.5.4",
     "git": "^0.1.0",
-    "repux-web3-api": "git+ssh://git@github.com:repux/repux-web3-api.git",
+    "repux-web3-api": "git+ssh://git@github.com:repux/repux-web3-api.git#v1.1.0",
     "rxjs": "^6.0.0",
     "zone.js": "^0.8.26"
   },
@@ -35,9 +36,10 @@
     "@angular/cli": "~6.0.1",
     "@angular/compiler-cli": "^6.0.0",
     "@angular/language-service": "^6.0.0",
+    "@repux/repux-lib": "git+ssh://git@github.com:repux/repux-lib.git#v0.3.0",
     "@types/jasmine": "~2.8.6",
     "@types/jasminewd2": "~2.0.3",
-    "@types/node": "~8.9.4",
+    "@types/node": "^10.1.2",
     "codelyzer": "~4.2.1",
     "jasmine-core": "~2.99.1",
     "jasmine-spec-reporter": "~4.2.1",
@@ -52,6 +54,7 @@
     "tsickle": ">=0.25.5",
     "tslib": "^1.7.1",
     "tslint": "~5.9.1",
+    "tslint-eslint-rules": "^5.3.1",
     "typescript": "~2.7.2"
   }
 }

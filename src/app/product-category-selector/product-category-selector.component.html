@@ -1,0 +1,8 @@
+<mat-form-field *ngIf="flatCategories">
+  <mat-select [placeholder]="placeholder" multiple [required]="required" [formControl]="formControl" [(value)]="value">
+    <mat-option *ngFor="let category of flatCategories" [value]="category">
+      {{ category }}
+    </mat-option>
+  </mat-select>
+  <mat-error *ngIf="formControl.hasError('required')">{{ placeholder }} is <strong>required</strong></mat-error>
+</mat-form-field>

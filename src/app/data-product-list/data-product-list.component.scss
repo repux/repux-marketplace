@@ -11,7 +11,7 @@ $shadow-color: rgba(0, 0, 0, .03);
   padding: 5px 10px 0;
 }
 
-.mat-icon {
+.search-icon {
   margin-right: 10px;
   position: relative;
   top: 5px;
@@ -32,4 +32,10 @@ $shadow-color: rgba(0, 0, 0, .03);
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+.add-product-button {
+  position: fixed;
+  bottom: 20px;
+  left: 30px;
 }

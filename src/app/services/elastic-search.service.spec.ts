@@ -1,5 +1,5 @@
 import { ElasticSearchService } from './elastic-search.service';
-import { EsDataProduct } from './es-data-product';
+import { EsDataProduct } from '../es-data-product';
 import { HttpErrorResponse } from '@angular/common/http';
 import { defer } from 'rxjs/index';
 
@@ -9,7 +9,7 @@ describe('ElasticSearchService', () => {
   const type = 'data_product';
 
   beforeEach(() => {
-    httpClientSpy = jasmine.createSpyObj('HttpClient', ['get']);
+    httpClientSpy = jasmine.createSpyObj('HttpClient', [ 'get' ]);
     service = new ElasticSearchService(<any> httpClientSpy);
   });
 
@@ -30,7 +30,7 @@ describe('ElasticSearchService', () => {
     });
 
     it('should return EsResponse<EsDataProducts> containing 2 products', () => {
-      const expectedEsDataProducts = [{
+      const expectedEsDataProducts = [ {
         _index: 'repux',
         _type: type,
         _id: '1',
@@ -46,7 +46,7 @@ describe('ElasticSearchService', () => {
         _source: {
           price: 2
         }
-      }];
+      } ];
 
       const expectedResult = {
         total: 2,
@@ -54,15 +54,15 @@ describe('ElasticSearchService', () => {
         hits: expectedEsDataProducts
       };
 
-      httpClientSpy.get.and.returnValue(defer(() => Promise.resolve({hits: expectedResult})));
+      httpClientSpy.get.and.returnValue(defer(() => Promise.resolve({ hits: expectedResult })));
 
       service.search(type, '*', '', 10, 0, EsDataProduct)
         .subscribe(result => {
             expect(result.hits.length).toEqual(2, '2 products');
             expect(result.hits[0].id).toEqual('1', 'first product has id 1');
-            expect(result.hits[0].source.price.toString()).toEqual('0.000000000000000001', 'first product has price 0.000000000000000001 REPUX');
+            expect(result.hits[0].source.price.toString()).toEqual('1', 'first product has price 1 REPUX');
             expect(result.hits[1].id).toEqual('2', 'second product has id 2');
-            expect(result.hits[1].source.price.toString()).toEqual('0.000000000000000002', 'first product has price 0.000000000000000002 REPUX');
+            expect(result.hits[1].source.price.toString()).toEqual('2', 'first product has price 2 REPUX');
           },
           fail
         );
