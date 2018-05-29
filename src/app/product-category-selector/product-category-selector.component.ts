@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { ProductCategoryService } from '../product-category.service';
+import { ProductCategoryService } from '../services/product-category.service';
 import { FormControl } from '@angular/forms';
 
 @Component({

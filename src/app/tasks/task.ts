@@ -1,4 +1,4 @@
-import { TaskManagerService } from '../task-manager/task-manager.service';
+import { TaskManagerService } from '../services/task-manager.service';
 
 export interface Task {
   name: string;
@@ -8,7 +8,10 @@ export interface Task {
   errors: ReadonlyArray<string>;
   needsUserAction: boolean;
   userActionName: string;
+
   run(taskManagerService: TaskManagerService): void;
+
   cancel(): void;
+
   callUserAction(): void;
 }

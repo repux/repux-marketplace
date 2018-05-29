@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 
 import Wallet from '../wallet';
-import { WalletService } from '../wallet.service';
+import { WalletService } from '../services/wallet.service';
 import { environment } from '../../environments/environment';
 
 @Component({

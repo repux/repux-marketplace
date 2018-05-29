@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { DataProductListService } from './data-product-list.service';
+import { DataProductListService } from '../services/data-product-list.service';
 import { EsResponse } from '../es-response';
 import { EsDataProduct } from '../es-data-product';
 import { MatDialog, MatPaginator, MatTableDataSource, PageEvent, Sort } from '@angular/material';
@@ -10,14 +10,14 @@ import { ProductCreatorDialogComponent } from '../product-creator-dialog/product
 @Component({
   selector: 'app-data-product-list',
   templateUrl: './data-product-list.component.html',
-  styleUrls: ['./data-product-list.component.scss']
+  styleUrls: [ './data-product-list.component.scss' ]
 })
 export class DataProductListComponent implements OnInit {
   @ViewChild(MatPaginator) paginator: MatPaginator;
 
   public esDataProducts: EsResponse<Deserializable<EsDataProduct>>;
   public dataSource: MatTableDataSource<Deserializable<EsDataProduct>>;
-  public displayedColumns = ['name', 'title', 'category', 'size', 'price'];
+  public displayedColumns = [ 'name', 'title', 'category', 'size', 'price' ];
   public pageSizeOptions = environment.repux.pageSizeOptions;
   public isLoadingResults = true;
   public query: string;
@@ -37,7 +37,7 @@ export class DataProductListComponent implements OnInit {
   constructor(
     public dataProductListService: DataProductListService,
     public productCreatorDialog: MatDialog) {
-    this.size = this.pageSizeOptions[0];
+    this.size = this.pageSizeOptions[ 0 ];
   }
 
   openProductCreatorDialog() {

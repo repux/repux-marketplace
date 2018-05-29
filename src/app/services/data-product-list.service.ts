@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs/index';
 import { EsResponse } from '../es-response';
 import { EsDataProduct } from '../es-data-product';
-import { ElasticSearchService } from '../elastic-search.service';
+import { ElasticSearchService } from './elastic-search.service';
 import { Deserializable } from '../deserializable';
 
 @Injectable({

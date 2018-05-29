@@ -7,25 +7,27 @@ import {
   OnInit
 } from '@angular/core';
 import { MatDialogRef } from '@angular/material';
-import { TaskManagerService } from './task-manager.service';
+import { TaskManagerService } from '../services/task-manager.service';
 
 @Component({
   selector: 'app-task-manager',
   templateUrl: './task-manager.component.html',
-  styleUrls: ['./task-manager.component.scss'],
+  styleUrls: [ './task-manager.component.scss' ],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class TaskManagerComponent implements OnInit, DoCheck, OnChanges {
   private _lastStatus = [];
   private _taskManagerService: TaskManagerService = <any> {
     tasks: [],
-    closeDialog: () => {}
+    closeDialog: () => {
+    }
   };
 
   constructor(
     private _cd: ChangeDetectorRef,
     private _dialogRef: MatDialogRef<TaskManagerComponent>
-  ) { }
+  ) {
+  }
 
   ngOnInit() {
     this._dialogRef.updatePosition({

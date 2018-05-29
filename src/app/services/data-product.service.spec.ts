@@ -12,7 +12,7 @@ describe('DataProductService', () => {
   beforeEach(() => {
     repuxWeb3ServiceSpy = jasmine.createSpyObj(
       'RepuxWeb3Service',
-      ['isDefaultAccountAvailable', 'getRepuxApiInstance']
+      [ 'isDefaultAccountAvailable', 'getRepuxApiInstance' ]
     );
     service = new DataProductService(<any> repuxWeb3ServiceSpy);
   });

@@ -1,8 +1,8 @@
 import { Task } from './task';
 import { BigNumber } from 'bignumber.js';
-import { RepuxLibService } from '../repux-lib.service';
-import { TaskManagerService } from '../task-manager/task-manager.service';
-import { DataProductService } from '../data-product.service';
+import { RepuxLibService } from '../services/repux-lib.service';
+import { TaskManagerService } from '../services/task-manager.service';
+import { DataProductService } from '../services/data-product.service';
 
 export const STATUS = {
   UPLOADING: 'Uploading',
@@ -87,10 +87,10 @@ export class FileUploadTask implements Task {
       this._finished = true;
       this._taskManagerService.onTaskEvent();
     } catch (error) {
+      console.warn(error);
       this._needsUserAction = true;
       this._status = STATUS.PUBLICATION_REJECTED;
       this._taskManagerService.onTaskEvent();
-      console.warn(error);
     }
   }
 

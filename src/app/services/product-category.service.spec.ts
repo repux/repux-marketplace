@@ -27,7 +27,7 @@ describe('ProductCategoryService', () => {
   ];
 
   beforeEach(() => {
-    httpClientSpy = jasmine.createSpyObj('HttpClient', ['get']);
+    httpClientSpy = jasmine.createSpyObj('HttpClient', [ 'get' ]);
     service = new ProductCategoryService(<any> httpClientSpy);
   });
 
@@ -54,11 +54,11 @@ describe('ProductCategoryService', () => {
       service.getFlattenCategories()
         .subscribe(result => {
           expect(result.length).toBe(5);
-          expect(result[0]).toBe('Category 1');
-          expect(result[1]).toBe('Category 1 > Subcategory 1');
-          expect(result[2]).toBe('Category 1 > Subcategory 1 > Sub-Subcategory 1');
-          expect(result[3]).toBe('Category 1 > Subcategory 2');
-          expect(result[4]).toBe('Category 2');
+          expect(result[ 0 ]).toBe('Category 1');
+          expect(result[ 1 ]).toBe('Category 1 > Subcategory 1');
+          expect(result[ 2 ]).toBe('Category 1 > Subcategory 1 > Sub-Subcategory 1');
+          expect(result[ 3 ]).toBe('Category 1 > Subcategory 2');
+          expect(result[ 4 ]).toBe('Category 2');
         });
       expect(httpClientSpy.get.calls.count()).toBe(1);
     });

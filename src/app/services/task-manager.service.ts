@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Task } from '../tasks/task';
-import { TaskManagerComponent } from './task-manager.component';
+import { TaskManagerComponent } from '../task-manager/task-manager.component';
 import { MatDialog, MatDialogRef } from '@angular/material';
 
 @Injectable({

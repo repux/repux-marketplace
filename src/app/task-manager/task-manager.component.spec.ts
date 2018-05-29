@@ -15,9 +15,9 @@ describe('TaskManagerComponent', () => {
   let fixture: ComponentFixture<TaskManagerComponent>;
 
   beforeEach(async(() => {
-    taskManagerService = jasmine.createSpyObj('TaskManagerService', ['closeDialog']);
-    matDialogRef = jasmine.createSpyObj('MatDialogObj', ['updatePosition']);
-    changeDetectorRef = jasmine.createSpyObj('ChangeDetectorRef', ['markForCheck', 'detectChanges']);
+    taskManagerService = jasmine.createSpyObj('TaskManagerService', [ 'closeDialog' ]);
+    matDialogRef = jasmine.createSpyObj('MatDialogObj', [ 'updatePosition' ]);
+    changeDetectorRef = jasmine.createSpyObj('ChangeDetectorRef', [ 'markForCheck', 'detectChanges' ]);
 
     TestBed.configureTestingModule({
       declarations: [ TaskManagerComponent ],
@@ -32,7 +32,7 @@ describe('TaskManagerComponent', () => {
         { provide: ChangeDetectorRef, useValue: changeDetectorRef }
       ]
     })
-    .compileComponents();
+      .compileComponents();
   }));
 
   beforeEach(() => {
@@ -45,7 +45,7 @@ describe('TaskManagerComponent', () => {
     it('should create and call matDialogRef.updatePosition', () => {
       expect(component).toBeTruthy();
       expect(matDialogRef.updatePosition.calls.count()).toBe(1);
-      expect(matDialogRef.updatePosition.calls.allArgs()[0][0]).toEqual({
+      expect(matDialogRef.updatePosition.calls.allArgs()[ 0 ][ 0 ]).toEqual({
         right: '15px',
         bottom: '15px'
       });
@@ -54,25 +54,25 @@ describe('TaskManagerComponent', () => {
 
   describe('#ngOnChanges()', () => {
     it('should assign to lastStatus values from taskManagerService.tasks', () => {
-      expect(component['_lastStatus']).toEqual([]);
-      component['_taskManagerService'] = <any> {
-        tasks: [{
+      expect(component[ '_lastStatus' ]).toEqual([]);
+      component[ '_taskManagerService' ] = <any> {
+        tasks: [ {
           status: 'STATUS',
           finished: false,
           errors: [],
           progress: 15
-        }]
+        } ]
       };
       component.ngOnChanges();
-      expect(component['_lastStatus'].length).toBe(1);
-      expect(component['_lastStatus'][0].status).toBe('STATUS');
-      expect(component['_lastStatus'][0].finished).toBeFalsy();
-      expect(component['_lastStatus'][0].errors).toEqual([]);
-      expect(component['_lastStatus'][0].progress).toBe(15);
+      expect(component[ '_lastStatus' ].length).toBe(1);
+      expect(component[ '_lastStatus' ][ 0 ].status).toBe('STATUS');
+      expect(component[ '_lastStatus' ][ 0 ].finished).toBeFalsy();
+      expect(component[ '_lastStatus' ][ 0 ].errors).toEqual([]);
+      expect(component[ '_lastStatus' ][ 0 ].progress).toBe(15);
 
-      component['_taskManagerService'].tasks[0].progress = 12;
+      component[ '_taskManagerService' ].tasks[ 0 ].progress = 12;
       component.ngOnChanges();
-      expect(component['_lastStatus'][0].progress).toBe(12);
+      expect(component[ '_lastStatus' ][ 0 ].progress).toBe(12);
     });
   });
 });

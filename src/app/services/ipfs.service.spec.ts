@@ -1,5 +1,5 @@
 import { IpfsService } from './ipfs.service';
-import { environment } from '../environments/environment';
+import { environment } from '../../environments/environment';
 
 describe('IpfsService', () => {
   let ipfsService;

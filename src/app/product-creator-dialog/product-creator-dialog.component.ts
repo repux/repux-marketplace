@@ -3,12 +3,12 @@ import { environment } from '../../environments/environment';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { BigNumber } from 'bignumber.js';
 import { FileUploadTask } from '../tasks/file-upload-task';
-import { RepuxLibService } from '../repux-lib.service';
+import { RepuxLibService } from '../services/repux-lib.service';
 import { FileInputComponent } from '../file-input/file-input.component';
 import { ProductCategorySelectorComponent } from '../product-category-selector/product-category-selector.component';
-import { TaskManagerService } from '../task-manager/task-manager.service';
+import { TaskManagerService } from '../services/task-manager.service';
 import { MatDialogRef } from '@angular/material';
-import { DataProductService } from '../data-product.service';
+import { DataProductService } from '../services/data-product.service';
 
 @Component({
   selector: 'app-product-creator-dialog',
