@@ -189,7 +189,7 @@ describe('DataProductListComponent', () => {
             name: 'test name',
             category: [ 'test category 1', 'test category 2' ],
             size: 1024,
-            price: 1
+            price: '1000000000000000000'
           }
         }) ]
       };

@@ -3,7 +3,6 @@ import { ProductCategorySelectorComponent } from './product-category-selector.co
 import { MatSelectModule } from '@angular/material';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
-import { defer } from 'rxjs';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 
 describe('ProductCategorySelectorComponent', () => {
@@ -32,9 +31,9 @@ describe('ProductCategorySelectorComponent', () => {
 
   describe('#ngOnInit()', () => {
     it('should call getCategories method', () => {
-      component.getCategories = jasmine.createSpy();
+      component.fetchCategories = jasmine.createSpy();
       component.ngOnInit();
-      expect((<any> component.getCategories).calls.count()).toBe(1);
+      expect((<any> component.fetchCategories).calls.count()).toBe(1);
     });
   });
 
@@ -42,10 +41,10 @@ describe('ProductCategorySelectorComponent', () => {
     it('should getFlattenCategories on productCategoryService', async () => {
       const categories = [ 'CATEGORY_1', 'CATEGORY_2' ];
       const getFlattenCategories = jasmine.createSpy();
-      getFlattenCategories.and.returnValue(defer(() => Promise.resolve(categories)));
+      getFlattenCategories.and.returnValue(Promise.resolve(categories));
       component[ '_productCategoryService' ].getFlattenCategories = getFlattenCategories;
 
-      await component.getCategories();
+      await component.fetchCategories();
       expect(component.flatCategories).toEqual(categories);
       expect(getFlattenCategories.calls.count()).toBe(1);
     });

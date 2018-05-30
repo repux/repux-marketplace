@@ -19,7 +19,7 @@ export const environment = {
   production: isProduction,
   repux: {
     metaindexer: {
-      protocol: 'http',
+      protocol: 'https',
       host: '${MARKETPLACE_METAINDEXER_HOST}' || '192.168.99.101',
       port: 9201,
       searchUrl: 'repux/_search'
@@ -37,6 +37,6 @@ export const environment = {
   ipfs: {
     host: '${MARKETPLACE_IPFS_HOST}' || '192.168.99.101',
     port: '5001',
-    protocol: 'http'
+    protocol: 'https'
   }
 };

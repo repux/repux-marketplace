@@ -1,5 +1,6 @@
 import { BigNumber } from 'bignumber.js';
 import { Deserializable } from './deserializable';
+import { environment } from '../environments/environment';
 
 export class DataProduct implements Deserializable<DataProduct> {
   title: string;
@@ -15,7 +16,7 @@ export class DataProduct implements Deserializable<DataProduct> {
 
   deserialize(input: any): DataProduct {
     Object.assign(this, input);
-    this.price = new BigNumber(input.price || '0');
+    this.price = (new BigNumber(input.price)).div(Math.pow(10, environment.repux.currency.precision));
     return this;
   }
 }

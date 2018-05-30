@@ -19,16 +19,10 @@ export class ProductCategorySelectorComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.getCategories();
+    this.fetchCategories();
   }
 
-  async getCategories() {
-    return new Promise(resolve => {
-      this._productCategoryService.getFlattenCategories()
-        .subscribe(result => {
-          this.flatCategories = result;
-          resolve();
-        });
-    });
+  async fetchCategories() {
+    this.flatCategories = await this._productCategoryService.getFlattenCategories();
   }
 }

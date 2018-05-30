@@ -36,7 +36,7 @@ describe('ElasticSearchService', () => {
         _id: '1',
         _score: 2,
         _source: {
-          price: 1
+          price: '1000000000000000000'
         }
       }, {
         _index: 'repux',
@@ -44,7 +44,7 @@ describe('ElasticSearchService', () => {
         _id: '2',
         _score: 1,
         _source: {
-          price: 2
+          price: '2000000000000000000'
         }
       } ];
 
@@ -59,10 +59,10 @@ describe('ElasticSearchService', () => {
       service.search(type, '*', '', 10, 0, EsDataProduct)
         .subscribe(result => {
             expect(result.hits.length).toEqual(2, '2 products');
-            expect(result.hits[0].id).toEqual('1', 'first product has id 1');
-            expect(result.hits[0].source.price.toString()).toEqual('1', 'first product has price 1 REPUX');
-            expect(result.hits[1].id).toEqual('2', 'second product has id 2');
-            expect(result.hits[1].source.price.toString()).toEqual('2', 'first product has price 2 REPUX');
+            expect(result.hits[ 0 ].id).toEqual('1', 'first product has id 1');
+            expect(result.hits[ 0 ].source.price.toString()).toEqual('1', 'first product has price 1 REPUX');
+            expect(result.hits[ 1 ].id).toEqual('2', 'second product has id 2');
+            expect(result.hits[ 1 ].source.price.toString()).toEqual('2', 'first product has price 2 REPUX');
           },
           fail
         );
