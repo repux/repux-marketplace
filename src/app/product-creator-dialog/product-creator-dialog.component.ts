@@ -1,4 +1,4 @@
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { environment } from '../../environments/environment';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { BigNumber } from 'bignumber.js';
@@ -15,7 +15,7 @@ import { DataProductService } from '../services/data-product.service';
   templateUrl: './product-creator-dialog.component.html',
   styleUrls: [ './product-creator-dialog.component.scss' ]
 })
-export class ProductCreatorDialogComponent implements OnInit {
+export class ProductCreatorDialogComponent {
   public currencyName: string = environment.repux.currency.defaultName;
   public formGroup: FormGroup;
   public titleMinLength = 3;
@@ -43,13 +43,13 @@ export class ProductCreatorDialogComponent implements OnInit {
     Validators.required
   ]);
 
-  public priceControl = new FormControl('', [
+  public priceFormControl = new FormControl('', [
     Validators.required,
     Validators.min(0),
     Validators.pattern(environment.repux.currency.pattern)
   ]);
 
-  public fileControl = new FormControl('', [
+  public fileFormControl = new FormControl('', [
     Validators.required
   ]);
 
@@ -63,12 +63,9 @@ export class ProductCreatorDialogComponent implements OnInit {
       shortDescription: this.shortDescriptionFormControl,
       longDescription: this.longDescriptionFormControl,
       category: this.categoryFormControl,
-      price: this.priceControl,
-      file: this.fileControl
+      price: this.priceFormControl,
+      file: this.fileFormControl
     });
-  }
-
-  ngOnInit() {
   }
 
   async upload() {
@@ -87,7 +84,7 @@ export class ProductCreatorDialogComponent implements OnInit {
       this.formGroup.value.longDescription,
       this.categoryInput.value,
       new BigNumber(this.formGroup.value.price),
-      this.fileInput.value[0]
+      this.fileInput.value[ 0 ]
     );
 
     this.taskManagerService.addTask(fileUploadTask);

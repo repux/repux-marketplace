@@ -15,7 +15,7 @@ export class TaskManagerService {
   }
 
   get tasks(): ReadonlyArray<Task> {
-    return Object.freeze(this._tasks);
+    return Object.freeze(Object.assign([], this._tasks));
   }
 
   addTask(task: Task) {
@@ -58,7 +58,7 @@ export class TaskManagerService {
   private _addConfirmationPrompt() {
     const self = this;
 
-    window.addEventListener('beforeunload', function(event) {
+    window.addEventListener('beforeunload', function (event) {
       if (self.hasUnfinishedTasks()) {
         const confirmationMessage = '\o/';
 

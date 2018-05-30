@@ -99,7 +99,7 @@ export class FileUploadTask implements Task {
   }
 
   get errors(): ReadonlyArray<string> {
-    return Object.freeze(this._errors);
+    return Object.freeze(Object.assign([], this._errors));
   }
 
   get finished(): boolean {

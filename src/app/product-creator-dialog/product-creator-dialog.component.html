@@ -52,7 +52,7 @@
              type="text"
              placeholder="Price"
              required
-             [formControl]="priceControl">
+             [formControl]="priceFormControl">
       <span matSuffix="">{{ currencyName }}</span>
       <mat-error *ngIf="formGroup.controls['price'].hasError('required')">
         Price is <strong>required</strong>
@@ -69,7 +69,7 @@
       <app-file-input #fileInput
                       placeholder="File"
                       required
-                      [formControl]="fileControl"
+                      [formControl]="fileFormControl"
                       ngDefaultControl></app-file-input>
     </div>
   </mat-dialog-content>
