@@ -15,16 +15,14 @@ export class ProductCategorySelectorComponent implements OnInit {
 
   public flatCategories: string[];
 
-  constructor(public productCategoryService: ProductCategoryService) { }
-
-  ngOnInit() {
-    this.getCategories();
+  constructor(private _productCategoryService: ProductCategoryService) {
   }
 
-  getCategories() {
-    this.productCategoryService.getFlattenCategories()
-      .subscribe( result => {
-        this.flatCategories = result;
-      });
+  ngOnInit() {
+    this.fetchCategories();
+  }
+
+  async fetchCategories() {
+    this.flatCategories = await this._productCategoryService.getFlattenCategories();
   }
 }

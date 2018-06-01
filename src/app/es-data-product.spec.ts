@@ -17,7 +17,7 @@ describe('EsDataProduct', () => {
           type: 'type',
           category: [ 'category1' ],
           maxNumberOfDownloads: 100,
-          price: '199.999999999999999999',
+          price: '199999999999999999999',
           termsOfUseType: 'termsOfUseType',
           name: 'name',
           size: 100

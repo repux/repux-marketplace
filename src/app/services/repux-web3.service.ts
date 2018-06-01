@@ -13,7 +13,7 @@ declare global {
   useFactory: RepuxWeb3ServiceFactory
 })
 export class RepuxWeb3Service {
-  constructor(private web3: any, private repuxWeb3Api: any) {
+  constructor(private web3: any, private repuxWeb3Api: RepuxWeb3Api) {
   }
 
   isProviderAvailable(): boolean {

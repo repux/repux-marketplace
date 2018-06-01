@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { from, Observable, of } from 'rxjs/index';
 
 @Injectable({
   providedIn: 'root'
@@ -11,24 +10,21 @@ export class ProductCategoryService {
   constructor(private http: HttpClient) {
   }
 
-  getCategories(): Observable<Object> {
+  async getCategories(): Promise<Object> {
     if (this.categories) {
-      return of(this.categories);
+      return this.categories;
     }
 
-    return this.http.get(`./assets/data-product-categories.json`);
+    this.categories = await this.http.get(`./assets/data-product-categories.json`).toPromise();
+    return this.categories;
   }
 
-  getFlattenCategories(): Observable<string[]> {
-    return from(new Promise(resolve => {
-      const categories = this.getCategories();
-      categories.subscribe(response => {
-        resolve(this.flattenCategories(response));
-      });
-    }));
+  async getFlattenCategories(): Promise<string[]> {
+    const categories = await this.getCategories();
+    return this.flattenCategories(categories);
   }
 
-  private flattenCategories(subcategories: any): any {
+  private flattenCategories(subcategories: any): string[] {
     const result = [];
 
     subcategories.forEach(subcategory => {

@@ -53,8 +53,7 @@ export class TaskManagerComponent implements OnInit, DoCheck, OnChanges {
     }
 
     for (let i = 0; i < this._taskManagerService.tasks.length; i++) {
-      if (!this._lastStatus[i] ||
-          this._lastStatus[i].status !== this._taskManagerService.tasks[i].status ||
+      if (this._lastStatus[i].status !== this._taskManagerService.tasks[i].status ||
           this._lastStatus[i].progress !== this._taskManagerService.tasks[i].progress ||
           this._lastStatus[i].errors.length !== this._taskManagerService.tasks[i].errors.length) {
         this._cd.markForCheck();
