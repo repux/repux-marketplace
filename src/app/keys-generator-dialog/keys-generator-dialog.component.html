@@ -1,0 +1,16 @@
+<form [formGroup]="formGroup" (ngSubmit)="generate()">
+  <h2 mat-dialog-title>Public - private keys generation</h2>
+  <mat-dialog-content class="mat-typography">
+    <p>Now we'll generate public/private key pair necessary for files encryption. This is a very important step and it
+      will take a while.</p>
+    <p>Keys will be stored in your browser secured with your personal password.</p>
+    <mat-form-field class="field-row">
+      <input matInput
+             placeholder="Personal password" required formControlName="password">
+    </mat-form-field>
+  </mat-dialog-content>
+  <mat-dialog-actions>
+    <button mat-button mat-dialog-close type="button">Cancel</button>
+    <button mat-button>Generate</button>
+  </mat-dialog-actions>
+</form>

@@ -1,6 +1,7 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { ProductCreatorDialogComponent } from './product-creator-dialog.component';
 import {
+  MatDialog,
   MatDialogModule,
   MatDialogRef,
   MatInputModule,
@@ -14,13 +15,16 @@ import { ProductCategorySelectorComponent } from '../product-category-selector/p
 import { FileInputComponent } from '../file-input/file-input.component';
 import { HttpClientModule } from '@angular/common/http';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
+import { KeyStoreService } from '../services/key-store.service';
 
-describe('ProductCreatorDialogComponent', () => {
-  let repuxLibService, dataProductService, taskManagerService, matDialogRef, generateAsymmetricKeyPair;
+fdescribe('ProductCreatorDialogComponent', () => {
+  let keyStoreService, repuxLibService, dataProductService, taskManagerService, matDialog, matDialogRef,
+    generateAsymmetricKeyPair;
   let component: ProductCreatorDialogComponent;
   let fixture: ComponentFixture<ProductCreatorDialogComponent>;
 
   beforeEach(async(() => {
+    keyStoreService = jasmine.createSpyObj('KeyStoreService', [ 'hasKeys' ]);
     repuxLibService = jasmine.createSpyObj('RepuxLibService', [ 'getClass', 'getInstance' ]);
     repuxLibService.getInstance.and.returnValue({
       createFileUploader: jasmine.createSpy()
@@ -31,7 +35,8 @@ describe('ProductCreatorDialogComponent', () => {
     });
     dataProductService = jasmine.createSpyObj('DataProductService', [ 'publishDataProduct' ]);
     taskManagerService = jasmine.createSpyObj('TaskManagerService', [ 'addTask' ]);
-    matDialogRef = jasmine.createSpyObj('MatDialogRef', [ 'close' ]);
+    matDialogRef = jasmine.createSpyObj('MatDialogRef', [ 'close', 'afterClosed' ]);
+    matDialog = jasmine.createSpyObj('MatDialog', [ 'open' ]);
 
     TestBed.configureTestingModule({
       declarations: [
@@ -49,13 +54,13 @@ describe('ProductCreatorDialogComponent', () => {
         NoopAnimationsModule
       ],
       providers: [
+        { provide: KeyStoreService, useValue: keyStoreService },
         { provide: MatDialogRef, useValue: matDialogRef },
         { provide: RepuxLibService, useValue: repuxLibService },
         { provide: TaskManagerService, useValue: taskManagerService },
         { provide: DataProductService, useValue: dataProductService }
       ]
-    })
-      .compileComponents();
+    }).compileComponents();
   }));
 
   beforeEach(() => {
@@ -66,7 +71,8 @@ describe('ProductCreatorDialogComponent', () => {
 
   describe('#constructor()', () => {
     it('should initialize formGroup property', () => {
-      component = new ProductCreatorDialogComponent(repuxLibService, dataProductService, taskManagerService, matDialogRef);
+      component = new ProductCreatorDialogComponent(keyStoreService, repuxLibService,
+        dataProductService, taskManagerService, matDialog, matDialogRef);
       expect(component.formGroup.controls[ 'title' ]).toBe(component.titleFormControl);
       expect(component.formGroup.controls[ 'shortDescription' ]).toBe(component.shortDescriptionFormControl);
       expect(component.formGroup.controls[ 'longDescription' ]).toBe(component.longDescriptionFormControl);

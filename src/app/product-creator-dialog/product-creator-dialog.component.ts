@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { environment } from '../../environments/environment';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { BigNumber } from 'bignumber.js';
@@ -7,8 +7,11 @@ import { RepuxLibService } from '../services/repux-lib.service';
 import { FileInputComponent } from '../file-input/file-input.component';
 import { ProductCategorySelectorComponent } from '../product-category-selector/product-category-selector.component';
 import { TaskManagerService } from '../services/task-manager.service';
-import { MatDialogRef } from '@angular/material';
+import { MatDialog, MatDialogRef } from '@angular/material';
 import { DataProductService } from '../services/data-product.service';
+import { KeyStoreService } from '../services/key-store.service';
+import { KeysPasswordDialogComponent } from '../keys-password-dialog/keys-password-dialog.component';
+import { KeysGeneratorDialogComponent } from '../keys-generator-dialog/keys-generator-dialog.component';
 
 @Component({
   selector: 'app-product-creator-dialog',
@@ -54,9 +57,11 @@ export class ProductCreatorDialogComponent {
   ]);
 
   constructor(
+    private keyStoreService: KeyStoreService,
     private repuxLibService: RepuxLibService,
     private dataProductService: DataProductService,
     private taskManagerService: TaskManagerService,
+    private dialog: MatDialog,
     public dialogRef: MatDialogRef<ProductCreatorDialogComponent>) {
     this.formGroup = new FormGroup({
       title: this.titleFormControl,
@@ -73,10 +78,10 @@ export class ProductCreatorDialogComponent {
       return;
     }
 
-    const keys = await this.repuxLibService.getClass().generateAsymmetricKeyPair();
+    const { publicKey } = await this.getKeys();
 
     const fileUploadTask = new FileUploadTask(
-      keys.publicKey,
+      publicKey,
       this.repuxLibService,
       this.dataProductService,
       this.formGroup.value.title,
@@ -89,5 +94,26 @@ export class ProductCreatorDialogComponent {
 
     this.taskManagerService.addTask(fileUploadTask);
     this.dialogRef.close(true);
+  }
+
+  private getKeys(): Promise<{ privateKey: CryptoKey, publicKey: CryptoKey }> {
+    return new Promise(resolve => {
+      let dialogRef;
+
+      if (this.keyStoreService.hasKeys()) {
+        dialogRef = this.dialog.open(KeysPasswordDialogComponent);
+      } else {
+        dialogRef = this.dialog.open(KeysGeneratorDialogComponent);
+      }
+
+      dialogRef.afterClosed().subscribe(result => {
+        if (result) {
+          resolve({
+            privateKey: result.privateKey,
+            publicKey: result.publicKey
+          });
+        }
+      });
+    });
   }
 }
