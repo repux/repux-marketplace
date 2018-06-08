@@ -1,4 +1,4 @@
-import { Component, ViewChild } from '@angular/core';
+import { Component, OnDestroy, ViewChild } from '@angular/core';
 import { environment } from '../../environments/environment';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { BigNumber } from 'bignumber.js';
@@ -9,16 +9,19 @@ import { ProductCategorySelectorComponent } from '../product-category-selector/p
 import { TaskManagerService } from '../services/task-manager.service';
 import { MatDialog, MatDialogRef } from '@angular/material';
 import { DataProductService } from '../services/data-product.service';
-import { KeyStoreService } from '../services/key-store.service';
-import { KeysPasswordDialogComponent } from '../keys-password-dialog/keys-password-dialog.component';
-import { KeysGeneratorDialogComponent } from '../keys-generator-dialog/keys-generator-dialog.component';
+import { KeyStoreService } from '../key-store/key-store.service';
+import { KeysPasswordDialogComponent } from '../key-store/keys-password-dialog/keys-password-dialog.component';
+import { KeysGeneratorDialogComponent } from '../key-store/keys-generator-dialog/keys-generator-dialog.component';
+import { Subscription } from 'rxjs/internal/Subscription';
 
 @Component({
   selector: 'app-product-creator-dialog',
   templateUrl: './product-creator-dialog.component.html',
   styleUrls: [ './product-creator-dialog.component.scss' ]
 })
-export class ProductCreatorDialogComponent {
+export class ProductCreatorDialogComponent implements OnDestroy {
+  private subscription: Subscription;
+
   public currencyName: string = environment.repux.currency.defaultName;
   public formGroup: FormGroup;
   public titleMinLength = 3;
@@ -106,7 +109,7 @@ export class ProductCreatorDialogComponent {
         dialogRef = this.dialog.open(KeysGeneratorDialogComponent);
       }
 
-      dialogRef.afterClosed().subscribe(result => {
+      this.subscription = dialogRef.afterClosed().subscribe(result => {
         if (result) {
           resolve({
             privateKey: result.privateKey,
@@ -115,5 +118,11 @@ export class ProductCreatorDialogComponent {
         }
       });
     });
+  }
+
+  ngOnDestroy() {
+    if (this.subscription) {
+      this.subscription.unsubscribe();
+    }
   }
 }

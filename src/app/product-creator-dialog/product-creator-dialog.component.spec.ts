@@ -15,11 +15,12 @@ import { ProductCategorySelectorComponent } from '../product-category-selector/p
 import { FileInputComponent } from '../file-input/file-input.component';
 import { HttpClientModule } from '@angular/common/http';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
-import { KeyStoreService } from '../services/key-store.service';
+import { KeyStoreService } from '../key-store/key-store.service';
+import { KeyStoreModule } from '../key-store/key-store.module';
 
-fdescribe('ProductCreatorDialogComponent', () => {
+describe('ProductCreatorDialogComponent', () => {
   let keyStoreService, repuxLibService, dataProductService, taskManagerService, matDialog, matDialogRef,
-    generateAsymmetricKeyPair;
+    getKeys;
   let component: ProductCreatorDialogComponent;
   let fixture: ComponentFixture<ProductCreatorDialogComponent>;
 
@@ -29,10 +30,7 @@ fdescribe('ProductCreatorDialogComponent', () => {
     repuxLibService.getInstance.and.returnValue({
       createFileUploader: jasmine.createSpy()
     });
-    generateAsymmetricKeyPair = jasmine.createSpy();
-    repuxLibService.getClass.and.returnValue({
-      generateAsymmetricKeyPair
-    });
+
     dataProductService = jasmine.createSpyObj('DataProductService', [ 'publishDataProduct' ]);
     taskManagerService = jasmine.createSpyObj('TaskManagerService', [ 'addTask' ]);
     matDialogRef = jasmine.createSpyObj('MatDialogRef', [ 'close', 'afterClosed' ]);
@@ -45,6 +43,7 @@ fdescribe('ProductCreatorDialogComponent', () => {
         FileInputComponent
       ],
       imports: [
+        KeyStoreModule,
         MatDialogModule,
         MatInputModule,
         FormsModule,
@@ -100,7 +99,8 @@ fdescribe('ProductCreatorDialogComponent', () => {
       const publicKey = 'PUBLIC_KEY';
       const file = 'FILE';
 
-      generateAsymmetricKeyPair.and.returnValue(Promise.resolve({
+      getKeys = spyOn<any>(component, 'getKeys');
+      getKeys.and.returnValue(Promise.resolve({
         publicKey
       }));
 
@@ -117,7 +117,7 @@ fdescribe('ProductCreatorDialogComponent', () => {
 
       await component.upload();
       expect(taskManagerService.addTask.calls.count()).toBe(1);
-      expect(generateAsymmetricKeyPair.calls.count()).toBe(1);
+      expect(getKeys.calls.count()).toBe(1);
       expect(matDialogRef.close.calls.count()).toBe(1);
     });
   });

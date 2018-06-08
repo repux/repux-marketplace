@@ -1,7 +1,7 @@
 # RepuxMarketplace
 
 ## Installation
-Run `yarn` to download project dependencies, a then `yarn prebuilt` to generate configuration template.
+Run `yarn` to download project dependencies, and then `yarn prebuild` to generate configuration template.
 
 ## IDE
 Informations below for IntelliJ IDEA apps (PHPStrom, WebStorm, etc.)

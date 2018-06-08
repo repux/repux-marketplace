@@ -1,18 +1,19 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+
+import { KeysPasswordDialogComponent } from './keys-password-dialog.component';
 import { MatDialogModule, MatDialogRef, MatInputModule } from '@angular/material';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { KeysGeneratorDialogComponent } from './keys-generator-dialog.component';
-import { RepuxLibService } from '../services/repux-lib.service';
-import { KeyStoreService } from '../services/key-store.service';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
+import { RepuxLibService } from '../../services/repux-lib.service';
+import { KeyStoreService } from '../key-store.service';
 
-describe('KeysGeneratorDialogComponent', () => {
-  let component: KeysGeneratorDialogComponent;
-  let fixture: ComponentFixture<KeysGeneratorDialogComponent>;
+describe('KeysPasswordDialogComponent', () => {
+  let component: KeysPasswordDialogComponent;
+  let fixture: ComponentFixture<KeysPasswordDialogComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ KeysGeneratorDialogComponent ],
+      declarations: [ KeysPasswordDialogComponent ],
       imports: [
         MatDialogModule,
         MatInputModule,
@@ -30,7 +31,7 @@ describe('KeysGeneratorDialogComponent', () => {
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(KeysGeneratorDialogComponent);
+    fixture = TestBed.createComponent(KeysPasswordDialogComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

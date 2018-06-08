@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { KeysGeneratorDialogComponent } from '../keys-generator-dialog/keys-generator-dialog.component';
 import { MatDialogRef } from '@angular/material';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
-import { KeyStoreService } from '../services/key-store.service';
+import { KeyStoreService } from '../key-store.service';
 
 function ValidateEmail(c: FormControl) {
   return KeyStoreService.isPasswordValid(c.value) ? null : {

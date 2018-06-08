@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { RepuxLibService } from '../services/repux-lib.service';
+import { RepuxLibService } from '../../services/repux-lib.service';
 import { FormControl, FormGroup } from '@angular/forms';
-import { KeyStoreService } from '../services/key-store.service';
+import { KeyStoreService } from '../key-store.service';
 import { MatDialogRef } from '@angular/material';
 
 @Component({

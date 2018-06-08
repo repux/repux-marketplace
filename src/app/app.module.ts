@@ -8,8 +8,6 @@ import { AppRoutingModule } from './app-routing.module';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { DataProductListComponent } from './data-product-list/data-product-list.component';
 import { ProductCreatorDialogComponent } from './product-creator-dialog/product-creator-dialog.component';
-import { KeysGeneratorDialogComponent } from './keys-generator-dialog/keys-generator-dialog.component';
-import { KeysPasswordDialogComponent } from './keys-password-dialog/keys-password-dialog.component';
 import { ProductCategorySelectorComponent } from './product-category-selector/product-category-selector.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { FileInputComponent } from './file-input/file-input.component';
@@ -31,6 +29,7 @@ import {
   MatTabsModule,
   MatTooltipModule
 } from '@angular/material';
+import { KeyStoreModule } from './key-store/key-store.module';
 
 @NgModule({
   declarations: [
@@ -40,14 +39,10 @@ import {
     ProductCreatorDialogComponent,
     ProductCategorySelectorComponent,
     FileInputComponent,
-    TaskManagerComponent,
-    KeysGeneratorDialogComponent,
-    KeysPasswordDialogComponent
+    TaskManagerComponent
   ],
   entryComponents: [
     ProductCreatorDialogComponent,
-    KeysGeneratorDialogComponent,
-    KeysPasswordDialogComponent,
     TaskManagerComponent
   ],
   imports: [
@@ -72,7 +67,8 @@ import {
     MatTooltipModule,
     FormsModule,
     ReactiveFormsModule,
-    PipesModule
+    PipesModule,
+    KeyStoreModule
   ],
   providers: [],
   bootstrap: [ AppComponent ]
