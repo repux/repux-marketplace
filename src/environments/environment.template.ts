@@ -32,7 +32,7 @@ export const environment = {
       pattern: /^\d*([,\.]\d{0,18})?$/
     },
     demoTokenContractAddress: '${MARKETPLACE_SC_TOKEN_ADDRESS}' || '0x225e1aa666d0deff793d35663066d0675fd3b6c4',
-    registryContractAddress: '${MARKETPLACE_SC_REGISTRY_ADDRESS}' || '0xbd83c21e6f0a9547abe908c6faa02a55512d57b4'
+    registryContractAddress: '${MARKETPLACE_SC_REGISTRY_ADDRESS}' || '0x4839e5903578ed8a81602431656c90bf9ff2f986'
   },
   ipfs: {
     host: '${MARKETPLACE_IPFS_HOST}' || 'localhost',

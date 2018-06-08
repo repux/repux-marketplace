@@ -53,16 +53,16 @@ describe('WalletService', () => {
   });
 
   describe('isDefaultAccountAvailable()', () => {
-    it('should return call isDefaultAccountAvailable on repuxWeb3Service', () => {
-      repuxWeb3ServiceSpy.isDefaultAccountAvailable.and.returnValue(true);
-      expect(walletService.isDefaultAccountAvailable()).toBeTruthy();
+    it('should return call isDefaultAccountAvailable on repuxWeb3Service', async () => {
+      repuxWeb3ServiceSpy.isDefaultAccountAvailable.and.returnValue(Promise.resolve(true));
+      expect(await walletService.isDefaultAccountAvailable()).toBeTruthy();
       expect(repuxWeb3ServiceSpy.isDefaultAccountAvailable.calls.count()).toBe(1);
     });
   });
 
   describe('getData()', () => {
     it('should return wallet data with account number and balance set', async () => {
-      repuxWeb3ServiceSpy.isDefaultAccountAvailable.and.returnValue(true);
+      repuxWeb3ServiceSpy.isDefaultAccountAvailable.and.returnValue(Promise.resolve(true));
       repuxWeb3ServiceSpy.getRepuxApiInstance.and.returnValue(repuxWeb3ApiMock);
       repuxWeb3ServiceSpy.getWeb3Instance.and.returnValue(web3Mock);
       const wallet = await walletService.getData();
@@ -73,7 +73,7 @@ describe('WalletService', () => {
     });
 
     it('should return null when no provider available', async () => {
-      repuxWeb3ServiceSpy.isDefaultAccountAvailable.and.returnValue(false);
+      repuxWeb3ServiceSpy.isDefaultAccountAvailable.and.returnValue(Promise.resolve(false));
       const wallet = await walletService.getData();
       expect(wallet).toBeNull();
     });

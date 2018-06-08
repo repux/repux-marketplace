@@ -29,6 +29,17 @@ class FileSizeStubComponent {
   @Input() bytes: number;
 }
 
+@Component({ selector: 'app-buy-product-button', template: '{{bytes}}' })
+class BuyProductButtonStubComponent {
+  @Input() productAddress: string;
+  @Input() productOwnerAddress: string;
+}
+
+@Component({ selector: 'app-download-product-button', template: '{{bytes}}' })
+class DownloadProductButtonStubComponent {
+  @Input() productAddress: string;
+}
+
 class DataProductListStubService {
   getFiles(query?: string, sort?: string, size?: number, from?: number): Observable<EsResponse<Deserializable<EsDataProduct>>> {
     return fromPromise(Promise.resolve(new EsResponse()));
@@ -44,7 +55,9 @@ describe('DataProductListComponent', () => {
       declarations: [
         DataProductListComponent,
         CurrencyStubComponent,
-        FileSizeStubComponent
+        FileSizeStubComponent,
+        BuyProductButtonStubComponent,
+        DownloadProductButtonStubComponent
       ],
       imports: [
         MatIconModule,

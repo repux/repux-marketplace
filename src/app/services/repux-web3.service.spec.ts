@@ -7,6 +7,9 @@ const balanceInEther = 1;
 const web3Mock = {
   eth: {
     accounts: [ '0x7300Ff23F38D44F2E3142feEE8Db36960EEB0571' ],
+    getAccounts(callback) {
+      callback(null, this.accounts);
+    }
   },
   fromWei() {
     return balanceInEther;
@@ -21,7 +24,11 @@ const web3Mock = {
 
 const repuxWeb3ApiMock = {
   getDefaultAccount() {
-    return web3Mock.eth.accounts[ 0 ];
+    return new Promise(resolve => {
+      web3Mock.eth.getAccounts((error, accounts) => {
+        resolve(accounts);
+      });
+    });
   },
 
   async getBalance() {
@@ -64,13 +71,13 @@ describe('RepuxWeb3Service', () => {
   });
 
   describe('#isDefaultAccountAvailable()', () => {
-    it('should return true if account is available', () => {
-      expect(repuxWeb3Service.isDefaultAccountAvailable()).toBeTruthy();
+    it('should return true if account is available', async () => {
+      expect(await repuxWeb3Service.isDefaultAccountAvailable()).toBeTruthy();
     });
 
-    it('should return false when account is not available', () => {
+    it('should return false when account is not available', async () => {
       repuxWeb3ServiceNoWeb3 = RepuxWeb3ServiceFactory();
-      expect(repuxWeb3ServiceNoWeb3.isDefaultAccountAvailable()).toBeFalsy();
+      expect(await repuxWeb3ServiceNoWeb3.isDefaultAccountAvailable()).toBeFalsy();
     });
   });
 

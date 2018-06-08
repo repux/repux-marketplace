@@ -84,32 +84,38 @@ describe('TaskManagerService', () => {
   describe('#openDialog()', () => {
     it('should call open method on dialog object and setTaskManagerService componentInstance', () => {
       const setTaskManagerService = jasmine.createSpy();
+      const ngDoCheck = jasmine.createSpy();
 
       const open = jasmine.createSpy().and.returnValue({
         componentInstance: {
-          setTaskManagerService
+          setTaskManagerService,
+          ngDoCheck
         }
       });
       service['_dialog'].open = open;
 
       service.openDialog();
       expect(setTaskManagerService.calls.count()).toBe(1);
+      expect(ngDoCheck.calls.count()).toBe(1);
       expect(open.calls.count()).toBe(1);
     });
 
     it('should not call open method when _dialogRef is defined', () => {
       service['_dialogRef'] = <any> 'SOME_VALUE';
       const setTaskManagerService = jasmine.createSpy();
+      const ngDoCheck = jasmine.createSpy();
 
       const open = jasmine.createSpy().and.returnValue({
         componentInstance: {
-          setTaskManagerService
+          setTaskManagerService,
+          ngDoCheck
         }
       });
       service['_dialog'].open = open;
 
       service.openDialog();
       expect(setTaskManagerService.calls.count()).toBe(0);
+      expect(ngDoCheck.calls.count()).toBe(0);
       expect(open.calls.count()).toBe(0);
     });
   });

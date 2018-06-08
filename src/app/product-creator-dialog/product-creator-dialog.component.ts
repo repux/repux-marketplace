@@ -99,7 +99,7 @@ export class ProductCreatorDialogComponent implements OnDestroy {
     this.dialogRef.close(true);
   }
 
-  private getKeys(): Promise<{ privateKey: CryptoKey, publicKey: CryptoKey }> {
+  private getKeys(): Promise<{ privateKey: JsonWebKey, publicKey: JsonWebKey }> {
     return new Promise(resolve => {
       let dialogRef;
 

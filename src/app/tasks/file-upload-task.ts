@@ -26,7 +26,7 @@ export class FileUploadTask implements Task {
   private _taskManagerService: TaskManagerService;
 
   constructor(
-    private _publicKey: CryptoKey,
+    private _publicKey: JsonWebKey,
     private _repuxLibService: RepuxLibService,
     private _dataProductService: DataProductService,
     private _title: string,
@@ -36,7 +36,7 @@ export class FileUploadTask implements Task {
     private _price: BigNumber,
     private _file: File
   ) {
-    this._name = this._file.name;
+    this._name = `Creating ${this._file.name}`;
     this._uploader = this._repuxLibService.getInstance().createFileUploader();
   }
 

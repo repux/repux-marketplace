@@ -18,6 +18,9 @@ import {
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { PipesModule } from './pipes/pipes.module';
 import { APP_BASE_HREF } from '@angular/common';
+import { DataProductNotificationsService } from './services/data-product-notifications.service';
+import { BuyProductButtonComponent } from './buy-product-button/buy-product-button.component';
+import { DownloadProductButtonComponent } from './download-product-button/download-product-button.component';
 
 describe('AppComponent', () => {
   beforeEach(async(() => {
@@ -25,7 +28,9 @@ describe('AppComponent', () => {
       declarations: [
         AppComponent,
         DashboardComponent,
-        DataProductListComponent
+        DataProductListComponent,
+        BuyProductButtonComponent,
+        DownloadProductButtonComponent
       ],
       imports: [
         AppRoutingModule,
@@ -43,7 +48,8 @@ describe('AppComponent', () => {
         PipesModule
       ],
       providers: [
-        { provide: APP_BASE_HREF, useValue: '/' }
+        { provide: APP_BASE_HREF, useValue: '/' },
+        { provide: DataProductNotificationsService, useValue: jasmine.createSpy() }
       ]
     }).compileComponents();
   }));

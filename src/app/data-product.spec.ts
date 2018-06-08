@@ -15,7 +15,8 @@ describe('DataProduct', () => {
         price: '199999999999999999999',
         termsOfUseType: 'termsOfUseType',
         name: 'name',
-        size: 100
+        size: 100,
+        ownerAddress: '0x1111'
       });
 
       expect(dataProduct.title).toBe('title');
@@ -27,6 +28,7 @@ describe('DataProduct', () => {
       expect(dataProduct.termsOfUseType).toBe('termsOfUseType');
       expect(dataProduct.name).toBe('name');
       expect(dataProduct.size).toBe(100);
+      expect(dataProduct.ownerAddress).toBe('0x1111');
     });
   });
 });
