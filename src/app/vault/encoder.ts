@@ -1,3 +1,5 @@
+import { BufferUtil } from './buffer.util';
+
 declare class TextEncoder {
   constructor(encoding: string);
 
@@ -12,24 +14,38 @@ declare class TextDecoder {
 
 export class Encoder {
   static HASHING_FN = 'SHA-256';
-  static ALGORITHM = 'AES-GCM';
-  static IV_LENGTH = 12;
+  static ALGORITHM = {
+    name: 'AES-CBC',
+    length: 256
+  };
+  static IV_LENGTH = 16;
   static ENCODING = 'utf-8';
+  static ITERATION_COUNT = 1e6;
+  static SALT_LENGTH = 16;
 
   constructor() {
   }
 
-  static async encode(plainText: string, password: string): Promise<{ iv: Uint8Array, encBuffer: ArrayBuffer }> {
+  static async encode(plainText: string, password: string): Promise<{
+    salt: Uint8Array,
+    iterationCount: number
+    iv: Uint8Array,
+    encBuffer: ArrayBuffer
+  }> {
     const textBuffer = new TextEncoder(Encoder.ENCODING).encode(plainText);
-    const passwordBuffer = new TextEncoder(Encoder.ENCODING).encode(password);
-    const passwordHash = await crypto.subtle.digest(Encoder.HASHING_FN, passwordBuffer);
+    const passwordBuffer = BufferUtil.stringToBuffer(password);
     const iv = crypto.getRandomValues(new Uint8Array(Encoder.IV_LENGTH));
-
-    const alg = { name: Encoder.ALGORITHM, iv: iv };
-    const key = await crypto.subtle.importKey('raw', passwordHash, alg, false, [ 'encrypt' ]);
-    const encBuffer = await crypto.subtle.encrypt(alg, key, textBuffer);
+    const salt = crypto.getRandomValues(new Uint8Array(Encoder.SALT_LENGTH));
+    const encryptionKey = await Encoder.generateEncryptionKey(passwordBuffer, salt, Encoder.ITERATION_COUNT);
+    const alg = {
+      name: Encoder.ALGORITHM.name,
+      iv
+    };
+    const encBuffer = await crypto.subtle.encrypt(alg, encryptionKey, textBuffer);
 
     return {
+      salt,
+      iterationCount: Encoder.ITERATION_COUNT,
       iv,
       encBuffer
     };
@@ -38,50 +54,63 @@ export class Encoder {
   static async encodeToString(data: string, password: string): Promise<string> {
     const encoded = await Encoder.encode(data, password);
     const initializationVectorBuffer = encoded.iv.buffer as ArrayBuffer;
-    const encodedDataBuffer = Encoder.appendBuffers(initializationVectorBuffer, encoded.encBuffer);
+    const saltBuffer = encoded.salt.buffer as ArrayBuffer;
+    const encodedDataBuffer = BufferUtil.appendBuffers(
+      initializationVectorBuffer,
+      saltBuffer,
+      encoded.encBuffer
+    );
 
-    return Encoder.bufferToString(encodedDataBuffer);
+    return BufferUtil.bufferToString(encodedDataBuffer);
   }
 
-  static async decode(encryptedText: ArrayBuffer, iv: Uint8Array, password: string): Promise<string> {
-    const passwordBuffer = new TextEncoder(Encoder.ENCODING).encode(password);
-    const passwordHash = await crypto.subtle.digest(Encoder.HASHING_FN, passwordBuffer);
+  static async decode(
+    encryptedText: ArrayBuffer,
+    iv: Uint8Array,
+    salt: Uint8Array,
+    iterationCount: number,
+    password: string
+  ): Promise<string> {
+    const passwordBuffer = BufferUtil.stringToBuffer(password);
+    const encryptionKey = await Encoder.generateEncryptionKey(passwordBuffer, salt, iterationCount);
 
-    const alg = { name: Encoder.ALGORITHM, iv: iv };
-    const key = await crypto.subtle.importKey('raw', passwordHash, alg, false, [ 'decrypt' ]);
-    const pBuffer = await crypto.subtle.decrypt(alg, key, encryptedText);
+    const alg = {
+      name: Encoder.ALGORITHM.name,
+      iv
+    };
+
+    const pBuffer = await crypto.subtle.decrypt(alg, encryptionKey, encryptedText);
 
     return new TextDecoder(Encoder.ENCODING).decode(pBuffer);
   }
 
   static decodeFromString(serializedData: string, password: string): Promise<string> {
-    const encodedBuffer = Encoder.stringToBuffer(serializedData);
-    const iv = encodedBuffer.slice(0, Encoder.IV_LENGTH);
-    const data = encodedBuffer.slice(Encoder.IV_LENGTH, encodedBuffer.byteLength);
 
-    return Encoder.decode(data, new Uint8Array(iv), password);
+    const encodedBuffer = BufferUtil.stringToBuffer(serializedData);
+    let pointer = Encoder.IV_LENGTH;
+    const iv = encodedBuffer.slice(0, pointer);
+    const salt = encodedBuffer.slice(pointer, pointer + Encoder.SALT_LENGTH);
+    pointer += Encoder.SALT_LENGTH;
+    const data = encodedBuffer.slice(pointer, pointer + encodedBuffer.byteLength);
+
+    return Encoder.decode(data, new Uint8Array(iv), new Uint8Array(salt), Encoder.ITERATION_COUNT, password);
   }
 
-  static bufferToString(buffer: ArrayBuffer): string {
-    return String.fromCharCode.apply(null, new Uint8Array(buffer));
-  }
+  static async generateEncryptionKey(passwordBuffer: ArrayBuffer, salt: Uint8Array, iterationCount: number): Promise<CryptoKey> {
+    const cryptoKey = await crypto.subtle.importKey(
+      'raw',
+      passwordBuffer,
+      { name: 'PBKDF2' },
+      false,
+      [ 'deriveBits', 'deriveKey' ]
+    );
 
-  static stringToBuffer(str: string): ArrayBuffer {
-    const buffer = new ArrayBuffer(str.length);
-    const bufferView = new Uint8Array(buffer);
-
-    for (let i = 0, strLen = str.length; i < strLen; i++) {
-      bufferView[ i ] = str.charCodeAt(i);
-    }
-
-    return buffer;
-  }
-
-  static appendBuffers(buffer1: ArrayBuffer, buffer2: ArrayBuffer): ArrayBuffer {
-    const combined = new Uint8Array(buffer1.byteLength + buffer2.byteLength);
-    combined.set(new Uint8Array(buffer1), 0);
-    combined.set(new Uint8Array(buffer2), buffer1.byteLength);
-
-    return combined.buffer as ArrayBuffer;
+    return crypto.subtle.deriveKey(
+      { name: 'PBKDF2', salt: salt, iterations: iterationCount, hash: Encoder.HASHING_FN },
+      cryptoKey,
+      Encoder.ALGORITHM,
+      false,
+      [ 'encrypt', 'decrypt' ]
+    );
   }
 }

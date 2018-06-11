@@ -1,4 +1,5 @@
 import { Encoder } from './encoder';
+import { BufferUtil } from './buffer.util';
 
 describe('Encoder', () => {
   it('should encode/decode text', async () => {
@@ -7,7 +8,7 @@ describe('Encoder', () => {
     const password = 'Some password';
 
     const result = await Encoder.encode(plainText, password);
-    const expectedPlainText = await Encoder.decode(result.encBuffer, result.iv, password);
+    const expectedPlainText = await Encoder.decode(result.encBuffer, result.iv, result.salt, result.iterationCount, password);
 
     expect(expectedPlainText).toEqual(plainText);
   });
@@ -24,13 +25,13 @@ describe('Encoder', () => {
     expect(decodedString).toEqual(serializedJSON);
   });
 
-  it('should convert buffer to string and back', () => {
-    const expectedString = 'aaa';
-    const expectedUint8Array = [ 97, 97, 97 ]; // aaa
-    const expectedBuffer = (new Uint8Array(expectedUint8Array)).buffer as ArrayBuffer;
-    const encodedBuffer = Encoder.stringToBuffer(expectedString);
+  it('should create password based encryption key', async () => {
+    const password = 'myPassword';
+    const salt = crypto.getRandomValues(new Uint8Array(Encoder.SALT_LENGTH));
+    const key = await Encoder.generateEncryptionKey(BufferUtil.stringToBuffer(password), salt, Encoder.ITERATION_COUNT);
 
-    expect(new Uint8Array(encodedBuffer)).toEqual(new Uint8Array(expectedBuffer));
-    expect(Encoder.bufferToString(encodedBuffer)).toEqual(expectedString);
+    expect(key.algorithm).toEqual(Encoder.ALGORITHM);
+    expect(key.type).toEqual('secret');
+    expect(key.usages).toEqual([ 'encrypt', 'decrypt' ]);
   });
 });

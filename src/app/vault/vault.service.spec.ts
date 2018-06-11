@@ -38,18 +38,20 @@ describe('VaultService', () => {
   describe('#storeValue', () => {
     it('should save value with encoded vault in storage', async () => {
       const vaultName = 'keystore';
+      const vaultInStorage = `vault_${vaultName}`;
       const vaultPassword = 'repux';
       const itemKey1 = 'pk';
       const itemValue1 = 'my private key';
       const itemKey2 = 'pub';
       const itemValue2 = 'my public key';
 
-
       await service.storeValue(vaultName, vaultPassword, itemKey1, itemValue1);
       await service.storeValue(vaultName, vaultPassword, itemKey2, itemValue2);
 
       const itemValueFromStorage1 = await service.getValue(vaultName, vaultPassword, itemKey1);
       const itemValueFromStorage2 = await service.getValue(vaultName, vaultPassword, itemKey2);
+
+      localStorage.removeItem(vaultInStorage);
 
       expect(itemValueFromStorage1).toEqual(itemValue1);
       expect(itemValueFromStorage2).toEqual(itemValue2);

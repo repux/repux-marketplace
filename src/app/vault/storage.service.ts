@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 interface Storage {
   getItem(name: string): string;
   setItem(name: string, value: string): void;
+  removeItem(name: string): void;
 }
 
 @Injectable({
@@ -20,6 +21,10 @@ export class StorageService {
 
   setItem(name: string, value: string) {
     this.storage.setItem(name, value);
+  }
+
+  removeItem(name: string) {
+    this.storage.removeItem(name);
   }
 }
 
