@@ -29,6 +29,7 @@ import {
   MatTabsModule,
   MatTooltipModule
 } from '@angular/material';
+import { KeyStoreModule } from './key-store/key-store.module';
 
 @NgModule({
   declarations: [
@@ -66,7 +67,8 @@ import {
     MatTooltipModule,
     FormsModule,
     ReactiveFormsModule,
-    PipesModule
+    PipesModule,
+    KeyStoreModule
   ],
   providers: [],
   bootstrap: [ AppComponent ]

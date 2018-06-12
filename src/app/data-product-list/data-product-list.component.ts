@@ -36,7 +36,8 @@ export class DataProductListComponent implements OnInit {
 
   constructor(
     public dataProductListService: DataProductListService,
-    public productCreatorDialog: MatDialog) {
+    public productCreatorDialog: MatDialog
+  ) {
     this.size = this.pageSizeOptions[ 0 ];
   }
 

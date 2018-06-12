@@ -1,6 +1,7 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { ProductCreatorDialogComponent } from './product-creator-dialog.component';
 import {
+  MatDialog,
   MatDialogModule,
   MatDialogRef,
   MatInputModule,
@@ -14,24 +15,26 @@ import { ProductCategorySelectorComponent } from '../product-category-selector/p
 import { FileInputComponent } from '../file-input/file-input.component';
 import { HttpClientModule } from '@angular/common/http';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
+import { KeyStoreService } from '../key-store/key-store.service';
+import { KeyStoreModule } from '../key-store/key-store.module';
 
 describe('ProductCreatorDialogComponent', () => {
-  let repuxLibService, dataProductService, taskManagerService, matDialogRef, generateAsymmetricKeyPair;
+  let keyStoreService, repuxLibService, dataProductService, taskManagerService, matDialog, matDialogRef,
+    getKeys;
   let component: ProductCreatorDialogComponent;
   let fixture: ComponentFixture<ProductCreatorDialogComponent>;
 
   beforeEach(async(() => {
+    keyStoreService = jasmine.createSpyObj('KeyStoreService', [ 'hasKeys' ]);
     repuxLibService = jasmine.createSpyObj('RepuxLibService', [ 'getClass', 'getInstance' ]);
     repuxLibService.getInstance.and.returnValue({
       createFileUploader: jasmine.createSpy()
     });
-    generateAsymmetricKeyPair = jasmine.createSpy();
-    repuxLibService.getClass.and.returnValue({
-      generateAsymmetricKeyPair
-    });
+
     dataProductService = jasmine.createSpyObj('DataProductService', [ 'publishDataProduct' ]);
     taskManagerService = jasmine.createSpyObj('TaskManagerService', [ 'addTask' ]);
-    matDialogRef = jasmine.createSpyObj('MatDialogRef', [ 'close' ]);
+    matDialogRef = jasmine.createSpyObj('MatDialogRef', [ 'close', 'afterClosed' ]);
+    matDialog = jasmine.createSpyObj('MatDialog', [ 'open' ]);
 
     TestBed.configureTestingModule({
       declarations: [
@@ -40,6 +43,7 @@ describe('ProductCreatorDialogComponent', () => {
         FileInputComponent
       ],
       imports: [
+        KeyStoreModule,
         MatDialogModule,
         MatInputModule,
         FormsModule,
@@ -49,13 +53,13 @@ describe('ProductCreatorDialogComponent', () => {
         NoopAnimationsModule
       ],
       providers: [
+        { provide: KeyStoreService, useValue: keyStoreService },
         { provide: MatDialogRef, useValue: matDialogRef },
         { provide: RepuxLibService, useValue: repuxLibService },
         { provide: TaskManagerService, useValue: taskManagerService },
         { provide: DataProductService, useValue: dataProductService }
       ]
-    })
-      .compileComponents();
+    }).compileComponents();
   }));
 
   beforeEach(() => {
@@ -66,7 +70,8 @@ describe('ProductCreatorDialogComponent', () => {
 
   describe('#constructor()', () => {
     it('should initialize formGroup property', () => {
-      component = new ProductCreatorDialogComponent(repuxLibService, dataProductService, taskManagerService, matDialogRef);
+      component = new ProductCreatorDialogComponent(keyStoreService, repuxLibService,
+        dataProductService, taskManagerService, matDialog, matDialogRef);
       expect(component.formGroup.controls[ 'title' ]).toBe(component.titleFormControl);
       expect(component.formGroup.controls[ 'shortDescription' ]).toBe(component.shortDescriptionFormControl);
       expect(component.formGroup.controls[ 'longDescription' ]).toBe(component.longDescriptionFormControl);
@@ -94,7 +99,8 @@ describe('ProductCreatorDialogComponent', () => {
       const publicKey = 'PUBLIC_KEY';
       const file = 'FILE';
 
-      generateAsymmetricKeyPair.and.returnValue(Promise.resolve({
+      getKeys = spyOn<any>(component, 'getKeys');
+      getKeys.and.returnValue(Promise.resolve({
         publicKey
       }));
 
@@ -111,7 +117,7 @@ describe('ProductCreatorDialogComponent', () => {
 
       await component.upload();
       expect(taskManagerService.addTask.calls.count()).toBe(1);
-      expect(generateAsymmetricKeyPair.calls.count()).toBe(1);
+      expect(getKeys.calls.count()).toBe(1);
       expect(matDialogRef.close.calls.count()).toBe(1);
     });
   });

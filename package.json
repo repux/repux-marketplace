@@ -26,6 +26,7 @@
     "bignumber.js": "7.0.2",
     "core-js": "^2.5.4",
     "git": "^0.1.0",
+    "repux-lib": "git+ssh://git@github.com:repux/repux-lib.git#v0.3.0",
     "repux-web3-api": "git+ssh://git@github.com:repux/repux-web3-api.git#v1.2.0",
     "rxjs": "^6.0.0",
     "zone.js": "^0.8.26"
@@ -39,7 +40,7 @@
     "@repux/repux-lib": "git+ssh://git@github.com:repux/repux-lib.git#v0.3.0",
     "@types/jasmine": "~2.8.6",
     "@types/jasminewd2": "~2.0.3",
-    "@types/node": "^10.1.2",
+    "@types/node": "10.1.2",
     "codelyzer": "~4.2.1",
     "jasmine-core": "~2.99.1",
     "jasmine-spec-reporter": "~4.2.1",

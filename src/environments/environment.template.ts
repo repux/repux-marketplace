@@ -20,7 +20,7 @@ export const environment = {
   repux: {
     metaindexer: {
       protocol: '${MARKETPLACE_METAINDEXER_PROTOCOL}' || 'https',
-      host: '${MARKETPLACE_METAINDEXER_HOST}' || '192.168.99.101',
+      host: '${MARKETPLACE_METAINDEXER_HOST}' || 'localhost',
       port: '${MARKETPLACE_METAINDEXER_PORT}' || 9201,
       searchUrl: 'repux/_search'
     },
@@ -35,8 +35,8 @@ export const environment = {
     registryContractAddress: '${MARKETPLACE_SC_REGISTRY_ADDRESS}' || '0xbd83c21e6f0a9547abe908c6faa02a55512d57b4'
   },
   ipfs: {
-    host: '${MARKETPLACE_IPFS_HOST}' || '192.168.99.101',
-    port: '${MARKETPLACE_IPFS_PORT}' || '5001',
+    host: '${MARKETPLACE_IPFS_HOST}' || 'localhost',
+    port: '${MARKETPLACE_IPFS_PORT}' || '5002',
     protocol: '${MARKETPLACE_IPFS_PROTOCOL}' || 'https'
   }
 };
