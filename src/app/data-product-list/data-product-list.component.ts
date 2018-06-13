@@ -6,6 +6,7 @@ import { MatDialog, MatPaginator, MatTableDataSource, PageEvent, Sort } from '@a
 import { environment } from '../../environments/environment';
 import { Deserializable } from '../deserializable';
 import { ProductCreatorDialogComponent } from '../product-creator-dialog/product-creator-dialog.component';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-data-product-list',
@@ -14,10 +15,11 @@ import { ProductCreatorDialogComponent } from '../product-creator-dialog/product
 })
 export class DataProductListComponent implements OnInit {
   @ViewChild(MatPaginator) paginator: MatPaginator;
+  private _subscriptions: Subscription[];
 
   public esDataProducts: EsResponse<Deserializable<EsDataProduct>>;
   public dataSource: MatTableDataSource<Deserializable<EsDataProduct>>;
-  public displayedColumns = [ 'name', 'title', 'category', 'size', 'price' ];
+  public displayedColumns = [ 'name', 'title', 'category', 'size', 'price', 'actions' ];
   public pageSizeOptions = environment.repux.pageSizeOptions;
   public isLoadingResults = true;
   public query: string;

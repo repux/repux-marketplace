@@ -2,7 +2,6 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { TaskManagerComponent } from './task-manager.component';
 import {
   MatDialogModule,
-  MatDialogRef,
   MatIconModule,
   MatProgressSpinnerModule,
   MatToolbarModule
@@ -10,13 +9,12 @@ import {
 import { ChangeDetectorRef } from '@angular/core';
 
 describe('TaskManagerComponent', () => {
-  let matDialogRef, changeDetectorRef, taskManagerService;
+  let changeDetectorRef, taskManagerService;
   let component: TaskManagerComponent;
   let fixture: ComponentFixture<TaskManagerComponent>;
 
   beforeEach(async(() => {
     taskManagerService = jasmine.createSpyObj('TaskManagerService', [ 'closeDialog' ]);
-    matDialogRef = jasmine.createSpyObj('MatDialogObj', [ 'updatePosition' ]);
     changeDetectorRef = jasmine.createSpyObj('ChangeDetectorRef', [ 'markForCheck', 'detectChanges' ]);
 
     TestBed.configureTestingModule({
@@ -28,7 +26,6 @@ describe('TaskManagerComponent', () => {
         MatDialogModule
       ],
       providers: [
-        { provide: MatDialogRef, useValue: matDialogRef },
         { provide: ChangeDetectorRef, useValue: changeDetectorRef }
       ]
     })
@@ -39,17 +36,6 @@ describe('TaskManagerComponent', () => {
     fixture = TestBed.createComponent(TaskManagerComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
-  });
-
-  describe('#onNgInit()', () => {
-    it('should create and call matDialogRef.updatePosition', () => {
-      expect(component).toBeTruthy();
-      expect(matDialogRef.updatePosition.calls.count()).toBe(1);
-      expect(matDialogRef.updatePosition.calls.allArgs()[ 0 ][ 0 ]).toEqual({
-        right: '15px',
-        bottom: '15px'
-      });
-    });
   });
 
   describe('#ngOnChanges()', () => {

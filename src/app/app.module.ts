@@ -12,6 +12,7 @@ import { ProductCategorySelectorComponent } from './product-category-selector/pr
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { FileInputComponent } from './file-input/file-input.component';
 import { TaskManagerComponent } from './task-manager/task-manager.component';
+import { TransactionDialogComponent } from './transaction-dialog/transaction-dialog.component';
 import {
   MatTableModule,
   MatInputModule,
@@ -29,7 +30,11 @@ import {
   MatTabsModule,
   MatTooltipModule
 } from '@angular/material';
+import { PurchaseConfirmationDialogComponent } from './purchase-confirmation-dialog/purchase-confirmation-dialog.component';
+import { BuyProductButtonComponent } from './buy-product-button/buy-product-button.component';
+import { DownloadProductButtonComponent } from './download-product-button/download-product-button.component';
 import { KeyStoreModule } from './key-store/key-store.module';
+import { NotificationsModule } from './notifications/notifications.module';
 
 @NgModule({
   declarations: [
@@ -39,11 +44,17 @@ import { KeyStoreModule } from './key-store/key-store.module';
     ProductCreatorDialogComponent,
     ProductCategorySelectorComponent,
     FileInputComponent,
-    TaskManagerComponent
+    TaskManagerComponent,
+    TransactionDialogComponent,
+    PurchaseConfirmationDialogComponent,
+    BuyProductButtonComponent,
+    DownloadProductButtonComponent
   ],
   entryComponents: [
     ProductCreatorDialogComponent,
-    TaskManagerComponent
+    TaskManagerComponent,
+    TransactionDialogComponent,
+    PurchaseConfirmationDialogComponent
   ],
   imports: [
     BrowserModule,
@@ -68,7 +79,8 @@ import { KeyStoreModule } from './key-store/key-store.module';
     FormsModule,
     ReactiveFormsModule,
     PipesModule,
-    KeyStoreModule
+    KeyStoreModule,
+    NotificationsModule
   ],
   providers: [],
   bootstrap: [ AppComponent ]

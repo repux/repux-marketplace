@@ -13,16 +13,16 @@ export class WalletService {
     return this.repuxWeb3Service.isProviderAvailable();
   }
 
-  isDefaultAccountAvailable(): boolean {
+  isDefaultAccountAvailable(): Promise<boolean> {
     return this.repuxWeb3Service.isDefaultAccountAvailable();
   }
 
   async getData(): Promise<Wallet> {
-    if (!this.isDefaultAccountAvailable()) {
+    if (!await this.isDefaultAccountAvailable()) {
       return null;
     }
 
-    const defaultAccount = this.repuxWeb3Service.getRepuxApiInstance().getDefaultAccount();
+    const defaultAccount = await this.repuxWeb3Service.getRepuxApiInstance().getDefaultAccount();
     const accountBalanceInWei = await this.repuxWeb3Service.getRepuxApiInstance().getBalance();
     const accountBalanceInEther = this.repuxWeb3Service.getWeb3Instance().fromWei(accountBalanceInWei, 'ether');
 

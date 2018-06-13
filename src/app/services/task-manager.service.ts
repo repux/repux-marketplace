@@ -36,10 +36,15 @@ export class TaskManagerService {
     }
 
     this._dialogRef = this._dialog.open(TaskManagerComponent, {
+      position: {
+        right: '15px',
+        bottom: '15px'
+      },
       hasBackdrop: false
     });
 
     this._dialogRef.componentInstance.setTaskManagerService(this);
+    this._dialogRef.componentInstance.ngDoCheck();
   }
 
   closeDialog() {

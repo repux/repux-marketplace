@@ -84,7 +84,7 @@ describe('FileUploadTask()', () => {
       expect(fileUploadTask[ '_price' ]).toBe(price);
       expect(<any> fileUploadTask[ '_file' ]).toBe(file);
       expect(fileUploadTask[ '_uploader' ]).toBe(fileUploader);
-      expect(fileUploadTask[ '_name' ]).toBe(fileName);
+      expect(fileUploadTask[ '_name' ]).toBe('Creating ' + fileName);
     });
   });
 

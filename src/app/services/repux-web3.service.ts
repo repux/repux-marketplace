@@ -20,8 +20,8 @@ export class RepuxWeb3Service {
     return typeof this.web3 !== 'undefined';
   }
 
-  isDefaultAccountAvailable(): boolean {
-    return this.isProviderAvailable() && this.repuxWeb3Api.getDefaultAccount();
+  async isDefaultAccountAvailable(): Promise<boolean> {
+    return this.isProviderAvailable() && await this.repuxWeb3Api.getDefaultAccount();
   }
 
   getWeb3Instance() {

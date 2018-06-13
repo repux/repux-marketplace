@@ -46,12 +46,12 @@ export class KeyStoreService {
     return this.vaultService.getValue(KeyStoreService.VAULT_NAME, password, item);
   }
 
-  async getKeys(password: string): Promise<{ privateKey: CryptoKey, publicKey: CryptoKey }> {
+  async getKeys(password: string): Promise<{ privateKey: JsonWebKey, publicKey: JsonWebKey }> {
     const publicKeySerialized = await this.vaultService.getValue(KeyStoreService.VAULT_NAME, password, KeyStoreService.PUBLIC_KEY);
     const privateKeySerialized = await this.vaultService.getValue(KeyStoreService.VAULT_NAME, password, KeyStoreService.PRIVATE_KEY);
 
-    const privateKey = JSON.parse(privateKeySerialized) as CryptoKey;
-    const publicKey = JSON.parse(publicKeySerialized) as CryptoKey;
+    const privateKey = JSON.parse(privateKeySerialized) as JsonWebKey;
+    const publicKey = JSON.parse(publicKeySerialized) as JsonWebKey;
 
     return {
       privateKey,

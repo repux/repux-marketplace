@@ -3,16 +3,19 @@ import { Deserializable } from './deserializable';
 import { environment } from '../environments/environment';
 
 export class DataProduct implements Deserializable<DataProduct> {
-  title: string;
-  shortDescription: string;
-  fullDescription: string;
-  type: string;
-  category: string[];
-  maxNumberOfDownloads: number;
-  price: BigNumber;
-  termsOfUseType: string;
-  name: string;
-  size: number;
+  title?: string;
+  shortDescription?: string;
+  fullDescription?: string;
+  type?: string;
+  category?: string[];
+  maxNumberOfDownloads?: number;
+  price?: BigNumber;
+  termsOfUseType?: string;
+  name?: string;
+  size?: number;
+  ownerAddress?: string;
+  purchased?: string[];
+  approved?: string[];
 
   deserialize(input: any): DataProduct {
     Object.assign(this, input);
