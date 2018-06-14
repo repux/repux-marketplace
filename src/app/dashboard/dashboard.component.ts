@@ -3,7 +3,6 @@ import { Component, OnInit } from '@angular/core';
 import Wallet from '../wallet';
 import { WalletService } from '../services/wallet.service';
 import { environment } from '../../environments/environment';
-import { VaultService } from '../vault/vault.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -17,15 +16,10 @@ export class DashboardComponent implements OnInit {
 
   wallet: Wallet;
 
-  constructor(private walletService: WalletService, private vaultService: VaultService) {
+  constructor(private walletService: WalletService) {
   }
 
   ngOnInit(): void {
-    this.getWallet();
+    this.walletService.getWallet().subscribe(wallet => this.wallet = wallet);
   }
-
-  getWallet(): void {
-    this.walletService.getData().then(wallet => this.wallet = wallet);
-  }
-
 }

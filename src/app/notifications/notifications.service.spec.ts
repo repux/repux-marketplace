@@ -11,8 +11,8 @@ describe('NotificationsService', () => {
   const walletAddress = '0x0000000000000000000000000000000000000000';
 
   beforeEach(async () => {
-    const walletServiceSpy = jasmine.createSpyObj('WalletService', [ 'getData' ]);
-    walletServiceSpy.getData.and.returnValue(Promise.resolve({
+    const walletServiceSpy = jasmine.createSpyObj('WalletService', [ 'getWalletData' ]);
+    walletServiceSpy.getWalletData.and.returnValue(Promise.resolve({
       address: walletAddress
     }));
     TestBed.configureTestingModule({

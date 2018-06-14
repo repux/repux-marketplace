@@ -31,7 +31,7 @@ export class DownloadProductButtonComponent implements OnDestroy {
 
   async downloadProduct(): Promise<void> {
     const { privateKey } = await this._getKeys();
-    const wallet: Wallet = await this._walletService.getData();
+    const wallet: Wallet = await this._walletService.getWalletData();
     const product = await this._dataProductService.getDataProductData(this.productAddress);
     let metaHash;
 

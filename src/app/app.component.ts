@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { WalletService } from './services/wallet.service';
 import { DataProductNotificationsService } from './services/data-product-notifications.service';
 
 @Component({
@@ -19,23 +18,9 @@ export class AppComponent implements OnInit {
     }
   ];
 
-  metaMaskStatusMessage: string;
-
-  constructor(
-    private walletService: WalletService,
-    private _dataProductNotificationService: DataProductNotificationsService) {
+  constructor(private _dataProductNotificationService: DataProductNotificationsService) {
   }
 
-  async ngOnInit(): Promise<void> {
-    if (!this.walletService.isProviderAvailable()) {
-      this.metaMaskStatusMessage = 'You need a secure wallet like MetaMask to browse through Marketplace. ' +
-        'As soon as the extension is installed the warning will be gone.';
-      return;
-    }
-
-    if (!await this.walletService.isDefaultAccountAvailable()) {
-      this.metaMaskStatusMessage = 'You need login to MetaMask and import RepuX account.';
-      return;
-    }
+  ngOnInit(): void {
   }
 }

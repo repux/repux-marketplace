@@ -13,13 +13,13 @@ describe('DataProductService', () => {
   beforeEach(() => {
     repuxWeb3ServiceSpy = jasmine.createSpyObj(
       'RepuxWeb3Service',
-      [ 'isDefaultAccountAvailable', 'getRepuxApiInstance' ]
+      [ 'getRepuxApiInstance', 'getWeb3Instance', 'isProviderAvailable', 'isDefaultAccountAvailable' ]
     );
     walletServiceSpy = jasmine.createSpyObj(
       'WalletServiceSpy',
-      [ 'getData' ]
+      [ 'getWalletData' ]
     );
-    walletServiceSpy.getData.and.returnValue({
+    walletServiceSpy.getWalletData.and.returnValue({
       address: walletAddress
     });
     service = new DataProductService(<any> repuxWeb3ServiceSpy, <any> walletServiceSpy);
