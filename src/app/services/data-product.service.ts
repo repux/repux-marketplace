@@ -4,8 +4,9 @@ import BigNumber from 'bignumber.js';
 import { Observable, Observer } from 'rxjs';
 import { DataProductEvent, DataProductUpdateAction } from 'repux-web3-api';
 import { filter } from 'rxjs/internal/operators';
-import { DataProductTransaction, TransactionResult } from 'repux-web3-api/repux-web3-api';
+import { ContractEvent, DataProductTransaction, TransactionResult } from 'repux-web3-api';
 import { WalletService } from './wallet.service';
+import Wallet from '../wallet';
 
 @Injectable({
   providedIn: 'root'
@@ -15,53 +16,60 @@ export class DataProductService {
   private _promises = {};
   private _dataProductUpdateObservable: Observable<DataProductEvent>;
   private _storage = localStorage;
+  private _wallet: Wallet;
+  private _productUpdateEvent: ContractEvent;
 
   constructor(
     private _repuxWeb3Service: RepuxWeb3Service,
     private _walletService: WalletService) {
+    this._walletService.getWallet().subscribe(wallet => this._onWalletChange(wallet));
+  }
+
+  private _onWalletChange(wallet: Wallet) {
+    if (!wallet || wallet === this._wallet) {
+      return;
+    }
+
+    this._wallet = wallet;
+    if (this._productUpdateEvent) {
+      this._productUpdateEvent.stopWatching();
+      this._productUpdateEvent = null;
+      this._dataProductUpdateObservable = null;
+    }
   }
 
   private get _api() {
     return this._repuxWeb3Service.getRepuxApiInstance();
   }
 
-  private async _getConfig(): Promise<{ lastBlock: number}> {
-    const saved = this._storage.getItem(DataProductService.STORAGE_PREFIX + 'config');
-    const wallet = await this._walletService.getWalletData();
+  private _getConfig(): { lastBlock: number } {
+    const saved = this._storage.getItem(DataProductService.STORAGE_PREFIX + this._wallet.address);
 
     if (saved) {
-      const parsed = JSON.parse(saved);
-
-      if (parsed.address === wallet.address) {
-        return parsed;
-      }
+      return JSON.parse(saved);
     }
 
     const config = {
-      lastBlock: 0,
-      address:  wallet.address
+      lastBlock: 0
     };
 
-    await this._setConfig(config);
-
+    this._setConfig(config);
     return config;
   }
 
-  private async _setConfig(config): Promise<void> {
-    const wallet = await this._walletService.getWalletData();
-    config.address = wallet.address;
-    this._storage.setItem(DataProductService.STORAGE_PREFIX + 'config', JSON.stringify(config));
+  private _setConfig(config): void {
+    this._storage.setItem(DataProductService.STORAGE_PREFIX + this._wallet.address, JSON.stringify(config));
   }
 
-  private async _getLastReadBlock(): Promise<number> {
-    const config = await this._getConfig();
+  private _getLastReadBlock(): number {
+    const config = this._getConfig();
     return config.lastBlock;
   }
 
-  private async _setLastReadBlock(lastBlock): Promise<void> {
-    const config = await this._getConfig();
+  private _setLastReadBlock(lastBlock): void {
+    const config = this._getConfig();
     config.lastBlock = lastBlock;
-    await this._setConfig(config);
+    this._setConfig(config);
   }
 
   private _getDebouncedPromise(promiseName, functionName) {
@@ -111,6 +119,10 @@ export class DataProductService {
 
   watchForDataProductUpdate(_dataProductAddress?: string, _dataProductUpdateAction?: DataProductUpdateAction)
     : Observable<DataProductEvent> {
+    if (!this._wallet) {
+      return;
+    }
+
     if (!this._dataProductUpdateObservable) {
       this._dataProductUpdateObservable = new Observable(observer => this._dataProductUpdateObserver(observer));
     }
@@ -122,11 +134,14 @@ export class DataProductService {
   }
 
   private _dataProductUpdateObserver(observer: Observer<DataProductEvent>) {
-    this._getLastReadBlock().then((lastBlock: number) => {
-      this._api.watchForDataProductUpdate({ fromBlock: lastBlock + 1, toBlock: 'latest' }, async (result: DataProductEvent) => {
-        await this._setLastReadBlock(result.blockNumber);
-        observer.next(result);
-      });
-    });
+    const config = {
+      fromBlock: this._getLastReadBlock() + 1,
+      toBlock: 'latest'
+    };
+
+    this._api.watchForDataProductUpdate(config, (result: DataProductEvent) => {
+      this._setLastReadBlock(result.blockNumber);
+      observer.next(result);
+    }).then(event => this._productUpdateEvent = event);
   }
 }

@@ -30,6 +30,7 @@ export class FileReencryptionTask implements Task {
   private _userActionName: string;
   private _status: string;
   private _taskManagerService: TaskManagerService;
+  public readonly walletSpecific = true;
 
   constructor(
     private _dataProductAddress: string,

@@ -4,6 +4,8 @@ import { NotificationType } from './notification-type';
 import { Notification } from './notification';
 import { WalletService } from '../services/wallet.service';
 import Spy = jasmine.Spy;
+import Wallet from '../wallet';
+import { from } from 'rxjs';
 
 describe('NotificationsService', () => {
   let service: NotificationsService;
@@ -11,10 +13,10 @@ describe('NotificationsService', () => {
   const walletAddress = '0x0000000000000000000000000000000000000000';
 
   beforeEach(async () => {
-    const walletServiceSpy = jasmine.createSpyObj('WalletService', [ 'getWalletData' ]);
-    walletServiceSpy.getWalletData.and.returnValue(Promise.resolve({
-      address: walletAddress
-    }));
+    const walletServiceSpy = jasmine.createSpyObj('WalletService', [ 'getWallet' ]);
+    const wallet = new Wallet(walletAddress, 1);
+    walletServiceSpy.getWallet.and.returnValue(from(Promise.resolve(wallet)));
+
     TestBed.configureTestingModule({
       providers: [
         { provide: WalletService, useValue: walletServiceSpy }
@@ -42,8 +44,7 @@ describe('NotificationsService', () => {
       service.saveNotifications();
       expect((<Spy> service[ '_setConfig' ]).calls.count()).toBe(1);
       expect((<Spy> service[ '_setConfig' ]).calls.allArgs()[ 0 ][ 0 ]).toEqual({
-        notifications: [],
-        address: walletAddress
+        notifications: []
       });
     });
   });
@@ -107,23 +108,11 @@ describe('NotificationsService', () => {
   describe('#_getConfig()', () => {
     it('should return config from storage', async () => {
       const storage = jasmine.createSpyObj('localStorage', [ 'getItem', 'setItem' ]);
-      storage.getItem.and.returnValue(`{"notifications":[{"type": "DATA_PRODUCT_TO_APPROVE", "data": {}}], "address": "${walletAddress}"}`);
+      storage.getItem.and.returnValue(`{"notifications":[{"type": "DATA_PRODUCT_TO_APPROVE", "data": {}}]}`);
       service[ '_storage' ] = storage;
       const result = await service[ '_getConfig' ]();
       expect(<any> result).toEqual({
-        notifications: [ { type: 'DATA_PRODUCT_TO_APPROVE', data: {} } ],
-        address: walletAddress
-      });
-    });
-
-    it('should return new config when wallet address is different than address in config', async () => {
-      const storage = jasmine.createSpyObj('localStorage', [ 'getItem', 'setItem' ]);
-      storage.getItem.and.returnValue(`{"notifications":[{"type": "DATA_PRODUCT_TO_APPROVE", "data": {}}], "address": "0x1"}`);
-      service[ '_storage' ] = storage;
-      const result = await service[ '_getConfig' ]();
-      expect(<any> result).toEqual({
-        notifications: [],
-        address: walletAddress
+        notifications: [ { type: 'DATA_PRODUCT_TO_APPROVE', data: {} } ]
       });
     });
 
@@ -133,8 +122,7 @@ describe('NotificationsService', () => {
       service[ '_storage' ] = storage;
       const result = await service[ '_getConfig' ]();
       expect(<any> result).toEqual({
-        notifications: [],
-        address: walletAddress
+        notifications: []
       });
     });
   });
@@ -145,7 +133,7 @@ describe('NotificationsService', () => {
       service[ '_storage' ] = storage;
       await service[ '_setConfig' ]({ notifications: [] });
       expect(storage.setItem.calls.count()).toBe(1);
-      expect(storage.setItem.calls.allArgs()[ 0 ][ 1 ]).toBe(`{"notifications":[],"address":"${walletAddress}"}`);
+      expect(storage.setItem.calls.allArgs()[ 0 ][ 1 ]).toBe(`{"notifications":[]}`);
     });
   });
 });

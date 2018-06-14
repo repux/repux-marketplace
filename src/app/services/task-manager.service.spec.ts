@@ -2,15 +2,23 @@ import { TaskManagerService } from './task-manager.service';
 import { TestBed } from '@angular/core/testing';
 import { TaskManagerComponent } from '../task-manager/task-manager.component';
 import { MatDialogModule } from '@angular/material';
+import { WalletService } from './wallet.service';
+import { from } from 'rxjs';
+import Wallet from '../wallet';
 
 describe('TaskManagerService', () => {
-  let matDialogSpy: { search: jasmine.Spy };
+  let matDialogSpy: { open: jasmine.Spy },
+    walletServiceSpy: { getWallet: jasmine.Spy };
   let service: TaskManagerService;
+  const walletAddress = '0x0000000000000000000000000000000000000000';
 
   beforeEach(() => {
+    walletServiceSpy = jasmine.createSpyObj('WalletService', [ 'getWallet' ]);
+    walletServiceSpy.getWallet.and.returnValue(from(Promise.resolve(new Wallet(walletAddress, 1))));
     matDialogSpy = jasmine.createSpyObj('MatDialog', [ 'open' ]);
-    service = new TaskManagerService(<any> matDialogSpy);
-    window.addEventListener = () => {};
+    service = new TaskManagerService(<any> matDialogSpy, <any> walletServiceSpy);
+    window.addEventListener = () => {
+    };
 
     TestBed.configureTestingModule({
       imports: [
@@ -30,9 +38,10 @@ describe('TaskManagerService', () => {
 
   describe('#addTask()', () => {
     it('should add task to tasks list, run it and call openDialog method', () => {
-      spyOn(service, 'openDialog').and.callFake(function() {
+      spyOn(service, 'openDialog').and.callFake(function () {
         this._dialogRef = {
-          componentInstance: {}
+          componentInstance: {},
+          close: jasmine.createSpy()
         };
       });
 
@@ -52,11 +61,12 @@ describe('TaskManagerService', () => {
     it('should call ngDoCheck on dialogComponent', () => {
       const ngDoCheck = jasmine.createSpy();
 
-      spyOn(service, 'openDialog').and.callFake(function() {
+      spyOn(service, 'openDialog').and.callFake(function () {
         this._dialogRef = {
           componentInstance: {
             ngDoCheck
-          }
+          },
+          close: jasmine.createSpy()
         };
       });
 
@@ -68,11 +78,12 @@ describe('TaskManagerService', () => {
     it('should not call ngDoCheck when dialogRef is undefined', () => {
       const ngDoCheck = jasmine.createSpy();
 
-      spyOn(service, 'openDialog').and.callFake(function() {
+      spyOn(service, 'openDialog').and.callFake(function () {
         this._dialogRef = {
           componentInstance: {
             ngDoCheck
-          }
+          },
+          close: jasmine.createSpy()
         };
       });
 
@@ -90,9 +101,11 @@ describe('TaskManagerService', () => {
         componentInstance: {
           setTaskManagerService,
           ngDoCheck
-        }
+        },
+        close: jasmine.createSpy()
       });
-      service['_dialog'].open = open;
+      service[ '_dialog' ].open = open;
+      service[ 'closeDialog' ] = jasmine.createSpy();
 
       service.openDialog();
       expect(setTaskManagerService.calls.count()).toBe(1);
@@ -101,7 +114,9 @@ describe('TaskManagerService', () => {
     });
 
     it('should not call open method when _dialogRef is defined', () => {
-      service['_dialogRef'] = <any> 'SOME_VALUE';
+      service[ '_dialogRef' ] = <any> {
+        close: jasmine.createSpy()
+      };
       const setTaskManagerService = jasmine.createSpy();
       const ngDoCheck = jasmine.createSpy();
 
@@ -109,9 +124,11 @@ describe('TaskManagerService', () => {
         componentInstance: {
           setTaskManagerService,
           ngDoCheck
-        }
+        },
+        close: jasmine.createSpy()
       });
-      service['_dialog'].open = open;
+      service[ '_dialog' ].open = open;
+      service[ 'closeDialog' ] = jasmine.createSpy();
 
       service.openDialog();
       expect(setTaskManagerService.calls.count()).toBe(0);
@@ -123,7 +140,7 @@ describe('TaskManagerService', () => {
   describe('#closeDialog()', () => {
     it('should call close method on _dialogRef object', () => {
       const close = jasmine.createSpy();
-      service['_dialogRef'] = <any> {
+      service[ '_dialogRef' ] = <any> {
         close
       };
 
@@ -134,7 +151,7 @@ describe('TaskManagerService', () => {
 
   describe('#hasUnfinishedTasks()', () => {
     it('should return true if at least one task is not finished', () => {
-      service['_tasks'] = <any> [ {
+      service[ '_tasks' ] = <any> [ {
         finished: true
       }, {
         finished: false
@@ -146,7 +163,7 @@ describe('TaskManagerService', () => {
     });
 
     it('should return false if all tasks are finished', () => {
-      service['_tasks'] = <any> [ {
+      service[ '_tasks' ] = <any> [ {
         finished: true
       }, {
         finished: true

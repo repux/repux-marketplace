@@ -2,7 +2,7 @@
   <button mat-raised-button
           color="accent"
           *ngIf="!userIsOwner && !bought"
-          (click)="buyDataProduct(productAddress)">Buy</button>
+          (click)="buyDataProduct()">Buy</button>
 
   <div *ngIf="approved || userIsOwner">
     <app-download-product-button [productAddress]="productAddress"></app-download-product-button>
