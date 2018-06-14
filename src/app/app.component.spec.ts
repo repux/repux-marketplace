@@ -18,17 +18,21 @@ import {
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { PipesModule } from './pipes/pipes.module';
 import { APP_BASE_HREF } from '@angular/common';
+import { MetamaskDetectorComponent } from './metamask-detector/metamask-detector.component';
 import { DataProductNotificationsService } from './services/data-product-notifications.service';
 import { BuyProductButtonComponent } from './buy-product-button/buy-product-button.component';
 import { DownloadProductButtonComponent } from './download-product-button/download-product-button.component';
+import { WalletService } from './services/wallet.service';
 
 describe('AppComponent', () => {
   beforeEach(async(() => {
+
     TestBed.configureTestingModule({
       declarations: [
         AppComponent,
         DashboardComponent,
         DataProductListComponent,
+        MetamaskDetectorComponent,
         BuyProductButtonComponent,
         DownloadProductButtonComponent
       ],
@@ -49,6 +53,7 @@ describe('AppComponent', () => {
       ],
       providers: [
         { provide: APP_BASE_HREF, useValue: '/' },
+        { provide: WalletService, useValue: jasmine.createSpy() },
         { provide: DataProductNotificationsService, useValue: jasmine.createSpy() }
       ]
     }).compileComponents();

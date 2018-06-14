@@ -35,6 +35,7 @@ import { BuyProductButtonComponent } from './buy-product-button/buy-product-butt
 import { DownloadProductButtonComponent } from './download-product-button/download-product-button.component';
 import { KeyStoreModule } from './key-store/key-store.module';
 import { NotificationsModule } from './notifications/notifications.module';
+import { MetamaskDetectorComponent } from './metamask-detector/metamask-detector.component';
 
 @NgModule({
   declarations: [
@@ -48,7 +49,8 @@ import { NotificationsModule } from './notifications/notifications.module';
     TransactionDialogComponent,
     PurchaseConfirmationDialogComponent,
     BuyProductButtonComponent,
-    DownloadProductButtonComponent
+    DownloadProductButtonComponent,
+    MetamaskDetectorComponent
   ],
   entryComponents: [
     ProductCreatorDialogComponent,

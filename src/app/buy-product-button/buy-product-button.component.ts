@@ -47,7 +47,7 @@ export class BuyProductButtonComponent implements OnInit, OnDestroy {
   }
 
   async getWallet(): Promise<void> {
-    this.wallet = await this._walletService.getData();
+    this.wallet = await this._walletService.getWalletData();
   }
 
   async buyDataProduct(dataProductAddress: string): Promise<void> {

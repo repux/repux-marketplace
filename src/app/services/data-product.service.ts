@@ -27,7 +27,7 @@ export class DataProductService {
 
   private async _getConfig(): Promise<{ lastBlock: number}> {
     const saved = this._storage.getItem(DataProductService.STORAGE_PREFIX + 'config');
-    const wallet = await this._walletService.getData();
+    const wallet = await this._walletService.getWalletData();
 
     if (saved) {
       const parsed = JSON.parse(saved);
@@ -48,7 +48,7 @@ export class DataProductService {
   }
 
   private async _setConfig(config): Promise<void> {
-    const wallet = await this._walletService.getData();
+    const wallet = await this._walletService.getWalletData();
     config.address = wallet.address;
     this._storage.setItem(DataProductService.STORAGE_PREFIX + 'config', JSON.stringify(config));
   }

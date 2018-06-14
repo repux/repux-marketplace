@@ -58,7 +58,7 @@ export class NotificationsService {
 
   private async _getConfig(): Promise<{ notifications: Notification[] }> {
     const saved = this._storage.getItem(NotificationsService.STORAGE_PREFIX + 'config');
-    const wallet = await this._walletService.getData();
+    const wallet = await this._walletService.getWalletData();
 
     if (saved) {
       const parsed = JSON.parse(saved);
@@ -79,7 +79,7 @@ export class NotificationsService {
   }
 
   private async _setConfig(config): Promise<void> {
-    const wallet = await this._walletService.getData();
+    const wallet = await this._walletService.getWalletData();
     config.address = wallet.address;
     this._storage.setItem(NotificationsService.STORAGE_PREFIX + 'config', JSON.stringify(config));
   }

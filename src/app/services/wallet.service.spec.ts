@@ -1,4 +1,4 @@
-import { WalletService } from './wallet.service';
+import { MetamaskStatus, WalletService } from './wallet.service';
 
 const balanceInWei = 1000000000000000000;
 const balanceInEther = 1;
@@ -20,7 +20,7 @@ const web3Mock = {
 
 const repuxWeb3ApiMock = {
   getDefaultAccount() {
-    return web3Mock.eth.accounts[0];
+    return web3Mock.eth.accounts[ 0 ];
   },
 
   async getBalance() {
@@ -37,45 +37,45 @@ describe('WalletService', () => {
       'RepuxWeb3Service',
       [ 'getRepuxApiInstance', 'getWeb3Instance', 'isProviderAvailable', 'isDefaultAccountAvailable' ]
     );
+    const raf = window.requestAnimationFrame;
+    window.requestAnimationFrame = undefined;
     walletService = new WalletService(<any> repuxWeb3ServiceSpy);
+    window.requestAnimationFrame = raf;
   });
 
   it('should be created', () => {
     expect(walletService).toBeTruthy();
   });
 
-  describe('isProviderAvailable()', () => {
-    it('should return call isProviderAvailable on repuxWeb3Service', () => {
+  describe('#detect()', () => {
+    it('should return `not installed`', async () => {
+      repuxWeb3ServiceSpy.isProviderAvailable.and.returnValue(false);
+      expect(await walletService.detectMetamaskStatus()).toEqual(MetamaskStatus.NotInstalled);
+    });
+
+    it('should return `not logged in`', async () => {
       repuxWeb3ServiceSpy.isProviderAvailable.and.returnValue(true);
-      expect(walletService.isProviderAvailable()).toBeTruthy();
-      expect(repuxWeb3ServiceSpy.isProviderAvailable.calls.count()).toBe(1);
+      repuxWeb3ServiceSpy.isDefaultAccountAvailable.and.returnValue(false);
+      expect(await walletService.detectMetamaskStatus()).toEqual(MetamaskStatus.NotLoggedIn);
+    });
+
+    it('should return `ok`', async () => {
+      repuxWeb3ServiceSpy.isProviderAvailable.and.returnValue(true);
+      repuxWeb3ServiceSpy.isDefaultAccountAvailable.and.returnValue(true);
+      expect(await walletService.detectMetamaskStatus()).toEqual(MetamaskStatus.Ok);
     });
   });
 
-  describe('isDefaultAccountAvailable()', () => {
-    it('should return call isDefaultAccountAvailable on repuxWeb3Service', async () => {
-      repuxWeb3ServiceSpy.isDefaultAccountAvailable.and.returnValue(Promise.resolve(true));
-      expect(await walletService.isDefaultAccountAvailable()).toBeTruthy();
-      expect(repuxWeb3ServiceSpy.isDefaultAccountAvailable.calls.count()).toBe(1);
-    });
-  });
-
-  describe('getData()', () => {
+  describe('#getWalletData()', () => {
     it('should return wallet data with account number and balance set', async () => {
-      repuxWeb3ServiceSpy.isDefaultAccountAvailable.and.returnValue(Promise.resolve(true));
+      repuxWeb3ServiceSpy.isDefaultAccountAvailable.and.returnValue(true);
       repuxWeb3ServiceSpy.getRepuxApiInstance.and.returnValue(repuxWeb3ApiMock);
       repuxWeb3ServiceSpy.getWeb3Instance.and.returnValue(web3Mock);
-      const wallet = await walletService.getData();
+      const wallet = await walletService.getWalletData();
       expect(wallet.address).toEqual(web3Mock.eth.accounts[ 0 ]);
       expect(wallet.balance).toEqual(balanceInEther);
       expect(repuxWeb3ServiceSpy.getWeb3Instance.calls.count()).toBe(1);
       expect(repuxWeb3ServiceSpy.getRepuxApiInstance.calls.count()).toBe(2);
-    });
-
-    it('should return null when no provider available', async () => {
-      repuxWeb3ServiceSpy.isDefaultAccountAvailable.and.returnValue(Promise.resolve(false));
-      const wallet = await walletService.getData();
-      expect(wallet).toBeNull();
     });
   });
 });
