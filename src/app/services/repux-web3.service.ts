@@ -24,6 +24,11 @@ export class RepuxWeb3Service {
     return this.isProviderAvailable() && await this.repuxWeb3Api.getDefaultAccount();
   }
 
+  async isNetworkCorrect(): Promise<boolean> {
+    const netId = await this.repuxWeb3Api.getNetworkId();
+    return +netId === environment.networkId;
+  }
+
   getWeb3Instance() {
     return this.web3;
   }
