@@ -3,10 +3,9 @@ import { MetamaskStatus, WalletService } from '../services/wallet.service';
 import { Subscription } from 'rxjs/internal/Subscription';
 import { environment } from '../../environments/environment';
 
-const networkName = environment.production ? 'Main Ethereum Network' : 'Truffle Development Network';
-
 const Messages = {
-  [ MetamaskStatus.WrongNetwork ]: `Oops, seems like you're on wrong network! Open MetaMask and please, switch to ${networkName} .`,
+  // tslint:disable:max-line-length
+  [ MetamaskStatus.WrongNetwork ]: `Oops, seems like you're on wrong network! Open MetaMask and please, switch to ${environment.networkName} .`,
   [ MetamaskStatus.NotInstalled ]: 'You need a secure wallet like MetaMask to browse through Marketplace. ' +
   'As soon as the extension is installed the warning will be gone.',
   [ MetamaskStatus.NotLoggedIn ]: 'You need login to MetaMask and import RepuX account.'
@@ -33,7 +32,9 @@ export class MetamaskDetectorComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.subscription = this.walletService.getMetamaskStatus().subscribe(status => {
       this.status = status;
-      this.message = Messages[ this.status ];
+      if (Messages[ this.status ]) {
+        this.message = Messages[ this.status ];
+      }
     });
   }
 

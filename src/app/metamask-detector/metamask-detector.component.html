@@ -1,4 +1,3 @@
-<mat-card
-  *ngIf="status !== statuses.Ok"
-  class="metamask-detector__banner">{{ message }}
-</mat-card>
+<div *ngIf="status !== statuses.Ok">
+  <mat-card class="metamask-detector__banner">{{ message }}</mat-card>
+</div>

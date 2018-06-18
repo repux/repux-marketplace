@@ -26,7 +26,7 @@ export class RepuxWeb3Service {
 
   async isNetworkCorrect(): Promise<boolean> {
     const netId = await this.repuxWeb3Api.getNetworkId();
-    return +netId === environment.networkId;
+    return +netId >= environment.networkId;
   }
 
   getWeb3Instance() {

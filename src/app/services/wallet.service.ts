@@ -2,7 +2,6 @@ import { Injectable, OnDestroy } from '@angular/core';
 import Wallet from '../wallet';
 import { RepuxWeb3Service } from './repux-web3.service';
 import { Observable } from 'rxjs/internal/Observable';
-import { Subject } from 'rxjs';
 import { BehaviorSubject } from 'rxjs/internal/BehaviorSubject';
 
 enum WorkerState {
@@ -23,7 +22,7 @@ export enum MetamaskStatus {
 export class WalletService implements OnDestroy {
   private metamaskStatus = MetamaskStatus.Ok;
   private rafReference: number;
-  private metamaskStatusSubject = new BehaviorSubject<MetamaskStatus>(undefined);
+  private metamaskStatusSubject = new BehaviorSubject<MetamaskStatus>(MetamaskStatus.Ok);
   private walletSubject = new BehaviorSubject<Wallet>(undefined);
   private currentFrame = 0;
   private checkFramesInterval = 100;

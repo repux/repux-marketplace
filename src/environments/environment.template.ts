@@ -18,6 +18,7 @@ const isProduction = [ 'true', '1', '' ].includes('${MARKETPLACE_IS_PRODUCTION}'
 export const environment = {
   production: isProduction,
   networkId: 1,
+  networkName: 'Main Ethereum Network',
   repux: {
     metaindexer: {
       protocol: '${MARKETPLACE_METAINDEXER_PROTOCOL}' || 'https',

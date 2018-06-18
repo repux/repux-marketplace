@@ -27,7 +27,7 @@
     "core-js": "^2.5.4",
     "git": "^0.1.0",
     "repux-lib": "git+ssh://git@github.com:repux/repux-lib.git#0.4.0",
-    "repux-web3-api": "git+ssh://git@github.com:repux/repux-web3-api.git#42974e0ec174d31a511211ad9bf8c1989a1e6587",
+    "repux-web3-api": "git+ssh://git@github.com:repux/repux-web3-api.git#1.4.0",
     "rxjs": "^6.0.0",
     "zone.js": "^0.8.26"
   },
