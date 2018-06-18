@@ -2,7 +2,7 @@ import { Injectable, OnDestroy } from '@angular/core';
 import Wallet from '../wallet';
 import { RepuxWeb3Service } from './repux-web3.service';
 import { Observable } from 'rxjs/internal/Observable';
-import { Subject } from 'rxjs';
+import { BehaviorSubject } from 'rxjs/internal/BehaviorSubject';
 
 enum WorkerState {
   Ready,
@@ -10,6 +10,7 @@ enum WorkerState {
 }
 
 export enum MetamaskStatus {
+  WrongNetwork,
   NotInstalled,
   NotLoggedIn,
   Ok
@@ -21,8 +22,8 @@ export enum MetamaskStatus {
 export class WalletService implements OnDestroy {
   private metamaskStatus = MetamaskStatus.Ok;
   private rafReference: number;
-  private metamaskStatusSubject = new Subject<MetamaskStatus>();
-  private walletSubject = new Subject<Wallet>();
+  private metamaskStatusSubject = new BehaviorSubject<MetamaskStatus>(MetamaskStatus.Ok);
+  private walletSubject = new BehaviorSubject<Wallet>(undefined);
   private currentFrame = 0;
   private checkFramesInterval = 100;
   private workerState: WorkerState;
@@ -71,6 +72,10 @@ export class WalletService implements OnDestroy {
   async detectMetamaskStatus(): Promise<MetamaskStatus> {
     if (!this.repuxWeb3Service.isProviderAvailable()) {
       return MetamaskStatus.NotInstalled;
+    }
+
+    if (!(await this.repuxWeb3Service.isNetworkCorrect())) {
+      return MetamaskStatus.WrongNetwork;
     }
 
     if (!(await this.repuxWeb3Service.isDefaultAccountAvailable())) {

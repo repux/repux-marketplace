@@ -35,7 +35,7 @@ describe('WalletService', () => {
   beforeEach(() => {
     repuxWeb3ServiceSpy = jasmine.createSpyObj(
       'RepuxWeb3Service',
-      [ 'getRepuxApiInstance', 'getWeb3Instance', 'isProviderAvailable', 'isDefaultAccountAvailable' ]
+      [ 'getRepuxApiInstance', 'getWeb3Instance', 'isProviderAvailable', 'isDefaultAccountAvailable', 'isNetworkCorrect' ]
     );
     const raf = window.requestAnimationFrame;
     window.requestAnimationFrame = undefined;
@@ -48,18 +48,26 @@ describe('WalletService', () => {
   });
 
   describe('#detect()', () => {
+    it('should return `wrong network`', async () => {
+      repuxWeb3ServiceSpy.isProviderAvailable.and.returnValue(true);
+      repuxWeb3ServiceSpy.isNetworkCorrect.and.returnValue(false);
+      expect(await walletService.detectMetamaskStatus()).toEqual(MetamaskStatus.WrongNetwork);
+    });
+
     it('should return `not installed`', async () => {
       repuxWeb3ServiceSpy.isProviderAvailable.and.returnValue(false);
       expect(await walletService.detectMetamaskStatus()).toEqual(MetamaskStatus.NotInstalled);
     });
 
     it('should return `not logged in`', async () => {
+      repuxWeb3ServiceSpy.isNetworkCorrect.and.returnValue(true);
       repuxWeb3ServiceSpy.isProviderAvailable.and.returnValue(true);
       repuxWeb3ServiceSpy.isDefaultAccountAvailable.and.returnValue(false);
       expect(await walletService.detectMetamaskStatus()).toEqual(MetamaskStatus.NotLoggedIn);
     });
 
     it('should return `ok`', async () => {
+      repuxWeb3ServiceSpy.isNetworkCorrect.and.returnValue(true);
       repuxWeb3ServiceSpy.isProviderAvailable.and.returnValue(true);
       repuxWeb3ServiceSpy.isDefaultAccountAvailable.and.returnValue(true);
       expect(await walletService.detectMetamaskStatus()).toEqual(MetamaskStatus.Ok);
