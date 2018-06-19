@@ -5,11 +5,11 @@ import { defer } from 'rxjs/index';
 
 describe('ElasticSearchService', () => {
   let service: ElasticSearchService<EsDataProduct>;
-  let httpClientSpy: { get: jasmine.Spy };
+  let httpClientSpy: { post: jasmine.Spy };
   const type = 'data_product';
 
   beforeEach(() => {
-    httpClientSpy = jasmine.createSpyObj('HttpClient', [ 'get' ]);
+    httpClientSpy = jasmine.createSpyObj('HttpClient', [ 'post' ]);
     service = new ElasticSearchService(<any> httpClientSpy);
   });
 
@@ -20,7 +20,7 @@ describe('ElasticSearchService', () => {
         status: 404, statusText: 'Not Found'
       });
 
-      httpClientSpy.get.and.returnValue(defer(() => Promise.reject(errorResponse)));
+      httpClientSpy.post.and.returnValue(defer(() => Promise.reject(errorResponse)));
 
       service.search(type, '*', '', 10, 0, EsDataProduct)
         .subscribe(
@@ -54,7 +54,7 @@ describe('ElasticSearchService', () => {
         hits: expectedEsDataProducts
       };
 
-      httpClientSpy.get.and.returnValue(defer(() => Promise.resolve({ hits: expectedResult })));
+      httpClientSpy.post.and.returnValue(defer(() => Promise.resolve({ hits: expectedResult })));
 
       service.search(type, '*', '', 10, 0, EsDataProduct)
         .subscribe(result => {
@@ -66,7 +66,7 @@ describe('ElasticSearchService', () => {
           },
           fail
         );
-      expect(httpClientSpy.get.calls.count()).toBe(1, 'one call');
+      expect(httpClientSpy.post.calls.count()).toBe(1, 'one call');
     });
   });
 });

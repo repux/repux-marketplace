@@ -31,8 +31,8 @@ export class DataProductNotificationsService implements OnDestroy {
     private _dialog: MatDialog
   ) {
     this._notificationsService.addParser(
-      NotificationType.DATA_PRODUCT_TO_APPROVE,
-      (notification: Notification) => this._parseDataProductToApprove(notification)
+      NotificationType.DATA_PRODUCT_TO_FINALISATION,
+      (notification: Notification) => this._parseDataProductToFinalisation(notification)
     );
     this._walletService.getWallet().subscribe(wallet => this._onWalletChange(wallet));
   }
@@ -63,20 +63,20 @@ export class DataProductNotificationsService implements OnDestroy {
 
   private async _onProductPurchase(purchaseEvent: DataProductEvent): Promise<void> {
     this._notificationsService.pushNotification(new Notification(
-      NotificationType.DATA_PRODUCT_TO_APPROVE,
+      NotificationType.DATA_PRODUCT_TO_FINALISATION,
       {
         purchaseEvent
       })
     );
   }
 
-  private async _parseDataProductToApprove(notification: Notification): Promise<string | null> {
+  private async _parseDataProductToFinalisation(notification: Notification): Promise<string | null> {
     const purchaseEvent = notification.data.purchaseEvent;
     const transaction = await this._dataProductService.getTransactionData(purchaseEvent.dataProductAddress, purchaseEvent.userAddress);
     const notificationMessage = `User with account ${purchaseEvent.userAddress} purchased your product ` +
-      `${purchaseEvent.dataProductAddress}. Please approve this transaction.`;
+      `${purchaseEvent.dataProductAddress}. Please finalise this transaction.`;
 
-    if (transaction.approved) {
+    if (transaction.finalised) {
       notification.read = true;
       this._notificationsService.saveNotifications();
       return notificationMessage;

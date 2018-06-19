@@ -26,8 +26,8 @@
     "bignumber.js": "7.0.2",
     "core-js": "^2.5.4",
     "git": "^0.1.0",
-    "repux-lib": "git+ssh://git@github.com:repux/repux-lib.git#0.4.0",
-    "repux-web3-api": "git+ssh://git@github.com:repux/repux-web3-api.git#1.4.0",
+    "repux-lib": "git+ssh://git@github.com:repux/repux-lib.git#f878331931b72be9ca2758328a3c58b9d0a66a8f",
+    "repux-web3-api": "git+ssh://git@github.com:repux/repux-web3-api.git#b0eb6b666c6c1db69cd8bc43590e3bfa37ec7a5a",
     "rxjs": "^6.0.0",
     "zone.js": "^0.8.26"
   },

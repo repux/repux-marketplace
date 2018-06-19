@@ -18,7 +18,8 @@ describe('BuyProductButtonComponent', () => {
   let component: BuyProductButtonComponent;
   let fixture: ComponentFixture<BuyProductButtonComponent>;
   let repuxLibServiceSpy, keyStoreServiceSpy;
-  const productAddress = '0x1111111111111111111111111111111111111111';
+  const dataProductAddress = '0x1111111111111111111111111111111111111111';
+  const buyerAddress = '0x0000000000000000000000000000000000000000';
 
   beforeEach(fakeAsync(() => {
     repuxLibServiceSpy = jasmine.createSpyObj('RepuxLibService', [ 'getInstance', 'getClass' ]);
@@ -43,7 +44,14 @@ describe('BuyProductButtonComponent', () => {
     fixture = TestBed.createComponent(BuyProductButtonComponent);
     component = fixture.componentInstance;
 
-    component.productAddress = productAddress;
+    component.dataProductAddress = dataProductAddress;
+    component.dataProduct = <any> {
+      address: dataProductAddress,
+      transactions: [ {
+        buyerAddress,
+        finalised: true
+      } ]
+    };
     fixture.detectChanges();
   }));
 
@@ -64,45 +72,22 @@ describe('BuyProductButtonComponent', () => {
     });
   });
 
-  describe('#getBoughtProducts()', () => {
-    it('should assign result of dataProductService.getBoughtDataProducts to boughtProducts property', async () => {
-      const expectedResult = [ 'PRODUCT' ];
-      const getBoughtDataProducts = jasmine.createSpy();
-      getBoughtDataProducts.and.returnValue(Promise.resolve(expectedResult));
-      component[ '_dataProductService' ].getBoughtDataProducts = getBoughtDataProducts;
-
-      await component.getBoughtProducts();
-      expect(component.boughtProducts).toBe(expectedResult);
-      expect(getBoughtDataProducts.calls.count()).toBe(1);
-    });
-  });
-
-  describe('#getApprovedProducts()', () => {
-    it('should assign result of dataProductService.getBoughtAndApprovedDataProducts to approvedProducts property', async () => {
-      const expectedResult = [ 'PRODUCT' ];
-      const getBoughtAndApprovedDataProducts = jasmine.createSpy();
-      getBoughtAndApprovedDataProducts.and.returnValue(Promise.resolve(expectedResult));
-      component[ '_dataProductService' ].getBoughtAndApprovedDataProducts = getBoughtAndApprovedDataProducts;
-
-      await component.getApprovedProducts();
-      expect(component.approvedProducts).toBe(expectedResult);
-      expect(getBoughtAndApprovedDataProducts.calls.count()).toBe(1);
-    });
-  });
-
   describe('#_onWalletChange()', () => {
-    it('should call getBoughtProducts and getApprovedProducts', () => {
-      const getApprovedProducts = jasmine.createSpy();
-      const getBoughtProducts = jasmine.createSpy();
-      component.getApprovedProducts = getApprovedProducts;
-      component.getBoughtProducts = getBoughtProducts;
+    it('should call getBoughtProducts and getFinalisedProducts', () => {
+      const getFinalised = jasmine.createSpy();
+      const getBought = jasmine.createSpy();
+      const getUserIsOwner = jasmine.createSpy();
+      component.getFinalised = getFinalised;
+      component.getBought = getBought;
+      component.getUserIsOwner = getUserIsOwner;
       const wallet = new Wallet('0x00', 0);
       component[ '_onWalletChange' ](wallet);
       component[ '_onWalletChange' ](wallet);
       component[ '_onWalletChange' ](null);
       component[ '_onWalletChange' ](new Wallet('0x01', 0));
-      expect(getApprovedProducts.calls.count()).toBe(2);
-      expect(getBoughtProducts.calls.count()).toBe(2);
+      expect(getFinalised.calls.count()).toBe(2);
+      expect(getBought.calls.count()).toBe(2);
+      expect(getUserIsOwner.calls.count()).toBe(2);
     });
   });
 
@@ -140,50 +125,82 @@ describe('BuyProductButtonComponent', () => {
       await component.buyDataProduct();
       expect(dialog.open.calls.count()).toBe(2);
       expect(callTransaction.calls.count()).toBe(1);
-      expect(component.boughtProducts).toEqual([ productAddress ]);
-      expect(component.approvedProducts).toEqual([]);
-    });
-  });
-
-  describe('#get approved()', () => {
-    it('should return true if approvedProducts contains productAddress', () => {
-      component.approvedProducts = null;
-      expect(component.approved).toBeFalsy();
-
-      component.approvedProducts = [];
-      expect(component.approved).toBeFalsy();
-
-      component.approvedProducts = [ productAddress ];
-      expect(component.approved).toBeTruthy();
-    });
-  });
-
-  describe('#get bought()', () => {
-    it('should return true if boughtProducts contains productAddress', () => {
-      component.boughtProducts = null;
-      expect(component.bought).toBeFalsy();
-
-      component.boughtProducts = [];
-      expect(component.bought).toBeFalsy();
-
-      component.boughtProducts = [ productAddress ];
       expect(component.bought).toBeTruthy();
+      expect(component.finalised).toBeFalsy();
     });
   });
 
-  describe('#get userIsOwner()', () => {
+  describe('#getFinalised()', () => {
+    it('should return true if user bought product and transaction is finalised', () => {
+      component.wallet = new Wallet(buyerAddress, 0);
+      component.dataProduct = <any> {
+        address: dataProductAddress,
+        transactions: [ {
+          buyerAddress,
+          finalised: true
+        } ]
+      };
+      expect(component.getFinalised()).toBeTruthy();
+      component.dataProduct = <any> {
+        address: dataProductAddress,
+        transactions: [ {
+          buyerAddress: '0x00',
+          finalised: true
+        } ]
+      };
+      expect(component.getFinalised()).toBeFalsy();
+
+      component.dataProduct = <any> {
+        address: dataProductAddress,
+        transactions: []
+      };
+      expect(component.getFinalised()).toBeFalsy();
+
+      component.dataProduct = <any> {
+        address: dataProductAddress,
+        transactions: [ {
+          buyerAddress,
+          finalised: false
+        } ]
+      };
+      expect(component.getFinalised()).toBeFalsy();
+    });
+  });
+
+  describe('#getBought()', () => {
+    it('should return true if bought proguct', () => {
+      component.wallet = new Wallet(buyerAddress, 0);
+      component.dataProduct = <any> {
+        address: dataProductAddress,
+        transactions: [ {
+          buyerAddress
+        } ]
+      };
+      expect(component.getBought()).toBeTruthy();
+
+      component.dataProduct = <any> {
+        address: dataProductAddress,
+        transactions: [ {
+          buyerAddress: '0x00'
+        } ]
+      };
+      expect(component.getBought()).toBeFalsy();
+    });
+  });
+
+  describe('#getUserIsOwner()', () => {
     it('should return true if productOwnerAddress is equal to wallet.address', () => {
       component.wallet = null;
-      expect(component.userIsOwner).toBeFalsy();
+      expect(component.getUserIsOwner()).toBeFalsy();
 
       component.wallet = new Wallet('0x00', 0);
-      expect(component.userIsOwner).toBeFalsy();
+      expect(component.getUserIsOwner()).toBeFalsy();
 
       component.productOwnerAddress = '0x00';
-      expect(component.userIsOwner).toBeTruthy();
+      expect(component.getUserIsOwner()).toBeTruthy();
 
       component.productOwnerAddress = '0x01';
-      expect(component.userIsOwner).toBeFalsy();
+      expect(component.getUserIsOwner()).toBeFalsy();
     });
   });
 

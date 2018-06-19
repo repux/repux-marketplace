@@ -1,15 +1,15 @@
-<div *ngIf="wallet && boughtProducts">
+<div *ngIf="wallet">
   <button mat-raised-button
           color="accent"
           *ngIf="!userIsOwner && !bought"
           (click)="buyDataProduct()">Buy</button>
 
-  <div *ngIf="approved || userIsOwner">
-    <app-download-product-button [productAddress]="productAddress"></app-download-product-button>
+  <div *ngIf="finalised || userIsOwner">
+    <app-download-product-button [productAddress]="dataProductAddress"></app-download-product-button>
   </div>
 
-  <span class="buy-button-replacement" *ngIf="bought && !approved"
-        matTooltip="You will be able to download this file after owner accepts the sale">
-    Pending approval
+  <span class="buy-button-replacement" *ngIf="bought && !finalised"
+        matTooltip="You will be able to download this file after owner finalises the sale">
+    Pending finalisation
   </span>
 </div>

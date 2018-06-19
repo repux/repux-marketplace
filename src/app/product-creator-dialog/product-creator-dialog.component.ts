@@ -59,6 +59,10 @@ export class ProductCreatorDialogComponent implements OnDestroy {
     Validators.required
   ]);
 
+  public daysForDeliverFormControl = new FormControl(1, [
+    Validators.required
+  ]);
+
   constructor(
     private keyStoreService: KeyStoreService,
     private repuxLibService: RepuxLibService,
@@ -72,7 +76,8 @@ export class ProductCreatorDialogComponent implements OnDestroy {
       longDescription: this.longDescriptionFormControl,
       category: this.categoryFormControl,
       price: this.priceFormControl,
-      file: this.fileFormControl
+      file: this.fileFormControl,
+      daysForDeliver: this.daysForDeliverFormControl
     });
   }
 
@@ -92,7 +97,8 @@ export class ProductCreatorDialogComponent implements OnDestroy {
       this.formGroup.value.longDescription,
       this.categoryInput.value,
       new BigNumber(this.formGroup.value.price),
-      this.fileInput.value[ 0 ]
+      this.fileInput.value[ 0 ],
+      this.formGroup.value.daysForDeliver,
     );
 
     this.taskManagerService.addTask(fileUploadTask);
@@ -118,6 +124,10 @@ export class ProductCreatorDialogComponent implements OnDestroy {
         }
       });
     });
+  }
+
+  get daysForDeliverOptions() {
+    return [ 0, 1, 2 ];
   }
 
   ngOnDestroy() {

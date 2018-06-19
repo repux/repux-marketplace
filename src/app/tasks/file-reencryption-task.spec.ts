@@ -32,7 +32,7 @@ describe('FileReencryptionTask', () => {
     repuxLibService.getInstance.and.returnValue({
       createFileReencryptor
     });
-    dataProductService = jasmine.createSpyObj('DataProductService', [ 'approveDataProductPurchase' ]);
+    dataProductService = jasmine.createSpyObj('DataProductService', [ 'finaliseDataProductPurchase' ]);
     taskManagerService = jasmine.createSpyObj('TaskManagerService', [ 'onTaskEvent' ]);
     keyStoreService = jasmine.createSpyObj('KeyStoreService', [ 'hasKeys' ]);
     matDialog = jasmine.createSpyObj('MatDialog', [ 'open' ]);
@@ -147,8 +147,8 @@ describe('FileReencryptionTask', () => {
       expect(fileReencryptionTask[ '_progress' ]).toEqual(100);
       expect(fileReencryptionTask[ '_result' ]).toEqual(result);
       expect(fileReencryptionTask[ '_needsUserAction' ]).toBeTruthy();
-      expect(fileReencryptionTask[ '_userActionName' ]).toBe('Approve');
-      expect(fileReencryptionTask[ '_status' ]).toBe(STATUS.WAITING_FOR_APPROVE);
+      expect(fileReencryptionTask[ '_userActionName' ]).toBe('Finalise');
+      expect(fileReencryptionTask[ '_status' ]).toBe(STATUS.WAITING_FOR_FINALISATION);
     });
 
     it('should call taskManagerService.onTaskEvent() when any event is received', async () => {
@@ -165,9 +165,9 @@ describe('FileReencryptionTask', () => {
       expect(taskManagerService.onTaskEvent.calls.count()).toBe(3);
     });
 
-    it('should call dataProductService.approveDataProductPurchase when status is WAITING_FOR_APPROVAL', async () => {
-      dataProductService.approveDataProductPurchase.and.returnValue(Promise.resolve());
-      fileReencryptionTask[ '_status' ] = STATUS.WAITING_FOR_APPROVE;
+    it('should call dataProductService.finaliseDataProductPurchase when status is WAITING_FOR_FINALISATION', async () => {
+      dataProductService.finaliseDataProductPurchase.and.returnValue(Promise.resolve());
+      fileReencryptionTask[ '_status' ] = STATUS.WAITING_FOR_FINALISATION;
       fileReencryptionTask[ '_taskManagerService' ] = taskManagerService;
       fileReencryptionTask[ '_needsUserAction' ] = true;
       fileReencryptionTask[ '_result' ] = 'RESULT';
@@ -176,16 +176,16 @@ describe('FileReencryptionTask', () => {
       expect(fileReencryptionTask[ '_needsUserAction' ]).toBeFalsy();
       expect(fileReencryptionTask[ '_status' ]).toBe(STATUS.FINISHED);
       expect(fileReencryptionTask[ '_finished' ]).toBeTruthy();
-      expect(dataProductService.approveDataProductPurchase.calls.allArgs()[ 0 ][ 0 ]).toBe(fileReencryptionTask[ '_dataProductAddress' ]);
-      expect(dataProductService.approveDataProductPurchase.calls.allArgs()[ 0 ][ 1 ]).toBe(fileReencryptionTask[ '_buyerAddress' ]);
-      expect(dataProductService.approveDataProductPurchase.calls.allArgs()[ 0 ][ 2 ]).toBe(fileReencryptionTask[ '_result' ]);
+      expect(dataProductService.finaliseDataProductPurchase.calls.allArgs()[ 0 ][ 0 ]).toBe(fileReencryptionTask[ '_dataProductAddress' ]);
+      expect(dataProductService.finaliseDataProductPurchase.calls.allArgs()[ 0 ][ 1 ]).toBe(fileReencryptionTask[ '_buyerAddress' ]);
+      expect(dataProductService.finaliseDataProductPurchase.calls.allArgs()[ 0 ][ 2 ]).toBe(fileReencryptionTask[ '_result' ]);
       expect(taskManagerService.onTaskEvent.calls.count()).toBe(2);
     });
 
-    it('should handle rejection of dataProductService.approveDataProductPurchase when status is WAITING_FOR_APPROVAL', async () => {
+    it('should handle rejection of dataProductService.finaliseDataProductPurchase when status is WAITING_FOR_FINALISATION', async () => {
       const error = 'ERROR';
-      dataProductService.approveDataProductPurchase.and.returnValue(Promise.reject(error));
-      fileReencryptionTask[ '_status' ] = STATUS.WAITING_FOR_APPROVE;
+      dataProductService.finaliseDataProductPurchase.and.returnValue(Promise.reject(error));
+      fileReencryptionTask[ '_status' ] = STATUS.WAITING_FOR_FINALISATION;
       fileReencryptionTask[ '_taskManagerService' ] = taskManagerService;
       fileReencryptionTask[ '_needsUserAction' ] = true;
       fileReencryptionTask[ '_result' ] = 'RESULT';

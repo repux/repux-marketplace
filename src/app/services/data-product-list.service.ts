@@ -14,7 +14,7 @@ export class DataProductListService {
   constructor(private esService: ElasticSearchService<EsDataProduct>) {
   }
 
-  getFiles(query?: string, sort?: string, size?: number, from?: number): Observable<EsResponse<Deserializable<EsDataProduct>>> {
+  getFiles(query?: Object, sort?: string, size?: number, from?: number): Observable<EsResponse<Deserializable<EsDataProduct>>> {
     return this.esService.search(DataProductListService.type, query, sort, size, from, EsDataProduct);
   }
 }

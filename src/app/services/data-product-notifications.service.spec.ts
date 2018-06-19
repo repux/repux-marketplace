@@ -69,7 +69,7 @@ describe('DataProductNotificationsService', () => {
   describe('#constructor()', () => {
     it('should add parser to notificationsService', () => {
       expect(notificationsService.addParser.calls.count()).toBe(1);
-      expect(notificationsService.addParser.calls.allArgs()[ 0 ][ 0 ]).toBe(NotificationType.DATA_PRODUCT_TO_APPROVE);
+      expect(notificationsService.addParser.calls.allArgs()[ 0 ][ 0 ]).toBe(NotificationType.DATA_PRODUCT_TO_FINALISATION);
       expect(typeof notificationsService.addParser.calls.allArgs()[ 0 ][ 1 ]).toBe('function');
       expect(dataProductService.getCreatedDataProducts.calls.count()).toBe(1);
     });
@@ -125,20 +125,20 @@ describe('DataProductNotificationsService', () => {
       service[ '_onProductPurchase' ](purchaseEvent);
       expect(notificationsService.pushNotification.calls.count()).toBe(1);
       expect(notificationsService.pushNotification.calls.allArgs()[ 0 ][ 0 ]).toEqual(new Notification(
-        NotificationType.DATA_PRODUCT_TO_APPROVE, {
+        NotificationType.DATA_PRODUCT_TO_FINALISATION, {
           purchaseEvent
         }));
     });
   });
 
-  describe('#_parseDataProductToApprove()', () => {
-    it('should return correct notification message when transaction is approved', async () => {
+  describe('#_parseDataProductToFinalisation()', () => {
+    it('should return correct notification message when transaction is finalised', async () => {
       dataProductService.getTransactionData.and.returnValue({
         publicKey: 'PUBLIC_KEY',
         buyerMetaHash: 'BUYER_META_HASH',
         price: new BigNumber(1),
         purchased: true,
-        approved: true,
+        finalised: true,
         rated: false,
         rating: new BigNumber(0)
       });
@@ -148,16 +148,16 @@ describe('DataProductNotificationsService', () => {
         dataProductUpdateAction: DataProductUpdateAction.PURCHASE,
         blockNumber: 1
       };
-      const notification = new Notification(NotificationType.DATA_PRODUCT_TO_APPROVE, {
+      const notification = new Notification(NotificationType.DATA_PRODUCT_TO_FINALISATION, {
         purchaseEvent
       });
 
-      const result = await service[ '_parseDataProductToApprove' ](notification);
+      const result = await service[ '_parseDataProductToFinalisation' ](notification);
       expect(notification.read).toBeTruthy();
-      expect(result).toBe(`User with account 0x01 purchased your product ${productAddress}. Please approve this transaction.`);
+      expect(result).toBe(`User with account 0x01 purchased your product ${productAddress}. Please finalise this transaction.`);
     });
 
-    it('should return correct notification message and create reencryption task when transaction is not approved', async () => {
+    it('should return correct notification message and create reencryption task when transaction is not finalised', async () => {
       repuxLibService.getClass.and.returnValue({
         deserializePublicKey(publicKey) {
           return 'DESERIALIZED_' + publicKey;
@@ -168,7 +168,7 @@ describe('DataProductNotificationsService', () => {
         buyerMetaHash: 'BUYER_META_HASH',
         price: new BigNumber(1),
         purchased: true,
-        approved: false,
+        finalised: false,
         rated: false,
         rating: new BigNumber(0)
       });
@@ -184,13 +184,13 @@ describe('DataProductNotificationsService', () => {
         dataProductUpdateAction: DataProductUpdateAction.PURCHASE,
         blockNumber: 1
       };
-      const notification = new Notification(NotificationType.DATA_PRODUCT_TO_APPROVE, {
+      const notification = new Notification(NotificationType.DATA_PRODUCT_TO_FINALISATION, {
         purchaseEvent
       });
 
-      const result = await service[ '_parseDataProductToApprove' ](notification);
+      const result = await service[ '_parseDataProductToFinalisation' ](notification);
       expect(notification.read).toBeFalsy();
-      expect(result).toBe(`User with account 0x01 purchased your product ${productAddress}. Please approve this transaction.`);
+      expect(result).toBe(`User with account 0x01 purchased your product ${productAddress}. Please finalise this transaction.`);
       expect(taskManagerService.addTask.calls.count()).toBe(1);
     });
   });

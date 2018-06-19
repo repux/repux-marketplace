@@ -72,6 +72,14 @@
                       [formControl]="fileFormControl"
                       ngDefaultControl></app-file-input>
     </div>
+
+    <mat-form-field class="field-row">
+      <mat-select placeholder="Days for deliver" required="true" [formControl]="daysForDeliverFormControl">
+        <mat-option *ngFor="let day of daysForDeliverOptions" [value]="day">
+          {{ day }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
   </mat-dialog-content>
   <mat-dialog-actions>
     <button mat-button mat-dialog-close type="button">Cancel</button>
