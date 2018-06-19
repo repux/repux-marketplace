@@ -21,8 +21,8 @@ export class BuyProductButtonComponent implements OnInit, OnDestroy {
   @Input() productOwnerAddress: string;
   private _subscription: Subscription;
   public wallet: Wallet;
-  public boughtProducts: string[];
-  public approvedProducts: string[];
+  public boughtProducts: string[] = [];
+  public approvedProducts: string[] = [];
 
   constructor(
     private _dataProductService: DataProductService,
@@ -33,9 +33,7 @@ export class BuyProductButtonComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.getWallet();
-    this.getBoughtProducts();
-    this.getApprovedProducts();
+    this._walletService.getWallet().subscribe(wallet => this._onWalletChange(wallet));
   }
 
   async getBoughtProducts(): Promise<void> {
@@ -46,11 +44,17 @@ export class BuyProductButtonComponent implements OnInit, OnDestroy {
     this.approvedProducts = await this._dataProductService.getBoughtAndApprovedDataProducts();
   }
 
-  async getWallet(): Promise<void> {
-    this.wallet = await this._walletService.getWalletData();
+  private _onWalletChange(wallet: Wallet): void {
+    if (!wallet || wallet === this.wallet) {
+      return;
+    }
+
+    this.wallet = wallet;
+    this.getBoughtProducts();
+    this.getApprovedProducts();
   }
 
-  async buyDataProduct(dataProductAddress: string): Promise<void> {
+  async buyDataProduct(): Promise<void> {
     const { publicKey } = await this._getKeys();
     const serializedKey = await this._repuxLibService.getClass().serializePublicKey(publicKey);
 
@@ -64,7 +68,7 @@ export class BuyProductButtonComponent implements OnInit, OnDestroy {
       }
     });
     const transactionDialog: TransactionDialogComponent = transactionDialogRef.componentInstance;
-    transactionDialog.transaction = () => this._dataProductService.purchaseDataProduct(dataProductAddress, serializedKey);
+    transactionDialog.transaction = () => this._dataProductService.purchaseDataProduct(this.productAddress, serializedKey);
     transactionDialog.callTransaction();
   }
 

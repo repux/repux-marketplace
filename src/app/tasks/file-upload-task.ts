@@ -24,6 +24,7 @@ export class FileUploadTask implements Task {
   private _userActionName: string;
   private _status: string;
   private _taskManagerService: TaskManagerService;
+  public readonly walletSpecific = false;
 
   constructor(
     private _publicKey: JsonWebKey,

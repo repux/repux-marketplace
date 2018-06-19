@@ -29,13 +29,13 @@ class FileSizeStubComponent {
   @Input() bytes: number;
 }
 
-@Component({ selector: 'app-buy-product-button', template: '{{bytes}}' })
+@Component({ selector: 'app-buy-product-button', template: '' })
 class BuyProductButtonStubComponent {
   @Input() productAddress: string;
   @Input() productOwnerAddress: string;
 }
 
-@Component({ selector: 'app-download-product-button', template: '{{bytes}}' })
+@Component({ selector: 'app-download-product-button', template: '' })
 class DownloadProductButtonStubComponent {
   @Input() productAddress: string;
 }

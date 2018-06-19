@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { Notification } from './notification';
 import { NotificationType } from './notification-type';
 import { WalletService } from '../services/wallet.service';
+import Wallet from '../wallet';
 
 @Injectable({
   providedIn: 'root'
@@ -11,17 +12,26 @@ export class NotificationsService {
   private _config;
   private _parsers = {};
   private _storage = localStorage;
+  private _wallet: Wallet;
 
   constructor(
     private _walletService: WalletService
-  ) {}
+  ) {
+    this._walletService.getWallet().subscribe(wallet => this._onWalletChange(wallet));
+  }
 
-  addParser(type: NotificationType, parser: (notification: Notification) => Promise<string|null>): Promise<void> {
-    this._parsers[type] = parser;
-
-    if (Object.keys(this._parsers).length === Object.keys(NotificationType).length) {
-      return this._init();
+  private _onWalletChange(wallet: Wallet) {
+    if (!wallet || wallet === this._wallet) {
+      return;
     }
+
+    this._wallet = wallet;
+    this._init();
+  }
+
+  addParser(type: NotificationType, parser: (notification: Notification) => Promise<string | null>): void {
+    this._parsers[ type ] = parser;
+    this._init();
   }
 
   saveNotifications(): void {
@@ -39,7 +49,7 @@ export class NotificationsService {
   }
 
   private async _parseNotification(notification: Notification): Promise<void> {
-    const notificationBody = await this._parsers[notification.type](notification);
+    const notificationBody = await this._parsers[ notification.type ](notification);
     if (notificationBody) {
       this._displayNotification(notificationBody);
     }
@@ -49,38 +59,38 @@ export class NotificationsService {
     console.log('NOTIFICATION: ', notificationBody);
   }
 
-  private async _init(): Promise<void> {
-    this._config = await this._getConfig();
+  private _init(): void {
+    if (!this._wallet) {
+      return;
+    }
+
+    if (Object.keys(this._parsers).length !== Object.keys(NotificationType).length) {
+      return;
+    }
+
+    this._config = this._getConfig();
     this._config.notifications.forEach((notification: Notification) => {
       this._parseNotification(notification);
     });
   }
 
-  private async _getConfig(): Promise<{ notifications: Notification[] }> {
-    const saved = this._storage.getItem(NotificationsService.STORAGE_PREFIX + 'config');
-    const wallet = await this._walletService.getWalletData();
+  private _getConfig(): { notifications: Notification[] } {
+    const saved = this._storage.getItem(NotificationsService.STORAGE_PREFIX + this._wallet.address);
 
     if (saved) {
-      const parsed = JSON.parse(saved);
-
-      if (parsed.address === wallet.address) {
-        return parsed;
-      }
+      return JSON.parse(saved);
     }
 
     const config = {
-      notifications: [],
-      address: wallet.address
+      notifications: []
     };
 
-    await this._setConfig(config);
+    this._setConfig(config);
 
     return config;
   }
 
-  private async _setConfig(config): Promise<void> {
-    const wallet = await this._walletService.getWalletData();
-    config.address = wallet.address;
-    this._storage.setItem(NotificationsService.STORAGE_PREFIX + 'config', JSON.stringify(config));
+  private _setConfig(config): void {
+    this._storage.setItem(NotificationsService.STORAGE_PREFIX + this._wallet.address, JSON.stringify(config));
   }
 }

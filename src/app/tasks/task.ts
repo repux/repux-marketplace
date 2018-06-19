@@ -8,6 +8,7 @@ export interface Task {
   errors: ReadonlyArray<string>;
   needsUserAction: boolean;
   userActionName: string;
+  walletSpecific: boolean;
 
   run(taskManagerService: TaskManagerService): void;
 

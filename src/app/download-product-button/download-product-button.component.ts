@@ -1,4 +1,4 @@
-import { Component, Input, OnDestroy } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { WalletService } from '../services/wallet.service';
 import { DataProductService } from '../services/data-product.service';
 import { FileDownloadTask } from '../tasks/file-download-task';
@@ -16,9 +16,10 @@ import { MatDialog } from '@angular/material';
   templateUrl: './download-product-button.component.html',
   styleUrls: [ './download-product-button.component.scss' ]
 })
-export class DownloadProductButtonComponent implements OnDestroy {
+export class DownloadProductButtonComponent implements OnDestroy, OnInit {
   @Input() productAddress: string;
   private _subscription: Subscription;
+  private _wallet: Wallet;
 
   constructor(
     private _walletService: WalletService,
@@ -27,24 +28,36 @@ export class DownloadProductButtonComponent implements OnDestroy {
     private _taskManagerService: TaskManagerService,
     private _keyStoreService: KeyStoreService,
     private _dialog: MatDialog
-  ) {}
+  ) {
+  }
+
+  ngOnInit(): void {
+    this._walletService.getWallet().subscribe(wallet => this._onWalletChange(wallet));
+  }
+
+  private _onWalletChange(wallet: Wallet): void {
+    if (!wallet || wallet === this._wallet) {
+      return;
+    }
+
+    this._wallet = wallet;
+  }
 
   async downloadProduct(): Promise<void> {
     const { privateKey } = await this._getKeys();
-    const wallet: Wallet = await this._walletService.getWalletData();
     const product = await this._dataProductService.getDataProductData(this.productAddress);
     let metaHash;
 
-    if (product.owner === wallet.address) {
+    if (product.owner === this._wallet.address) {
       metaHash = product.sellerMetaHash;
     } else {
-      const transaction = await this._dataProductService.getTransactionData(this.productAddress, wallet.address);
+      const transaction = await this._dataProductService.getTransactionData(this.productAddress, this._wallet.address);
       metaHash = transaction.buyerMetaHash;
     }
 
     const fileDownloadTask = new FileDownloadTask(
       this.productAddress,
-      wallet.address,
+      this._wallet.address,
       metaHash,
       privateKey,
       this._repuxLibService
