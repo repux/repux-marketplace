@@ -8,11 +8,20 @@ import { MatDialog } from '@angular/material';
   styleUrls: [ './marketplace.component.scss' ]
 })
 export class MarketplaceComponent {
+  public staticQuery = {
+    bool: {
+      must_not: [
+        { match: { disabled: true } }
+      ]
+    }
+  };
 
   constructor(private _dialog: MatDialog) {
   }
 
   openProductCreatorDialog() {
-    this._dialog.open(ProductCreatorDialogComponent);
+    this._dialog.open(ProductCreatorDialogComponent, {
+      disableClose: true
+    });
   }
 }

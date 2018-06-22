@@ -2,6 +2,19 @@ import { Component } from '@angular/core';
 import Wallet from '../../wallet';
 import { WalletService } from '../../services/wallet.service';
 
+const NOT_DISABLED_OR_WITH_FUNDS_TO_WITHDRAW_QUERY = {
+  bool: {
+    should: [
+      { match: { disabled: false } },
+      {
+        bool: {
+          must_not: [ { match: { fundsToWithdraw: '0' } } ]
+        }
+      }
+    ]
+  }
+};
+
 @Component({
   selector: 'app-selling-files',
   templateUrl: './my-active-listings.component.html',
@@ -34,7 +47,8 @@ export class MyActiveListingsComponent {
     this.staticQuery = {
       bool: {
         must: [
-          { match: { ownerAddress: '' } }
+          { match: { ownerAddress: '' } },
+          NOT_DISABLED_OR_WITH_FUNDS_TO_WITHDRAW_QUERY
         ]
       }
     };
@@ -50,7 +64,8 @@ export class MyActiveListingsComponent {
     this.staticQuery = {
       bool: {
         must: [
-          { match: { ownerAddress: this._wallet.address } }
+          { match: { ownerAddress: this._wallet.address } },
+          NOT_DISABLED_OR_WITH_FUNDS_TO_WITHDRAW_QUERY
         ]
       }
     };

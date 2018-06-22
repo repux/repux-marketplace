@@ -1,0 +1,6 @@
+<div *ngIf="wallet && userIsOwner && !transaction.finalised">
+  <button mat-raised-button
+          color="accent"
+          (click)="finalise()">Finalise transaction
+  </button>
+</div>

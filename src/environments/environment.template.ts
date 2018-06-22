@@ -33,8 +33,8 @@ export const environment = {
       format: '1.0-18',
       pattern: /^\d*([,\.]\d{0,18})?$/
     },
-    demoTokenContractAddress: '${MARKETPLACE_SC_TOKEN_ADDRESS}' || '0x676c5a98879083e9276b58ea2a36e296a52bcbf8',
-    registryContractAddress: '${MARKETPLACE_SC_REGISTRY_ADDRESS}' || '0x21e790519ff11e3fa036e25a761e5ca3a63887d4',
+    demoTokenContractAddress: '${MARKETPLACE_SC_TOKEN_ADDRESS}' || '0xbd83c21e6f0a9547abe908c6faa02a55512d57b4',
+    registryContractAddress: '${MARKETPLACE_SC_REGISTRY_ADDRESS}' || '0xc2d327375dd73b132d1171aadf7a205d3a9b7d8f',
     categoriesListPath: '${MARKETPLACE_CATEGORIES_PATH}' || './assets/data-product-categories.json'
   },
   ipfs: {

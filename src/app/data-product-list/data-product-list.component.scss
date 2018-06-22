@@ -44,8 +44,22 @@ $shadow-color: rgba(0, 0, 0, .03);
   }
 }
 
+.details {
+  background: rgba(0, 0, 0, 0.03);
+  padding: 0 20px;
+}
+
+.detail-header {
+  padding: 15px 25px 0;
+  display: block;
+}
+
 mat-header-cell {
   mat-icon {
     cursor: default;
   }
+}
+
+mat-row.disabled {
+  opacity: 0.5;
 }

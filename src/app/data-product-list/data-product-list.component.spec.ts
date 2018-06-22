@@ -13,17 +13,15 @@ import { PipesModule } from '../pipes/pipes.module';
 import { Component, Input } from '@angular/core';
 import { BigNumber } from 'bignumber.js';
 import { DataProductListService } from '../services/data-product-list.service';
-import { from as fromPromise, Observable } from 'rxjs/index';
+import { from as fromPromise } from 'rxjs/index';
 import { EsResponse } from '../es-response';
 import { Deserializable } from '../deserializable';
 import { EsDataProduct } from '../es-data-product';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { DataProduct } from '../data-product';
-
-@Component({ selector: 'app-currency', template: '{{value}}' })
-class CurrencyStubComponent {
-  @Input() value: BigNumber;
-}
+import { DataProductListDetailDirective } from './data-product-list-detail.directive';
+import { DataProductTransaction } from '../data-product-transaction';
+import { DataProductNotificationsService } from '../services/data-product-notifications.service';
 
 @Component({ selector: 'app-file-size', template: '{{bytes}}' })
 class FileSizeStubComponent {
@@ -45,25 +43,35 @@ class UnpublishButtonStubComponent {
   @Input() dataProduct: string;
 }
 
-class DataProductListStubService {
-  getFiles(query?: string, sort?: string, size?: number, from?: number): Observable<EsResponse<Deserializable<EsDataProduct>>> {
-    return fromPromise(Promise.resolve(new EsResponse()));
-  }
+@Component({ selector: 'app-data-product-transactions-list', template: '' })
+class DataProductTransactionsListStubComponent {
+  @Input() dataProduct: DataProduct;
+  @Input() transactions: DataProductTransaction[];
 }
 
 describe('DataProductListComponent', () => {
   let component: DataProductListComponent;
   let fixture: ComponentFixture<DataProductListComponent>;
+  let dataProductNotificationsService, dataProductListService;
 
   beforeEach(async(() => {
+    dataProductNotificationsService = jasmine.createSpyObj('DataProductNotificationsService', [ 'findFinalisationRequest' ]);
+    dataProductListService = jasmine.createSpyObj('DataProductListService', [ 'getFiles' ]);
+    dataProductListService.getFiles.and.returnValue({
+      subscribe(callback) {
+        callback(new EsResponse());
+      }
+    });
+
     TestBed.configureTestingModule({
       declarations: [
         DataProductListComponent,
-        CurrencyStubComponent,
         FileSizeStubComponent,
         BuyProductButtonStubComponent,
         WithdrawButtonStubComponent,
-        UnpublishButtonStubComponent
+        UnpublishButtonStubComponent,
+        DataProductListDetailDirective,
+        DataProductTransactionsListStubComponent
       ],
       imports: [
         MatIconModule,
@@ -76,7 +84,8 @@ describe('DataProductListComponent', () => {
         NoopAnimationsModule
       ],
       providers: [
-        { provide: DataProductListService, useClass: DataProductListStubService }
+        { provide: DataProductListService, useValue: dataProductListService },
+        { provide: DataProductNotificationsService, useValue: dataProductNotificationsService }
       ]
     })
       .compileComponents();
@@ -102,9 +111,9 @@ describe('DataProductListComponent', () => {
       component.applyFilter('String to search for');
       expect(component.from).toBe(0);
       expect(component.query).toEqual([
-        { wildcard: { name: '*string to search for*' } },
-        { wildcard: { title: '*string to search for*' } },
-        { wildcard: { category: '*string to search for*' } },
+        { regexp: { name: '.*"string to search for".*' } },
+        { regexp: { title: '.*"string to search for".*' } },
+        { regexp: { category: '.*"string to search for".*' } },
         { fuzzy: { name: 'string to search for' } },
         { fuzzy: { title: 'string to search for' } },
         { fuzzy: { category: 'string to search for' } }
@@ -112,7 +121,7 @@ describe('DataProductListComponent', () => {
     });
 
     it('should call refreshData method', () => {
-      const refreshData = spyOn(component, 'refreshData')
+      const refreshData = spyOn(component, 'refreshData');
       component.applyFilter('');
       expect(refreshData.calls.count()).toBe(1, 'one call');
     });
@@ -173,15 +182,15 @@ describe('DataProductListComponent', () => {
         component.sort = 'SORT';
         component.size = 10;
         component.from = 1;
-        const getFiles = spyOn(component.dataProductListService, 'getFiles').and.callFake((query, sort, size, from) => {
-          expect(query).toEqual({ bool: { should: [ 'QUERY' ] } });
+        dataProductListService.getFiles.and.callFake((query, sort, size, from) => {
+          expect(query).toEqual({ bool: { must: [ { bool: { should: [ 'QUERY' ] } } ] } });
           expect(sort).toBe('SORT');
           expect(size).toBe(10);
           expect(from).toBe(1);
           return fromPromise(Promise.resolve(expectedResponse));
         });
         await component.refreshData();
-        expect(getFiles.calls.count()).toBe(1, 'one call');
+        expect(dataProductListService.getFiles.calls.count()).toBe(2);
         expect(component.esDataProducts).toBe(expectedResponse);
       });
   });
@@ -198,6 +207,9 @@ describe('DataProductListComponent', () => {
     });
 
     it('should display table with data provided by dataSource property', () => {
+      const transactions = [ {
+        finalised: false
+      } ];
       component.esDataProducts = {
         total: 1,
         max_score: 1,
@@ -211,7 +223,7 @@ describe('DataProductListComponent', () => {
             price: '1000000000000000000',
             daysForDeliver: '1',
             fundsToWithdraw: '0',
-            transactions: []
+            transactions
           }
         }) ]
       };
@@ -234,6 +246,8 @@ describe('DataProductListComponent', () => {
         'withdraw',
         'unpublish'
       ];
+      component.getTransactionsToFinalisation = () => <any> transactions;
+      component.displayPendingTransactions = true;
       fixture.detectChanges();
 
       const element: HTMLElement = fixture.nativeElement;
@@ -275,10 +289,14 @@ describe('DataProductListComponent', () => {
       expect(firstRow.querySelector('mat-cell:nth-child(7)').textContent.trim()).toBe('0');
       expect(firstRow.querySelector('mat-cell:nth-child(8)').textContent.trim()).toBe('REPUX 0');
       expect(firstRow.querySelector('mat-cell:nth-child(9)').textContent.trim()).toBe('REPUX 0');
-      expect(firstRow.querySelector('mat-cell:nth-child(10)').textContent.trim()).toBe('0');
+      expect(firstRow.querySelector('mat-cell:nth-child(10)').textContent.trim()).toBe('1');
       expect(firstRow.querySelector('mat-cell:nth-child(11) app-buy-product-button')).not.toBeNull();
       expect(firstRow.querySelector('mat-cell:nth-child(11) app-withdraw-button')).not.toBeNull();
       expect(firstRow.querySelector('mat-cell:nth-child(11) app-unpublish-button')).not.toBeNull();
+
+      expect(table.querySelectorAll('.details').length).toBe(1);
+      expect(table.querySelector('.details .detail-header').textContent.trim()).toBe('Transactions:');
+      expect(table.querySelectorAll('.details app-data-product-transactions-list').length).toBe(1);
     });
 
     it('should call sortChanged method when user clicks on sorting column', () => {

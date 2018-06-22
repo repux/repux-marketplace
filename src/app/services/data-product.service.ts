@@ -2,9 +2,8 @@ import { Injectable } from '@angular/core';
 import { RepuxWeb3Service } from './repux-web3.service';
 import BigNumber from 'bignumber.js';
 import { Observable, Observer } from 'rxjs';
-import { DataProductEvent, DataProductUpdateAction } from 'repux-web3-api';
+import { DataProductEvent, DataProductUpdateAction, ContractEvent, DataProductTransaction, TransactionResult } from 'repux-web3-api';
 import { filter } from 'rxjs/internal/operators';
-import { ContractEvent, DataProductTransaction, TransactionResult } from 'repux-web3-api';
 import { WalletService } from './wallet.service';
 import Wallet from '../wallet';
 

@@ -9,6 +9,8 @@ import { DataProductTransaction } from '../data-product-transaction';
 import { BigNumber } from 'bignumber.js';
 import { DataProduct } from '../data-product';
 import { deepCopy } from '../utils/deep-copy';
+import { DataProductNotificationsService } from '../services/data-product-notifications.service';
+import { ElasticSearchService } from '../services/elastic-search.service';
 
 @Component({
   selector: 'app-data-product-list',
@@ -30,6 +32,7 @@ export class DataProductListComponent implements OnInit, OnChanges {
   @Input() availableActions = [
     'buy'
   ];
+  @Input() displayPendingTransactions = false;
 
   public esDataProducts: EsResponse<Deserializable<EsDataProduct>>;
   public dataSource: MatTableDataSource<Deserializable<EsDataProduct>>;
@@ -49,7 +52,9 @@ export class DataProductListComponent implements OnInit, OnChanges {
     'longDescription'
   ];
 
-  constructor(public dataProductListService: DataProductListService) {
+  constructor(
+    public dataProductListService: DataProductListService,
+    private _dataProductNotificationsService: DataProductNotificationsService) {
     this.size = this.pageSizeOptions[ 0 ];
   }
 
@@ -73,9 +78,9 @@ export class DataProductListComponent implements OnInit, OnChanges {
     const search = filterValue.trim().toLowerCase();
 
     this.query = [
-      { wildcard: { name: '*' + search + '*' } },
-      { wildcard: { title: '*' + search + '*' } },
-      { wildcard: { category: '*' + search + '*' } },
+      { regexp: { name: '.*"' + search + '".*' } },
+      { regexp: { title: '.*"' + search + '".*' } },
+      { regexp: { category: '.*"' + search + '".*' } },
       { fuzzy: { name: search } },
       { fuzzy: { title: search } },
       { fuzzy: { category: search } }
@@ -108,10 +113,10 @@ export class DataProductListComponent implements OnInit, OnChanges {
     if (!query.bool) {
       query.bool = {};
     }
-    if (!query.bool.should) {
-      query.bool.should = [];
+    if (!query.bool.must) {
+      query.bool.must = [];
     }
-    query.bool.should.push(...this.query);
+    query.bool.must.push({ bool: { should: this.query } });
 
     return new Promise(resolve => {
       this.isLoadingResults = true;
@@ -135,6 +140,12 @@ export class DataProductListComponent implements OnInit, OnChanges {
   }
 
   getTransactionsToFinalisation(dataProduct: DataProduct): DataProductTransaction[] {
-    return dataProduct.transactions.filter(transaction => !transaction.finalised);
+    return dataProduct.transactions.filter(transaction =>
+      !transaction.finalised &&
+      this._dataProductNotificationsService.findFinalisationRequest({
+        dataProductAddress: dataProduct.address,
+        buyerAddress: transaction.buyerAddress
+      })
+    );
   }
 }

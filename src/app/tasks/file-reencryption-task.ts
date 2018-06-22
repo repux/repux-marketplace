@@ -9,7 +9,6 @@ import { MatDialog } from '@angular/material';
 import { Subscription } from 'rxjs';
 
 export const STATUS = {
-  WAITING_FOR_KEY_ACCESS: 'Waiting for key access',
   REENCRYPTION: 'Reencryption',
   WAITING_FOR_FINALISATION: 'Waiting for finalisation',
   FINISHED: 'Finished',
@@ -36,6 +35,7 @@ export class FileReencryptionTask implements Task {
     private _dataProductAddress: string,
     private _buyerAddress: string,
     private _metaFileHash: string,
+    private _sellerPrivateKey: JsonWebKey,
     private _buyerPublicKey: JsonWebKey,
     private _repuxLibService: RepuxLibService,
     private _dataProductService: DataProductService,
@@ -47,10 +47,28 @@ export class FileReencryptionTask implements Task {
   }
 
   run(taskManagerService: TaskManagerService): void {
-    this._status = STATUS.WAITING_FOR_KEY_ACCESS;
-    this._needsUserAction = true;
-    this._userActionName = 'Give access';
+    this._status = STATUS.REENCRYPTION;
     this._taskManagerService = taskManagerService;
+
+    this._reencryptor.reencrypt(this._sellerPrivateKey, this._buyerPublicKey, this._metaFileHash)
+      .on('progress', (eventType, progress) => {
+        this._progress = progress * 100;
+      })
+      .on('error', (eventType, error) => {
+        this._finished = true;
+        this._errors.push(error);
+        this._status = STATUS.CANCELED;
+      })
+      .on('finish', (eventType, result) => {
+        this._progress = 100;
+        this._result = result;
+        this._needsUserAction = true;
+        this._userActionName = 'Finalise';
+        this._status = STATUS.WAITING_FOR_FINALISATION;
+      })
+      .on('progress, error, finish', () => {
+        this._taskManagerService.onTaskEvent();
+      });
   }
 
   cancel(): void {
@@ -62,47 +80,19 @@ export class FileReencryptionTask implements Task {
   }
 
   async callUserAction(): Promise<any> {
-    if (!this._needsUserAction) {
-      return;
-    }
-
-    if (this._status === STATUS.WAITING_FOR_KEY_ACCESS) {
-      const { privateKey } = await this._getKeys();
-
-      this._reencryptor.reencrypt(privateKey, this._buyerPublicKey, this._metaFileHash)
-        .on('progress', (eventType, progress) => {
-          this._progress = progress * 100;
-        })
-        .on('error', (eventType, error) => {
-          this._finished = true;
-          this._errors.push(error);
-          this._status = STATUS.CANCELED;
-        })
-        .on('finish', (eventType, result) => {
-          this._progress = 100;
-          this._result = result;
-          this._needsUserAction = true;
-          this._userActionName = 'Finalise';
-          this._status = STATUS.WAITING_FOR_FINALISATION;
-        })
-        .on('progress, error, finish', () => {
-          this._taskManagerService.onTaskEvent();
-        });
-    } else {
-      try {
-        this._needsUserAction = false;
-        this._status = STATUS.PENDING_FINALISATION;
-        this._taskManagerService.onTaskEvent();
-        await this._dataProductService.finaliseDataProductPurchase(this._dataProductAddress, this._buyerAddress, this._result);
-        this._status = STATUS.FINISHED;
-        this._finished = true;
-        this._taskManagerService.onTaskEvent();
-      } catch (error) {
-        console.warn(error);
-        this._needsUserAction = true;
-        this._status = STATUS.REJECTED;
-        this._taskManagerService.onTaskEvent();
-      }
+    try {
+      this._needsUserAction = false;
+      this._status = STATUS.PENDING_FINALISATION;
+      this._taskManagerService.onTaskEvent();
+      await this._dataProductService.finaliseDataProductPurchase(this._dataProductAddress, this._buyerAddress, this._result);
+      this._status = STATUS.FINISHED;
+      this._finished = true;
+      this._taskManagerService.onTaskEvent();
+    } catch (error) {
+      console.warn(error);
+      this._needsUserAction = true;
+      this._status = STATUS.REJECTED;
+      this._taskManagerService.onTaskEvent();
     }
   }
 

@@ -10,11 +10,11 @@ import { DataProductUpdateAction } from 'repux-web3-api';
 import { Notification } from '../notifications/notification';
 import BigNumber from 'bignumber.js';
 import Wallet from '../wallet';
-import { from } from 'rxjs';
 
 describe('DataProductNotificationsService', () => {
   let service: DataProductNotificationsService;
-  let notificationsService, repuxLibService, dataProductService, keyStoreService, taskManagerService, matDialog, walletService;
+  let notificationsService, repuxLibService, dataProductService, keyStoreService, taskManagerService, matDialog,
+    walletService;
   const productAddress = '0x1111111111111111111111111111111111111111';
   const walletAddress = '0x0000000000000000000000000000000000000000';
 
@@ -57,12 +57,8 @@ describe('DataProductNotificationsService', () => {
 
     service = new DataProductNotificationsService(
       notificationsService,
-      repuxLibService,
       dataProductService,
-      keyStoreService,
-      taskManagerService,
-      walletService,
-      matDialog
+      walletService
     );
   });
 
@@ -155,43 +151,6 @@ describe('DataProductNotificationsService', () => {
       const result = await service[ '_parseDataProductToFinalisation' ](notification);
       expect(notification.read).toBeTruthy();
       expect(result).toBe(`User with account 0x01 purchased your product ${productAddress}. Please finalise this transaction.`);
-    });
-
-    it('should return correct notification message and create reencryption task when transaction is not finalised', async () => {
-      repuxLibService.getClass.and.returnValue({
-        deserializePublicKey(publicKey) {
-          return 'DESERIALIZED_' + publicKey;
-        }
-      });
-      dataProductService.getTransactionData.and.returnValue({
-        publicKey: 'PUBLIC_KEY',
-        buyerMetaHash: 'BUYER_META_HASH',
-        price: new BigNumber(1),
-        purchased: true,
-        finalised: false,
-        rated: false,
-        rating: new BigNumber(0)
-      });
-      repuxLibService.getInstance.and.returnValue({
-        createFileReencryptor: jasmine.createSpy()
-      });
-      dataProductService.getDataProductData.and.returnValue({
-        sellerMetaHash: 'SELLER_META_HASH'
-      });
-      const purchaseEvent = {
-        dataProductAddress: productAddress,
-        userAddress: '0x01',
-        dataProductUpdateAction: DataProductUpdateAction.PURCHASE,
-        blockNumber: 1
-      };
-      const notification = new Notification(NotificationType.DATA_PRODUCT_TO_FINALISATION, {
-        purchaseEvent
-      });
-
-      const result = await service[ '_parseDataProductToFinalisation' ](notification);
-      expect(notification.read).toBeFalsy();
-      expect(result).toBe(`User with account 0x01 purchased your product ${productAddress}. Please finalise this transaction.`);
-      expect(taskManagerService.addTask.calls.count()).toBe(1);
     });
   });
 })
