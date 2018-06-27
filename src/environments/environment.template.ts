@@ -41,5 +41,9 @@ export const environment = {
     host: '${MARKETPLACE_IPFS_HOST}' || 'localhost',
     port: '${MARKETPLACE_IPFS_PORT}' || '5002',
     protocol: '${MARKETPLACE_IPFS_PROTOCOL}' || 'https'
-  }
+  },
+  webPushServer: {
+    host: '${WEBPUSH_SERVER_HOST}' || 'http://localhost:3000',
+    publicKey: '${WEBPUSH_SERVER_PUBLIC_KEY}' || 'BHG0pFCWLmtfofYay5cGDhVkIDH-rJR6ntTH0EK8Kvj0LEh91O0LkufHxKA29ap7lDA-FH11KfEMyP39V8550cM'
+  },
 };

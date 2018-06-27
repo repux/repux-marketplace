@@ -33,6 +33,7 @@ import { UnpublishedComponent } from './sell/unpublished/unpublished.component';
 import { DataProductListDetailDirective } from './data-product-list/data-product-list-detail.directive';
 import { DataProductTransactionsListComponent } from './data-product-transactions-list/data-product-transactions-list.component';
 import { FinaliseButtonComponent } from './finalise-button/finalise-button.component';
+import { HttpClient } from "@angular/common/http";
 
 describe('AppComponent', () => {
   beforeEach(async(() => {
@@ -75,7 +76,8 @@ describe('AppComponent', () => {
       providers: [
         { provide: APP_BASE_HREF, useValue: '/' },
         { provide: WalletService, useValue: jasmine.createSpy() },
-        { provide: DataProductNotificationsService, useValue: jasmine.createSpy() }
+        { provide: DataProductNotificationsService, useValue: jasmine.createSpy() },
+        { provide: HttpClient, useValue: jasmine.createSpy() }
       ]
     }).compileComponents();
   }));
