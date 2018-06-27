@@ -3,6 +3,7 @@ import { TestBed } from '@angular/core/testing';
 import { NotificationType } from './notification-type';
 import { Notification } from './notification';
 import { WalletService } from '../services/wallet.service';
+import { StorageService } from '../services/storage.service';
 import Spy = jasmine.Spy;
 import Wallet from '../wallet';
 import { from } from 'rxjs';
@@ -10,16 +11,19 @@ import { from } from 'rxjs';
 describe('NotificationsService', () => {
   let service: NotificationsService;
   let exampleNotification: Notification;
+  let walletServiceSpy, storageServiceSpy;
   const walletAddress = '0x0000000000000000000000000000000000000000';
 
   beforeEach(async () => {
-    const walletServiceSpy = jasmine.createSpyObj('WalletService', [ 'getWallet' ]);
+    storageServiceSpy = jasmine.createSpyObj('StorageService', [ 'getItem', 'setItem' ]);
+    walletServiceSpy = jasmine.createSpyObj('WalletService', [ 'getWallet' ]);
     const wallet = new Wallet(walletAddress, 1);
     walletServiceSpy.getWallet.and.returnValue(from(Promise.resolve(wallet)));
 
     TestBed.configureTestingModule({
       providers: [
-        { provide: WalletService, useValue: walletServiceSpy }
+        { provide: WalletService, useValue: walletServiceSpy },
+        { provide: StorageService, useValue: storageServiceSpy }
       ]
     });
 
@@ -39,11 +43,11 @@ describe('NotificationsService', () => {
   });
 
   describe('#saveNotifications()', () => {
-    it('should call _setConfig method', () => {
-      service[ '_setConfig' ] = jasmine.createSpy();
+    it('should call _saveToStore method', () => {
+      service[ '_saveToStore' ] = jasmine.createSpy();
       service.saveNotifications();
-      expect((<Spy> service[ '_setConfig' ]).calls.count()).toBe(1);
-      expect((<Spy> service[ '_setConfig' ]).calls.allArgs()[ 0 ][ 0 ]).toEqual({
+      expect((<Spy> service[ '_saveToStore' ]).calls.count()).toBe(1);
+      expect((<Spy> service[ '_saveToStore' ]).calls.allArgs()[ 0 ][ 0 ]).toEqual({
         notifications: []
       });
     });
@@ -91,49 +95,44 @@ describe('NotificationsService', () => {
 
   describe('#_init()', () => {
     it('should fetch config and parse each stored notification', async () => {
-      const getConfig = jasmine.createSpy();
+      const readFromStore = jasmine.createSpy();
       const parseNotification = jasmine.createSpy();
-      getConfig.and.returnValue({
+      readFromStore.and.returnValue({
         notifications: [ exampleNotification ]
       });
-      service[ '_getConfig' ] = getConfig;
+      service[ '_readFromStore' ] = readFromStore;
       service[ '_parseNotification' ] = parseNotification;
       await service[ '_init' ]();
-      expect(getConfig.calls.count()).toBe(1, '1');
-      expect(parseNotification.calls.count()).toBe(1, '2');
+      expect(readFromStore.calls.count()).toBe(1);
+      expect(parseNotification.calls.count()).toBe(1);
       expect(parseNotification.calls.allArgs()[ 0 ][ 0 ]).toEqual(exampleNotification);
     });
   });
 
-  describe('#_getConfig()', () => {
+  describe('#_readFromStore()', () => {
     it('should return config from storage', async () => {
-      const storage = jasmine.createSpyObj('localStorage', [ 'getItem', 'setItem' ]);
-      storage.getItem.and.returnValue(`{"notifications":[{"type": "DATA_PRODUCT_TO_FINALISATION", "data": {}}]}`);
-      service[ '_storage' ] = storage;
-      const result = await service[ '_getConfig' ]();
-      expect(<any> result).toEqual({
+      const expectedResult = {
         notifications: [ { type: 'DATA_PRODUCT_TO_FINALISATION', data: {} } ]
-      });
+      };
+      storageServiceSpy.getItem.and.returnValue(expectedResult);
+      const result = await service[ '_readFromStore' ]();
+      expect(<any> result).toEqual(expectedResult);
     });
 
     it('should return new config when there is none in storage', async () => {
-      const storage = jasmine.createSpyObj('localStorage', [ 'getItem', 'setItem' ]);
-      storage.getItem.and.returnValue(null);
-      service[ '_storage' ] = storage;
-      const result = await service[ '_getConfig' ]();
+      storageServiceSpy.getItem.and.returnValue(null);
+      const result = await service[ '_readFromStore' ]();
       expect(<any> result).toEqual({
         notifications: []
       });
     });
   });
 
-  describe('#_setConfig()', () => {
+  describe('#_saveToStore()', () => {
     it('should call set item on storage', async () => {
-      const storage = jasmine.createSpyObj('localStorage', [ 'getItem', 'setItem' ]);
-      service[ '_storage' ] = storage;
-      await service[ '_setConfig' ]({ notifications: [] });
-      expect(storage.setItem.calls.count()).toBe(1);
-      expect(storage.setItem.calls.allArgs()[ 0 ][ 1 ]).toBe(`{"notifications":[]}`);
+      await service[ '_saveToStore' ]({ notifications: [] });
+      expect(storageServiceSpy.setItem.calls.count()).toBe(2);
+      expect(storageServiceSpy.setItem.calls.allArgs()[ 0 ][ 1 ]).toEqual({ notifications: [] });
     });
   });
 });

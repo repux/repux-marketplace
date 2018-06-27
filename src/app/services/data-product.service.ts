@@ -2,86 +2,40 @@ import { Injectable } from '@angular/core';
 import { RepuxWeb3Service } from './repux-web3.service';
 import BigNumber from 'bignumber.js';
 import { Observable, Observer } from 'rxjs';
-import { DataProductEvent, DataProductUpdateAction, ContractEvent, DataProductTransaction, TransactionResult } from 'repux-web3-api';
+import {
+  ContractEvent,
+  DataProductEvent,
+  DataProductTransaction,
+  DataProductUpdateAction,
+  TransactionResult
+} from 'repux-web3-api';
 import { filter } from 'rxjs/internal/operators';
 import { WalletService } from './wallet.service';
 import Wallet from '../wallet';
+import { StorageService } from './storage.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class DataProductService {
   private static readonly STORAGE_PREFIX = 'DataProductService_';
+  private readonly _defaultData = {
+    lastBlock: 0
+  };
   private _promises = {};
   private _dataProductUpdateObservable: Observable<DataProductEvent>;
-  private _storage = localStorage;
   private _wallet: Wallet;
   private _productUpdateEvent: ContractEvent;
 
   constructor(
     private _repuxWeb3Service: RepuxWeb3Service,
-    private _walletService: WalletService) {
+    private _walletService: WalletService,
+    private _storageService: StorageService) {
     this._walletService.getWallet().subscribe(wallet => this._onWalletChange(wallet));
-  }
-
-  private _onWalletChange(wallet: Wallet) {
-    if (!wallet || wallet === this._wallet) {
-      return;
-    }
-
-    this._wallet = wallet;
-    if (this._productUpdateEvent) {
-      this._productUpdateEvent.stopWatching();
-      this._productUpdateEvent = null;
-      this._dataProductUpdateObservable = null;
-    }
   }
 
   private get _api() {
     return this._repuxWeb3Service.getRepuxApiInstance();
-  }
-
-  private _getConfig(): { lastBlock: number } {
-    const saved = this._storage.getItem(DataProductService.STORAGE_PREFIX + this._wallet.address);
-
-    if (saved) {
-      return JSON.parse(saved);
-    }
-
-    const config = {
-      lastBlock: 0
-    };
-
-    this._setConfig(config);
-    return config;
-  }
-
-  private _setConfig(config): void {
-    this._storage.setItem(DataProductService.STORAGE_PREFIX + this._wallet.address, JSON.stringify(config));
-  }
-
-  private _getLastReadBlock(): number {
-    const config = this._getConfig();
-    return config.lastBlock;
-  }
-
-  private _setLastReadBlock(lastBlock): void {
-    const config = this._getConfig();
-    config.lastBlock = lastBlock;
-    this._setConfig(config);
-  }
-
-  private _getDebouncedPromise(promiseName, functionName) {
-    if (this._promises[ promiseName ]) {
-      return this._promises[ promiseName ];
-    }
-
-    this._promises[ promiseName ] = this._api[ functionName ]();
-    this._promises[ promiseName ]
-      .then(() => delete this._promises[ promiseName ])
-      .catch(() => delete this._promises[ promiseName ]);
-
-    return this._promises[ promiseName ];
   }
 
   getDataProductData(dataProductAddress: string) {
@@ -138,6 +92,62 @@ export class DataProductService {
       filter(event => !_dataProductAddress || _dataProductAddress === event.dataProductAddress),
       filter(event => !_dataProductUpdateAction || _dataProductUpdateAction === event.action)
     );
+  }
+
+  private _getStorageKey(): string {
+    return DataProductService.STORAGE_PREFIX + this._wallet.address;
+  }
+
+  private _readFromStore(): any {
+    const saved = this._storageService.getItem(this._getStorageKey());
+
+    if (saved) {
+      return saved;
+    }
+
+    this._saveToStore(this._defaultData);
+    return this._defaultData;
+  }
+
+  private _saveToStore(data: any): void {
+    this._storageService.setItem(this._getStorageKey(), data);
+  }
+
+  private _onWalletChange(wallet: Wallet) {
+    if (!wallet || wallet === this._wallet) {
+      return;
+    }
+
+    this._wallet = wallet;
+    if (this._productUpdateEvent) {
+      this._productUpdateEvent.stopWatching();
+      this._productUpdateEvent = null;
+      this._dataProductUpdateObservable = null;
+    }
+  }
+
+  private _getLastReadBlock(): number {
+    const config = this._readFromStore();
+    return config.lastBlock;
+  }
+
+  private _setLastReadBlock(lastBlock): void {
+    const config = this._readFromStore();
+    config.lastBlock = lastBlock;
+    this._saveToStore(config);
+  }
+
+  private _getDebouncedPromise(promiseName, functionName) {
+    if (this._promises[ promiseName ]) {
+      return this._promises[ promiseName ];
+    }
+
+    this._promises[ promiseName ] = this._api[ functionName ]();
+    this._promises[ promiseName ]
+      .then(() => delete this._promises[ promiseName ])
+      .catch(() => delete this._promises[ promiseName ]);
+
+    return this._promises[ promiseName ];
   }
 
   private _dataProductUpdateObserver(observer: Observer<DataProductEvent>) {

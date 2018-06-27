@@ -1,4 +1,6 @@
 import { Component } from '@angular/core';
+import { UnpublishedProductsService } from '../../services/unpublished-products.service';
+import { DataProduct } from '../../data-product';
 
 @Component({
   selector: 'app-unpublished-files',
@@ -6,6 +8,16 @@ import { Component } from '@angular/core';
   styleUrls: [ './unpublished.component.scss' ]
 })
 export class UnpublishedComponent {
-  constructor() {
+  public availableActions = [
+    'publish'
+  ];
+
+  constructor(
+    private _unpublishedProductsService: UnpublishedProductsService
+  ) {
+  }
+
+  get dataProducts(): DataProduct[] {
+    return this._unpublishedProductsService.products;
   }
 }

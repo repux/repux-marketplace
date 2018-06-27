@@ -13,6 +13,7 @@ import { KeyStoreService } from '../key-store/key-store.service';
 import { KeysPasswordDialogComponent } from '../key-store/keys-password-dialog/keys-password-dialog.component';
 import { KeysGeneratorDialogComponent } from '../key-store/keys-generator-dialog/keys-generator-dialog.component';
 import { Subscription } from 'rxjs/internal/Subscription';
+import { UnpublishedProductsService } from '../services/unpublished-products.service';
 
 @Component({
   selector: 'app-product-creator-dialog',
@@ -37,7 +38,7 @@ export class ProductCreatorDialogComponent implements OnDestroy {
     Validators.maxLength(this.titleMaxLength)
   ]);
 
-  public longDescriptionFormControl = new FormControl('', []);
+  public fullDescriptionFormControl = new FormControl('', []);
 
   public shortDescriptionFormControl = new FormControl('', [
     Validators.required,
@@ -68,12 +69,13 @@ export class ProductCreatorDialogComponent implements OnDestroy {
     private repuxLibService: RepuxLibService,
     private dataProductService: DataProductService,
     private taskManagerService: TaskManagerService,
+    private _unpublishedProductsService: UnpublishedProductsService,
     private dialog: MatDialog,
     public dialogRef: MatDialogRef<ProductCreatorDialogComponent>) {
     this.formGroup = new FormGroup({
       title: this.titleFormControl,
       shortDescription: this.shortDescriptionFormControl,
-      longDescription: this.longDescriptionFormControl,
+      fullDescription: this.fullDescriptionFormControl,
       category: this.categoryFormControl,
       price: this.priceFormControl,
       file: this.fileFormControl,
@@ -92,9 +94,10 @@ export class ProductCreatorDialogComponent implements OnDestroy {
       publicKey,
       this.repuxLibService,
       this.dataProductService,
+      this._unpublishedProductsService,
       this.formGroup.value.title,
       this.formGroup.value.shortDescription,
-      this.formGroup.value.longDescription,
+      this.formGroup.value.fullDescription,
       this.categoryInput.value,
       new BigNumber(this.formGroup.value.price),
       this.fileInput.value[ 0 ],

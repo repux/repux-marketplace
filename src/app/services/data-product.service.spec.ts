@@ -6,7 +6,7 @@ import Wallet from '../wallet';
 
 describe('DataProductService', () => {
   let service: DataProductService;
-  let repuxWeb3ServiceSpy, walletServiceSpy;
+  let repuxWeb3ServiceSpy, walletServiceSpy, storageServiceSpy;
   const fileHash = 'FILE_HASH';
   const price = new BigNumber(100);
   const daysForDeliver = 1;
@@ -24,6 +24,7 @@ describe('DataProductService', () => {
       'WalletServiceSpy',
       [ 'getWallet' ]
     );
+    storageServiceSpy = jasmine.createSpyObj('StorageService', [ 'getItem', 'setItem' ]);
     const wallet = new Wallet(walletAddress, 1);
     walletServiceSpy.getWallet.and.returnValue({
       subscribe(callback) {
@@ -31,7 +32,7 @@ describe('DataProductService', () => {
       }
     });
 
-    service = new DataProductService(<any> repuxWeb3ServiceSpy, <any> walletServiceSpy);
+    service = new DataProductService(<any> repuxWeb3ServiceSpy, <any> walletServiceSpy, <any> storageServiceSpy);
   });
 
   describe('#get _api()', () => {
@@ -43,59 +44,48 @@ describe('DataProductService', () => {
     });
   });
 
-  describe('#_getConfig()', () => {
+  describe('#_readFromStore()', () => {
     it('should return config from storage', () => {
-      const storage = jasmine.createSpyObj('localStorage', [ 'getItem', 'setItem' ]);
-      storage.getItem.and.returnValue(`{"lastBlock": 12}`);
-      service[ '_storage' ] = storage;
-      const result = service[ '_getConfig' ]();
-      expect(<any> result).toEqual({
-        lastBlock: 12
-      });
+      const expectedResult = { lastBlock: 12 };
+      storageServiceSpy.getItem.and.returnValue(expectedResult);
+      const result = service[ '_readFromStore' ]();
+      expect(<any> result).toEqual(expectedResult);
     });
 
     it('should return new config when there is none in storage', () => {
-      const storage = jasmine.createSpyObj('localStorage', [ 'getItem', 'setItem' ]);
-      storage.getItem.and.returnValue(null);
-      service[ '_storage' ] = storage;
-      const result = service[ '_getConfig' ]();
-      expect(<any> result).toEqual({
-        lastBlock: 0
-      });
+      storageServiceSpy.getItem.and.returnValue(null);
+      const result = service[ '_readFromStore' ]();
+      expect(<any> result).toEqual({ lastBlock: 0 });
     });
   });
 
-  describe('#_setConfig()', () => {
+  describe('#_saveToStore()', () => {
     it('should call set item on storage', () => {
-      const storage = jasmine.createSpyObj('localStorage', [ 'getItem', 'setItem' ]);
-      service[ '_storage' ] = storage;
-      service[ '_setConfig' ]({ lastBlock: 12 });
-      expect(storage.setItem.calls.count()).toBe(1);
-      expect(storage.setItem.calls.allArgs()[ 0 ][ 1 ]).toBe(`{"lastBlock":12}`);
+      service[ '_saveToStore' ]({ lastBlock: 12 });
+      expect(storageServiceSpy.setItem.calls.count()).toBe(1);
+      expect(storageServiceSpy.setItem.calls.allArgs()[ 0 ][ 1 ]).toEqual({ lastBlock: 12 });
     });
   });
 
   describe('#_getLastReadBlock()', () => {
     it('should return lastBlock from config', () => {
-      const getConfig = jasmine.createSpy();
-      getConfig.and.returnValue({ lastBlock: 12 });
-      service[ '_getConfig' ] = getConfig;
+      const readFromStore = jasmine.createSpy();
+      readFromStore.and.returnValue({ lastBlock: 12 });
+      service[ '_readFromStore' ] = readFromStore;
       expect(service[ '_getLastReadBlock' ]()).toBe(12);
     });
   });
 
   describe('#_setLastReadBlock()', () => {
     it('should call set config', () => {
-      const getConfig = jasmine.createSpy();
-      const setConfig = jasmine.createSpy();
-      getConfig.and.returnValue({ lastBlock: 12 });
-      service[ '_getConfig' ] = getConfig;
-      service[ '_setConfig' ] = setConfig;
+      const readFromStore = jasmine.createSpy();
+      const saveToStore = jasmine.createSpy();
+      readFromStore.and.returnValue({ lastBlock: 12 });
+      service[ '_readFromStore' ] = readFromStore;
+      service[ '_saveToStore' ] = saveToStore;
       service[ '_setLastReadBlock' ](13);
-      expect(setConfig.calls.count()).toBe(1);
-      expect(setConfig.calls.allArgs()[ 0 ][ 0 ]).toEqual({
-        lastBlock: 13
-      });
+      expect(saveToStore.calls.count()).toBe(1);
+      expect(saveToStore.calls.allArgs()[ 0 ][ 0 ]).toEqual({ lastBlock: 13 });
     });
   });
 

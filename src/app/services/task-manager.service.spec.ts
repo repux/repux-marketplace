@@ -39,8 +39,11 @@ describe('TaskManagerService', () => {
   describe('#addTask()', () => {
     it('should add task to tasks list, run it and call openDialog method', () => {
       spyOn(service, 'openDialog').and.callFake(function () {
+        const ngDoCheck = jasmine.createSpy();
         this._dialogRef = {
-          componentInstance: {},
+          componentInstance: {
+            ngDoCheck
+          },
           close: jasmine.createSpy()
         };
       });
@@ -114,11 +117,14 @@ describe('TaskManagerService', () => {
     });
 
     it('should not call open method when _dialogRef is defined', () => {
+      const ngDoCheck = jasmine.createSpy();
       service[ '_dialogRef' ] = <any> {
+        componentInstance: {
+          ngDoCheck
+        },
         close: jasmine.createSpy()
       };
       const setTaskManagerService = jasmine.createSpy();
-      const ngDoCheck = jasmine.createSpy();
 
       const open = jasmine.createSpy().and.returnValue({
         componentInstance: {
@@ -139,8 +145,12 @@ describe('TaskManagerService', () => {
 
   describe('#closeDialog()', () => {
     it('should call close method on _dialogRef object', () => {
+      const ngDoCheck = jasmine.createSpy();
       const close = jasmine.createSpy();
       service[ '_dialogRef' ] = <any> {
+        componentInstance: {
+          ngDoCheck
+        },
         close
       };
 

@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { ProductCreatorDialogComponent } from '../product-creator-dialog/product-creator-dialog.component';
 import { MatDialog } from '@angular/material';
 import { DataProductNotificationsService } from '../services/data-product-notifications.service';
+import { UnpublishedProductsService } from '../services/unpublished-products.service';
 
 @Component({
   selector: 'app-selling',
@@ -29,9 +30,11 @@ export class SellComponent {
 
   constructor(
     private _dialog: MatDialog,
-    private _dataProductNotificationsService: DataProductNotificationsService
+    private _dataProductNotificationsService: DataProductNotificationsService,
+    private _unpublishedProductsService: UnpublishedProductsService
   ) {
     this.navLinks.find(link => link.path === 'pending-finalisation').items = _dataProductNotificationsService.finalisationRequests;
+    this.navLinks.find(link => link.path === 'unpublished').items = _unpublishedProductsService.products;
   }
 
   openProductCreatorDialog() {
