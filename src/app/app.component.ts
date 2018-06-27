@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { DataProductNotificationsService } from './services/data-product-notifications.service';
+import { WebpushNotificationService } from './services/webpush-notification.service';
 
 @Component({
   selector: 'app-root',
@@ -22,9 +23,13 @@ export class AppComponent implements OnInit {
     }
   ];
 
-  constructor(private _dataProductNotificationService: DataProductNotificationsService) {
+  constructor(
+    private _dataProductNotificationService: DataProductNotificationsService,
+    private _webpushNotificationService: WebpushNotificationService
+  ) {
   }
 
   ngOnInit(): void {
+    this._webpushNotificationService.init();
   }
 }

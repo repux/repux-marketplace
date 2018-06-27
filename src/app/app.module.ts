@@ -70,7 +70,7 @@ import { FinaliseButtonComponent } from './finalise-button/finalise-button.compo
     MarketplaceComponent,
     WithdrawButtonComponent,
     UnpublishButtonComponent,
-    FinaliseButtonComponent
+    FinaliseButtonComponent,
   ],
   entryComponents: [
     ProductCreatorDialogComponent,
@@ -103,7 +103,7 @@ import { FinaliseButtonComponent } from './finalise-button/finalise-button.compo
     ReactiveFormsModule,
     PipesModule,
     KeyStoreModule,
-    NotificationsModule,
+    NotificationsModule
   ],
   providers: [],
   bootstrap: [ AppComponent ]
