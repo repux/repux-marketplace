@@ -1,16 +1,10 @@
 import { DataProductService } from './data-product.service';
-import { DataProductUpdateAction } from 'repux-web3-api';
+import { DataProductUpdateAction, DataProductEvent } from 'repux-web3-api';
 import { NotificationsService } from '../notifications/notifications.service';
 import { NotificationType } from '../notifications/notification-type';
 import { Notification } from '../notifications/notification';
 import { Injectable, OnDestroy } from '@angular/core';
-import { DataProductEvent } from 'repux-web3-api/repux-web3-api';
 import { Subscription } from 'rxjs/internal/Subscription';
-import { FileReencryptionTask } from '../tasks/file-reencryption-task';
-import { RepuxLibService } from './repux-lib.service';
-import { MatDialog } from '@angular/material';
-import { KeyStoreService } from '../key-store/key-store.service';
-import { TaskManagerService } from './task-manager.service';
 import Wallet from '../wallet';
 import { WalletService } from './wallet.service';
 
@@ -20,15 +14,12 @@ import { WalletService } from './wallet.service';
 export class DataProductNotificationsService implements OnDestroy {
   private _purchaseSubscriptions: Subscription[] = [];
   private _wallet: Wallet;
+  public finalisationRequests = [];
 
   constructor(
     private _notificationsService: NotificationsService,
-    private _repuxLibService: RepuxLibService,
     private _dataProductService: DataProductService,
-    private _keyStoreService: KeyStoreService,
-    private _taskManagerService: TaskManagerService,
-    private _walletService: WalletService,
-    private _dialog: MatDialog
+    private _walletService: WalletService
   ) {
     this._notificationsService.addParser(
       NotificationType.DATA_PRODUCT_TO_FINALISATION,
@@ -82,23 +73,27 @@ export class DataProductNotificationsService implements OnDestroy {
       return notificationMessage;
     }
 
-    const publicKey = this._repuxLibService.getClass().deserializePublicKey(transaction.publicKey);
-    const dataProduct = await this._dataProductService.getDataProductData(purchaseEvent.dataProductAddress);
-
-    const fileReencryptionTask = new FileReencryptionTask(
-      purchaseEvent.dataProductAddress,
-      purchaseEvent.userAddress,
-      dataProduct.sellerMetaHash,
-      publicKey,
-      this._repuxLibService,
-      this._dataProductService,
-      this._keyStoreService,
-      this._dialog
-    );
-
-    this._taskManagerService.addTask(fileReencryptionTask);
+    this.finalisationRequests.push({
+      dataProductAddress: purchaseEvent.dataProductAddress,
+      buyerAddress: purchaseEvent.userAddress
+    });
 
     return notificationMessage;
+  }
+
+  findFinalisationRequest(_request: { dataProductAddress: string, buyerAddress: string }) {
+    return this.finalisationRequests.find(request =>
+      request.dataProductAddress === _request.dataProductAddress &&
+      request.buyerAddress === _request.buyerAddress
+    );
+  }
+
+  removeFinalisationRequest(request: { dataProductAddress: string, buyerAddress: string }) {
+    const foundRequest = this.findFinalisationRequest(request);
+    if (foundRequest) {
+      const index = this.finalisationRequests.indexOf(foundRequest);
+      this.finalisationRequests.splice(index, 1);
+    }
   }
 
   private _clearSubscriptions() {

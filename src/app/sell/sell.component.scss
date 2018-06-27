@@ -3,3 +3,19 @@
   bottom: 20px;
   left: 30px;
 }
+
+.mat-tab-link {
+  opacity: 1;
+}
+
+.text {
+  opacity: .6;
+}
+
+.mat-tab-link:focus:not(.mat-tab-disabled) .text {
+  opacity: 1;
+}
+
+.mat-chip-list {
+  margin-left: 10px;
+}

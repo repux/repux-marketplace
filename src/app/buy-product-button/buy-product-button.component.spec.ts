@@ -168,7 +168,7 @@ describe('BuyProductButtonComponent', () => {
   });
 
   describe('#getBought()', () => {
-    it('should return true if bought proguct', () => {
+    it('should return true if bought product', () => {
       component.wallet = new Wallet(buyerAddress, 0);
       component.dataProduct = <any> {
         address: dataProductAddress,

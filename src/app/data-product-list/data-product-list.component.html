@@ -11,7 +11,7 @@
       <mat-spinner *ngIf="isLoadingResults"></mat-spinner>
     </div>
 
-    <mat-table mat-table #table [dataSource]="dataSource" matSort (matSortChange)="sortChanged($event)">
+    <mat-table #table [dataSource]="dataSource" matSort (matSortChange)="sortChanged($event)">
 
       <!-- Name Column -->
       <ng-container matColumnDef="name">
@@ -96,20 +96,31 @@
             <app-buy-product-button *ngIf="availableActions.includes('buy')"
                                     [dataProduct]="element.source"></app-buy-product-button>
 
-            <app-withdraw-button *ngIf="availableActions.includes('withdraw')"
-                                 [dataProduct]="element.source"></app-withdraw-button>
-
             <app-unpublish-button *ngIf="availableActions.includes('unpublish')"
                                   [dataProduct]="element.source"></app-unpublish-button>
+
+            <app-withdraw-button *ngIf="availableActions.includes('withdraw')"
+                                 [dataProduct]="element.source"></app-withdraw-button>
           </div>
         </mat-cell>
       </ng-container>
 
       <mat-row mat-header-row *matHeaderRowDef="displayedColumns"></mat-row>
-      <mat-row mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+      <mat-row mat-row *matRowDef="let row; columns: displayedColumns;"
+               [appDataProductListDetailRow]="row" [appDataProductListDetailTpl]="tpl"
+               [class.disabled]="row.source.disabled"></mat-row>
     </mat-table>
   </div>
 
   <mat-paginator (page)="pageChanged($event)" [length]="esDataProducts.total" [(pageSize)]="size"
                  [pageSizeOptions]="pageSizeOptions"></mat-paginator>
 </div>
+
+<ng-template #tpl let-element>
+  <div *ngIf="displayPendingTransactions && getTransactionsToFinalisation(element.source).length" class="details">
+    <strong class="detail-header">Transactions:</strong>
+    <app-data-product-transactions-list
+        [dataProduct]="element.source"
+        [transactions]="getTransactionsToFinalisation(element.source)"></app-data-product-transactions-list>
+  </div>
+</ng-template>

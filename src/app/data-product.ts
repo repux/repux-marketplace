@@ -19,6 +19,7 @@ export class DataProduct implements Deserializable<DataProduct> {
   ownerAddress?: string;
   purchased?: string[];
   finalised?: string[];
+  disabled?: boolean;
   transactions: DataProductTransaction[] = [];
   lastUpdate: Date;
   daysForDeliver: number;

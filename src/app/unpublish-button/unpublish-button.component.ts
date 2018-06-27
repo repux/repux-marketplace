@@ -48,7 +48,7 @@ export class UnpublishButtonComponent implements OnInit {
     });
     transactionDialogRef.afterClosed().subscribe(result => {
       if (result) {
-        this.userIsOwner = false;
+        this.dataProduct.disabled = true;
       }
     });
     const transactionDialog: TransactionDialogComponent = transactionDialogRef.componentInstance;

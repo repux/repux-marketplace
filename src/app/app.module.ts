@@ -28,7 +28,7 @@ import {
   MatCardModule,
   MatMenuModule,
   MatTabsModule,
-  MatTooltipModule
+  MatTooltipModule, MatChipsModule
 } from '@angular/material';
 import { PurchaseConfirmationDialogComponent } from './purchase-confirmation-dialog/purchase-confirmation-dialog.component';
 import { BuyProductButtonComponent } from './buy-product-button/buy-product-button.component';
@@ -43,12 +43,17 @@ import { MarketplaceComponent } from './marketplace/marketplace.component';
 import { WithdrawButtonComponent } from './withdraw-button/withdraw-button.component';
 import { UnpublishButtonComponent } from './unpublish-button/unpublish-button.component';
 import { UnpublishedComponent } from './sell/unpublished/unpublished.component';
+import { DataProductListDetailDirective } from './data-product-list/data-product-list-detail.directive';
+import { DataProductTransactionsListComponent } from './data-product-transactions-list/data-product-transactions-list.component';
+import { FinaliseButtonComponent } from './finalise-button/finalise-button.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     DashboardComponent,
     DataProductListComponent,
+    DataProductListDetailDirective,
+    DataProductTransactionsListComponent,
     ProductCreatorDialogComponent,
     ProductCategorySelectorComponent,
     FileInputComponent,
@@ -64,7 +69,8 @@ import { UnpublishedComponent } from './sell/unpublished/unpublished.component';
     UnpublishedComponent,
     MarketplaceComponent,
     WithdrawButtonComponent,
-    UnpublishButtonComponent
+    UnpublishButtonComponent,
+    FinaliseButtonComponent
   ],
   entryComponents: [
     ProductCreatorDialogComponent,
@@ -92,11 +98,12 @@ import { UnpublishedComponent } from './sell/unpublished/unpublished.component';
     MatDialogModule,
     MatSelectModule,
     MatTooltipModule,
+    MatChipsModule,
     FormsModule,
     ReactiveFormsModule,
     PipesModule,
     KeyStoreModule,
-    NotificationsModule
+    NotificationsModule,
   ],
   providers: [],
   bootstrap: [ AppComponent ]

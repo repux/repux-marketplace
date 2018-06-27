@@ -1,8 +1,9 @@
-<div *ngIf="wallet">
+<div *ngIf="!dataProduct.disabled && wallet">
   <button mat-raised-button
           color="accent"
           *ngIf="!userIsOwner && !bought"
-          (click)="buyDataProduct()">Buy</button>
+          (click)="buyDataProduct()">Buy
+  </button>
 
   <div *ngIf="finalised || userIsOwner">
     <app-download-product-button [productAddress]="dataProductAddress"></app-download-product-button>

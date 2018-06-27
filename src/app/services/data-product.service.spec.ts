@@ -1,6 +1,6 @@
 import { DataProductService } from './data-product.service';
 import BigNumber from 'bignumber.js';
-import { from, Observable } from 'rxjs';
+import { Observable } from 'rxjs';
 import { DataProductUpdateAction } from 'repux-web3-api';
 import Wallet from '../wallet';
 
@@ -38,7 +38,7 @@ describe('DataProductService', () => {
     it('should return result of _repuxWeb3Service.getRepuxApiInstance function', () => {
       const expectedResult = 'EXPECTED_RESULT';
       repuxWeb3ServiceSpy.getRepuxApiInstance.and.returnValue(expectedResult);
-      expect(service[ '_api' ]).toBe(expectedResult);
+      expect(service[ '_api' ]).toBe(<any> expectedResult);
       expect(repuxWeb3ServiceSpy.getRepuxApiInstance.calls.count()).toBe(1);
     });
   });

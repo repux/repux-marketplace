@@ -13,7 +13,7 @@ import {
   MatToolbarModule,
   MatPaginatorModule,
   MatProgressSpinnerModule,
-  MatTableModule
+  MatTableModule, MatChipsModule
 } from '@angular/material';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { PipesModule } from './pipes/pipes.module';
@@ -30,6 +30,9 @@ import { PendingFinalisationComponent } from './sell/pending-finalisation/pendin
 import { WithdrawButtonComponent } from './withdraw-button/withdraw-button.component';
 import { UnpublishButtonComponent } from './unpublish-button/unpublish-button.component';
 import { UnpublishedComponent } from './sell/unpublished/unpublished.component';
+import { DataProductListDetailDirective } from './data-product-list/data-product-list-detail.directive';
+import { DataProductTransactionsListComponent } from './data-product-transactions-list/data-product-transactions-list.component';
+import { FinaliseButtonComponent } from './finalise-button/finalise-button.component';
 
 describe('AppComponent', () => {
   beforeEach(async(() => {
@@ -44,11 +47,14 @@ describe('AppComponent', () => {
         PendingFinalisationComponent,
         UnpublishedComponent,
         DataProductListComponent,
+        DataProductListDetailDirective,
+        DataProductTransactionsListComponent,
         MetamaskDetectorComponent,
         BuyProductButtonComponent,
         DownloadProductButtonComponent,
         WithdrawButtonComponent,
-        UnpublishButtonComponent
+        UnpublishButtonComponent,
+        FinaliseButtonComponent
       ],
       imports: [
         AppRoutingModule,
@@ -63,6 +69,7 @@ describe('AppComponent', () => {
         MatProgressSpinnerModule,
         MatFormFieldModule,
         MatTableModule,
+        MatChipsModule,
         PipesModule
       ],
       providers: [
