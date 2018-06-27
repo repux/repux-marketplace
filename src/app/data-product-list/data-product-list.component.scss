@@ -34,8 +34,18 @@ $shadow-color: rgba(0, 0, 0, .03);
   justify-content: center;
 }
 
-.add-product-button {
-  position: fixed;
-  bottom: 20px;
-  left: 30px;
+.row {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+
+  > * {
+    margin: 10px;
+  }
+}
+
+mat-header-cell {
+  mat-icon {
+    cursor: default;
+  }
 }

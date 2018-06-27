@@ -1,0 +1,6 @@
+<div *ngIf="wallet && userIsOwner && !dataProduct.fundsToWithdraw.isZero()">
+  <button mat-raised-button
+          color="accent"
+          (click)="withdraw()">Withdraw all
+  </button>
+</div>

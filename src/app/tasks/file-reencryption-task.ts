@@ -11,10 +11,10 @@ import { Subscription } from 'rxjs';
 export const STATUS = {
   WAITING_FOR_KEY_ACCESS: 'Waiting for key access',
   REENCRYPTION: 'Reencryption',
-  WAITING_FOR_APPROVE: 'Waiting for approve',
+  WAITING_FOR_FINALISATION: 'Waiting for finalisation',
   FINISHED: 'Finished',
   CANCELED: 'Canceled',
-  PENDING_APPROVAL: 'Pending approval',
+  PENDING_FINALISATION: 'Pending finalisation',
   REJECTED: 'Transaction rejected, try again'
 };
 
@@ -82,8 +82,8 @@ export class FileReencryptionTask implements Task {
           this._progress = 100;
           this._result = result;
           this._needsUserAction = true;
-          this._userActionName = 'Approve';
-          this._status = STATUS.WAITING_FOR_APPROVE;
+          this._userActionName = 'Finalise';
+          this._status = STATUS.WAITING_FOR_FINALISATION;
         })
         .on('progress, error, finish', () => {
           this._taskManagerService.onTaskEvent();
@@ -91,9 +91,9 @@ export class FileReencryptionTask implements Task {
     } else {
       try {
         this._needsUserAction = false;
-        this._status = STATUS.PENDING_APPROVAL;
+        this._status = STATUS.PENDING_FINALISATION;
         this._taskManagerService.onTaskEvent();
-        await this._dataProductService.approveDataProductPurchase(this._dataProductAddress, this._buyerAddress, this._result);
+        await this._dataProductService.finaliseDataProductPurchase(this._dataProductAddress, this._buyerAddress, this._result);
         this._status = STATUS.FINISHED;
         this._finished = true;
         this._taskManagerService.onTaskEvent();

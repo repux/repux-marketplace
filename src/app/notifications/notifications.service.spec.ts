@@ -24,16 +24,16 @@ describe('NotificationsService', () => {
     });
 
     service = TestBed.get(NotificationsService);
-    await service.addParser(NotificationType.DATA_PRODUCT_TO_APPROVE, (notification: Notification) => Promise.resolve('RESULT'));
-    exampleNotification = new Notification(NotificationType.DATA_PRODUCT_TO_APPROVE, {});
+    await service.addParser(NotificationType.DATA_PRODUCT_TO_FINALISATION, (notification: Notification) => Promise.resolve('RESULT'));
+    exampleNotification = new Notification(NotificationType.DATA_PRODUCT_TO_FINALISATION, {});
   });
 
   describe('#addParser()', () => {
     it('should add parser function to specified notification type and call _init method', () => {
       service[ '_init' ] = jasmine.createSpy();
       const parser = (notification: Notification) => Promise.resolve('RESULT');
-      service.addParser(NotificationType.DATA_PRODUCT_TO_APPROVE, parser);
-      expect(service[ '_parsers' ][ NotificationType.DATA_PRODUCT_TO_APPROVE ]).toEqual(parser);
+      service.addParser(NotificationType.DATA_PRODUCT_TO_FINALISATION, parser);
+      expect(service[ '_parsers' ][ NotificationType.DATA_PRODUCT_TO_FINALISATION ]).toEqual(parser);
       expect((<any> service[ '_init' ]).calls.count()).toBe(1);
     });
   });
@@ -80,7 +80,7 @@ describe('NotificationsService', () => {
       const notificationString = 'NOTIFICATION_STRING';
       const parser = jasmine.createSpy();
       parser.and.returnValue(notificationString);
-      service[ '_parsers' ][ NotificationType.DATA_PRODUCT_TO_APPROVE ] = parser;
+      service[ '_parsers' ][ NotificationType.DATA_PRODUCT_TO_FINALISATION ] = parser;
       service[ '_displayNotification' ] = jasmine.createSpy();
       await service[ '_parseNotification' ](exampleNotification);
       expect(parser.calls.count()).toBe(1);
@@ -108,11 +108,11 @@ describe('NotificationsService', () => {
   describe('#_getConfig()', () => {
     it('should return config from storage', async () => {
       const storage = jasmine.createSpyObj('localStorage', [ 'getItem', 'setItem' ]);
-      storage.getItem.and.returnValue(`{"notifications":[{"type": "DATA_PRODUCT_TO_APPROVE", "data": {}}]}`);
+      storage.getItem.and.returnValue(`{"notifications":[{"type": "DATA_PRODUCT_TO_FINALISATION", "data": {}}]}`);
       service[ '_storage' ] = storage;
       const result = await service[ '_getConfig' ]();
       expect(<any> result).toEqual({
-        notifications: [ { type: 'DATA_PRODUCT_TO_APPROVE', data: {} } ]
+        notifications: [ { type: 'DATA_PRODUCT_TO_FINALISATION', data: {} } ]
       });
     });
 

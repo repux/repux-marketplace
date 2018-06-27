@@ -23,6 +23,13 @@ import { DataProductNotificationsService } from './services/data-product-notific
 import { BuyProductButtonComponent } from './buy-product-button/buy-product-button.component';
 import { DownloadProductButtonComponent } from './download-product-button/download-product-button.component';
 import { WalletService } from './services/wallet.service';
+import { MarketplaceComponent } from './marketplace/marketplace.component';
+import { SellComponent } from './sell/sell.component';
+import { MyActiveListingsComponent } from './sell/my-active-listings/my-active-listings.component';
+import { PendingFinalisationComponent } from './sell/pending-finalisation/pending-finalisation.component';
+import { WithdrawButtonComponent } from './withdraw-button/withdraw-button.component';
+import { UnpublishButtonComponent } from './unpublish-button/unpublish-button.component';
+import { UnpublishedComponent } from './sell/unpublished/unpublished.component';
 
 describe('AppComponent', () => {
   beforeEach(async(() => {
@@ -31,10 +38,17 @@ describe('AppComponent', () => {
       declarations: [
         AppComponent,
         DashboardComponent,
+        MarketplaceComponent,
+        SellComponent,
+        MyActiveListingsComponent,
+        PendingFinalisationComponent,
+        UnpublishedComponent,
         DataProductListComponent,
         MetamaskDetectorComponent,
         BuyProductButtonComponent,
-        DownloadProductButtonComponent
+        DownloadProductButtonComponent,
+        WithdrawButtonComponent,
+        UnpublishButtonComponent
       ],
       imports: [
         AppRoutingModule,

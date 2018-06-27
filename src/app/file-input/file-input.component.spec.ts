@@ -36,7 +36,7 @@ describe('FileInputComponent', () => {
   });
 
   describe('#onChange', () => {
-    it('should assign event files to value property', () => {
+    it('should assign event my-active-listings to value property', () => {
       const files = <any> [ { name: 'FILE' } ];
       component.onChange({ target: { files } });
       expect(component.value).toBe(files);

@@ -93,28 +93,36 @@ export class DataProductService {
     return this._api.getDataProductTransaction(dataProductAddress, buyerAddress);
   }
 
-  publishDataProduct(metaFileHash: string, price: BigNumber): Promise<TransactionResult> {
-    return this._api.createDataProduct(metaFileHash, price);
+  publishDataProduct(metaFileHash: string, price: BigNumber, daysForDeliver: number): Promise<TransactionResult> {
+    return this._api.createDataProduct(metaFileHash, price, daysForDeliver);
   }
 
   purchaseDataProduct(dataProductAddress: string, buyerPublicKey: string): Promise<TransactionResult> {
     return this._api.purchaseDataProduct(dataProductAddress, buyerPublicKey);
   }
 
-  approveDataProductPurchase(dataProductAddress: string, buyerAddress: string, buyerMetaHash: string): Promise<TransactionResult> {
-    return this._api.approveDataProductPurchase(dataProductAddress, buyerAddress, buyerMetaHash);
+  finaliseDataProductPurchase(dataProductAddress: string, buyerAddress: string, buyerMetaHash: string): Promise<TransactionResult> {
+    return this._api.finaliseDataProductPurchase(dataProductAddress, buyerAddress, buyerMetaHash);
   }
 
   getBoughtDataProducts(): Promise<string[]> {
     return this._getDebouncedPromise('boughtData', 'getBoughtDataProducts');
   }
 
-  getBoughtAndApprovedDataProducts(): Promise<string[]> {
-    return this._getDebouncedPromise('boughtAndApprovedData', 'getBoughtAndApprovedDataProducts');
+  getBoughtAndFinalisedDataProducts(): Promise<string[]> {
+    return this._getDebouncedPromise('boughtAndFinalisedData', 'getBoughtAndFinalisedDataProducts');
   }
 
   getCreatedDataProducts(): Promise<string[]> {
     return this._getDebouncedPromise('createdData', 'getCreatedDataProducts');
+  }
+
+  withdrawFundsFromDataProduct(dataProductAddress: string): Promise<TransactionResult> {
+    return this._api.withdrawFundsFromDataProduct(dataProductAddress);
+  }
+
+  disableDataProduct(dataProductAddress: string): Promise<TransactionResult> {
+    return this._api.disableDataProduct(dataProductAddress);
   }
 
   watchForDataProductUpdate(_dataProductAddress?: string, _dataProductUpdateAction?: DataProductUpdateAction)

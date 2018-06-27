@@ -11,60 +11,105 @@
       <mat-spinner *ngIf="isLoadingResults"></mat-spinner>
     </div>
 
-    <table mat-table #table [dataSource]="dataSource" matSort (matSortChange)="sortChanged($event)">
+    <mat-table mat-table #table [dataSource]="dataSource" matSort (matSortChange)="sortChanged($event)">
 
       <!-- Name Column -->
       <ng-container matColumnDef="name">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header> Name </th>
-        <td mat-cell *matCellDef="let element"> {{element.source.name}} </td>
+        <mat-header-cell *matHeaderCellDef mat-sort-header> File name</mat-header-cell>
+        <mat-cell *matCellDef="let element"> {{element.source.name}}</mat-cell>
       </ng-container>
 
       <!-- Title Column -->
       <ng-container matColumnDef="title">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header> Title </th>
-        <td mat-cell *matCellDef="let element"> {{element.source.title}} </td>
+        <mat-header-cell *matHeaderCellDef mat-sort-header> Title</mat-header-cell>
+        <mat-cell *matCellDef="let element"> {{element.source.title}}</mat-cell>
       </ng-container>
 
       <!-- Categories Column -->
       <ng-container matColumnDef="category">
-        <th mat-header-cell *matHeaderCellDef> Categories </th>
-        <td mat-cell *matCellDef="let element"> {{element.source.category | array_join: ', '}} </td>
+        <mat-header-cell *matHeaderCellDef> Categories</mat-header-cell>
+        <mat-cell *matCellDef="let element"> {{element.source.category | array_join: ', '}}</mat-cell>
       </ng-container>
-
       <!-- Size Column -->
       <ng-container matColumnDef="size">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header> Size </th>
-        <td mat-cell *matCellDef="let element"> {{ element.source.size | fileSize }} </td>
+        <mat-header-cell *matHeaderCellDef mat-sort-header> Size</mat-header-cell>
+        <mat-cell *matCellDef="let element"> {{ element.source.size | fileSize }}</mat-cell>
       </ng-container>
 
       <!-- Price Column -->
       <ng-container matColumnDef="price">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header> Price </th>
-        <td mat-cell *matCellDef="let element"> {{ element.source.price.toString() | currency : '' : currencyName : currencyFormat }}</td>
+        <mat-header-cell *matHeaderCellDef mat-sort-header> List price</mat-header-cell>
+        <mat-cell *matCellDef="let element"> {{ element.source.price.toString() | currency : '' :
+          currencyName :
+          currencyFormat }}
+        </mat-cell>
       </ng-container>
 
-      <!-- Price Column -->
+      <!-- Delivery time Column -->
+      <ng-container matColumnDef="daysForDeliver">
+        <mat-header-cell *matHeaderCellDef mat-sort-header> Delivery time</mat-header-cell>
+        <mat-cell *matCellDef="let element"> {{ element.source.daysForDeliver }}</mat-cell>
+      </ng-container>
+
+      <!-- Times purchased Column -->
+      <ng-container matColumnDef="timesPurchased">
+        <mat-header-cell *matHeaderCellDef> Times purchased</mat-header-cell>
+        <mat-cell *matCellDef="let element"> {{ getTimesPurchased(element.source) }}</mat-cell>
+      </ng-container>
+
+      <!-- Total earnings Column -->
+      <ng-container matColumnDef="totalEarnings">
+        <mat-header-cell *matHeaderCellDef> Total earnings</mat-header-cell>
+        <mat-cell *matCellDef="let element"> {{ getTotalEarnings(element.source).toString() | currency : '' :
+          currencyName : currencyFormat }}
+        </mat-cell>
+      </ng-container>
+
+      <!-- Total deposit Column -->
+      <ng-container matColumnDef="fundsToWithdraw">
+        <mat-header-cell *matHeaderCellDef>
+          <div class="row">
+            Total deposit
+            <mat-icon
+                matTooltip="Funds accumulated in the product Smart Contract that can be released using the Withdraw function">
+              help
+            </mat-icon>
+          </div>
+        </mat-header-cell>
+        <mat-cell *matCellDef="let element"> {{ element.source.fundsToWithdraw.toString() | currency : '' :
+          currencyName : currencyFormat }}
+        </mat-cell>
+      </ng-container>
+
+      <!-- Times purchased Column -->
+      <ng-container matColumnDef="pendingFinalisationRequests">
+        <mat-header-cell *matHeaderCellDef> Pending finalisation requests</mat-header-cell>
+        <mat-cell *matCellDef="let element"> {{ getTransactionsToFinalisation(element.source).length }}
+        </mat-cell>
+      </ng-container>
+
+      <!-- Actions Column -->
       <ng-container matColumnDef="actions">
-        <th mat-header-cell *matHeaderCellDef></th>
-        <td mat-cell *matCellDef="let element">
-          <app-buy-product-button [productAddress]="element.id"
-                                  [productOwnerAddress]="element.source.ownerAddress"></app-buy-product-button>
-        </td>
+        <mat-header-cell *matHeaderCellDef></mat-header-cell>
+        <mat-cell *matCellDef="let element">
+          <div class="row">
+            <app-buy-product-button *ngIf="availableActions.includes('buy')"
+                                    [dataProduct]="element.source"></app-buy-product-button>
+
+            <app-withdraw-button *ngIf="availableActions.includes('withdraw')"
+                                 [dataProduct]="element.source"></app-withdraw-button>
+
+            <app-unpublish-button *ngIf="availableActions.includes('unpublish')"
+                                  [dataProduct]="element.source"></app-unpublish-button>
+          </div>
+        </mat-cell>
       </ng-container>
 
-      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-    </table>
+      <mat-row mat-header-row *matHeaderRowDef="displayedColumns"></mat-row>
+      <mat-row mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+    </mat-table>
   </div>
 
-  <mat-paginator (page)="pageChanged($event)" [length]="esDataProducts.total" [(pageSize)]="size" [pageSizeOptions]="pageSizeOptions"></mat-paginator>
+  <mat-paginator (page)="pageChanged($event)" [length]="esDataProducts.total" [(pageSize)]="size"
+                 [pageSizeOptions]="pageSizeOptions"></mat-paginator>
 </div>
-
-<button
-  class="add-product-button"
-  mat-fab
-  (click)="openProductCreatorDialog()"
-  matTooltip="Create new product"
-  matTooltipPosition="before">
-  <mat-icon aria-label="Add file">add</mat-icon>
-</button>

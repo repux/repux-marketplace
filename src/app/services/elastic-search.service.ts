@@ -14,15 +14,14 @@ export class ElasticSearchService<T> {
   constructor(private http: HttpClient) {
   }
 
-  search(type: string, query: string = '*', sort: string = '', size: number = 10,
+  search(type: string, query: Object = { bool: {} }, sort: string = '', size: number = 10,
          from: number = 0, resultEntityType: any): Observable<EsResponse<T>> {
-    return this.http.get(`${this.config.protocol}://${this.config.host}:${this.config.port}/${this.config.searchUrl}` +
-      `?type=${type}&q=${query}&size=${size}&from=${from}&sort=${sort}`)
-      .pipe(
-        map((data: { hits: EsResponse<T> }) => {
-          data.hits.hits = data.hits.hits.map(hit => new resultEntityType().deserialize(hit));
-          return data.hits;
-        })
-      );
+    return this.http.post(`${this.config.protocol}://${this.config.host}:${this.config.port}/${this.config.searchUrl}` +
+      `?type=${type}&size=${size}&from=${from}&sort=${sort}&`, { query }).pipe(
+      map((data: { hits: EsResponse<T> }) => {
+        data.hits.hits = data.hits.hits.map(hit => new resultEntityType().deserialize(hit));
+        return data.hits;
+      })
+    );
   }
 }

@@ -10,6 +10,7 @@ import { KeysPasswordDialogComponent } from '../key-store/keys-password-dialog/k
 import { KeysGeneratorDialogComponent } from '../key-store/keys-generator-dialog/keys-generator-dialog.component';
 import { KeyStoreService } from '../key-store/key-store.service';
 import { Subscription } from 'rxjs/internal/Subscription';
+import { DataProduct } from '../data-product';
 
 @Component({
   selector: 'app-buy-product-button',
@@ -17,12 +18,14 @@ import { Subscription } from 'rxjs/internal/Subscription';
   styleUrls: [ './buy-product-button.component.scss' ]
 })
 export class BuyProductButtonComponent implements OnInit, OnDestroy {
-  @Input() productAddress: string;
-  @Input() productOwnerAddress: string;
+  @Input() dataProduct: DataProduct;
   private _subscription: Subscription;
   public wallet: Wallet;
-  public boughtProducts: string[] = [];
-  public approvedProducts: string[] = [];
+  public finalised: boolean;
+  public bought: boolean;
+  public userIsOwner: boolean;
+  public dataProductAddress: string;
+  public productOwnerAddress: string;
 
   constructor(
     private _dataProductService: DataProductService,
@@ -33,15 +36,9 @@ export class BuyProductButtonComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    this.dataProductAddress = this.dataProduct.address;
+    this.productOwnerAddress = this.dataProduct.ownerAddress;
     this._walletService.getWallet().subscribe(wallet => this._onWalletChange(wallet));
-  }
-
-  async getBoughtProducts(): Promise<void> {
-    this.boughtProducts = await this._dataProductService.getBoughtDataProducts();
-  }
-
-  async getApprovedProducts(): Promise<void> {
-    this.approvedProducts = await this._dataProductService.getBoughtAndApprovedDataProducts();
   }
 
   private _onWalletChange(wallet: Wallet): void {
@@ -50,8 +47,9 @@ export class BuyProductButtonComponent implements OnInit, OnDestroy {
     }
 
     this.wallet = wallet;
-    this.getBoughtProducts();
-    this.getApprovedProducts();
+    this.userIsOwner = this.getUserIsOwner();
+    this.finalised = this.getFinalised();
+    this.bought = this.getBought();
   }
 
   async buyDataProduct(): Promise<void> {
@@ -63,24 +61,26 @@ export class BuyProductButtonComponent implements OnInit, OnDestroy {
     });
     transactionDialogRef.afterClosed().subscribe(result => {
       if (result) {
-        this.boughtProducts.push(this.productAddress);
+        this.bought = true;
         this._dialog.open(PurchaseConfirmationDialogComponent);
       }
     });
     const transactionDialog: TransactionDialogComponent = transactionDialogRef.componentInstance;
-    transactionDialog.transaction = () => this._dataProductService.purchaseDataProduct(this.productAddress, serializedKey);
+    transactionDialog.transaction = () => this._dataProductService.purchaseDataProduct(this.dataProductAddress, serializedKey);
     transactionDialog.callTransaction();
   }
 
-  get approved() {
-    return this.approvedProducts && this.approvedProducts.includes(this.productAddress);
+  getFinalised() {
+    return this.dataProduct.transactions
+      .filter(transaction => transaction.buyerAddress === this.wallet.address && transaction.finalised).length > 0;
   }
 
-  get bought() {
-    return this.boughtProducts && this.boughtProducts.includes(this.productAddress);
+  getBought() {
+    return this.dataProduct.transactions
+      .filter(transaction => transaction.buyerAddress === this.wallet.address).length > 0;
   }
 
-  get userIsOwner() {
+  getUserIsOwner() {
     return this.wallet && this.wallet.address === this.productOwnerAddress;
   }
 

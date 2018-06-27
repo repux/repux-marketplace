@@ -50,7 +50,8 @@ describe('FileUploadTask()', () => {
       longDescription,
       category,
       price,
-      <any> file
+      <any> file,
+      1
     );
   });
 
@@ -71,7 +72,8 @@ describe('FileUploadTask()', () => {
         longDescription,
         category,
         price,
-        <any> file
+        <any> file,
+        1
       );
 
       expect(<any> fileUploadTask[ '_publicKey' ]).toBe(publicKey);
@@ -260,7 +262,7 @@ describe('FileUploadTask()', () => {
 
   describe('#_createMetadata()', () => {
     it('should return metadata object', () => {
-      expect(fileUploadTask['_createMetadata']()).toEqual({
+      expect(fileUploadTask[ '_createMetadata' ]()).toEqual({
         title,
         shortDescription,
         longDescription,

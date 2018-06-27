@@ -35,7 +35,8 @@ export class FileUploadTask implements Task {
     private _longDescription: string,
     private _category: string[],
     private _price: BigNumber,
-    private _file: File
+    private _file: File,
+    private _daysForDeliver: number
   ) {
     this._name = `Creating ${this._file.name}`;
     this._uploader = this._repuxLibService.getInstance().createFileUploader();
@@ -83,7 +84,7 @@ export class FileUploadTask implements Task {
       this._needsUserAction = false;
       this._status = STATUS.PUBLICATION;
       this._taskManagerService.onTaskEvent();
-      await this._dataProductService.publishDataProduct(this._result, this._price);
+      await this._dataProductService.publishDataProduct(this._result, this._price, this._daysForDeliver);
       this._status = STATUS.FINISHED;
       this._finished = true;
       this._taskManagerService.onTaskEvent();

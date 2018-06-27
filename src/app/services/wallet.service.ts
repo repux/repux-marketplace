@@ -99,9 +99,8 @@ export class WalletService implements OnDestroy {
     }
 
     const defaultAccount = await this.repuxWeb3Service.getRepuxApiInstance().getDefaultAccount();
-    const accountBalanceInWei = await this.repuxWeb3Service.getRepuxApiInstance().getBalance();
-    const accountBalanceInEther = this.repuxWeb3Service.getWeb3Instance().fromWei(accountBalanceInWei, 'ether');
-    return new Wallet(defaultAccount, +accountBalanceInEther.toString());
+    const accountBalance = await this.repuxWeb3Service.getRepuxApiInstance().getBalance();
+    return new Wallet(defaultAccount, +accountBalance.toString());
   }
 
   ngOnDestroy(): void {

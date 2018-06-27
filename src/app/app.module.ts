@@ -36,6 +36,13 @@ import { DownloadProductButtonComponent } from './download-product-button/downlo
 import { KeyStoreModule } from './key-store/key-store.module';
 import { NotificationsModule } from './notifications/notifications.module';
 import { MetamaskDetectorComponent } from './metamask-detector/metamask-detector.component';
+import { SellComponent } from './sell/sell.component';
+import { MyActiveListingsComponent } from './sell/my-active-listings/my-active-listings.component';
+import { PendingFinalisationComponent } from './sell/pending-finalisation/pending-finalisation.component';
+import { MarketplaceComponent } from './marketplace/marketplace.component';
+import { WithdrawButtonComponent } from './withdraw-button/withdraw-button.component';
+import { UnpublishButtonComponent } from './unpublish-button/unpublish-button.component';
+import { UnpublishedComponent } from './sell/unpublished/unpublished.component';
 
 @NgModule({
   declarations: [
@@ -50,7 +57,14 @@ import { MetamaskDetectorComponent } from './metamask-detector/metamask-detector
     PurchaseConfirmationDialogComponent,
     BuyProductButtonComponent,
     DownloadProductButtonComponent,
-    MetamaskDetectorComponent
+    MetamaskDetectorComponent,
+    SellComponent,
+    MyActiveListingsComponent,
+    PendingFinalisationComponent,
+    UnpublishedComponent,
+    MarketplaceComponent,
+    WithdrawButtonComponent,
+    UnpublishButtonComponent
   ],
   entryComponents: [
     ProductCreatorDialogComponent,
