@@ -13,7 +13,10 @@ import {
   MatToolbarModule,
   MatPaginatorModule,
   MatProgressSpinnerModule,
-  MatTableModule, MatChipsModule
+  MatTableModule,
+  MatChipsModule,
+  MatSidenavModule,
+  MatListModule,
 } from '@angular/material';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { PipesModule } from './pipes/pipes.module';
@@ -33,7 +36,8 @@ import { UnpublishedComponent } from './sell/unpublished/unpublished.component';
 import { DataProductListDetailDirective } from './data-product-list/data-product-list-detail.directive';
 import { DataProductTransactionsListComponent } from './data-product-transactions-list/data-product-transactions-list.component';
 import { FinaliseButtonComponent } from './finalise-button/finalise-button.component';
-import { HttpClient } from "@angular/common/http";
+import { HttpClient } from '@angular/common/http';
+import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 
 describe('AppComponent', () => {
   beforeEach(async(() => {
@@ -71,7 +75,10 @@ describe('AppComponent', () => {
         MatFormFieldModule,
         MatTableModule,
         MatChipsModule,
-        PipesModule
+        MatSidenavModule,
+        MatListModule,
+        PipesModule,
+        NoopAnimationsModule
       ],
       providers: [
         { provide: APP_BASE_HREF, useValue: '/' },

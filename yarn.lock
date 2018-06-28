@@ -5278,13 +5278,13 @@ repeating@^2.0.0:
   dependencies:
     is-finite "^1.0.0"
 
-"repux-lib@git+ssh://git@github.com:repux/repux-lib.git#0.4.0":
-  version "0.4.0"
-  resolved "git+ssh://git@github.com:repux/repux-lib.git#abaa4cb288cf4080a8ea1606027388c7e757a14a"
+"repux-lib@git+ssh://git@github.com:repux/repux-lib.git#f878331931b72be9ca2758328a3c58b9d0a66a8f":
+  version "0.4.1"
+  resolved "git+ssh://git@github.com:repux/repux-lib.git#f878331931b72be9ca2758328a3c58b9d0a66a8f"
 
-"repux-web3-api@git+ssh://git@github.com:repux/repux-web3-api.git#1.4.0":
-  version "1.4.0"
-  resolved "git+ssh://git@github.com:repux/repux-web3-api.git#97da7e4ec16090a801970fce09496355eaa5b75c"
+"repux-web3-api@git+ssh://git@github.com:repux/repux-web3-api.git#b0eb6b666c6c1db69cd8bc43590e3bfa37ec7a5a":
+  version "1.0.0"
+  resolved "git+ssh://git@github.com:repux/repux-web3-api.git#b0eb6b666c6c1db69cd8bc43590e3bfa37ec7a5a"
   dependencies:
     bignumber.js "^7.2.0"
     web3 "^0.20.6"
