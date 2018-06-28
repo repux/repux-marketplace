@@ -20,7 +20,7 @@ import { KeyStoreModule } from '../key-store/key-store.module';
 
 describe('ProductCreatorDialogComponent', () => {
   let keyStoreService, repuxLibService, dataProductService, taskManagerService, matDialog, matDialogRef,
-    getKeys;
+    getKeys, unpublishedProductsService;
   let component: ProductCreatorDialogComponent;
   let fixture: ComponentFixture<ProductCreatorDialogComponent>;
 
@@ -33,6 +33,7 @@ describe('ProductCreatorDialogComponent', () => {
 
     dataProductService = jasmine.createSpyObj('DataProductService', [ 'publishDataProduct' ]);
     taskManagerService = jasmine.createSpyObj('TaskManagerService', [ 'addTask' ]);
+    unpublishedProductsService = jasmine.createSpyObj('UnpublishedProductsService', [ 'addProduct', 'removeProduct' ]);
     matDialogRef = jasmine.createSpyObj('MatDialogRef', [ 'close', 'afterClosed' ]);
     matDialog = jasmine.createSpyObj('MatDialog', [ 'open' ]);
 
@@ -71,10 +72,10 @@ describe('ProductCreatorDialogComponent', () => {
   describe('#constructor()', () => {
     it('should initialize formGroup property', () => {
       component = new ProductCreatorDialogComponent(keyStoreService, repuxLibService,
-        dataProductService, taskManagerService, matDialog, matDialogRef);
+        dataProductService, taskManagerService, unpublishedProductsService, matDialog, matDialogRef);
       expect(component.formGroup.controls[ 'title' ]).toBe(component.titleFormControl);
       expect(component.formGroup.controls[ 'shortDescription' ]).toBe(component.shortDescriptionFormControl);
-      expect(component.formGroup.controls[ 'longDescription' ]).toBe(component.longDescriptionFormControl);
+      expect(component.formGroup.controls[ 'fullDescription' ]).toBe(component.fullDescriptionFormControl);
       expect(component.formGroup.controls[ 'category' ]).toBe(component.categoryFormControl);
       expect(component.formGroup.controls[ 'price' ]).toBe(component.priceFormControl);
       expect(component.formGroup.controls[ 'file' ]).toBe(component.fileFormControl);
@@ -94,7 +95,7 @@ describe('ProductCreatorDialogComponent', () => {
     it('should add new FileUploadTask to taskManagerService', async () => {
       const title = 'TITLE';
       const shortDescription = 'SHORT_DESCRIPTION';
-      const longDescription = 'LONG_DESCRIPTION';
+      const fullDescription = 'FULL_DESCRIPTION';
       const price = '12.23';
       const publicKey = 'PUBLIC_KEY';
       const file = 'FILE';
@@ -109,7 +110,7 @@ describe('ProductCreatorDialogComponent', () => {
         value: {
           title,
           shortDescription,
-          longDescription,
+          fullDescription,
           price
         },
         valid: true

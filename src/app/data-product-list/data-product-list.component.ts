@@ -10,7 +10,6 @@ import { BigNumber } from 'bignumber.js';
 import { DataProduct } from '../data-product';
 import { deepCopy } from '../utils/deep-copy';
 import { DataProductNotificationsService } from '../services/data-product-notifications.service';
-import { ElasticSearchService } from '../services/elastic-search.service';
 
 @Component({
   selector: 'app-data-product-list',
@@ -33,9 +32,14 @@ export class DataProductListComponent implements OnInit, OnChanges {
     'buy'
   ];
   @Input() displayPendingTransactions = false;
+  @Input() showPaginator = true;
+  @Input() showSearch = true;
+  @Input() showFilters = true;
+  @Input() enableSorting = true;
+  @Input() dataProducts: DataProduct[];
 
   public esDataProducts: EsResponse<Deserializable<EsDataProduct>>;
-  public dataSource: MatTableDataSource<Deserializable<EsDataProduct>>;
+  public dataSource: MatTableDataSource<DataProduct>;
   public pageSizeOptions = environment.repux.pageSizeOptions;
   public isLoadingResults = true;
   public query = [];
@@ -49,7 +53,7 @@ export class DataProductListComponent implements OnInit, OnChanges {
     'title',
     'category',
     'shortDescription',
-    'longDescription'
+    'fullDescription'
   ];
 
   constructor(
@@ -109,6 +113,12 @@ export class DataProductListComponent implements OnInit, OnChanges {
   }
 
   refreshData(): Promise<void> {
+    if (this.dataProducts) {
+      this.dataSource = new MatTableDataSource(this.dataProducts);
+      this.isLoadingResults = false;
+      return;
+    }
+
     const query = deepCopy(this.staticQuery);
     if (!query.bool) {
       query.bool = {};
@@ -123,7 +133,8 @@ export class DataProductListComponent implements OnInit, OnChanges {
       this.dataProductListService.getFiles(query, this.sort, this.size, this.from)
         .subscribe(esDataProducts => {
           this.esDataProducts = esDataProducts;
-          this.dataSource = new MatTableDataSource(this.esDataProducts.hits);
+          const dataProducts = this.esDataProducts.hits.map((esDataProduct: EsDataProduct) => esDataProduct.source);
+          this.dataSource = new MatTableDataSource(dataProducts);
           this.isLoadingResults = false;
           resolve();
         });

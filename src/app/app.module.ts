@@ -28,7 +28,10 @@ import {
   MatCardModule,
   MatMenuModule,
   MatTabsModule,
-  MatTooltipModule, MatChipsModule, MatSidenavModule, MatListModule
+  MatTooltipModule,
+  MatChipsModule,
+  MatSidenavModule,
+  MatListModule
 } from '@angular/material';
 import { PurchaseConfirmationDialogComponent } from './purchase-confirmation-dialog/purchase-confirmation-dialog.component';
 import { BuyProductButtonComponent } from './buy-product-button/buy-product-button.component';
@@ -47,6 +50,8 @@ import { DataProductListDetailDirective } from './data-product-list/data-product
 import { DataProductTransactionsListComponent } from './data-product-transactions-list/data-product-transactions-list.component';
 import { FinaliseButtonComponent } from './finalise-button/finalise-button.component';
 import { LayoutModule } from '@angular/cdk/layout';
+import { PublishButtonComponent } from './publish-button/publish-button.component';
+import { ConfirmationDialogComponent } from './confirmation-dialog/confirmation-dialog.component';
 
 @NgModule({
   declarations: [
@@ -60,6 +65,7 @@ import { LayoutModule } from '@angular/cdk/layout';
     FileInputComponent,
     TaskManagerComponent,
     TransactionDialogComponent,
+    ConfirmationDialogComponent,
     PurchaseConfirmationDialogComponent,
     BuyProductButtonComponent,
     DownloadProductButtonComponent,
@@ -70,6 +76,7 @@ import { LayoutModule } from '@angular/cdk/layout';
     UnpublishedComponent,
     MarketplaceComponent,
     WithdrawButtonComponent,
+    PublishButtonComponent,
     UnpublishButtonComponent,
     FinaliseButtonComponent
   ],
@@ -77,6 +84,7 @@ import { LayoutModule } from '@angular/cdk/layout';
     ProductCreatorDialogComponent,
     TaskManagerComponent,
     TransactionDialogComponent,
+    ConfirmationDialogComponent,
     PurchaseConfirmationDialogComponent
   ],
   imports: [

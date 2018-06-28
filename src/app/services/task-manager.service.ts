@@ -28,10 +28,7 @@ export class TaskManagerService {
     this._wallet = wallet;
     this._tasks.filter(task => task.walletSpecific).forEach(task => task.cancel());
     this._tasks = this._tasks.filter(task => !task.walletSpecific);
-
-    if (this._tasks.length === 0) {
-      this.closeDialog();
-    }
+    this._afterTaskRemove();
   }
 
   get tasks(): ReadonlyArray<Task> {
@@ -42,6 +39,19 @@ export class TaskManagerService {
     task.run(this);
     this._tasks.push(task);
     this.openDialog();
+  }
+
+  removeTask(task: Task) {
+    this._tasks = this._tasks.filter(storedTask => storedTask !== task);
+    this._afterTaskRemove();
+  }
+
+  _afterTaskRemove() {
+    this.onTaskEvent();
+
+    if (this._tasks.length === 0) {
+      this.closeDialog();
+    }
   }
 
   onTaskEvent() {

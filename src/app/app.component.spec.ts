@@ -17,6 +17,7 @@ import {
   MatChipsModule,
   MatSidenavModule,
   MatListModule,
+  MatSortModule
 } from '@angular/material';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { PipesModule } from './pipes/pipes.module';
@@ -36,6 +37,7 @@ import { UnpublishedComponent } from './sell/unpublished/unpublished.component';
 import { DataProductListDetailDirective } from './data-product-list/data-product-list-detail.directive';
 import { DataProductTransactionsListComponent } from './data-product-transactions-list/data-product-transactions-list.component';
 import { FinaliseButtonComponent } from './finalise-button/finalise-button.component';
+import { PublishButtonComponent } from './publish-button/publish-button.component';
 import { HttpClient } from '@angular/common/http';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 
@@ -58,6 +60,7 @@ describe('AppComponent', () => {
         BuyProductButtonComponent,
         DownloadProductButtonComponent,
         WithdrawButtonComponent,
+        PublishButtonComponent,
         UnpublishButtonComponent,
         FinaliseButtonComponent
       ],
@@ -75,6 +78,7 @@ describe('AppComponent', () => {
         MatFormFieldModule,
         MatTableModule,
         MatChipsModule,
+        MatSortModule,
         MatSidenavModule,
         MatListModule,
         PipesModule,

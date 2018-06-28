@@ -3,6 +3,8 @@ import { BigNumber } from 'bignumber.js';
 import { RepuxLibService } from '../services/repux-lib.service';
 import { TaskManagerService } from '../services/task-manager.service';
 import { DataProductService } from '../services/data-product.service';
+import { UnpublishedProductsService } from '../services/unpublished-products.service';
+import { DataProduct } from '../data-product';
 
 export const STATUS = {
   UPLOADING: 'Uploading',
@@ -24,15 +26,17 @@ export class FileUploadTask implements Task {
   private _userActionName: string;
   private _status: string;
   private _taskManagerService: TaskManagerService;
+  private _dataProduct: DataProduct;
   public readonly walletSpecific = false;
 
   constructor(
     private _publicKey: JsonWebKey,
     private _repuxLibService: RepuxLibService,
     private _dataProductService: DataProductService,
+    private _unpublishedProductsService: UnpublishedProductsService,
     private _title: string,
     private _shortDescription: string,
-    private _longDescription: string,
+    private _fullDescription: string,
     private _category: string[],
     private _price: BigNumber,
     private _file: File,
@@ -61,10 +65,27 @@ export class FileUploadTask implements Task {
         this._needsUserAction = true;
         this._userActionName = 'Publish';
         this._status = STATUS.WAITING_FOR_PUBLICATION;
+        this._saveProduct();
       })
       .on('progress, error, finish', () => {
         this._taskManagerService.onTaskEvent();
       });
+  }
+
+  private _saveProduct() {
+    const dataProduct = new DataProduct();
+    dataProduct.sellerMetaHash = this._result;
+    dataProduct.name = this._file.name;
+    dataProduct.size = this._file.size;
+    dataProduct.title = this._title;
+    dataProduct.shortDescription = this._shortDescription;
+    dataProduct.fullDescription = this._fullDescription;
+    dataProduct.category = this._category;
+    dataProduct.price = this._price;
+    dataProduct.daysForDeliver = this._daysForDeliver;
+    this._dataProduct = dataProduct;
+
+    this._unpublishedProductsService.addProduct(this._dataProduct);
   }
 
   cancel(): void {
@@ -85,6 +106,7 @@ export class FileUploadTask implements Task {
       this._status = STATUS.PUBLICATION;
       this._taskManagerService.onTaskEvent();
       await this._dataProductService.publishDataProduct(this._result, this._price, this._daysForDeliver);
+      this._unpublishedProductsService.removeProduct(this._dataProduct);
       this._status = STATUS.FINISHED;
       this._finished = true;
       this._taskManagerService.onTaskEvent();
@@ -124,11 +146,15 @@ export class FileUploadTask implements Task {
     return this._status;
   }
 
+  get sellerMetaHash(): string {
+    return this._result;
+  }
+
   _createMetadata() {
     return {
       title: this._title,
       shortDescription: this._shortDescription,
-      longDescription: this._longDescription,
+      fullDescription: this._fullDescription,
       category: this._category,
       price: this._price
     };

@@ -7,7 +7,7 @@ import {
   MatTableModule,
   MatPaginatorModule,
   MatDialogModule,
-  MatTableDataSource
+  MatTableDataSource, MatSortModule
 } from '@angular/material';
 import { PipesModule } from '../pipes/pipes.module';
 import { Component, Input } from '@angular/core';
@@ -38,6 +38,11 @@ class WithdrawButtonStubComponent {
   @Input() dataProduct: string;
 }
 
+@Component({ selector: 'app-publish-button', template: '' })
+class PublishButtonStubComponent {
+  @Input() dataProduct: string;
+}
+
 @Component({ selector: 'app-unpublish-button', template: '' })
 class UnpublishButtonStubComponent {
   @Input() dataProduct: string;
@@ -59,7 +64,9 @@ describe('DataProductListComponent', () => {
     dataProductListService = jasmine.createSpyObj('DataProductListService', [ 'getFiles' ]);
     dataProductListService.getFiles.and.returnValue({
       subscribe(callback) {
-        callback(new EsResponse());
+        const response = new EsResponse();
+        response.hits = [];
+        callback(response);
       }
     });
 
@@ -69,6 +76,7 @@ describe('DataProductListComponent', () => {
         FileSizeStubComponent,
         BuyProductButtonStubComponent,
         WithdrawButtonStubComponent,
+        PublishButtonStubComponent,
         UnpublishButtonStubComponent,
         DataProductListDetailDirective,
         DataProductTransactionsListStubComponent
@@ -80,6 +88,7 @@ describe('DataProductListComponent', () => {
         MatTableModule,
         MatPaginatorModule,
         MatDialogModule,
+        MatSortModule,
         PipesModule,
         NoopAnimationsModule
       ],
@@ -202,7 +211,8 @@ describe('DataProductListComponent', () => {
         max_score: 1,
         hits: []
       };
-      component.dataSource = new MatTableDataSource(component.esDataProducts.hits);
+      const dataProducts = component.esDataProducts.hits.map((esDataProduct: EsDataProduct) => esDataProduct.source);
+      component.dataSource = new MatTableDataSource(dataProducts);
       fixture.detectChanges();
     });
 
@@ -227,7 +237,8 @@ describe('DataProductListComponent', () => {
           }
         }) ]
       };
-      component.dataSource = new MatTableDataSource(component.esDataProducts.hits);
+      const dataProducts = component.esDataProducts.hits.map((esDataProduct: EsDataProduct) => esDataProduct.source);
+      component.dataSource = new MatTableDataSource(dataProducts);
       component.displayedColumns = [
         'name',
         'title',

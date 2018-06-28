@@ -1,6 +1,6 @@
-<div *ngIf="esDataProducts">
+<div *ngIf="dataSource">
 
-  <mat-form-field>
+  <mat-form-field *ngIf="showSearch">
     <mat-icon class="search-icon" matPrefix>search</mat-icon>
 
     <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Search">
@@ -15,31 +15,31 @@
 
       <!-- Name Column -->
       <ng-container matColumnDef="name">
-        <mat-header-cell *matHeaderCellDef mat-sort-header> File name</mat-header-cell>
-        <mat-cell *matCellDef="let element"> {{element.source.name}}</mat-cell>
+        <mat-header-cell *matHeaderCellDef mat-sort-header [disabled]="enableSorting"> File name</mat-header-cell>
+        <mat-cell *matCellDef="let element"> {{element.name}}</mat-cell>
       </ng-container>
 
       <!-- Title Column -->
       <ng-container matColumnDef="title">
-        <mat-header-cell *matHeaderCellDef mat-sort-header> Title</mat-header-cell>
-        <mat-cell *matCellDef="let element"> {{element.source.title}}</mat-cell>
+        <mat-header-cell *matHeaderCellDef mat-sort-header [disabled]="enableSorting"> Title</mat-header-cell>
+        <mat-cell *matCellDef="let element"> {{element.title}}</mat-cell>
       </ng-container>
 
       <!-- Categories Column -->
       <ng-container matColumnDef="category">
         <mat-header-cell *matHeaderCellDef> Categories</mat-header-cell>
-        <mat-cell *matCellDef="let element"> {{element.source.category | array_join: ', '}}</mat-cell>
+        <mat-cell *matCellDef="let element"> {{element.category | array_join: ', '}}</mat-cell>
       </ng-container>
       <!-- Size Column -->
       <ng-container matColumnDef="size">
-        <mat-header-cell *matHeaderCellDef mat-sort-header> Size</mat-header-cell>
-        <mat-cell *matCellDef="let element"> {{ element.source.size | fileSize }}</mat-cell>
+        <mat-header-cell *matHeaderCellDef mat-sort-header [disabled]="enableSorting"> Size</mat-header-cell>
+        <mat-cell *matCellDef="let element"> {{ element.size | fileSize }}</mat-cell>
       </ng-container>
 
       <!-- Price Column -->
       <ng-container matColumnDef="price">
-        <mat-header-cell *matHeaderCellDef mat-sort-header> List price</mat-header-cell>
-        <mat-cell *matCellDef="let element"> {{ element.source.price.toString() | currency : '' :
+        <mat-header-cell *matHeaderCellDef mat-sort-header [disabled]="enableSorting"> List price</mat-header-cell>
+        <mat-cell *matCellDef="let element"> {{ element.price.toString() | currency : '' :
           currencyName :
           currencyFormat }}
         </mat-cell>
@@ -47,20 +47,20 @@
 
       <!-- Delivery time Column -->
       <ng-container matColumnDef="daysForDeliver">
-        <mat-header-cell *matHeaderCellDef mat-sort-header> Delivery time</mat-header-cell>
-        <mat-cell *matCellDef="let element"> {{ element.source.daysForDeliver }}</mat-cell>
+        <mat-header-cell *matHeaderCellDef mat-sort-header [disabled]="enableSorting"> Delivery time</mat-header-cell>
+        <mat-cell *matCellDef="let element"> {{ element.daysForDeliver }}</mat-cell>
       </ng-container>
 
       <!-- Times purchased Column -->
       <ng-container matColumnDef="timesPurchased">
         <mat-header-cell *matHeaderCellDef> Times purchased</mat-header-cell>
-        <mat-cell *matCellDef="let element"> {{ getTimesPurchased(element.source) }}</mat-cell>
+        <mat-cell *matCellDef="let element"> {{ getTimesPurchased(element) }}</mat-cell>
       </ng-container>
 
       <!-- Total earnings Column -->
       <ng-container matColumnDef="totalEarnings">
         <mat-header-cell *matHeaderCellDef> Total earnings</mat-header-cell>
-        <mat-cell *matCellDef="let element"> {{ getTotalEarnings(element.source).toString() | currency : '' :
+        <mat-cell *matCellDef="let element"> {{ getTotalEarnings(element).toString() | currency : '' :
           currencyName : currencyFormat }}
         </mat-cell>
       </ng-container>
@@ -76,7 +76,7 @@
             </mat-icon>
           </div>
         </mat-header-cell>
-        <mat-cell *matCellDef="let element"> {{ element.source.fundsToWithdraw.toString() | currency : '' :
+        <mat-cell *matCellDef="let element"> {{ element.fundsToWithdraw.toString() | currency : '' :
           currencyName : currencyFormat }}
         </mat-cell>
       </ng-container>
@@ -84,7 +84,7 @@
       <!-- Times purchased Column -->
       <ng-container matColumnDef="pendingFinalisationRequests">
         <mat-header-cell *matHeaderCellDef> Pending finalisation requests</mat-header-cell>
-        <mat-cell *matCellDef="let element"> {{ getTransactionsToFinalisation(element.source).length }}
+        <mat-cell *matCellDef="let element"> {{ getTransactionsToFinalisation(element).length }}
         </mat-cell>
       </ng-container>
 
@@ -94,13 +94,16 @@
         <mat-cell *matCellDef="let element">
           <div class="row">
             <app-buy-product-button *ngIf="availableActions.includes('buy')"
-                                    [dataProduct]="element.source"></app-buy-product-button>
+                                    [dataProduct]="element"></app-buy-product-button>
+
+            <app-publish-button *ngIf="availableActions.includes('publish')"
+                                [dataProduct]="element"></app-publish-button>
 
             <app-unpublish-button *ngIf="availableActions.includes('unpublish')"
-                                  [dataProduct]="element.source"></app-unpublish-button>
+                                  [dataProduct]="element"></app-unpublish-button>
 
             <app-withdraw-button *ngIf="availableActions.includes('withdraw')"
-                                 [dataProduct]="element.source"></app-withdraw-button>
+                                 [dataProduct]="element"></app-withdraw-button>
           </div>
         </mat-cell>
       </ng-container>
@@ -108,19 +111,19 @@
       <mat-row mat-header-row *matHeaderRowDef="displayedColumns"></mat-row>
       <mat-row mat-row *matRowDef="let row; columns: displayedColumns;"
                [appDataProductListDetailRow]="row" [appDataProductListDetailTpl]="tpl"
-               [class.disabled]="row.source.disabled"></mat-row>
+               [class.disabled]="row.disabled"></mat-row>
     </mat-table>
   </div>
 
   <mat-paginator (page)="pageChanged($event)" [length]="esDataProducts.total" [(pageSize)]="size"
-                 [pageSizeOptions]="pageSizeOptions"></mat-paginator>
+                 [pageSizeOptions]="pageSizeOptions" *ngIf="showPaginator"></mat-paginator>
 </div>
 
 <ng-template #tpl let-element>
-  <div *ngIf="displayPendingTransactions && getTransactionsToFinalisation(element.source).length" class="details">
+  <div *ngIf="displayPendingTransactions && getTransactionsToFinalisation(element).length" class="details">
     <strong class="detail-header">Transactions:</strong>
     <app-data-product-transactions-list
-        [dataProduct]="element.source"
-        [transactions]="getTransactionsToFinalisation(element.source)"></app-data-product-transactions-list>
+        [dataProduct]="element"
+        [transactions]="getTransactionsToFinalisation(element)"></app-data-product-transactions-list>
   </div>
 </ng-template>

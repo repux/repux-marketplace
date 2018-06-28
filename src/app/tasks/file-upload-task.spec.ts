@@ -2,16 +2,15 @@ import { FileUploadTask, STATUS } from './file-upload-task';
 import BigNumber from 'bignumber.js';
 import { DataProductService } from '../services/data-product.service';
 import { RepuxLibService } from '../services/repux-lib.service';
-import { defer } from 'rxjs/index';
 
 describe('FileUploadTask()', () => {
   let fileUploadTask: FileUploadTask, dataProductService, repuxLibService, fileUploader, fileUploaderUpload,
-    fileUploaderOn, taskManagerService, uploaderEventHandlers, fileUploaderTerminate;
+    fileUploaderOn, taskManagerService, uploaderEventHandlers, fileUploaderTerminate, unpublishedProductsService;
   const fileName = 'FILE_NAME';
   const publicKey = 'PUBLIC_KEY';
   const title = 'TITLE';
   const shortDescription = 'SHORT_DESCRIPTION';
-  const longDescription = 'LONG_DESCRIPTION';
+  const fullDescription = 'FULL_DESCRIPTION';
   const category = [ 'CATEGORY' ];
   const price = new BigNumber(1);
   const file = new File([ new Blob([]) ], fileName);
@@ -40,14 +39,16 @@ describe('FileUploadTask()', () => {
     });
     dataProductService = jasmine.createSpyObj('DataProductService', [ 'publishDataProduct' ]);
     taskManagerService = jasmine.createSpyObj('TaskManagerService', [ 'onTaskEvent' ]);
+    unpublishedProductsService = jasmine.createSpyObj('UnpublishedProductsService', [ 'addProduct', 'removeProduct' ]);
 
     fileUploadTask = new FileUploadTask(
       <any> publicKey,
       repuxLibService,
       dataProductService,
+      unpublishedProductsService,
       title,
       shortDescription,
-      longDescription,
+      fullDescription,
       category,
       price,
       <any> file,
@@ -67,9 +68,10 @@ describe('FileUploadTask()', () => {
         <any> publicKey,
         repuxLibService,
         dataProductService,
+        unpublishedProductsService,
         title,
         shortDescription,
-        longDescription,
+        fullDescription,
         category,
         price,
         <any> file,
@@ -81,7 +83,7 @@ describe('FileUploadTask()', () => {
       expect(fileUploadTask[ '_dataProductService' ]).toBe(dataProductService);
       expect(fileUploadTask[ '_title' ]).toBe(title);
       expect(fileUploadTask[ '_shortDescription' ]).toBe(shortDescription);
-      expect(fileUploadTask[ '_longDescription' ]).toBe(longDescription);
+      expect(fileUploadTask[ '_fullDescription' ]).toBe(fullDescription);
       expect(fileUploadTask[ '_category' ]).toBe(category);
       expect(fileUploadTask[ '_price' ]).toBe(price);
       expect(<any> fileUploadTask[ '_file' ]).toBe(file);
@@ -105,7 +107,7 @@ describe('FileUploadTask()', () => {
       expect(fileUploaderUpload.calls.allArgs()[ 0 ][ 2 ]).toEqual({
         title,
         shortDescription,
-        longDescription,
+        fullDescription,
         category,
         price
       });
@@ -265,7 +267,7 @@ describe('FileUploadTask()', () => {
       expect(fileUploadTask[ '_createMetadata' ]()).toEqual({
         title,
         shortDescription,
-        longDescription,
+        fullDescription,
         category,
         price
       });
