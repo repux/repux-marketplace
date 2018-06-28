@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { DataProductNotificationsService } from './services/data-product-notifications.service';
 import { WebpushNotificationService } from './services/webpush-notification.service';
+import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
+import { map } from 'rxjs/operators';
+import { Observable } from 'rxjs/index';
 
 @Component({
   selector: 'app-root',
@@ -8,6 +10,11 @@ import { WebpushNotificationService } from './services/webpush-notification.serv
   styleUrls: [ './app.component.scss' ]
 })
 export class AppComponent implements OnInit {
+  isHandset$: Observable<boolean> = this.breakpointObserver.observe(Breakpoints.Handset)
+    .pipe(
+      map(result => result.matches)
+    );
+
   navLinks = [
     {
       label: 'Dashboard',
@@ -24,12 +31,12 @@ export class AppComponent implements OnInit {
   ];
 
   constructor(
-    private _dataProductNotificationService: DataProductNotificationsService,
-    private _webpushNotificationService: WebpushNotificationService
+    private breakpointObserver: BreakpointObserver,
+    private webpushNotificationService: WebpushNotificationService
   ) {
   }
 
   ngOnInit(): void {
-    this._webpushNotificationService.init();
+    this.webpushNotificationService.init();
   }
 }

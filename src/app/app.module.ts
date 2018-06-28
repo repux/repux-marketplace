@@ -28,7 +28,7 @@ import {
   MatCardModule,
   MatMenuModule,
   MatTabsModule,
-  MatTooltipModule, MatChipsModule
+  MatTooltipModule, MatChipsModule, MatSidenavModule, MatListModule
 } from '@angular/material';
 import { PurchaseConfirmationDialogComponent } from './purchase-confirmation-dialog/purchase-confirmation-dialog.component';
 import { BuyProductButtonComponent } from './buy-product-button/buy-product-button.component';
@@ -46,6 +46,7 @@ import { UnpublishedComponent } from './sell/unpublished/unpublished.component';
 import { DataProductListDetailDirective } from './data-product-list/data-product-list-detail.directive';
 import { DataProductTransactionsListComponent } from './data-product-transactions-list/data-product-transactions-list.component';
 import { FinaliseButtonComponent } from './finalise-button/finalise-button.component';
+import { LayoutModule } from '@angular/cdk/layout';
 
 @NgModule({
   declarations: [
@@ -70,7 +71,7 @@ import { FinaliseButtonComponent } from './finalise-button/finalise-button.compo
     MarketplaceComponent,
     WithdrawButtonComponent,
     UnpublishButtonComponent,
-    FinaliseButtonComponent,
+    FinaliseButtonComponent
   ],
   entryComponents: [
     ProductCreatorDialogComponent,
@@ -103,7 +104,10 @@ import { FinaliseButtonComponent } from './finalise-button/finalise-button.compo
     ReactiveFormsModule,
     PipesModule,
     KeyStoreModule,
-    NotificationsModule
+    NotificationsModule,
+    LayoutModule,
+    MatSidenavModule,
+    MatListModule
   ],
   providers: [],
   bootstrap: [ AppComponent ]
