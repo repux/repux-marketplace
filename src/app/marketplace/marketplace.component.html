@@ -3,6 +3,7 @@
 
 <button
   class="add-product-button"
+  [class.navigation-opened]="!(isHandset$ | async)"
   mat-fab
   (click)="openProductCreatorDialog()"
   matTooltip="Create new product"
