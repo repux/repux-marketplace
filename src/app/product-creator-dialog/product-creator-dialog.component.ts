@@ -127,7 +127,7 @@ export class ProductCreatorDialogComponent implements OnDestroy {
   }
 
   get daysForDeliverOptions() {
-    return [ 0, 1, 2 ];
+    return Array.from(Array(environment.repux.maxDaysForDeliver + 1).keys());
   }
 
   ngOnDestroy() {

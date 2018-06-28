@@ -35,7 +35,8 @@ export const environment = {
     },
     demoTokenContractAddress: '${MARKETPLACE_SC_TOKEN_ADDRESS}' || '0xbd83c21e6f0a9547abe908c6faa02a55512d57b4',
     registryContractAddress: '${MARKETPLACE_SC_REGISTRY_ADDRESS}' || '0xc2d327375dd73b132d1171aadf7a205d3a9b7d8f',
-    categoriesListPath: '${MARKETPLACE_CATEGORIES_PATH}' || './assets/data-product-categories.json'
+    categoriesListPath: '${MARKETPLACE_CATEGORIES_PATH}' || './assets/data-product-categories.json',
+    maxDaysForDeliver: 14
   },
   ipfs: {
     host: '${MARKETPLACE_IPFS_HOST}' || 'localhost',
