@@ -1,6 +1,9 @@
 import { Component } from '@angular/core';
 import { ProductCreatorDialogComponent } from '../product-creator-dialog/product-creator-dialog.component';
 import { MatDialog } from '@angular/material';
+import { map } from 'rxjs/operators';
+import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
+import { Observable } from 'rxjs/index';
 
 @Component({
   selector: 'app-marketplace',
@@ -8,6 +11,11 @@ import { MatDialog } from '@angular/material';
   styleUrls: [ './marketplace.component.scss' ]
 })
 export class MarketplaceComponent {
+  isHandset$: Observable<boolean> = this.breakpointObserver.observe(Breakpoints.Handset)
+    .pipe(
+      map(result => result.matches)
+    );
+
   public staticQuery = {
     bool: {
       must_not: [
@@ -16,7 +24,10 @@ export class MarketplaceComponent {
     }
   };
 
-  constructor(private _dialog: MatDialog) {
+  constructor(
+    private breakpointObserver: BreakpointObserver,
+    private _dialog: MatDialog
+  ) {
   }
 
   openProductCreatorDialog() {
