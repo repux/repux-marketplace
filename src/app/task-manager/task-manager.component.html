@@ -7,7 +7,7 @@
     </button>
   </mat-toolbar>
 
-  <div class="item mat-body-1" *ngFor="let task of taskManagerService.tasks">
+  <div class="item mat-body-1" *ngFor="let task of tasks">
     <div class="row" *ngIf="!task.finished">
       <span class="item_status">{{ task.status }}</span>
       <span class="spacer"></span>

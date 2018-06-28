@@ -27,6 +27,10 @@ export class AppComponent implements OnInit {
     {
       label: 'Sell',
       path: 'sell'
+    },
+    {
+      label: 'Buying',
+      path: 'buying'
     }
   ];
 

@@ -2,3 +2,19 @@
   font-style: italic;
   opacity: 0.5;
 }
+
+.row {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.download-progress {
+  min-width: 180px;
+}
+
+.download-progress-label {
+  opacity: 0.5;
+  font-style: italic;
+}

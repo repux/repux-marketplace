@@ -61,49 +61,31 @@ describe('TaskManagerService', () => {
   });
 
   describe('#onTaskEvent()', () => {
-    it('should call ngDoCheck on dialogComponent', () => {
-      const ngDoCheck = jasmine.createSpy();
+    it('should call next on _tasksSubject', () => {
+      const next = jasmine.createSpy();
+      service[ '_tasksSubject' ] = <any> {
+        next
+      };
 
       spyOn(service, 'openDialog').and.callFake(function () {
         this._dialogRef = {
-          componentInstance: {
-            ngDoCheck
-          },
           close: jasmine.createSpy()
         };
       });
 
       service.openDialog();
       service.onTaskEvent();
-      expect(ngDoCheck.calls.count()).toBe(1);
-    });
-
-    it('should not call ngDoCheck when dialogRef is undefined', () => {
-      const ngDoCheck = jasmine.createSpy();
-
-      spyOn(service, 'openDialog').and.callFake(function () {
-        this._dialogRef = {
-          componentInstance: {
-            ngDoCheck
-          },
-          close: jasmine.createSpy()
-        };
-      });
-
-      service.onTaskEvent();
-      expect(ngDoCheck.calls.count()).toBe(0);
+      expect(next.calls.count()).toBe(1);
     });
   });
 
   describe('#openDialog()', () => {
     it('should call open method on dialog object and setTaskManagerService componentInstance', () => {
       const setTaskManagerService = jasmine.createSpy();
-      const ngDoCheck = jasmine.createSpy();
 
       const open = jasmine.createSpy().and.returnValue({
         componentInstance: {
-          setTaskManagerService,
-          ngDoCheck
+          setTaskManagerService
         },
         close: jasmine.createSpy()
       });
@@ -112,7 +94,6 @@ describe('TaskManagerService', () => {
 
       service.openDialog();
       expect(setTaskManagerService.calls.count()).toBe(1);
-      expect(ngDoCheck.calls.count()).toBe(1);
       expect(open.calls.count()).toBe(1);
     });
 
@@ -128,8 +109,7 @@ describe('TaskManagerService', () => {
 
       const open = jasmine.createSpy().and.returnValue({
         componentInstance: {
-          setTaskManagerService,
-          ngDoCheck
+          setTaskManagerService
         },
         close: jasmine.createSpy()
       });
@@ -138,7 +118,6 @@ describe('TaskManagerService', () => {
 
       service.openDialog();
       expect(setTaskManagerService.calls.count()).toBe(0);
-      expect(ngDoCheck.calls.count()).toBe(0);
       expect(open.calls.count()).toBe(0);
     });
   });

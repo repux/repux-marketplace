@@ -1,66 +1,45 @@
-import {
-  ChangeDetectionStrategy,
-  ChangeDetectorRef,
-  Component,
-  DoCheck,
-  OnChanges
-} from '@angular/core';
+import { Component, OnDestroy } from '@angular/core';
 import { TaskManagerService } from '../services/task-manager.service';
+import { Task } from '../tasks/task';
+import { Subscription } from 'rxjs/internal/Subscription';
 
 @Component({
   selector: 'app-task-manager',
   templateUrl: './task-manager.component.html',
-  styleUrls: [ './task-manager.component.scss' ],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  styleUrls: [ './task-manager.component.scss' ]
 })
-export class TaskManagerComponent implements DoCheck, OnChanges {
-  private _lastStatus = [];
-  private _taskManagerService: TaskManagerService = <any> {
-    tasks: [],
-    closeDialog: () => {
-    }
-  };
+export class TaskManagerComponent implements OnDestroy {
+  tasks: ReadonlyArray<Task> = [];
 
-  constructor(
-    private _cd: ChangeDetectorRef
-  ) {
-  }
+  private _tasksSubscription: Subscription;
+  private _taskManagerService: TaskManagerService;
 
-  ngOnChanges() {
-    for (let i = 0; i < this._taskManagerService.tasks.length; i++) {
-      this._lastStatus[i] = {
-        progress: this._taskManagerService.tasks[i].progress,
-        errors: this._taskManagerService.tasks[i].errors,
-        status: this._taskManagerService.tasks[i].status
-      };
-    }
-  }
-
-  ngDoCheck() {
-    if (this._lastStatus.length !== this._taskManagerService.tasks.length) {
-      this._cd.markForCheck();
-      return this._cd.detectChanges();
-    }
-
-    for (let i = 0; i < this._taskManagerService.tasks.length; i++) {
-      if (this._lastStatus[i].status !== this._taskManagerService.tasks[i].status ||
-          this._lastStatus[i].progress !== this._taskManagerService.tasks[i].progress ||
-          this._lastStatus[i].errors.length !== this._taskManagerService.tasks[i].errors.length) {
-        this._cd.markForCheck();
-        return this._cd.detectChanges();
-      }
-    }
+  get taskManagerService(): TaskManagerService {
+    return this._taskManagerService;
   }
 
   closeDialog() {
-    this._taskManagerService.closeDialog();
+    if (this._taskManagerService) {
+      this._taskManagerService.closeDialog();
+    }
   }
 
   setTaskManagerService(taskManagerService: TaskManagerService) {
     this._taskManagerService = taskManagerService;
+
+    this._unsubscribeTasks();
+    this._tasksSubscription = this._taskManagerService.getTasks().subscribe(tasks => {
+      this.tasks = tasks;
+    });
   }
 
-  get taskManagerService(): TaskManagerService {
-    return this._taskManagerService;
+  ngOnDestroy() {
+    this._unsubscribeTasks();
+  }
+
+  private _unsubscribeTasks() {
+    if (this._tasksSubscription) {
+      this._tasksSubscription.unsubscribe();
+    }
   }
 }

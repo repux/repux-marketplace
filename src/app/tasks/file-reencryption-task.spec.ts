@@ -232,4 +232,12 @@ describe('FileReencryptionTask', () => {
       expect(fileReencryptionTask.status).toBe(status);
     });
   });
+
+  describe('#get productAddress()', () => {
+    it('should return __dataProductAddress', () => {
+      const address = 'ADDRESS';
+      fileReencryptionTask[ '_dataProductAddress' ] = address;
+      expect(fileReencryptionTask.productAddress).toBe(address);
+    });
+  });
 });

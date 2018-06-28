@@ -184,4 +184,12 @@ describe('FileDownloadTask', () => {
       expect(fileDownloadTask.status).toBe(status);
     });
   });
+
+  describe('#get productAddress()', () => {
+    it('should return __dataProductAddress', () => {
+      const address = 'ADDRESS';
+      fileDownloadTask[ '_dataProductAddress' ] = address;
+      expect(fileDownloadTask.productAddress).toBe(address);
+    });
+  });
 });

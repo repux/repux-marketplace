@@ -3,6 +3,7 @@ import { BigNumber } from 'bignumber.js';
 import { RepuxLibService } from '../services/repux-lib.service';
 import { TaskManagerService } from '../services/task-manager.service';
 import { DataProductService } from '../services/data-product.service';
+import { TaskType } from './task-type';
 import { UnpublishedProductsService } from '../services/unpublished-products.service';
 import { DataProduct } from '../data-product';
 
@@ -16,18 +17,12 @@ export const STATUS = {
 };
 
 export class FileUploadTask implements Task {
+  public readonly walletSpecific = false;
+  public readonly taskType = TaskType.UPLOAD;
   private _uploader;
-  private _progress: number;
   private _result: string;
-  private _errors: string[] = [];
-  private _finished = false;
-  private _name: string;
-  private _needsUserAction: boolean;
-  private _userActionName: string;
-  private _status: string;
   private _taskManagerService: TaskManagerService;
   private _dataProduct: DataProduct;
-  public readonly walletSpecific = false;
 
   constructor(
     private _publicKey: JsonWebKey,
@@ -44,6 +39,56 @@ export class FileUploadTask implements Task {
   ) {
     this._name = `Creating ${this._file.name}`;
     this._uploader = this._repuxLibService.getInstance().createFileUploader();
+  }
+
+  private _progress: number;
+
+  get progress(): number {
+    return this._progress;
+  }
+
+  private _errors: string[] = [];
+
+  get errors(): ReadonlyArray<string> {
+    return Object.freeze(Object.assign([], this._errors));
+  }
+
+  private _finished = false;
+
+  get finished(): boolean {
+    return this._finished;
+  }
+
+  private _name: string;
+
+  get name(): string {
+    return this._name;
+  }
+
+  private _needsUserAction: boolean;
+
+  get needsUserAction(): boolean {
+    return this._needsUserAction;
+  }
+
+  private _userActionName: string;
+
+  get userActionName(): string {
+    return this._userActionName;
+  }
+
+  private _status: string;
+
+  get status(): string {
+    return this._status;
+  }
+
+  get productAddress(): string {
+    return;
+  }
+
+  get sellerMetaHash(): string {
+    return this._result;
   }
 
   run(taskManagerService: TaskManagerService): void {
@@ -70,22 +115,6 @@ export class FileUploadTask implements Task {
       .on('progress, error, finish', () => {
         this._taskManagerService.onTaskEvent();
       });
-  }
-
-  private _saveProduct() {
-    const dataProduct = new DataProduct();
-    dataProduct.sellerMetaHash = this._result;
-    dataProduct.name = this._file.name;
-    dataProduct.size = this._file.size;
-    dataProduct.title = this._title;
-    dataProduct.shortDescription = this._shortDescription;
-    dataProduct.fullDescription = this._fullDescription;
-    dataProduct.category = this._category;
-    dataProduct.price = this._price;
-    dataProduct.daysForDeliver = this._daysForDeliver;
-    this._dataProduct = dataProduct;
-
-    this._unpublishedProductsService.addProduct(this._dataProduct);
   }
 
   cancel(): void {
@@ -118,38 +147,6 @@ export class FileUploadTask implements Task {
     }
   }
 
-  get progress(): number {
-    return this._progress;
-  }
-
-  get errors(): ReadonlyArray<string> {
-    return Object.freeze(Object.assign([], this._errors));
-  }
-
-  get finished(): boolean {
-    return this._finished;
-  }
-
-  get name(): string {
-    return this._name;
-  }
-
-  get needsUserAction(): boolean {
-    return this._needsUserAction;
-  }
-
-  get userActionName(): string {
-    return this._userActionName;
-  }
-
-  get status(): string {
-    return this._status;
-  }
-
-  get sellerMetaHash(): string {
-    return this._result;
-  }
-
   _createMetadata() {
     return {
       title: this._title,
@@ -158,5 +155,21 @@ export class FileUploadTask implements Task {
       category: this._category,
       price: this._price
     };
+  }
+
+  private _saveProduct() {
+    const dataProduct = new DataProduct();
+    dataProduct.sellerMetaHash = this._result;
+    dataProduct.name = this._file.name;
+    dataProduct.size = this._file.size;
+    dataProduct.title = this._title;
+    dataProduct.shortDescription = this._shortDescription;
+    dataProduct.fullDescription = this._fullDescription;
+    dataProduct.category = this._category;
+    dataProduct.price = this._price;
+    dataProduct.daysForDeliver = this._daysForDeliver;
+    this._dataProduct = dataProduct;
+
+    this._unpublishedProductsService.addProduct(this._dataProduct);
   }
 }
