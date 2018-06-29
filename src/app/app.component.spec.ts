@@ -1,4 +1,4 @@
-import { TestBed, async } from '@angular/core/testing';
+import { async, TestBed } from '@angular/core/testing';
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
 import { DashboardComponent } from './dashboard/dashboard.component';
@@ -6,18 +6,19 @@ import { DataProductListComponent } from './data-product-list/data-product-list.
 import {
   MatButtonModule,
   MatCardModule,
+  MatChipsModule,
   MatGridListModule,
   MatIconModule,
+  MatListModule,
   MatMenuModule,
+  MatPaginatorModule,
+  MatProgressBarModule,
+  MatProgressSpinnerModule,
+  MatSidenavModule,
+  MatSortModule,
+  MatTableModule,
   MatTabsModule,
   MatToolbarModule,
-  MatPaginatorModule,
-  MatProgressSpinnerModule,
-  MatTableModule,
-  MatChipsModule,
-  MatSidenavModule,
-  MatListModule,
-  MatSortModule
 } from '@angular/material';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { PipesModule } from './pipes/pipes.module';
@@ -40,6 +41,9 @@ import { FinaliseButtonComponent } from './finalise-button/finalise-button.compo
 import { PublishButtonComponent } from './publish-button/publish-button.component';
 import { HttpClient } from '@angular/common/http';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
+import { BuyingComponent } from './buying/buying.component';
+import { ReadyToDownloadComponent } from './buying/ready-to-download/ready-to-download.component';
+import { AwaitingFinalisationComponent } from './buying/awaiting-finalisation/awaiting-finalisation.component';
 import { SettingsModule } from './settings/settings.module';
 
 describe('AppComponent', () => {
@@ -53,6 +57,9 @@ describe('AppComponent', () => {
         SellComponent,
         MyActiveListingsComponent,
         PendingFinalisationComponent,
+        BuyingComponent,
+        ReadyToDownloadComponent,
+        AwaitingFinalisationComponent,
         UnpublishedComponent,
         DataProductListComponent,
         DataProductListDetailDirective,
@@ -76,6 +83,7 @@ describe('AppComponent', () => {
         MatTabsModule,
         MatPaginatorModule,
         MatProgressSpinnerModule,
+        MatProgressBarModule,
         MatFormFieldModule,
         MatTableModule,
         MatChipsModule,

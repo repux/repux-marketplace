@@ -1,6 +1,6 @@
 import { ComponentFixture, fakeAsync, TestBed } from '@angular/core/testing';
 import { RepuxLibService } from '../services/repux-lib.service';
-import { MatDialogModule } from '@angular/material';
+import { MatDialogModule, MatIconModule, MatProgressBarModule } from '@angular/material';
 import { DownloadProductButtonComponent } from './download-product-button.component';
 import { TransactionDialogComponent } from '../transaction-dialog/transaction-dialog.component';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
@@ -22,11 +22,13 @@ describe('DownloadProductButtonComponent', () => {
     keyStoreServiceSpy = jasmine.createSpyObj('KeyStoreService', [ 'hasKeys' ]);
     TestBed.configureTestingModule({
       declarations: [
-        DownloadProductButtonComponent
+        DownloadProductButtonComponent,
       ],
       imports: [
         MatDialogModule,
-        NoopAnimationsModule
+        NoopAnimationsModule,
+        MatProgressBarModule,
+        MatIconModule
       ],
       providers: [
         { provide: RepuxLibService, useValue: repuxLibServiceSpy },

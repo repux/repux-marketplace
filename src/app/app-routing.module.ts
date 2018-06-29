@@ -6,6 +6,9 @@ import { PendingFinalisationComponent } from './sell/pending-finalisation/pendin
 import { MarketplaceComponent } from './marketplace/marketplace.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { UnpublishedComponent } from './sell/unpublished/unpublished.component';
+import { BuyingComponent } from './buying/buying.component';
+import { ReadyToDownloadComponent } from './buying/ready-to-download/ready-to-download.component';
+import { AwaitingFinalisationComponent } from './buying/awaiting-finalisation/awaiting-finalisation.component';
 import { SettingsIndexComponent } from './settings/settings-index/settings-index.component';
 
 const routes: Routes = [
@@ -18,6 +21,13 @@ const routes: Routes = [
       { path: 'my-active-listings', component: MyActiveListingsComponent },
       { path: 'unpublished', component: UnpublishedComponent },
       { path: 'pending-finalisation', component: PendingFinalisationComponent }
+    ]
+  },
+  {
+    path: 'buying', component: BuyingComponent, children: [
+      { path: '', redirectTo: 'ready-to-download', pathMatch: 'full' },
+      { path: 'ready-to-download', component: ReadyToDownloadComponent },
+      { path: 'awaiting-finalisation', component: AwaitingFinalisationComponent }
     ]
   },
   { path: 'settings', component: SettingsIndexComponent }

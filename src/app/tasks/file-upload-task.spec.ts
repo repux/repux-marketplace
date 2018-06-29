@@ -262,6 +262,14 @@ describe('FileUploadTask()', () => {
     });
   });
 
+  describe('#get productAddress()', () => {
+    it('should return undefined', () => {
+      const address = 'ADDRESS';
+      fileUploadTask[ '_dataProductAddress' ] = address;
+      expect(fileUploadTask.productAddress).toBeUndefined();
+    });
+  });
+
   describe('#_createMetadata()', () => {
     it('should return metadata object', () => {
       expect(fileUploadTask[ '_createMetadata' ]()).toEqual({

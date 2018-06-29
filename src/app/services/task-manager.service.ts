@@ -4,14 +4,16 @@ import { TaskManagerComponent } from '../task-manager/task-manager.component';
 import { MatDialog, MatDialogRef } from '@angular/material';
 import { WalletService } from './wallet.service';
 import Wallet from '../wallet';
+import { BehaviorSubject } from 'rxjs/internal/BehaviorSubject';
+import { Observable } from 'rxjs/internal/Observable';
 
 @Injectable({
   providedIn: 'root'
 })
 export class TaskManagerService {
-  private _tasks: Task[] = [];
   private _dialogRef: MatDialogRef<TaskManagerComponent>;
   private _wallet: Wallet;
+  private _tasksSubject = new BehaviorSubject<ReadonlyArray<Task>>([]);
 
   constructor(
     private _dialog: MatDialog,
@@ -20,16 +22,7 @@ export class TaskManagerService {
     this._walletService.getWallet().subscribe(wallet => this._onWalletChange(wallet));
   }
 
-  private _onWalletChange(wallet: Wallet) {
-    if (!wallet || wallet === this._wallet) {
-      return;
-    }
-
-    this._wallet = wallet;
-    this._tasks.filter(task => task.walletSpecific).forEach(task => task.cancel());
-    this._tasks = this._tasks.filter(task => !task.walletSpecific);
-    this._afterTaskRemove();
-  }
+  private _tasks: Task[] = [];
 
   get tasks(): ReadonlyArray<Task> {
     return Object.freeze(Object.assign([], this._tasks));
@@ -38,6 +31,7 @@ export class TaskManagerService {
   addTask(task: Task) {
     task.run(this);
     this._tasks.push(task);
+    this._tasksSubject.next(this.tasks);
     this.openDialog();
   }
 
@@ -55,9 +49,7 @@ export class TaskManagerService {
   }
 
   onTaskEvent() {
-    if (this._dialogRef) {
-      this._dialogRef.componentInstance.ngDoCheck();
-    }
+    this._tasksSubject.next(this.tasks);
   }
 
   openDialog() {
@@ -74,7 +66,7 @@ export class TaskManagerService {
     });
 
     this._dialogRef.componentInstance.setTaskManagerService(this);
-    this._dialogRef.componentInstance.ngDoCheck();
+    this._tasksSubject.next(this.tasks);
   }
 
   closeDialog() {
@@ -88,6 +80,21 @@ export class TaskManagerService {
 
   hasUnfinishedTasks(): boolean {
     return this._tasks.filter(task => !task.finished).length > 0;
+  }
+
+  getTasks(): Observable<ReadonlyArray<Task>> {
+    return this._tasksSubject.asObservable();
+  }
+
+  private _onWalletChange(wallet: Wallet) {
+    if (!wallet || wallet === this._wallet) {
+      return;
+    }
+
+    this._wallet = wallet;
+    this._tasks.filter(task => task.walletSpecific).forEach(task => task.cancel());
+    this._tasks = this._tasks.filter(task => !task.walletSpecific);
+    this._afterTaskRemove();
   }
 
   private _addConfirmationPrompt() {

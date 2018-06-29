@@ -10,6 +10,8 @@ import { KeysGeneratorDialogComponent } from '../key-store/keys-generator-dialog
 import { KeyStoreService } from '../key-store/key-store.service';
 import { Subscription } from 'rxjs/internal/Subscription';
 import { MatDialog } from '@angular/material';
+import { Task } from '../tasks/task';
+import { TaskType } from '../tasks/task-type';
 
 @Component({
   selector: 'app-download-product-button',
@@ -18,8 +20,11 @@ import { MatDialog } from '@angular/material';
 })
 export class DownloadProductButtonComponent implements OnDestroy, OnInit {
   @Input() productAddress: string;
-  private _subscription: Subscription;
+  private _walletSubscription: Subscription;
+  private _tasksSubscription: Subscription;
+  private _keyStoreSubscription: Subscription;
   private _wallet: Wallet;
+  private _foundTask: Task;
 
   constructor(
     private _walletService: WalletService,
@@ -31,16 +36,29 @@ export class DownloadProductButtonComponent implements OnDestroy, OnInit {
   ) {
   }
 
-  ngOnInit(): void {
-    this._walletService.getWallet().subscribe(wallet => this._onWalletChange(wallet));
+  get downloading() {
+    return this.progress !== null;
   }
 
-  private _onWalletChange(wallet: Wallet): void {
-    if (!wallet || wallet === this._wallet) {
+  get progress() {
+    if (!this._foundTask) {
+      return null;
+    }
+
+    return this._foundTask.progress;
+  }
+
+  cancel() {
+    if (!this._foundTask) {
       return;
     }
 
-    this._wallet = wallet;
+    this._foundTask.cancel();
+  }
+
+  ngOnInit(): void {
+    this._walletSubscription = this._walletService.getWallet().subscribe(wallet => this._onWalletChange(wallet));
+    this._tasksSubscription = this._taskManagerService.getTasks().subscribe(tasks => this._onTasksChange(tasks));
   }
 
   async downloadProduct(): Promise<void> {
@@ -66,6 +84,36 @@ export class DownloadProductButtonComponent implements OnDestroy, OnInit {
     this._taskManagerService.addTask(fileDownloadTask);
   }
 
+  ngOnDestroy() {
+    if (this._walletSubscription) {
+      this._walletSubscription.unsubscribe();
+    }
+
+    if (this._tasksSubscription) {
+      this._tasksSubscription.unsubscribe();
+    }
+
+    if (this._keyStoreSubscription) {
+      this._keyStoreSubscription.unsubscribe();
+    }
+  }
+
+  private _onWalletChange(wallet: Wallet): void {
+    if (!wallet || wallet === this._wallet) {
+      return;
+    }
+
+    this._wallet = wallet;
+  }
+
+  private _onTasksChange(tasks: ReadonlyArray<Task>) {
+    this._foundTask = tasks.find(task =>
+      task.taskType === TaskType.DOWNLOAD &&
+      task.productAddress === this.productAddress &&
+      !task.finished
+    );
+  }
+
   private _getKeys(): Promise<{ privateKey: JsonWebKey, publicKey: JsonWebKey }> {
     return new Promise(resolve => {
       let dialogRef;
@@ -76,7 +124,7 @@ export class DownloadProductButtonComponent implements OnDestroy, OnInit {
         dialogRef = this._dialog.open(KeysGeneratorDialogComponent);
       }
 
-      this._subscription = dialogRef.afterClosed().subscribe(result => {
+      this._keyStoreSubscription = dialogRef.afterClosed().subscribe(result => {
         if (result) {
           resolve({
             privateKey: result.privateKey,
@@ -85,11 +133,5 @@ export class DownloadProductButtonComponent implements OnDestroy, OnInit {
         }
       });
     });
-  }
-
-  ngOnDestroy() {
-    if (this._subscription) {
-      this._subscription.unsubscribe();
-    }
   }
 }

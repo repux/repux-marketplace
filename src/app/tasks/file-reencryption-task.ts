@@ -7,6 +7,7 @@ import { KeysGeneratorDialogComponent } from '../key-store/keys-generator-dialog
 import { KeyStoreService } from '../key-store/key-store.service';
 import { MatDialog } from '@angular/material';
 import { Subscription } from 'rxjs';
+import { TaskType } from './task-type';
 
 export const STATUS = {
   REENCRYPTION: 'Reencryption',
@@ -18,18 +19,12 @@ export const STATUS = {
 };
 
 export class FileReencryptionTask implements Task {
+  public readonly walletSpecific = true;
+  public readonly taskType = TaskType.REENCRYPTION;
   private _subscription: Subscription;
   private _reencryptor;
-  private _progress: number;
   private _result: string;
-  private _errors: string[] = [];
-  private _finished = false;
-  private _name: string;
-  private _needsUserAction: boolean;
-  private _userActionName: string;
-  private _status: string;
   private _taskManagerService: TaskManagerService;
-  public readonly walletSpecific = true;
 
   constructor(
     private _dataProductAddress: string,
@@ -44,6 +39,52 @@ export class FileReencryptionTask implements Task {
   ) {
     this._name = `Selling ${this._dataProductAddress}`;
     this._reencryptor = this._repuxLibService.getInstance().createFileReencryptor();
+  }
+
+  private _progress: number;
+
+  get progress(): number {
+    return this._progress;
+  }
+
+  private _errors: string[] = [];
+
+  get errors(): ReadonlyArray<string> {
+    return Object.freeze(Object.assign([], this._errors));
+  }
+
+  private _finished = false;
+
+  get finished(): boolean {
+    return this._finished;
+  }
+
+  private _name: string;
+
+  get name(): string {
+    return this._name;
+  }
+
+  private _needsUserAction: boolean;
+
+  get needsUserAction(): boolean {
+    return this._needsUserAction;
+  }
+
+  private _userActionName: string;
+
+  get userActionName(): string {
+    return this._userActionName;
+  }
+
+  private _status: string;
+
+  get status(): string {
+    return this._status;
+  }
+
+  get productAddress(): string {
+    return this._dataProductAddress;
   }
 
   run(taskManagerService: TaskManagerService): void {
@@ -94,34 +135,6 @@ export class FileReencryptionTask implements Task {
       this._status = STATUS.REJECTED;
       this._taskManagerService.onTaskEvent();
     }
-  }
-
-  get progress(): number {
-    return this._progress;
-  }
-
-  get errors(): ReadonlyArray<string> {
-    return Object.freeze(Object.assign([], this._errors));
-  }
-
-  get finished(): boolean {
-    return this._finished;
-  }
-
-  get name(): string {
-    return this._name;
-  }
-
-  get needsUserAction(): boolean {
-    return this._needsUserAction;
-  }
-
-  get userActionName(): string {
-    return this._userActionName;
-  }
-
-  get status(): string {
-    return this._status;
   }
 
   private _getKeys(): Promise<{ privateKey: JsonWebKey, publicKey: JsonWebKey }> {

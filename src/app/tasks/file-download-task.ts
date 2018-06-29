@@ -2,6 +2,7 @@ import { Task } from './task';
 import { RepuxLibService } from '../services/repux-lib.service';
 import { TaskManagerService } from '../services/task-manager.service';
 import { BlobDownloader } from '../utils/blob-downloader';
+import { TaskType } from './task-type';
 
 export const STATUS = {
   DOWNLOADING: 'Downloading',
@@ -10,17 +11,11 @@ export const STATUS = {
 };
 
 export class FileDownloadTask implements Task {
-  private _downloader;
-  private _progress: number;
-  private _result: string;
-  private _errors: string[] = [];
-  private _finished = false;
-  private _name: string;
-  private _needsUserAction: boolean;
-  private _userActionName: string;
-  private _status: string;
-  private _taskManagerService: TaskManagerService;
   public readonly walletSpecific = false;
+  public readonly taskType = TaskType.DOWNLOAD;
+  private _downloader;
+  private _result: string;
+  private _taskManagerService: TaskManagerService;
 
   constructor(
     private _dataProductAddress: string,
@@ -31,6 +26,52 @@ export class FileDownloadTask implements Task {
   ) {
     this._name = `Downloading ${this._dataProductAddress}`;
     this._downloader = this._repuxLibService.getInstance().createFileDownloader();
+  }
+
+  private _progress: number;
+
+  get progress(): number {
+    return this._progress;
+  }
+
+  private _errors: string[] = [];
+
+  get errors(): ReadonlyArray<string> {
+    return Object.freeze(Object.assign([], this._errors));
+  }
+
+  private _finished = false;
+
+  get finished(): boolean {
+    return this._finished;
+  }
+
+  private _name: string;
+
+  get name(): string {
+    return this._name;
+  }
+
+  private _needsUserAction: boolean;
+
+  get needsUserAction(): boolean {
+    return this._needsUserAction;
+  }
+
+  private _userActionName: string;
+
+  get userActionName(): string {
+    return this._userActionName;
+  }
+
+  private _status: string;
+
+  get status(): string {
+    return this._status;
+  }
+
+  get productAddress(): string {
+    return this._dataProductAddress;
   }
 
   run(taskManagerService: TaskManagerService): void {
@@ -68,33 +109,5 @@ export class FileDownloadTask implements Task {
 
   async callUserAction(): Promise<any> {
     return;
-  }
-
-  get progress(): number {
-    return this._progress;
-  }
-
-  get errors(): ReadonlyArray<string> {
-    return Object.freeze(Object.assign([], this._errors));
-  }
-
-  get finished(): boolean {
-    return this._finished;
-  }
-
-  get name(): string {
-    return this._name;
-  }
-
-  get needsUserAction(): boolean {
-    return this._needsUserAction;
-  }
-
-  get userActionName(): string {
-    return this._userActionName;
-  }
-
-  get status(): string {
-    return this._status;
   }
 }

@@ -1,0 +1,14 @@
+<nav mat-tab-nav-bar>
+  <a mat-tab-link
+     *ngFor="let link of navLinks"
+     [routerLink]="link.path"
+     routerLinkActive #rla="routerLinkActive"
+     [active]="rla.isActive">
+    <span class="text">{{link.label}}</span>
+    <mat-chip-list>
+      <mat-chip *ngIf="link.items.length" color="accent" selected="true">{{link.items.length}}</mat-chip>
+    </mat-chip-list>
+  </a>
+</nav>
+
+<router-outlet></router-outlet>

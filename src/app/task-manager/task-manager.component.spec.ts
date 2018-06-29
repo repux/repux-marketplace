@@ -1,22 +1,20 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { TaskManagerComponent } from './task-manager.component';
-import {
-  MatDialogModule,
-  MatIconModule,
-  MatProgressSpinnerModule,
-  MatToolbarModule
-} from '@angular/material';
-import { ChangeDetectorRef } from '@angular/core';
+import { MatDialogModule, MatIconModule, MatProgressSpinnerModule, MatToolbarModule } from '@angular/material';
 
 describe('TaskManagerComponent', () => {
-  let changeDetectorRef, taskManagerService;
+  let taskManagerService;
   let component: TaskManagerComponent;
   let fixture: ComponentFixture<TaskManagerComponent>;
+  const tasks = [ 'TASK' ];
 
   beforeEach(async(() => {
-    taskManagerService = jasmine.createSpyObj('TaskManagerService', [ 'closeDialog' ]);
-    changeDetectorRef = jasmine.createSpyObj('ChangeDetectorRef', [ 'markForCheck', 'detectChanges' ]);
-
+    taskManagerService = jasmine.createSpyObj('TaskManagerService', [ 'closeDialog', 'getTasks' ]);
+    taskManagerService.getTasks.and.returnValue({
+      subscribe(callback) {
+        callback(tasks);
+      }
+    });
     TestBed.configureTestingModule({
       declarations: [ TaskManagerComponent ],
       imports: [
@@ -24,9 +22,6 @@ describe('TaskManagerComponent', () => {
         MatToolbarModule,
         MatProgressSpinnerModule,
         MatDialogModule
-      ],
-      providers: [
-        { provide: ChangeDetectorRef, useValue: changeDetectorRef }
       ]
     })
       .compileComponents();
@@ -36,71 +31,6 @@ describe('TaskManagerComponent', () => {
     fixture = TestBed.createComponent(TaskManagerComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
-  });
-
-  describe('#ngOnChanges()', () => {
-    it('should assign to lastStatus values from taskManagerService.tasks', () => {
-      expect(component[ '_lastStatus' ]).toEqual([]);
-      component[ '_taskManagerService' ] = <any> {
-        tasks: [ {
-          status: 'STATUS',
-          finished: false,
-          errors: [],
-          progress: 15
-        } ]
-      };
-      component.ngOnChanges();
-      expect(component[ '_lastStatus' ].length).toBe(1);
-      expect(component[ '_lastStatus' ][ 0 ].status).toBe('STATUS');
-      expect(component[ '_lastStatus' ][ 0 ].finished).toBeFalsy();
-      expect(component[ '_lastStatus' ][ 0 ].errors).toEqual([]);
-      expect(component[ '_lastStatus' ][ 0 ].progress).toBe(15);
-
-      component[ '_taskManagerService' ].tasks[ 0 ].progress = 12;
-      component.ngOnChanges();
-      expect(component[ '_lastStatus' ][ 0 ].progress).toBe(12);
-    });
-  });
-
-  describe('#ngDoCkeck()', () => {
-    it('should detect changes on taskManagerService.tasks', () => {
-      component[ '_cd' ] = changeDetectorRef;
-      component.ngDoCheck();
-      expect(changeDetectorRef.markForCheck.calls.count()).toBe(0);
-      expect(changeDetectorRef.detectChanges.calls.count()).toBe(0);
-
-      component[ '_taskManagerService' ] = <any> {
-        tasks: [ {
-          status: 'STATUS',
-          finished: false,
-          errors: [],
-          progress: 15
-        } ]
-      };
-      component.ngDoCheck();
-      expect(changeDetectorRef.markForCheck.calls.count()).toBe(1);
-      expect(changeDetectorRef.detectChanges.calls.count()).toBe(1);
-
-      component[ '_taskManagerService' ].tasks[ 0 ].finished = true;
-      component.ngDoCheck();
-      expect(changeDetectorRef.markForCheck.calls.count()).toBe(2);
-      expect(changeDetectorRef.detectChanges.calls.count()).toBe(2);
-
-      component[ '_taskManagerService' ].tasks[ 0 ].status = 'STATUS_2';
-      component.ngDoCheck();
-      expect(changeDetectorRef.markForCheck.calls.count()).toBe(3);
-      expect(changeDetectorRef.detectChanges.calls.count()).toBe(3);
-
-      component[ '_taskManagerService' ].tasks[ 0 ].errors = [ 'ERROR' ];
-      component.ngDoCheck();
-      expect(changeDetectorRef.markForCheck.calls.count()).toBe(4);
-      expect(changeDetectorRef.detectChanges.calls.count()).toBe(4);
-
-      component[ '_taskManagerService' ].tasks[ 0 ].progress = 10;
-      component.ngDoCheck();
-      expect(changeDetectorRef.markForCheck.calls.count()).toBe(5);
-      expect(changeDetectorRef.detectChanges.calls.count()).toBe(5);
-    });
   });
 
   describe('#closeDialog()', () => {
@@ -113,8 +43,23 @@ describe('TaskManagerComponent', () => {
 
   describe('#setTaskMangerService()', () => {
     it('should set taskManagerService', () => {
+      const unsubscribeTasks = jasmine.createSpy();
+      component[ '_unsubscribeTasks' ] = unsubscribeTasks;
       component.setTaskManagerService(taskManagerService);
       expect(component.taskManagerService).toBe(taskManagerService);
+      expect(component.tasks).toEqual(<any> tasks);
+      expect(unsubscribeTasks.calls.count()).toBe(1);
+    });
+  });
+
+  describe('#unsubscribeTasks()', () => {
+    it('should call unsubscribe when there is subscription', () => {
+      const unsubscribe = jasmine.createSpy();
+      component[ '_tasksSubscription' ] = <any> {
+        unsubscribe
+      };
+      component[ '_unsubscribeTasks' ]();
+      expect(unsubscribe.calls.count()).toBe(1);
     });
   });
 });

@@ -14,24 +14,25 @@ import { FileInputComponent } from './file-input/file-input.component';
 import { TaskManagerComponent } from './task-manager/task-manager.component';
 import { TransactionDialogComponent } from './transaction-dialog/transaction-dialog.component';
 import {
-  MatTableModule,
-  MatInputModule,
-  MatPaginatorModule,
-  MatIconModule,
-  MatSortModule,
-  MatProgressSpinnerModule,
   MatButtonModule,
-  MatDialogModule,
-  MatSelectModule,
-  MatToolbarModule,
-  MatGridListModule,
   MatCardModule,
-  MatMenuModule,
-  MatTabsModule,
-  MatTooltipModule,
   MatChipsModule,
+  MatDialogModule,
+  MatGridListModule,
+  MatIconModule,
+  MatInputModule,
+  MatListModule,
+  MatMenuModule,
+  MatPaginatorModule,
+  MatProgressBarModule,
+  MatProgressSpinnerModule,
+  MatSelectModule,
   MatSidenavModule,
-  MatListModule
+  MatSortModule,
+  MatTableModule,
+  MatTabsModule,
+  MatToolbarModule,
+  MatTooltipModule
 } from '@angular/material';
 import { PurchaseConfirmationDialogComponent } from './purchase-confirmation-dialog/purchase-confirmation-dialog.component';
 import { BuyProductButtonComponent } from './buy-product-button/buy-product-button.component';
@@ -52,6 +53,9 @@ import { FinaliseButtonComponent } from './finalise-button/finalise-button.compo
 import { LayoutModule } from '@angular/cdk/layout';
 import { PublishButtonComponent } from './publish-button/publish-button.component';
 import { ConfirmationDialogComponent } from './confirmation-dialog/confirmation-dialog.component';
+import { BuyingComponent } from './buying/buying.component';
+import { ReadyToDownloadComponent } from './buying/ready-to-download/ready-to-download.component';
+import { AwaitingFinalisationComponent } from './buying/awaiting-finalisation/awaiting-finalisation.component';
 import { SettingsModule } from './settings/settings.module';
 
 @NgModule({
@@ -74,6 +78,9 @@ import { SettingsModule } from './settings/settings.module';
     SellComponent,
     MyActiveListingsComponent,
     PendingFinalisationComponent,
+    BuyingComponent,
+    ReadyToDownloadComponent,
+    AwaitingFinalisationComponent,
     UnpublishedComponent,
     MarketplaceComponent,
     WithdrawButtonComponent,
@@ -105,6 +112,7 @@ import { SettingsModule } from './settings/settings.module';
     MatTabsModule,
     MatSortModule,
     MatProgressSpinnerModule,
+    MatProgressBarModule,
     MatDialogModule,
     MatSelectModule,
     MatTooltipModule,

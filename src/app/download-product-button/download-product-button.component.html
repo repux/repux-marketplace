@@ -1,3 +1,21 @@
 <button mat-raised-button
         color="primary"
-        (click)="downloadProduct()">Download</button>
+        (click)="downloadProduct()"
+        *ngIf="!downloading">Download
+</button>
+
+<div class="row" *ngIf="downloading">
+  <div class="download-progress">
+    <mat-progress-bar mode="determinate" [value]="progress" color="primary"></mat-progress-bar>
+    <div class="row download-progress-label">
+      <div>Downloading...</div>
+      <div>{{progress | number : '1.2-2'}}%</div>
+    </div>
+  </div>
+
+  <button mat-icon-button
+          matTooltip="Cancel"
+          (click)="cancel()">
+    <mat-icon>block</mat-icon>
+  </button>
+</div>
