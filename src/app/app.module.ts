@@ -52,6 +52,7 @@ import { FinaliseButtonComponent } from './finalise-button/finalise-button.compo
 import { LayoutModule } from '@angular/cdk/layout';
 import { PublishButtonComponent } from './publish-button/publish-button.component';
 import { ConfirmationDialogComponent } from './confirmation-dialog/confirmation-dialog.component';
+import { SettingsModule } from './settings/settings.module';
 
 @NgModule({
   declarations: [
@@ -115,7 +116,8 @@ import { ConfirmationDialogComponent } from './confirmation-dialog/confirmation-
     NotificationsModule,
     LayoutModule,
     MatSidenavModule,
-    MatListModule
+    MatListModule,
+    SettingsModule
   ],
   providers: [],
   bootstrap: [ AppComponent ]

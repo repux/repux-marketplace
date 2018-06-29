@@ -6,6 +6,7 @@ import { PendingFinalisationComponent } from './sell/pending-finalisation/pendin
 import { MarketplaceComponent } from './marketplace/marketplace.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { UnpublishedComponent } from './sell/unpublished/unpublished.component';
+import { SettingsIndexComponent } from './settings/settings-index/settings-index.component';
 
 const routes: Routes = [
   { path: '', redirectTo: '/dashboard', pathMatch: 'full' },
@@ -18,7 +19,8 @@ const routes: Routes = [
       { path: 'unpublished', component: UnpublishedComponent },
       { path: 'pending-finalisation', component: PendingFinalisationComponent }
     ]
-  }
+  },
+  { path: 'settings', component: SettingsIndexComponent }
 ];
 
 @NgModule({

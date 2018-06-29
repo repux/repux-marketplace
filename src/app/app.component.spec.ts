@@ -40,6 +40,7 @@ import { FinaliseButtonComponent } from './finalise-button/finalise-button.compo
 import { PublishButtonComponent } from './publish-button/publish-button.component';
 import { HttpClient } from '@angular/common/http';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
+import { SettingsModule } from './settings/settings.module';
 
 describe('AppComponent', () => {
   beforeEach(async(() => {
@@ -82,7 +83,8 @@ describe('AppComponent', () => {
         MatSidenavModule,
         MatListModule,
         PipesModule,
-        NoopAnimationsModule
+        NoopAnimationsModule,
+        SettingsModule
       ],
       providers: [
         { provide: APP_BASE_HREF, useValue: '/' },
