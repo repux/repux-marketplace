@@ -5,7 +5,7 @@ import { TaskManagerService } from '../services/task-manager.service';
 import { DataProductService } from '../services/data-product.service';
 import { TaskType } from './task-type';
 import { UnpublishedProductsService } from '../services/unpublished-products.service';
-import { DataProduct } from '../data-product';
+import { DataProduct } from '../shared/models/data-product';
 
 export const STATUS = {
   UPLOADING: 'Uploading',

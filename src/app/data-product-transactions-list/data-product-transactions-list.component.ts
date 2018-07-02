@@ -1,10 +1,10 @@
 import {
   Component, Input, OnChanges
 } from '@angular/core';
-import { DataProductTransaction } from '../data-product-transaction';
+import { DataProductTransaction } from '../shared/models/data-product-transaction';
 import { MatTableDataSource } from '@angular/material';
 import { environment } from '../../environments/environment';
-import { DataProduct } from '../data-product';
+import { DataProduct } from '../shared/models/data-product';
 
 const DAY_IN_MILLISECONDS = 24 * 60 * 60 * 1000;
 

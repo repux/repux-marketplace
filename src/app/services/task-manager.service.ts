@@ -3,7 +3,7 @@ import { Task } from '../tasks/task';
 import { TaskManagerComponent } from '../task-manager/task-manager.component';
 import { MatDialog, MatDialogRef } from '@angular/material';
 import { WalletService } from './wallet.service';
-import Wallet from '../wallet';
+import Wallet from '../shared/models/wallet';
 import { BehaviorSubject } from 'rxjs/internal/BehaviorSubject';
 import { Observable } from 'rxjs/internal/Observable';
 

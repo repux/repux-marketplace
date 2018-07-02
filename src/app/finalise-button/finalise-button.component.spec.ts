@@ -2,7 +2,7 @@ import { ComponentFixture, fakeAsync, TestBed } from '@angular/core/testing';
 import { MatDialog, MatDialogModule } from '@angular/material';
 import { TransactionDialogComponent } from '../transaction-dialog/transaction-dialog.component';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
-import Wallet from '../wallet';
+import Wallet from '../shared/models/wallet';
 import { from } from 'rxjs';
 import { FinaliseButtonComponent } from './finalise-button.component';
 import BigNumber from 'bignumber.js';

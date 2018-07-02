@@ -9,19 +9,19 @@ import {
   MatDialogModule,
   MatTableDataSource, MatSortModule
 } from '@angular/material';
-import { PipesModule } from '../pipes/pipes.module';
 import { Component, Input } from '@angular/core';
 import { BigNumber } from 'bignumber.js';
 import { DataProductListService } from '../services/data-product-list.service';
 import { from as fromPromise } from 'rxjs/index';
-import { EsResponse } from '../es-response';
-import { Deserializable } from '../deserializable';
-import { EsDataProduct } from '../es-data-product';
+import { EsResponse } from '../shared/models/es-response';
+import { Deserializable } from '../shared/models/deserializable';
+import { EsDataProduct } from '../shared/models/es-data-product';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
-import { DataProduct } from '../data-product';
+import { DataProduct } from '../shared/models/data-product';
 import { DataProductListDetailDirective } from './data-product-list-detail.directive';
-import { DataProductTransaction } from '../data-product-transaction';
+import { DataProductTransaction } from '../shared/models/data-product-transaction';
 import { DataProductNotificationsService } from '../services/data-product-notifications.service';
+import { SharedModule } from '../shared/shared.module';
 
 @Component({ selector: 'app-file-size', template: '{{bytes}}' })
 class FileSizeStubComponent {
@@ -82,6 +82,7 @@ describe('DataProductListComponent', () => {
         DataProductTransactionsListStubComponent
       ],
       imports: [
+        SharedModule,
         MatIconModule,
         MatInputModule,
         MatProgressSpinnerModule,
@@ -89,7 +90,6 @@ describe('DataProductListComponent', () => {
         MatPaginatorModule,
         MatDialogModule,
         MatSortModule,
-        PipesModule,
         NoopAnimationsModule
       ],
       providers: [

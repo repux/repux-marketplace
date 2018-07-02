@@ -1,5 +1,5 @@
 import BigNumber from 'bignumber.js';
-import { environment } from '../environments/environment';
+import { environment } from '../../../environments/environment';
 
 export class DataProductTransaction {
   finalised: boolean;

@@ -1,6 +1,6 @@
 import { BigNumber } from 'bignumber.js';
 import { Deserializable } from './deserializable';
-import { environment } from '../environments/environment';
+import { environment } from '../../../environments/environment';
 import { DataProductTransaction } from './data-product-transaction';
 
 export class DataProduct implements Deserializable<DataProduct> {

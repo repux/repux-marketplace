@@ -1,7 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { MetamaskStatus, WalletService } from '../services/wallet.service';
+import { MetamaskStatus, WalletService } from '../../../services/wallet.service';
 import { Subscription } from 'rxjs/internal/Subscription';
-import { environment } from '../../environments/environment';
+import { environment } from '../../../../environments/environment';
 
 const Messages = {
   // tslint:disable:max-line-length

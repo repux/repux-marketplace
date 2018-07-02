@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { UnpublishedProductsService } from '../../services/unpublished-products.service';
-import { DataProduct } from '../../data-product';
+import { DataProduct } from '../../shared/models/data-product';
 
 @Component({
   selector: 'app-unpublished-files',

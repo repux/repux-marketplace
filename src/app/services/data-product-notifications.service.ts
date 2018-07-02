@@ -5,7 +5,7 @@ import { NotificationType } from '../notifications/notification-type';
 import { Notification } from '../notifications/notification';
 import { Injectable, OnDestroy } from '@angular/core';
 import { Subscription } from 'rxjs/internal/Subscription';
-import Wallet from '../wallet';
+import Wallet from '../shared/models/wallet';
 import { WalletService } from './wallet.service';
 
 @Injectable({

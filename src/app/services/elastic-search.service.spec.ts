@@ -1,5 +1,5 @@
 import { ElasticSearchService } from './elastic-search.service';
-import { EsDataProduct } from '../es-data-product';
+import { EsDataProduct } from '../shared/models/es-data-product';
 import { HttpErrorResponse } from '@angular/common/http';
 import { defer } from 'rxjs/index';
 

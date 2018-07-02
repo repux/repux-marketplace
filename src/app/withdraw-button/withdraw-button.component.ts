@@ -1,7 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { DataProduct } from '../data-product';
+import { DataProduct } from '../shared/models/data-product';
 import { WalletService } from '../services/wallet.service';
-import Wallet from '../wallet';
+import Wallet from '../shared/models/wallet';
 import BigNumber from 'bignumber.js';
 import { DataProductService } from '../services/data-product.service';
 import { TransactionDialogComponent } from '../transaction-dialog/transaction-dialog.component';

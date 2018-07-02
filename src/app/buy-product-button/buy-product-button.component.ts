@@ -5,12 +5,12 @@ import { DataProductService } from '../services/data-product.service';
 import { MatDialog } from '@angular/material';
 import { PurchaseConfirmationDialogComponent } from '../purchase-confirmation-dialog/purchase-confirmation-dialog.component';
 import { TransactionDialogComponent } from '../transaction-dialog/transaction-dialog.component';
-import Wallet from '../wallet';
+import Wallet from '../shared/models/wallet';
 import { KeysPasswordDialogComponent } from '../key-store/keys-password-dialog/keys-password-dialog.component';
 import { KeysGeneratorDialogComponent } from '../key-store/keys-generator-dialog/keys-generator-dialog.component';
 import { KeyStoreService } from '../key-store/key-store.service';
 import { Subscription } from 'rxjs/internal/Subscription';
-import { DataProduct } from '../data-product';
+import { DataProduct } from '../shared/models/data-product';
 
 @Component({
   selector: 'app-buy-product-button',

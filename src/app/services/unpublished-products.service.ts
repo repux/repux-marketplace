@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { StorageService } from './storage.service';
-import { DataProduct } from '../data-product';
+import { DataProduct } from '../shared/models/data-product';
 import { TaskManagerService } from './task-manager.service';
 import { FileUploadTask } from '../tasks/file-upload-task';
 

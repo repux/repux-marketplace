@@ -1,6 +1,6 @@
 import { async } from '@angular/core/testing';
 import { MetamaskDetectorComponent } from './metamask-detector.component';
-import { WalletService } from '../services/wallet.service';
+import { WalletService } from '../../../services/wallet.service';
 
 describe('MetamaskDetectorComponent', () => {
   let component: MetamaskDetectorComponent;

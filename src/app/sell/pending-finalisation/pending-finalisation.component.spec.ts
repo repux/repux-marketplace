@@ -2,7 +2,7 @@ import { MatDialog, MatDialogModule } from '@angular/material';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { ComponentFixture, fakeAsync, TestBed } from '@angular/core/testing';
 import { PendingFinalisationComponent } from './pending-finalisation.component';
-import Wallet from '../../wallet';
+import Wallet from '../../shared/models/wallet';
 import { Component, Input } from '@angular/core';
 
 @Component({ selector: 'app-data-product-list', template: '' })

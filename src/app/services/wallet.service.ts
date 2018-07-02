@@ -1,5 +1,5 @@
 import { Injectable, OnDestroy } from '@angular/core';
-import Wallet from '../wallet';
+import Wallet from '../shared/models/wallet';
 import { RepuxWeb3Service } from './repux-web3.service';
 import { Observable } from 'rxjs/internal/Observable';
 import { BehaviorSubject } from 'rxjs/internal/BehaviorSubject';

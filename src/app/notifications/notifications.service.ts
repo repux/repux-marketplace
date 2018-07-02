@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Notification } from './notification';
 import { NotificationType } from './notification-type';
 import { WalletService } from '../services/wallet.service';
-import Wallet from '../wallet';
+import Wallet from '../shared/models/wallet';
 import { StorageService } from '../services/storage.service';
 
 @Injectable({

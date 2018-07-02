@@ -12,11 +12,12 @@ import { RepuxLibService } from '../services/repux-lib.service';
 import { DataProductService } from '../services/data-product.service';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ProductCategorySelectorComponent } from '../product-category-selector/product-category-selector.component';
-import { FileInputComponent } from '../file-input/file-input.component';
+import { FileInputComponent } from '../shared/components/file-input/file-input.component';
 import { HttpClientModule } from '@angular/common/http';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { KeyStoreService } from '../key-store/key-store.service';
 import { KeyStoreModule } from '../key-store/key-store.module';
+import { SharedModule } from '../shared/shared.module';
 
 describe('ProductCreatorDialogComponent', () => {
   let keyStoreService, repuxLibService, dataProductService, taskManagerService, matDialog, matDialogRef,
@@ -40,10 +41,10 @@ describe('ProductCreatorDialogComponent', () => {
     TestBed.configureTestingModule({
       declarations: [
         ProductCreatorDialogComponent,
-        ProductCategorySelectorComponent,
-        FileInputComponent
+        ProductCategorySelectorComponent
       ],
       imports: [
+        SharedModule,
         KeyStoreModule,
         MatDialogModule,
         MatInputModule,

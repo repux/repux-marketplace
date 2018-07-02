@@ -1,0 +1,32 @@
+<form [formGroup]="formGroup" (ngSubmit)="upload()">
+  <h2 mat-dialog-title>Upload new private/public key pair</h2>
+  <mat-dialog-content class="mat-typography">
+    <p>Now you can add new/replace existing private/public key pair in browser storage. Please provide separate keys in JSON Web Key format.</p>
+    <p>Keys will be stored in your browser secured with your personal password.</p>
+
+    <div class="field-row">
+      <app-file-input #filePrivateKeyInput
+                      placeholder="Private key"
+                      required
+                      [formControl]="filePrivateKeyFormControl"
+                      ngDefaultControl></app-file-input>
+    </div>
+
+    <div class="field-row">
+      <app-file-input #filePublicKeyInput
+                      placeholder="Public key"
+                      required
+                      [formControl]="filePublicKeyFormControl"
+                      ngDefaultControl></app-file-input>
+    </div>
+
+    <mat-form-field class="field-row">
+      <input matInput type="password"
+             placeholder="Personal password" required formControlName="password">
+    </mat-form-field>
+  </mat-dialog-content>
+  <mat-dialog-actions>
+    <button mat-button mat-dialog-close type="button">Cancel</button>
+    <button mat-button>Upload</button>
+  </mat-dialog-actions>
+</form>

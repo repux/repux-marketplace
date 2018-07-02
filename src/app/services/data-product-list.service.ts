@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs/index';
-import { EsResponse } from '../es-response';
-import { EsDataProduct } from '../es-data-product';
+import { EsResponse } from '../shared/models/es-response';
+import { EsDataProduct } from '../shared/models/es-data-product';
 import { ElasticSearchService } from './elastic-search.service';
-import { Deserializable } from '../deserializable';
+import { Deserializable } from '../shared/models/deserializable';
 
 @Injectable({
   providedIn: 'root'

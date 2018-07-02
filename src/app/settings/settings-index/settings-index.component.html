@@ -5,7 +5,11 @@
     Download keys
   </button>
 
-  <button mat-button color="primary" *ngIf="!hasKeys" (click)="generateKeys()">
-    Generate Keys
+  <button mat-button color="primary" (click)="generateKeys()">
+    Generate new keys
+  </button>
+
+  <button mat-button color="primary" (click)="uploadKeys()">
+    Upload new keys
   </button>
 </section>

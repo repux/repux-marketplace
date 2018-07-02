@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { WalletService } from '../../services/wallet.service';
-import Wallet from '../../wallet';
+import Wallet from '../../shared/models/wallet';
 
 const PENDING_FINALISATION_QUERY = {
   nested: {

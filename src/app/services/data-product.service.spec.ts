@@ -2,7 +2,7 @@ import { DataProductService } from './data-product.service';
 import BigNumber from 'bignumber.js';
 import { Observable } from 'rxjs';
 import { DataProductUpdateAction } from 'repux-web3-api';
-import Wallet from '../wallet';
+import Wallet from '../shared/models/wallet';
 
 describe('DataProductService', () => {
   let service: DataProductService;

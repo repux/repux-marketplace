@@ -2,7 +2,6 @@ import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { HttpClientModule } from '@angular/common/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { PipesModule } from './pipes/pipes.module';
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
 import { DashboardComponent } from './dashboard/dashboard.component';
@@ -10,7 +9,6 @@ import { DataProductListComponent } from './data-product-list/data-product-list.
 import { ProductCreatorDialogComponent } from './product-creator-dialog/product-creator-dialog.component';
 import { ProductCategorySelectorComponent } from './product-category-selector/product-category-selector.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { FileInputComponent } from './file-input/file-input.component';
 import { TaskManagerComponent } from './task-manager/task-manager.component';
 import { TransactionDialogComponent } from './transaction-dialog/transaction-dialog.component';
 import {
@@ -39,7 +37,7 @@ import { BuyProductButtonComponent } from './buy-product-button/buy-product-butt
 import { DownloadProductButtonComponent } from './download-product-button/download-product-button.component';
 import { KeyStoreModule } from './key-store/key-store.module';
 import { NotificationsModule } from './notifications/notifications.module';
-import { MetamaskDetectorComponent } from './metamask-detector/metamask-detector.component';
+import { MetamaskDetectorComponent } from './shared/components/metamask-detector/metamask-detector.component';
 import { SellComponent } from './sell/sell.component';
 import { MyActiveListingsComponent } from './sell/my-active-listings/my-active-listings.component';
 import { PendingFinalisationComponent } from './sell/pending-finalisation/pending-finalisation.component';
@@ -57,6 +55,7 @@ import { BuyingComponent } from './buying/buying.component';
 import { ReadyToDownloadComponent } from './buying/ready-to-download/ready-to-download.component';
 import { AwaitingFinalisationComponent } from './buying/awaiting-finalisation/awaiting-finalisation.component';
 import { SettingsModule } from './settings/settings.module';
+import { SharedModule } from './shared/shared.module';
 
 @NgModule({
   declarations: [
@@ -67,7 +66,6 @@ import { SettingsModule } from './settings/settings.module';
     DataProductTransactionsListComponent,
     ProductCreatorDialogComponent,
     ProductCategorySelectorComponent,
-    FileInputComponent,
     TaskManagerComponent,
     TransactionDialogComponent,
     ConfirmationDialogComponent,
@@ -119,12 +117,12 @@ import { SettingsModule } from './settings/settings.module';
     MatChipsModule,
     FormsModule,
     ReactiveFormsModule,
-    PipesModule,
     KeyStoreModule,
     NotificationsModule,
     LayoutModule,
     MatSidenavModule,
     MatListModule,
+    SharedModule,
     SettingsModule
   ],
   providers: [],

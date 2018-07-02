@@ -2,7 +2,7 @@ import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { WalletService } from '../services/wallet.service';
 import { DataProductService } from '../services/data-product.service';
 import { FileDownloadTask } from '../tasks/file-download-task';
-import Wallet from '../wallet';
+import Wallet from '../shared/models/wallet';
 import { RepuxLibService } from '../services/repux-lib.service';
 import { TaskManagerService } from '../services/task-manager.service';
 import { KeysPasswordDialogComponent } from '../key-store/keys-password-dialog/keys-password-dialog.component';
