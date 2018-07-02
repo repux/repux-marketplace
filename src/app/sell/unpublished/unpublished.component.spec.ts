@@ -1,7 +1,7 @@
 import { ComponentFixture, fakeAsync, TestBed } from '@angular/core/testing';
 import { UnpublishedComponent } from './unpublished.component';
 import { Component, Input } from '@angular/core';
-import { DataProduct } from '../../data-product';
+import { DataProduct } from '../../shared/models/data-product';
 import { UnpublishedProductsService } from '../../services/unpublished-products.service';
 
 @Component({ selector: 'app-data-product-list', template: '' })

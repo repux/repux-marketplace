@@ -1,9 +1,9 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { DataProduct } from '../data-product';
+import { DataProduct } from '../shared/models/data-product';
 import { MatDialog } from '@angular/material';
 import { DataProductService } from '../services/data-product.service';
 import { WalletService } from '../services/wallet.service';
-import Wallet from '../wallet';
+import Wallet from '../shared/models/wallet';
 import { TransactionDialogComponent } from '../transaction-dialog/transaction-dialog.component';
 
 @Component({

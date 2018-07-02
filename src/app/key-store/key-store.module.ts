@@ -1,13 +1,16 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { KeysGeneratorDialogComponent } from './keys-generator-dialog/keys-generator-dialog.component';
 import { KeysPasswordDialogComponent } from './keys-password-dialog/keys-password-dialog.component';
 import { MatButtonModule, MatDialogModule, MatInputModule } from '@angular/material';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { KeysUpdateDialogComponent } from './keys-update-dialog/keys-update-dialog.component';
+import { SharedModule } from '../shared/shared.module';
 
 @NgModule({
   imports: [
     CommonModule,
+    SharedModule,
     MatDialogModule,
     MatButtonModule,
     MatInputModule,
@@ -16,15 +19,19 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
   ],
   declarations: [
     KeysGeneratorDialogComponent,
-    KeysPasswordDialogComponent
+    KeysPasswordDialogComponent,
+    KeysUpdateDialogComponent
   ],
   entryComponents: [
     KeysGeneratorDialogComponent,
-    KeysPasswordDialogComponent
+    KeysPasswordDialogComponent,
+    KeysUpdateDialogComponent
   ],
   exports: [
     KeysGeneratorDialogComponent,
-    KeysPasswordDialogComponent
+    KeysPasswordDialogComponent,
+    KeysUpdateDialogComponent
   ]
 })
-export class KeyStoreModule { }
+export class KeyStoreModule {
+}

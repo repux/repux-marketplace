@@ -4,7 +4,7 @@ import { MatDialogModule, MatIconModule, MatProgressBarModule } from '@angular/m
 import { DownloadProductButtonComponent } from './download-product-button.component';
 import { TransactionDialogComponent } from '../transaction-dialog/transaction-dialog.component';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
-import Wallet from '../wallet';
+import Wallet from '../shared/models/wallet';
 import { from } from 'rxjs';
 import { KeyStoreService } from '../key-store/key-store.service';
 

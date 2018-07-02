@@ -21,9 +21,8 @@ import {
   MatToolbarModule,
 } from '@angular/material';
 import { MatFormFieldModule } from '@angular/material/form-field';
-import { PipesModule } from './pipes/pipes.module';
 import { APP_BASE_HREF } from '@angular/common';
-import { MetamaskDetectorComponent } from './metamask-detector/metamask-detector.component';
+import { MetamaskDetectorComponent } from './shared/components/metamask-detector/metamask-detector.component';
 import { DataProductNotificationsService } from './services/data-product-notifications.service';
 import { BuyProductButtonComponent } from './buy-product-button/buy-product-button.component';
 import { DownloadProductButtonComponent } from './download-product-button/download-product-button.component';
@@ -45,6 +44,7 @@ import { BuyingComponent } from './buying/buying.component';
 import { ReadyToDownloadComponent } from './buying/ready-to-download/ready-to-download.component';
 import { AwaitingFinalisationComponent } from './buying/awaiting-finalisation/awaiting-finalisation.component';
 import { SettingsModule } from './settings/settings.module';
+import { SharedModule } from './shared/shared.module';
 
 describe('AppComponent', () => {
   beforeEach(async(() => {
@@ -90,8 +90,8 @@ describe('AppComponent', () => {
         MatSortModule,
         MatSidenavModule,
         MatListModule,
-        PipesModule,
         NoopAnimationsModule,
+        SharedModule,
         SettingsModule
       ],
       providers: [

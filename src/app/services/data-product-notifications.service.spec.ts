@@ -9,7 +9,7 @@ import { NotificationType } from '../notifications/notification-type';
 import { DataProductUpdateAction } from 'repux-web3-api';
 import { Notification } from '../notifications/notification';
 import BigNumber from 'bignumber.js';
-import Wallet from '../wallet';
+import Wallet from '../shared/models/wallet';
 
 describe('DataProductNotificationsService', () => {
   let service: DataProductNotificationsService;

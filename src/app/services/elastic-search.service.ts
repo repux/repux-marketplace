@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../environments/environment';
 import { Observable } from 'rxjs/index';
-import { EsResponse } from '../es-response';
+import { EsResponse } from '../shared/models/es-response';
 import { map } from 'rxjs/internal/operators';
 
 @Injectable({

@@ -4,7 +4,7 @@ import { TaskManagerComponent } from '../task-manager/task-manager.component';
 import { MatDialogModule } from '@angular/material';
 import { WalletService } from './wallet.service';
 import { from } from 'rxjs';
-import Wallet from '../wallet';
+import Wallet from '../shared/models/wallet';
 
 describe('TaskManagerService', () => {
   let matDialogSpy: { open: jasmine.Spy },

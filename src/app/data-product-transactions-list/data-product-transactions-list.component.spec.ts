@@ -1,12 +1,12 @@
 import { MatTableDataSource, MatTableModule } from '@angular/material';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
-import { PipesModule } from '../pipes/pipes.module';
 import { Component, Input } from '@angular/core';
-import { DataProductTransaction } from '../data-product-transaction';
-import { DataProduct } from '../data-product';
+import { DataProductTransaction } from '../shared/models/data-product-transaction';
+import { DataProduct } from '../shared/models/data-product';
 import { DataProductTransactionsListComponent } from './data-product-transactions-list.component';
 import BigNumber from 'bignumber.js';
+import { SharedModule } from '../shared/shared.module';
 
 @Component({ selector: 'app-finalise-button', template: '' })
 class FinaliseButtonStubComponent {
@@ -25,8 +25,8 @@ describe('DataProductTransactionsListComponent', () => {
         FinaliseButtonStubComponent
       ],
       imports: [
+        SharedModule,
         MatTableModule,
-        PipesModule,
         NoopAnimationsModule
       ]
     })

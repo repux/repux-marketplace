@@ -5,7 +5,7 @@ import { Notification } from './notification';
 import { WalletService } from '../services/wallet.service';
 import { StorageService } from '../services/storage.service';
 import Spy = jasmine.Spy;
-import Wallet from '../wallet';
+import Wallet from '../shared/models/wallet';
 import { from } from 'rxjs';
 
 describe('NotificationsService', () => {

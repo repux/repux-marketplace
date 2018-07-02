@@ -1,14 +1,14 @@
 import { Component, Input, OnChanges, OnInit, ViewChild } from '@angular/core';
 import { DataProductListService } from '../services/data-product-list.service';
-import { EsResponse } from '../es-response';
-import { EsDataProduct } from '../es-data-product';
+import { EsResponse } from '../shared/models/es-response';
+import { EsDataProduct } from '../shared/models/es-data-product';
 import { MatPaginator, MatTableDataSource, PageEvent, Sort } from '@angular/material';
 import { environment } from '../../environments/environment';
-import { Deserializable } from '../deserializable';
-import { DataProductTransaction } from '../data-product-transaction';
+import { Deserializable } from '../shared/models/deserializable';
+import { DataProductTransaction } from '../shared/models/data-product-transaction';
 import { BigNumber } from 'bignumber.js';
-import { DataProduct } from '../data-product';
-import { deepCopy } from '../utils/deep-copy';
+import { DataProduct } from '../shared/models/data-product';
+import { deepCopy } from '../shared/utils/deep-copy';
 import { DataProductNotificationsService } from '../services/data-product-notifications.service';
 
 @Component({

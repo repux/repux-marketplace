@@ -11,7 +11,7 @@ import {
 } from 'repux-web3-api';
 import { filter } from 'rxjs/internal/operators';
 import { WalletService } from './wallet.service';
-import Wallet from '../wallet';
+import Wallet from '../shared/models/wallet';
 import { StorageService } from './storage.service';
 
 @Injectable({

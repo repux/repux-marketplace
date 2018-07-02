@@ -4,7 +4,7 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { BigNumber } from 'bignumber.js';
 import { FileUploadTask } from '../tasks/file-upload-task';
 import { RepuxLibService } from '../services/repux-lib.service';
-import { FileInputComponent } from '../file-input/file-input.component';
+import { FileInputComponent } from '../shared/components/file-input/file-input.component';
 import { ProductCategorySelectorComponent } from '../product-category-selector/product-category-selector.component';
 import { TaskManagerService } from '../services/task-manager.service';
 import { MatDialog, MatDialogRef } from '@angular/material';

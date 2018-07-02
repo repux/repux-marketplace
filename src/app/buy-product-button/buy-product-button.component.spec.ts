@@ -3,7 +3,8 @@ import { BuyProductButtonComponent } from './buy-product-button.component';
 import { Component, Input } from '@angular/core';
 import { RepuxLibService } from '../services/repux-lib.service';
 import { MatDialogModule } from '@angular/material';
-import Wallet from '../wallet';
+import Wallet from '../shared/models/wallet';
+
 import { from } from 'rxjs';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { TransactionDialogComponent } from '../transaction-dialog/transaction-dialog.component';

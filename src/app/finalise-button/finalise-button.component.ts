@@ -1,17 +1,17 @@
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material';
-import { DataProductTransaction } from '../data-product-transaction';
+import { DataProductTransaction } from '../shared/models/data-product-transaction';
 import { KeysGeneratorDialogComponent } from '../key-store/keys-generator-dialog/keys-generator-dialog.component';
 import { KeysPasswordDialogComponent } from '../key-store/keys-password-dialog/keys-password-dialog.component';
 import { KeyStoreService } from '../key-store/key-store.service';
 import { Subscription } from 'rxjs';
 import { FileReencryptionTask } from '../tasks/file-reencryption-task';
-import { DataProduct } from '../data-product';
+import { DataProduct } from '../shared/models/data-product';
 import { RepuxLibService } from '../services/repux-lib.service';
 import { DataProductService } from '../services/data-product.service';
 import { TaskManagerService } from '../services/task-manager.service';
 import { DataProductNotificationsService } from '../services/data-product-notifications.service';
-import Wallet from '../wallet';
+import Wallet from '../shared/models/wallet';
 import { WalletService } from '../services/wallet.service';
 
 @Component({

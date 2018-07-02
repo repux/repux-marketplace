@@ -1,6 +1,6 @@
 import { DataProductListService } from './data-product-list.service';
 import { defer } from 'rxjs/index';
-import { EsDataProduct } from '../es-data-product';
+import { EsDataProduct } from '../shared/models/es-data-product';
 
 describe('DataProductListService', () => {
   let elasticSearchServiceSpy: { search: jasmine.Spy };

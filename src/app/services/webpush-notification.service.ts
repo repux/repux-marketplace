@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
 import { environment } from '../../environments/environment';
-import { Decoder } from './../utils/decoder';
+import { Decoder } from '../shared/utils/decoder';
 import { WebpushServerService } from '../services/webpush-server.service';
 import { WalletService } from '../services/wallet.service';
-import Wallet from '../wallet';
+import Wallet from '../shared/models/wallet';
 
 @Injectable({
   providedIn: 'root'

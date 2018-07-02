@@ -1,7 +1,7 @@
 import { Task } from './task';
 import { RepuxLibService } from '../services/repux-lib.service';
 import { TaskManagerService } from '../services/task-manager.service';
-import { BlobDownloader } from '../utils/blob-downloader';
+import { BlobDownloader } from '../shared/utils/blob-downloader';
 import { TaskType } from './task-type';
 
 export const STATUS = {
