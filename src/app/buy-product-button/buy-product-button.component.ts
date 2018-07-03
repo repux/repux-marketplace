@@ -19,7 +19,8 @@ import { DataProduct } from '../shared/models/data-product';
 })
 export class BuyProductButtonComponent implements OnInit, OnDestroy {
   @Input() dataProduct: DataProduct;
-  private _subscription: Subscription;
+  private _keysSubscription: Subscription;
+  private _walletSubscription: Subscription;
   public wallet: Wallet;
   public finalised: boolean;
   public bought: boolean;
@@ -38,7 +39,7 @@ export class BuyProductButtonComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.dataProductAddress = this.dataProduct.address;
     this.productOwnerAddress = this.dataProduct.ownerAddress;
-    this._walletService.getWallet().subscribe(wallet => this._onWalletChange(wallet));
+    this._walletSubscription = this._walletService.getWallet().subscribe(wallet => this._onWalletChange(wallet));
   }
 
   private _onWalletChange(wallet: Wallet): void {
@@ -94,7 +95,7 @@ export class BuyProductButtonComponent implements OnInit, OnDestroy {
         dialogRef = this._dialog.open(KeysGeneratorDialogComponent);
       }
 
-      this._subscription = dialogRef.afterClosed().subscribe(result => {
+      this._keysSubscription = dialogRef.afterClosed().subscribe(result => {
         if (result) {
           resolve({
             privateKey: result.privateKey,
@@ -106,8 +107,12 @@ export class BuyProductButtonComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    if (this._subscription) {
-      this._subscription.unsubscribe();
+    if (this._keysSubscription) {
+      this._keysSubscription.unsubscribe();
+    }
+
+    if (this._walletSubscription) {
+      this._walletSubscription.unsubscribe();
     }
   }
 }

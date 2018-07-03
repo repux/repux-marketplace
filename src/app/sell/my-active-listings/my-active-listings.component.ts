@@ -1,6 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, OnDestroy } from '@angular/core';
 import Wallet from '../../shared/models/wallet';
 import { WalletService } from '../../services/wallet.service';
+import { Subscription } from 'rxjs/internal/Subscription';
 
 const NOT_DISABLED_OR_WITH_FUNDS_TO_WITHDRAW_QUERY = {
   bool: {
@@ -20,7 +21,7 @@ const NOT_DISABLED_OR_WITH_FUNDS_TO_WITHDRAW_QUERY = {
   templateUrl: './my-active-listings.component.html',
   styleUrls: [ './my-active-listings.component.scss' ]
 })
-export class MyActiveListingsComponent {
+export class MyActiveListingsComponent implements OnDestroy {
   public displayedColumns = [
     'name',
     'title',
@@ -40,6 +41,7 @@ export class MyActiveListingsComponent {
   public staticQuery = {};
 
   private _wallet: Wallet;
+  private _walletSubscription: Subscription;
 
   constructor(
     private _walletService: WalletService
@@ -52,7 +54,13 @@ export class MyActiveListingsComponent {
         ]
       }
     };
-    this._walletService.getWallet().subscribe(wallet => this._onWalletChange(wallet));
+    this._walletSubscription = this._walletService.getWallet().subscribe(wallet => this._onWalletChange(wallet));
+  }
+
+  ngOnDestroy() {
+    if (this._walletSubscription) {
+      this._walletSubscription.unsubscribe();
+    }
   }
 
   private _onWalletChange(wallet: Wallet) {

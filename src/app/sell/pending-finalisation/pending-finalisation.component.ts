@@ -1,6 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, OnDestroy } from '@angular/core';
 import { WalletService } from '../../services/wallet.service';
 import Wallet from '../../shared/models/wallet';
+import { Subscription } from 'rxjs/internal/Subscription';
 
 const PENDING_FINALISATION_QUERY = {
   nested: {
@@ -20,7 +21,7 @@ const PENDING_FINALISATION_QUERY = {
   templateUrl: './pending-finalisation.component.html',
   styleUrls: [ './pending-finalisation.component.scss' ]
 })
-export class PendingFinalisationComponent {
+export class PendingFinalisationComponent implements OnDestroy {
   public displayedColumns = [
     'name',
     'title',
@@ -34,6 +35,8 @@ export class PendingFinalisationComponent {
   private _wallet: Wallet;
   public staticQuery = {};
 
+  private _walletSubscription: Subscription;
+
   constructor(
     private _walletService: WalletService
   ) {
@@ -45,7 +48,13 @@ export class PendingFinalisationComponent {
         ]
       }
     };
-    this._walletService.getWallet().subscribe(wallet => this._onWalletChange(wallet));
+    this._walletSubscription = this._walletService.getWallet().subscribe(wallet => this._onWalletChange(wallet));
+  }
+
+  ngOnDestroy() {
+    if (this._walletSubscription) {
+      this._walletSubscription.unsubscribe();
+    }
   }
 
   private _onWalletChange(wallet: Wallet) {

@@ -78,6 +78,10 @@ export class DataProductService {
     return this._api.disableDataProduct(dataProductAddress);
   }
 
+  cancelDataProductPurchase(dataProductAddress: string): Promise<TransactionResult> {
+    return this._api.cancelDataProductPurchase(dataProductAddress);
+  }
+
   watchForDataProductUpdate(_dataProductAddress?: string, _dataProductUpdateAction?: DataProductUpdateAction)
     : Observable<DataProductEvent> {
     if (!this._wallet) {

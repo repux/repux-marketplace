@@ -1,21 +1,24 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { DataProduct } from '../shared/models/data-product';
 import { MatDialog } from '@angular/material';
 import { DataProductService } from '../services/data-product.service';
 import { WalletService } from '../services/wallet.service';
 import Wallet from '../shared/models/wallet';
 import { TransactionDialogComponent } from '../transaction-dialog/transaction-dialog.component';
+import { Subscription } from 'rxjs/internal/Subscription';
 
 @Component({
   selector: 'app-unpublish-button',
   templateUrl: './unpublish-button.component.html',
   styleUrls: [ './unpublish-button.component.scss' ]
 })
-export class UnpublishButtonComponent implements OnInit {
+export class UnpublishButtonComponent implements OnInit, OnDestroy {
   @Input() dataProduct: DataProduct;
   public dataProductAddress: string;
   public wallet: Wallet;
   public userIsOwner: boolean;
+
+  private _walletSubscription: Subscription;
 
   constructor(
     private _walletService: WalletService,
@@ -26,7 +29,7 @@ export class UnpublishButtonComponent implements OnInit {
 
   ngOnInit() {
     this.dataProductAddress = this.dataProduct.address;
-    this._walletService.getWallet().subscribe(wallet => this._onWalletChange(wallet));
+    this._walletSubscription = this._walletService.getWallet().subscribe(wallet => this._onWalletChange(wallet));
   }
 
   private _onWalletChange(wallet: Wallet) {
@@ -54,5 +57,11 @@ export class UnpublishButtonComponent implements OnInit {
     const transactionDialog: TransactionDialogComponent = transactionDialogRef.componentInstance;
     transactionDialog.transaction = () => this._dataProductService.disableDataProduct(this.dataProductAddress);
     transactionDialog.callTransaction();
+  }
+
+  ngOnDestroy() {
+    if (this._walletSubscription) {
+      this._walletSubscription.unsubscribe();
+    }
   }
 }

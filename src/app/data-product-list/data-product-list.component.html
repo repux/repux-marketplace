@@ -88,6 +88,20 @@
         </mat-cell>
       </ng-container>
 
+      <!-- Transaction date -->
+      <ng-container matColumnDef="transactionDate">
+        <mat-header-cell *matHeaderCellDef> Transaction date</mat-header-cell>
+        <mat-cell *matCellDef="let element"> {{ getTransactionDate(element) | date : 'short' }}
+        </mat-cell>
+      </ng-container>
+
+      <!-- Delivery deadline -->
+      <ng-container matColumnDef="deliveryDeadline">
+        <mat-header-cell *matHeaderCellDef> Delivery deadline</mat-header-cell>
+        <mat-cell *matCellDef="let element"> {{ getDeliveryDeadline(element) | date : 'short' }}
+        </mat-cell>
+      </ng-container>
+
       <!-- Actions Column -->
       <ng-container matColumnDef="actions">
         <mat-header-cell *matHeaderCellDef></mat-header-cell>
@@ -95,6 +109,9 @@
           <div class="row">
             <app-buy-product-button *ngIf="availableActions.includes('buy')"
                                     [dataProduct]="element"></app-buy-product-button>
+
+            <app-cancel-purchase-button *ngIf="availableActions.includes('cancelPurchase')"
+                                           [dataProduct]="element"></app-cancel-purchase-button>
 
             <app-publish-button *ngIf="availableActions.includes('publish')"
                                 [dataProduct]="element"></app-publish-button>

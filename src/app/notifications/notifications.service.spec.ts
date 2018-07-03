@@ -4,9 +4,9 @@ import { NotificationType } from './notification-type';
 import { Notification } from './notification';
 import { WalletService } from '../services/wallet.service';
 import { StorageService } from '../services/storage.service';
-import Spy = jasmine.Spy;
 import Wallet from '../shared/models/wallet';
 import { from } from 'rxjs';
+import Spy = jasmine.Spy;
 
 describe('NotificationsService', () => {
   let service: NotificationsService;
@@ -28,6 +28,7 @@ describe('NotificationsService', () => {
     });
 
     service = TestBed.get(NotificationsService);
+    await service.addParser(NotificationType.DATA_PRODUCT_PURCHASED, (notification: Notification) => Promise.resolve('RESULT'));
     await service.addParser(NotificationType.DATA_PRODUCT_TO_FINALISATION, (notification: Notification) => Promise.resolve('RESULT'));
     exampleNotification = new Notification(NotificationType.DATA_PRODUCT_TO_FINALISATION, {});
   });

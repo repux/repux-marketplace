@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { DataProduct } from '../shared/models/data-product';
 import { WalletService } from '../services/wallet.service';
 import Wallet from '../shared/models/wallet';
@@ -6,18 +6,21 @@ import BigNumber from 'bignumber.js';
 import { DataProductService } from '../services/data-product.service';
 import { TransactionDialogComponent } from '../transaction-dialog/transaction-dialog.component';
 import { MatDialog } from '@angular/material';
+import { Subscription } from 'rxjs/internal/Subscription';
 
 @Component({
   selector: 'app-withdraw-button',
   templateUrl: './withdraw-button.component.html',
   styleUrls: [ './withdraw-button.component.scss' ]
 })
-export class WithdrawButtonComponent implements OnInit {
+export class WithdrawButtonComponent implements OnInit, OnDestroy {
   @Input() dataProduct: DataProduct;
   public dataProductAddress: string;
   public wallet: Wallet;
   public userIsOwner: boolean;
   public fundsToWithdraw: BigNumber;
+
+  private _walletSubscription: Subscription;
 
   constructor(
     private _walletService: WalletService,
@@ -28,7 +31,7 @@ export class WithdrawButtonComponent implements OnInit {
 
   ngOnInit() {
     this.dataProductAddress = this.dataProduct.address;
-    this._walletService.getWallet().subscribe(wallet => this._onWalletChange(wallet));
+    this._walletSubscription = this._walletService.getWallet().subscribe(wallet => this._onWalletChange(wallet));
   }
 
   private _onWalletChange(wallet: Wallet) {
@@ -56,5 +59,11 @@ export class WithdrawButtonComponent implements OnInit {
     const transactionDialog: TransactionDialogComponent = transactionDialogRef.componentInstance;
     transactionDialog.transaction = () => this._dataProductService.withdrawFundsFromDataProduct(this.dataProductAddress);
     return transactionDialog.callTransaction();
+  }
+
+  ngOnDestroy() {
+    if (this._walletSubscription) {
+      this._walletSubscription.unsubscribe();
+    }
   }
 }

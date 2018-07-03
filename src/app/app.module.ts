@@ -37,6 +37,7 @@ import { SettingsModule } from './settings/settings.module';
 import { SharedModule } from './shared/shared.module';
 import { ProductDetailsComponent } from './product-details/product-details.component';
 import { MaterialModule } from './material.module';
+import { CancelPurchaseButtonComponent } from './cancel-purchase-button/cancel-purchase-button.component';
 
 @NgModule({
   declarations: [
@@ -66,6 +67,7 @@ import { MaterialModule } from './material.module';
     PublishButtonComponent,
     UnpublishButtonComponent,
     FinaliseButtonComponent,
+    CancelPurchaseButtonComponent,
     ProductDetailsComponent
   ],
   entryComponents: [
