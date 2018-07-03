@@ -46,7 +46,11 @@ export class WalletService implements OnDestroy {
     this.currentFrame = 0;
 
     const currentStatus = await this.detectMetamaskStatus();
-    const currentAccount = await this.repuxWeb3Service.getRepuxApiInstance().getDefaultAccount();
+    let currentAccount;
+
+    if (this.repuxWeb3Service.getRepuxApiInstance()) {
+      currentAccount = await this.repuxWeb3Service.getRepuxApiInstance().getDefaultAccount();
+    }
 
     if (currentStatus !== this.metamaskStatus) {
       this.metamaskStatus = currentStatus;

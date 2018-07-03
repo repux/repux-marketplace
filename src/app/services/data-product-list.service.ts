@@ -17,4 +17,15 @@ export class DataProductListService {
   getFiles(query?: Object, sort?: string, size?: number, from?: number): Observable<EsResponse<Deserializable<EsDataProduct>>> {
     return this.esService.search(DataProductListService.type, query, sort, size, from, EsDataProduct);
   }
+
+  getFile(address: string): Observable<EsResponse<Deserializable<EsDataProduct>>> {
+    const query = {
+      'bool': {
+        'must': [
+          { 'match': { 'address': address } }
+        ]
+      }
+    };
+    return this.esService.search(DataProductListService.type, query, '', 1, 0, EsDataProduct);
+  }
 }

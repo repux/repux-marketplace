@@ -1,0 +1,49 @@
+<div *ngIf="(product$ | async) as product" class="mat-typography">
+  <h1>{{ product.title }}</h1>
+  <mat-hint>{{ product.name }}</mat-hint>
+  <br/><br/>
+
+  <p *ngIf="product.fullDescription; else showShortDescription">
+    {{ product.fullDescription }}
+  </p>
+  <ng-template #showShortDescription>
+    <p>
+      {{ product.shortDescription }}
+    </p>
+  </ng-template>
+
+  <mat-list>
+    <mat-divider></mat-divider>
+    <mat-list-item>
+      <h4 mat-line>{{ product.price.toString() | currencyRepux }}</h4>
+      <mat-hint mat-line>Price</mat-hint>
+    </mat-list-item>
+    <mat-divider></mat-divider>
+    <mat-list-item>
+      <h4 mat-line>{{ product.daysForDeliver }} days</h4>
+      <mat-hint mat-line>Delivery time</mat-hint>
+    </mat-list-item>
+    <mat-divider></mat-divider>
+    <mat-list-item>
+      <h4 mat-line>{{ product.size | fileSize }}</h4>
+      <mat-hint mat-line>File size</mat-hint>
+    </mat-list-item>
+    <mat-divider></mat-divider>
+  </mat-list>
+
+  <br/><br/>
+
+  <mat-chip-list>
+    <mat-chip *ngFor="let category of product.category" disabled>{{ category }}</mat-chip>
+  </mat-chip-list>
+
+  <br/><br/>
+
+  <div class="row">
+    <app-buy-product-button [dataProduct]="product"></app-buy-product-button>
+  </div>
+
+  <br/><br/>
+  
+  <a routerLink="/marketplace">Back to list</a>
+</div>

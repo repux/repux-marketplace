@@ -22,6 +22,8 @@ import { DataProductListDetailDirective } from './data-product-list-detail.direc
 import { DataProductTransaction } from '../shared/models/data-product-transaction';
 import { DataProductNotificationsService } from '../services/data-product-notifications.service';
 import { SharedModule } from '../shared/shared.module';
+import { MaterialModule } from '../material.module';
+import { RouterTestingModule } from '@angular/router/testing';
 
 @Component({ selector: 'app-file-size', template: '{{bytes}}' })
 class FileSizeStubComponent {
@@ -83,8 +85,8 @@ describe('DataProductListComponent', () => {
       ],
       imports: [
         SharedModule,
-        MatIconModule,
-        MatInputModule,
+        MaterialModule,
+        RouterTestingModule,
         MatProgressSpinnerModule,
         MatTableModule,
         MatPaginatorModule,
@@ -104,14 +106,6 @@ describe('DataProductListComponent', () => {
     fixture = TestBed.createComponent(DataProductListComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
-  });
-
-  describe('#onNgInit()', () => {
-    it('should call refreshData method', () => {
-      const refreshData = spyOn(component, 'refreshData');
-      component.ngOnInit();
-      expect(refreshData.calls.count()).toBe(1, 'one call');
-    });
   });
 
   describe('#applyFilter()', () => {
@@ -199,7 +193,7 @@ describe('DataProductListComponent', () => {
           return fromPromise(Promise.resolve(expectedResponse));
         });
         await component.refreshData();
-        expect(dataProductListService.getFiles.calls.count()).toBe(2);
+        expect(dataProductListService.getFiles.calls.count()).toBe(1);
         expect(component.esDataProducts).toBe(expectedResponse);
       });
   });
