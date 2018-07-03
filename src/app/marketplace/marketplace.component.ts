@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { ProductCreatorDialogComponent } from '../product-creator-dialog/product-creator-dialog.component';
+import { ProductCreatorDialogComponent } from './components/product-creator-dialog/product-creator-dialog.component';
 import { MatDialog } from '@angular/material';
 import { map } from 'rxjs/operators';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';

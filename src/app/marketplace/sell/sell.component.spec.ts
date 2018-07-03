@@ -1,40 +1,41 @@
 import { MatDialog } from '@angular/material';
 import { ComponentFixture, fakeAsync, TestBed } from '@angular/core/testing';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
-import { MarketplaceComponent } from './marketplace.component';
-import { ProductCreatorDialogComponent } from './components/product-creator-dialog/product-creator-dialog.component';
-import { Component, Input } from '@angular/core';
-import { MaterialModule } from '../material.module';
+import { ProductCreatorDialogComponent } from '../components/product-creator-dialog/product-creator-dialog.component';
+import { SellComponent } from './sell.component';
+import { DataProductNotificationsService } from '../../services/data-product-notifications.service';
+import { RouterTestingModule } from '@angular/router/testing';
+import { MaterialModule } from '../../material.module';
 
-@Component({ selector: 'app-data-product-list', template: '' })
-class DataProductListStubComponent {
-  @Input() staticQuery: {};
-}
-
-describe('MarketplaceComponent', () => {
-  let component: MarketplaceComponent;
-  let fixture: ComponentFixture<MarketplaceComponent>;
-  let matDialog;
+describe('SellComponent', () => {
+  let component: SellComponent;
+  let fixture: ComponentFixture<SellComponent>;
+  let matDialog, dataProductNotificationsService;
 
   beforeEach(fakeAsync(() => {
     matDialog = jasmine.createSpyObj('MatDialog', [ 'open' ]);
-
+    dataProductNotificationsService = jasmine.createSpyObj('DataProductNotificationsService', [ 'getFinalisationRequests' ]);
+    dataProductNotificationsService.getFinalisationRequests.and.returnValue({
+      subscribe() {
+      }
+    });
     TestBed.configureTestingModule({
       declarations: [
-        DataProductListStubComponent,
-        MarketplaceComponent
+        SellComponent
       ],
       imports: [
+        RouterTestingModule,
         MaterialModule,
         NoopAnimationsModule
       ],
       providers: [
-        { provide: MatDialog, useValue: matDialog }
+        { provide: MatDialog, useValue: matDialog },
+        { provide: DataProductNotificationsService, useValue: dataProductNotificationsService }
       ]
     })
       .compileComponents();
 
-    fixture = TestBed.createComponent(MarketplaceComponent);
+    fixture = TestBed.createComponent(SellComponent);
     component = fixture.componentInstance;
 
     fixture.detectChanges();
@@ -52,7 +53,6 @@ describe('MarketplaceComponent', () => {
     it('should render all elements', () => {
       const element: HTMLElement = fixture.nativeElement;
 
-      expect(element.querySelector('app-data-product-list')).not.toBeNull();
       expect(element.querySelector('.add-product-button')).not.toBeNull();
       expect(element.querySelector('.add-product-button').getAttribute('matTooltip')).toBe('Create new product');
     });

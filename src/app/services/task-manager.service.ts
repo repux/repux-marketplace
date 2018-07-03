@@ -1,6 +1,6 @@
 import { Injectable, OnDestroy } from '@angular/core';
 import { Task } from '../tasks/task';
-import { TaskManagerComponent } from '../task-manager/task-manager.component';
+import { TaskManagerComponent } from '../shared/components/task-manager/task-manager.component';
 import { MatDialog, MatDialogRef } from '@angular/material';
 import { WalletService } from './wallet.service';
 import Wallet from '../shared/models/wallet';

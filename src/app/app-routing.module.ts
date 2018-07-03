@@ -1,16 +1,16 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { SellComponent } from './sell/sell.component';
-import { MyActiveListingsComponent } from './sell/my-active-listings/my-active-listings.component';
-import { PendingFinalisationComponent } from './sell/pending-finalisation/pending-finalisation.component';
+import { SellComponent } from './marketplace/sell/sell.component';
+import { MyActiveListingsComponent } from './marketplace/sell/my-active-listings/my-active-listings.component';
+import { PendingFinalisationComponent } from './marketplace/sell/pending-finalisation/pending-finalisation.component';
 import { MarketplaceComponent } from './marketplace/marketplace.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
-import { UnpublishedComponent } from './sell/unpublished/unpublished.component';
-import { BuyingComponent } from './buying/buying.component';
-import { ReadyToDownloadComponent } from './buying/ready-to-download/ready-to-download.component';
-import { AwaitingFinalisationComponent } from './buying/awaiting-finalisation/awaiting-finalisation.component';
+import { UnpublishedComponent } from './marketplace/sell/unpublished/unpublished.component';
+import { BuyingComponent } from './marketplace/buying/buying.component';
+import { ReadyToDownloadComponent } from './marketplace/buying/ready-to-download/ready-to-download.component';
+import { AwaitingFinalisationComponent } from './marketplace/buying/awaiting-finalisation/awaiting-finalisation.component';
 import { SettingsIndexComponent } from './settings/settings-index/settings-index.component';
-import { ProductDetailsComponent } from './product-details/product-details.component';
+import { ProductDetailsComponent } from './marketplace/product-details/product-details.component';
 
 const routes: Routes = [
   { path: '', redirectTo: '/dashboard', pathMatch: 'full' },

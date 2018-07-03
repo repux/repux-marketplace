@@ -1,6 +1,6 @@
 import { TaskManagerService } from './task-manager.service';
 import { TestBed } from '@angular/core/testing';
-import { TaskManagerComponent } from '../task-manager/task-manager.component';
+import { TaskManagerComponent } from '../shared/components/task-manager/task-manager.component';
 import { MatDialogModule } from '@angular/material';
 import { WalletService } from './wallet.service';
 import { from } from 'rxjs';
