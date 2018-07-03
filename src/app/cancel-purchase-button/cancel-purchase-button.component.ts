@@ -25,6 +25,7 @@ export class CancelPurchaseButtonComponent implements OnInit, OnDestroy {
   private _clockSubscription: Subscription;
   private _walletSubscription: Subscription;
   private _awaitingFinalisationSubscription: Subscription;
+  private _transactionDialogSubscription: Subscription;
   private _transaction: DataProductTransaction;
 
   constructor(
@@ -52,7 +53,8 @@ export class CancelPurchaseButtonComponent implements OnInit, OnDestroy {
     const transactionDialogRef = this._dialog.open(TransactionDialogComponent, {
       disableClose: true
     });
-    transactionDialogRef.afterClosed().subscribe(result => {
+    this._unsubscribeTransactionDialog();
+    this._transactionDialogSubscription = transactionDialogRef.afterClosed().subscribe(result => {
       if (result) {
         this._dataProductNotificationsService.removeAwaitingFinalisation({
           dataProductAddress: this.dataProductAddress,
@@ -79,6 +81,8 @@ export class CancelPurchaseButtonComponent implements OnInit, OnDestroy {
     if (this._awaitingFinalisationSubscription) {
       this._awaitingFinalisationSubscription.unsubscribe();
     }
+
+    this._unsubscribeTransactionDialog();
   }
 
   private _onWalletChange(wallet: Wallet) {
@@ -106,6 +110,13 @@ export class CancelPurchaseButtonComponent implements OnInit, OnDestroy {
     }
 
     this.isAfterDeliveryDeadline = date > this._transaction.deliveryDeadline;
+  }
+
+  private _unsubscribeTransactionDialog() {
+    if (this._transactionDialogSubscription) {
+      this._transactionDialogSubscription.unsubscribe();
+      this._transactionDialogSubscription = null;
+    }
   }
 
   private _checkIfIsAwaiting() {

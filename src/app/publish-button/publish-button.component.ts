@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, OnDestroy } from '@angular/core';
 import { DataProduct } from '../shared/models/data-product';
 import { MatDialog } from '@angular/material';
 import { DataProductService } from '../services/data-product.service';
@@ -6,16 +6,19 @@ import Wallet from '../shared/models/wallet';
 import { TransactionDialogComponent } from '../transaction-dialog/transaction-dialog.component';
 import { UnpublishedProductsService } from '../services/unpublished-products.service';
 import { ConfirmationDialogComponent } from '../confirmation-dialog/confirmation-dialog.component';
+import { Subscription } from 'rxjs/internal/Subscription';
 
 @Component({
   selector: 'app-publish-button',
   templateUrl: './publish-button.component.html',
   styleUrls: [ './publish-button.component.scss' ]
 })
-export class PublishButtonComponent {
+export class PublishButtonComponent implements OnDestroy {
   @Input() dataProduct: DataProduct;
   public dataProductAddress: string;
   public wallet: Wallet;
+
+  private _transactionDialogSubscription: Subscription;
 
   constructor(
     private _unpublishedProductsService: UnpublishedProductsService,
@@ -32,7 +35,8 @@ export class PublishButtonComponent {
     const transactionDialogRef = this._dialog.open(TransactionDialogComponent, {
       disableClose: true
     });
-    transactionDialogRef.afterClosed().subscribe(result => {
+    this._unsubscribeTransactionDialog();
+    this._transactionDialogSubscription = transactionDialogRef.afterClosed().subscribe(result => {
       if (result) {
         this._unpublishedProductsService.removeProduct(this.dataProduct);
       }
@@ -53,10 +57,22 @@ export class PublishButtonComponent {
     });
     confirmationDialogRef.componentInstance.title = 'Removing unpublished file';
     confirmationDialogRef.componentInstance.body = `Are you sure you want to delete product ${this.dataProduct.name}?`;
-    confirmationDialogRef.afterClosed().subscribe(result => {
+    this._unsubscribeTransactionDialog();
+    this._transactionDialogSubscription = confirmationDialogRef.afterClosed().subscribe(result => {
       if (result) {
         this._unpublishedProductsService.removeProduct(this.dataProduct);
       }
     });
+  }
+
+  ngOnDestroy() {
+    this._unsubscribeTransactionDialog();
+  }
+
+  private _unsubscribeTransactionDialog() {
+    if (this._transactionDialogSubscription) {
+      this._transactionDialogSubscription.unsubscribe();
+      this._transactionDialogSubscription = null;
+    }
   }
 }

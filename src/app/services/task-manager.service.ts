@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, OnDestroy } from '@angular/core';
 import { Task } from '../tasks/task';
 import { TaskManagerComponent } from '../task-manager/task-manager.component';
 import { MatDialog, MatDialogRef } from '@angular/material';
@@ -6,23 +6,24 @@ import { WalletService } from './wallet.service';
 import Wallet from '../shared/models/wallet';
 import { BehaviorSubject } from 'rxjs/internal/BehaviorSubject';
 import { Observable } from 'rxjs/internal/Observable';
+import { Subscription } from 'rxjs/internal/Subscription';
 
 @Injectable({
   providedIn: 'root'
 })
-export class TaskManagerService {
+export class TaskManagerService implements OnDestroy {
   private _dialogRef: MatDialogRef<TaskManagerComponent>;
   private _wallet: Wallet;
   private _tasksSubject = new BehaviorSubject<ReadonlyArray<Task>>([]);
+  private _walletSubscription: Subscription;
+  private _tasks: Task[] = [];
 
   constructor(
     private _dialog: MatDialog,
     private _walletService: WalletService) {
     this._addConfirmationPrompt();
-    this._walletService.getWallet().subscribe(wallet => this._onWalletChange(wallet));
+    this._walletSubscription = this._walletService.getWallet().subscribe(wallet => this._onWalletChange(wallet));
   }
-
-  private _tasks: Task[] = [];
 
   get tasks(): ReadonlyArray<Task> {
     return Object.freeze(Object.assign([], this._tasks));
@@ -84,6 +85,12 @@ export class TaskManagerService {
 
   getTasks(): Observable<ReadonlyArray<Task>> {
     return this._tasksSubject.asObservable();
+  }
+
+  ngOnDestroy() {
+    if (this._walletSubscription) {
+      this._walletSubscription.unsubscribe();
+    }
   }
 
   private _onWalletChange(wallet: Wallet) {

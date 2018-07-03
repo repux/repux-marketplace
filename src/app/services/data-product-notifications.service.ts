@@ -16,6 +16,7 @@ export class DataProductNotificationsService implements OnDestroy {
   private _finalisationRequests = [];
   private _awaitingFinalisation = [];
   private _purchaseSubscriptions: Subscription[] = [];
+  private _walletSubscription: Subscription;
   private _wallet: Wallet;
   private _createdProductsAddresses: string[];
   private _boughtProductsAddresses: string[];
@@ -35,7 +36,7 @@ export class DataProductNotificationsService implements OnDestroy {
       NotificationType.DATA_PRODUCT_PURCHASED,
       (notification: Notification) => this._parseDataProductPurchased(notification)
     );
-    this._walletService.getWallet().subscribe(wallet => this._onWalletChange(wallet));
+    this._walletSubscription = this._walletService.getWallet().subscribe(wallet => this._onWalletChange(wallet));
   }
 
   watchForProductPurchase(productAddress: string): void {
@@ -97,6 +98,10 @@ export class DataProductNotificationsService implements OnDestroy {
 
   ngOnDestroy() {
     this._clearSubscriptions();
+
+    if (this._walletSubscription) {
+      this._walletSubscription.unsubscribe();
+    }
   }
 
   private _onWalletChange(wallet: Wallet) {
@@ -126,21 +131,11 @@ export class DataProductNotificationsService implements OnDestroy {
   }
 
   private async _onProductPurchase(purchaseEvent: DataProductEvent): Promise<void> {
-    if (this._createdProductsAddresses.includes(purchaseEvent.dataProductAddress)) {
-      this._notificationsService.pushNotification(new Notification(
-        NotificationType.DATA_PRODUCT_TO_FINALISATION,
-        {
-          purchaseEvent
-        })
-      );
-    } else {
-      this._notificationsService.pushNotification(new Notification(
-        NotificationType.DATA_PRODUCT_PURCHASED,
-        {
-          purchaseEvent
-        })
-      );
-    }
+    const type = this._createdProductsAddresses.includes(purchaseEvent.dataProductAddress)
+      ? NotificationType.DATA_PRODUCT_TO_FINALISATION
+      : NotificationType.DATA_PRODUCT_PURCHASED;
+
+    this._notificationsService.pushNotification(new Notification(type, { purchaseEvent }));
   }
 
   private async _parseDataProductToFinalisation(notification: Notification): Promise<string | null> {
