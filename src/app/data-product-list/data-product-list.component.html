@@ -110,7 +110,9 @@
 
       <mat-row mat-header-row *matHeaderRowDef="displayedColumns"></mat-row>
       <mat-row mat-row *matRowDef="let row; columns: displayedColumns;"
-               [appDataProductListDetailRow]="row" [appDataProductListDetailTpl]="tpl"
+               [routerLink]="['/marketplace', row.address]"
+               [appDataProductListDetailRow]="row"
+               [appDataProductListDetailTpl]="tpl"
                [class.disabled]="row.disabled"></mat-row>
     </mat-table>
   </div>

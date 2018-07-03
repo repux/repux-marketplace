@@ -10,11 +10,13 @@ import { BuyingComponent } from './buying/buying.component';
 import { ReadyToDownloadComponent } from './buying/ready-to-download/ready-to-download.component';
 import { AwaitingFinalisationComponent } from './buying/awaiting-finalisation/awaiting-finalisation.component';
 import { SettingsIndexComponent } from './settings/settings-index/settings-index.component';
+import { ProductDetailsComponent } from './product-details/product-details.component';
 
 const routes: Routes = [
   { path: '', redirectTo: '/dashboard', pathMatch: 'full' },
   { path: 'dashboard', component: DashboardComponent },
   { path: 'marketplace', component: MarketplaceComponent },
+  { path: 'marketplace/:address', component: ProductDetailsComponent },
   {
     path: 'sell', component: SellComponent, children: [
       { path: '', redirectTo: 'my-active-listings', pathMatch: 'full' },

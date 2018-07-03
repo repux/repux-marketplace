@@ -3,24 +3,6 @@ import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { DataProductListComponent } from './data-product-list/data-product-list.component';
-import {
-  MatButtonModule,
-  MatCardModule,
-  MatChipsModule,
-  MatGridListModule,
-  MatIconModule,
-  MatListModule,
-  MatMenuModule,
-  MatPaginatorModule,
-  MatProgressBarModule,
-  MatProgressSpinnerModule,
-  MatSidenavModule,
-  MatSortModule,
-  MatTableModule,
-  MatTabsModule,
-  MatToolbarModule,
-} from '@angular/material';
-import { MatFormFieldModule } from '@angular/material/form-field';
 import { APP_BASE_HREF } from '@angular/common';
 import { MetamaskDetectorComponent } from './shared/components/metamask-detector/metamask-detector.component';
 import { DataProductNotificationsService } from './services/data-product-notifications.service';
@@ -45,6 +27,8 @@ import { ReadyToDownloadComponent } from './buying/ready-to-download/ready-to-do
 import { AwaitingFinalisationComponent } from './buying/awaiting-finalisation/awaiting-finalisation.component';
 import { SettingsModule } from './settings/settings.module';
 import { SharedModule } from './shared/shared.module';
+import { ProductDetailsComponent } from './product-details/product-details.component';
+import { MaterialModule } from './material.module';
 
 describe('AppComponent', () => {
   beforeEach(async(() => {
@@ -70,27 +54,13 @@ describe('AppComponent', () => {
         WithdrawButtonComponent,
         PublishButtonComponent,
         UnpublishButtonComponent,
-        FinaliseButtonComponent
+        FinaliseButtonComponent,
+        ProductDetailsComponent
       ],
       imports: [
         AppRoutingModule,
-        MatToolbarModule,
-        MatCardModule,
-        MatMenuModule,
-        MatIconModule,
-        MatButtonModule,
-        MatGridListModule,
-        MatTabsModule,
-        MatPaginatorModule,
-        MatProgressSpinnerModule,
-        MatProgressBarModule,
-        MatFormFieldModule,
-        MatTableModule,
-        MatChipsModule,
-        MatSortModule,
-        MatSidenavModule,
-        MatListModule,
         NoopAnimationsModule,
+        MaterialModule,
         SharedModule,
         SettingsModule
       ],

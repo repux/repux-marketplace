@@ -1,4 +1,4 @@
-import { Component, Input, OnChanges, OnInit, ViewChild } from '@angular/core';
+import { Component, Input, OnChanges, ViewChild } from '@angular/core';
 import { DataProductListService } from '../services/data-product-list.service';
 import { EsResponse } from '../shared/models/es-response';
 import { EsDataProduct } from '../shared/models/es-data-product';
@@ -16,7 +16,7 @@ import { DataProductNotificationsService } from '../services/data-product-notifi
   templateUrl: './data-product-list.component.html',
   styleUrls: [ './data-product-list.component.scss' ]
 })
-export class DataProductListComponent implements OnInit, OnChanges {
+export class DataProductListComponent implements OnChanges {
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @Input() staticQuery = { bool: {} };
   @Input() displayedColumns = [
@@ -60,10 +60,6 @@ export class DataProductListComponent implements OnInit, OnChanges {
     public dataProductListService: DataProductListService,
     private _dataProductNotificationsService: DataProductNotificationsService) {
     this.size = this.pageSizeOptions[ 0 ];
-  }
-
-  ngOnInit(): Promise<void> {
-    return this.refreshData();
   }
 
   ngOnChanges() {

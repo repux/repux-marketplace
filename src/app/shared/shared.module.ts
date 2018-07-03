@@ -9,6 +9,7 @@ import {
 } from '@angular/material';
 import { FileSizePipe } from './pipes/file-size.pipe';
 import { ArrayJoinPipe } from './pipes/array-join.pipe';
+import { CurrencyRepuxPipe } from './pipes/currency-repux';
 
 @NgModule({
   imports: [
@@ -22,12 +23,14 @@ import { ArrayJoinPipe } from './pipes/array-join.pipe';
   declarations: [
     FileInputComponent,
     ArrayJoinPipe,
-    FileSizePipe
+    FileSizePipe,
+    CurrencyRepuxPipe
   ],
   exports: [
     FileInputComponent,
     ArrayJoinPipe,
-    FileSizePipe
+    FileSizePipe,
+    CurrencyRepuxPipe
   ]
 })
 export class SharedModule {

@@ -11,27 +11,6 @@ import { ProductCategorySelectorComponent } from './product-category-selector/pr
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { TaskManagerComponent } from './task-manager/task-manager.component';
 import { TransactionDialogComponent } from './transaction-dialog/transaction-dialog.component';
-import {
-  MatButtonModule,
-  MatCardModule,
-  MatChipsModule,
-  MatDialogModule,
-  MatGridListModule,
-  MatIconModule,
-  MatInputModule,
-  MatListModule,
-  MatMenuModule,
-  MatPaginatorModule,
-  MatProgressBarModule,
-  MatProgressSpinnerModule,
-  MatSelectModule,
-  MatSidenavModule,
-  MatSortModule,
-  MatTableModule,
-  MatTabsModule,
-  MatToolbarModule,
-  MatTooltipModule
-} from '@angular/material';
 import { PurchaseConfirmationDialogComponent } from './purchase-confirmation-dialog/purchase-confirmation-dialog.component';
 import { BuyProductButtonComponent } from './buy-product-button/buy-product-button.component';
 import { DownloadProductButtonComponent } from './download-product-button/download-product-button.component';
@@ -56,6 +35,8 @@ import { ReadyToDownloadComponent } from './buying/ready-to-download/ready-to-do
 import { AwaitingFinalisationComponent } from './buying/awaiting-finalisation/awaiting-finalisation.component';
 import { SettingsModule } from './settings/settings.module';
 import { SharedModule } from './shared/shared.module';
+import { ProductDetailsComponent } from './product-details/product-details.component';
+import { MaterialModule } from './material.module';
 
 @NgModule({
   declarations: [
@@ -84,7 +65,8 @@ import { SharedModule } from './shared/shared.module';
     WithdrawButtonComponent,
     PublishButtonComponent,
     UnpublishButtonComponent,
-    FinaliseButtonComponent
+    FinaliseButtonComponent,
+    ProductDetailsComponent
   ],
   entryComponents: [
     ProductCreatorDialogComponent,
@@ -98,30 +80,12 @@ import { SharedModule } from './shared/shared.module';
     HttpClientModule,
     AppRoutingModule,
     BrowserAnimationsModule,
-    MatTableModule,
-    MatInputModule,
-    MatPaginatorModule,
-    MatGridListModule,
-    MatCardModule,
-    MatMenuModule,
-    MatIconModule,
-    MatButtonModule,
-    MatToolbarModule,
-    MatTabsModule,
-    MatSortModule,
-    MatProgressSpinnerModule,
-    MatProgressBarModule,
-    MatDialogModule,
-    MatSelectModule,
-    MatTooltipModule,
-    MatChipsModule,
     FormsModule,
     ReactiveFormsModule,
     KeyStoreModule,
     NotificationsModule,
     LayoutModule,
-    MatSidenavModule,
-    MatListModule,
+    MaterialModule,
     SharedModule,
     SettingsModule
   ],
