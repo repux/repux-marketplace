@@ -19,13 +19,15 @@ import { DataProduct } from '../shared/models/data-product';
 })
 export class BuyProductButtonComponent implements OnInit, OnDestroy {
   @Input() dataProduct: DataProduct;
-  private _subscription: Subscription;
   public wallet: Wallet;
   public finalised: boolean;
   public bought: boolean;
   public userIsOwner: boolean;
   public dataProductAddress: string;
   public productOwnerAddress: string;
+  private _keysSubscription: Subscription;
+  private _walletSubscription: Subscription;
+  private _transactionDialogSubscription: Subscription;
 
   constructor(
     private _dataProductService: DataProductService,
@@ -38,18 +40,7 @@ export class BuyProductButtonComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.dataProductAddress = this.dataProduct.address;
     this.productOwnerAddress = this.dataProduct.ownerAddress;
-    this._walletService.getWallet().subscribe(wallet => this._onWalletChange(wallet));
-  }
-
-  private _onWalletChange(wallet: Wallet): void {
-    if (!wallet || wallet === this.wallet) {
-      return;
-    }
-
-    this.wallet = wallet;
-    this.userIsOwner = this.getUserIsOwner();
-    this.finalised = this.getFinalised();
-    this.bought = this.getBought();
+    this._walletSubscription = this._walletService.getWallet().subscribe(wallet => this._onWalletChange(wallet));
   }
 
   async buyDataProduct(): Promise<void> {
@@ -59,7 +50,8 @@ export class BuyProductButtonComponent implements OnInit, OnDestroy {
     const transactionDialogRef = this._dialog.open(TransactionDialogComponent, {
       disableClose: true
     });
-    transactionDialogRef.afterClosed().subscribe(result => {
+    this._unsubscribeTransactionDialog();
+    this._transactionDialogSubscription = transactionDialogRef.afterClosed().subscribe(result => {
       if (result) {
         this.bought = true;
         this._dialog.open(PurchaseConfirmationDialogComponent);
@@ -84,6 +76,29 @@ export class BuyProductButtonComponent implements OnInit, OnDestroy {
     return this.wallet && this.wallet.address === this.productOwnerAddress;
   }
 
+  ngOnDestroy() {
+    if (this._keysSubscription) {
+      this._keysSubscription.unsubscribe();
+    }
+
+    if (this._walletSubscription) {
+      this._walletSubscription.unsubscribe();
+    }
+
+    this._unsubscribeTransactionDialog();
+  }
+
+  private _onWalletChange(wallet: Wallet): void {
+    if (!wallet || wallet === this.wallet) {
+      return;
+    }
+
+    this.wallet = wallet;
+    this.userIsOwner = this.getUserIsOwner();
+    this.finalised = this.getFinalised();
+    this.bought = this.getBought();
+  }
+
   private _getKeys(): Promise<{ privateKey: JsonWebKey, publicKey: JsonWebKey }> {
     return new Promise(resolve => {
       let dialogRef;
@@ -94,7 +109,7 @@ export class BuyProductButtonComponent implements OnInit, OnDestroy {
         dialogRef = this._dialog.open(KeysGeneratorDialogComponent);
       }
 
-      this._subscription = dialogRef.afterClosed().subscribe(result => {
+      this._keysSubscription = dialogRef.afterClosed().subscribe(result => {
         if (result) {
           resolve({
             privateKey: result.privateKey,
@@ -105,9 +120,10 @@ export class BuyProductButtonComponent implements OnInit, OnDestroy {
     });
   }
 
-  ngOnDestroy() {
-    if (this._subscription) {
-      this._subscription.unsubscribe();
+  private _unsubscribeTransactionDialog() {
+    if (this._transactionDialogSubscription) {
+      this._transactionDialogSubscription.unsubscribe();
+      this._transactionDialogSubscription = null;
     }
   }
 }

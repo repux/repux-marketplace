@@ -11,6 +11,7 @@ class DataProductListStubComponent {
   @Input() displayedColumns: string[];
   @Input() availableActions: string[];
   @Input() displayPendingTransactions: boolean;
+  @Input() disablePendingFinalisation: boolean;
 }
 
 describe('PendingFinalisationComponent', () => {

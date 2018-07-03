@@ -27,6 +27,7 @@ import { ReadyToDownloadComponent } from './buying/ready-to-download/ready-to-do
 import { AwaitingFinalisationComponent } from './buying/awaiting-finalisation/awaiting-finalisation.component';
 import { SettingsModule } from './settings/settings.module';
 import { SharedModule } from './shared/shared.module';
+import { CancelPurchaseButtonComponent } from './cancel-purchase-button/cancel-purchase-button.component';
 import { ProductDetailsComponent } from './product-details/product-details.component';
 import { MaterialModule } from './material.module';
 
@@ -55,6 +56,7 @@ describe('AppComponent', () => {
         PublishButtonComponent,
         UnpublishButtonComponent,
         FinaliseButtonComponent,
+        CancelPurchaseButtonComponent,
         ProductDetailsComponent
       ],
       imports: [

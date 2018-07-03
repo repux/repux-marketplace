@@ -1,4 +1,4 @@
-import { Component, Input, OnChanges, ViewChild } from '@angular/core';
+import { Component, Input, OnChanges, OnDestroy, ViewChild } from '@angular/core';
 import { DataProductListService } from '../services/data-product-list.service';
 import { EsResponse } from '../shared/models/es-response';
 import { EsDataProduct } from '../shared/models/es-data-product';
@@ -10,13 +10,16 @@ import { BigNumber } from 'bignumber.js';
 import { DataProduct } from '../shared/models/data-product';
 import { deepCopy } from '../shared/utils/deep-copy';
 import { DataProductNotificationsService } from '../services/data-product-notifications.service';
+import { Subscription } from 'rxjs/internal/Subscription';
+
+const DAY_IN_MILLISECONDS = 24 * 60 * 60 * 1000;
 
 @Component({
   selector: 'app-data-product-list',
   templateUrl: './data-product-list.component.html',
   styleUrls: [ './data-product-list.component.scss' ]
 })
-export class DataProductListComponent implements OnChanges {
+export class DataProductListComponent implements OnChanges, OnDestroy {
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @Input() staticQuery = { bool: {} };
   @Input() displayedColumns = [
@@ -31,11 +34,13 @@ export class DataProductListComponent implements OnChanges {
   @Input() availableActions = [
     'buy'
   ];
+  @Input() disablePendingFinalisation = false;
   @Input() displayPendingTransactions = false;
   @Input() showPaginator = true;
   @Input() showSearch = true;
   @Input() showFilters = true;
   @Input() enableSorting = true;
+  @Input() buyerAddress: string;
   @Input() dataProducts: DataProduct[];
 
   public esDataProducts: EsResponse<Deserializable<EsDataProduct>>;
@@ -56,6 +61,8 @@ export class DataProductListComponent implements OnChanges {
     'fullDescription'
   ];
 
+  private _dataProductsSubscription: Subscription;
+
   constructor(
     public dataProductListService: DataProductListService,
     private _dataProductNotificationsService: DataProductNotificationsService) {
@@ -64,14 +71,6 @@ export class DataProductListComponent implements OnChanges {
 
   ngOnChanges() {
     return this.refreshData();
-  }
-
-  private getColumn(columnName) {
-    if (this.textColumns.includes(columnName)) {
-      return columnName + '.keyword';
-    }
-
-    return columnName;
   }
 
   applyFilter(filterValue: string): Promise<void> {
@@ -126,7 +125,8 @@ export class DataProductListComponent implements OnChanges {
 
     return new Promise(resolve => {
       this.isLoadingResults = true;
-      this.dataProductListService.getFiles(query, this.sort, this.size, this.from)
+      this._unsubscribeDataProducts();
+      this._dataProductsSubscription = this.dataProductListService.getFiles(query, this.sort, this.size, this.from)
         .subscribe(esDataProducts => {
           this.esDataProducts = esDataProducts;
           const dataProducts = this.esDataProducts.hits.map((esDataProduct: EsDataProduct) => esDataProduct.source);
@@ -154,5 +154,52 @@ export class DataProductListComponent implements OnChanges {
         buyerAddress: transaction.buyerAddress
       })
     );
+  }
+
+  getTransactionDate(dataProduct: DataProduct) {
+    const transaction = this._findTransactionByCurrentBuyerAddress(dataProduct);
+
+    if (!transaction) {
+      return;
+    }
+
+    return new Date((transaction.deliveryDeadline.getTime() - dataProduct.daysForDeliver * DAY_IN_MILLISECONDS));
+  }
+
+  getDeliveryDeadline(dataProduct: DataProduct) {
+    const transaction = this._findTransactionByCurrentBuyerAddress(dataProduct);
+
+    if (!transaction) {
+      return;
+    }
+
+    return transaction.deliveryDeadline;
+  }
+
+  ngOnDestroy() {
+    this._unsubscribeDataProducts();
+  }
+
+  private _findTransactionByCurrentBuyerAddress(dataProduct: DataProduct) {
+    if (!this.buyerAddress) {
+      return;
+    }
+
+    return dataProduct.transactions.find(transaction => transaction.buyerAddress === this.buyerAddress);
+  }
+
+  private getColumn(columnName) {
+    if (this.textColumns.includes(columnName)) {
+      return columnName + '.keyword';
+    }
+
+    return columnName;
+  }
+
+  private _unsubscribeDataProducts() {
+    if (this._dataProductsSubscription) {
+      this._dataProductsSubscription.unsubscribe();
+      this._dataProductsSubscription = null;
+    }
   }
 }

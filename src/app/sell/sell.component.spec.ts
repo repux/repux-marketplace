@@ -13,10 +13,11 @@ describe('SellComponent', () => {
 
   beforeEach(fakeAsync(() => {
     matDialog = jasmine.createSpyObj('MatDialog', [ 'open' ]);
-    dataProductNotificationsService = {
-      finalisationRequests: []
-    };
-
+    dataProductNotificationsService = jasmine.createSpyObj('DataProductNotificationsService', [ 'getFinalisationRequests' ]);
+    dataProductNotificationsService.getFinalisationRequests.and.returnValue({
+      subscribe() {
+      }
+    });
     TestBed.configureTestingModule({
       declarations: [
         SellComponent

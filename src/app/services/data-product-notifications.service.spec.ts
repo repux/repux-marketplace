@@ -29,7 +29,7 @@ describe('DataProductNotificationsService', () => {
     );
     dataProductService = jasmine.createSpyObj(
       'DataProductService',
-      [ 'getCreatedDataProducts', 'watchForDataProductUpdate', 'getDataProductData', 'getTransactionData' ]
+      [ 'getCreatedDataProducts', 'getBoughtDataProducts', 'watchForDataProductUpdate', 'getDataProductData', 'getTransactionData' ]
     );
     keyStoreService = jasmine.createSpyObj(
       'KeyStoreService',
@@ -54,6 +54,7 @@ describe('DataProductNotificationsService', () => {
       }
     });
     dataProductService.getCreatedDataProducts.and.returnValue(Promise.resolve([]));
+    dataProductService.getBoughtDataProducts.and.returnValue(Promise.resolve([]));
 
     service = new DataProductNotificationsService(
       notificationsService,
@@ -64,7 +65,7 @@ describe('DataProductNotificationsService', () => {
 
   describe('#constructor()', () => {
     it('should add parser to notificationsService', () => {
-      expect(notificationsService.addParser.calls.count()).toBe(1);
+      expect(notificationsService.addParser.calls.count()).toBe(2);
       expect(notificationsService.addParser.calls.allArgs()[ 0 ][ 0 ]).toBe(NotificationType.DATA_PRODUCT_TO_FINALISATION);
       expect(typeof notificationsService.addParser.calls.allArgs()[ 0 ][ 1 ]).toBe('function');
       expect(dataProductService.getCreatedDataProducts.calls.count()).toBe(1);
@@ -118,6 +119,7 @@ describe('DataProductNotificationsService', () => {
         blockNumber: 1
       };
 
+      service[ '_createdProductsAddresses' ] = [ productAddress ];
       service[ '_onProductPurchase' ](purchaseEvent);
       expect(notificationsService.pushNotification.calls.count()).toBe(1);
       expect(notificationsService.pushNotification.calls.allArgs()[ 0 ][ 0 ]).toEqual(new Notification(
@@ -151,6 +153,33 @@ describe('DataProductNotificationsService', () => {
       const result = await service[ '_parseDataProductToFinalisation' ](notification);
       expect(notification.read).toBeTruthy();
       expect(result).toBe(`User with account 0x01 purchased your product ${productAddress}. Please finalise this transaction.`);
+    });
+  });
+
+  describe('#_parseDataProductPurchased()', () => {
+    it('should return correct notification message when transaction is finalised', async () => {
+      dataProductService.getTransactionData.and.returnValue({
+        publicKey: 'PUBLIC_KEY',
+        buyerMetaHash: 'BUYER_META_HASH',
+        price: new BigNumber(1),
+        purchased: true,
+        finalised: true,
+        rated: false,
+        rating: new BigNumber(0)
+      });
+      const purchaseEvent = {
+        dataProductAddress: productAddress,
+        userAddress: '0x01',
+        dataProductUpdateAction: DataProductUpdateAction.PURCHASE,
+        blockNumber: 1
+      };
+      const notification = new Notification(NotificationType.DATA_PRODUCT_PURCHASED, {
+        purchaseEvent
+      });
+
+      const result = await service[ '_parseDataProductPurchased' ](notification);
+      expect(notification.read).toBeTruthy();
+      expect(result).toBe(`You have purchased product ${productAddress} Please wait to transaction finalisation.`);
     });
   });
 })

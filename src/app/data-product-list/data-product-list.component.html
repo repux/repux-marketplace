@@ -84,7 +84,30 @@
       <!-- Times purchased Column -->
       <ng-container matColumnDef="pendingFinalisationRequests">
         <mat-header-cell *matHeaderCellDef> Pending finalisation requests</mat-header-cell>
-        <mat-cell *matCellDef="let element"> {{ getTransactionsToFinalisation(element).length }}
+        <mat-cell *matCellDef="let element">
+          <button mat-icon-button
+                  routerLink="/sell/pending-finalisation"
+                  *ngIf="!disablePendingFinalisation"
+                  color="primary">
+            {{ getTransactionsToFinalisation(element).length }}
+          </button>
+          <span *ngIf="disablePendingFinalisation">
+            {{ getTransactionsToFinalisation(element).length }}
+          </span>
+        </mat-cell>
+      </ng-container>
+
+      <!-- Transaction date -->
+      <ng-container matColumnDef="transactionDate">
+        <mat-header-cell *matHeaderCellDef> Transaction date</mat-header-cell>
+        <mat-cell *matCellDef="let element"> {{ getTransactionDate(element) | date : 'short' }}
+        </mat-cell>
+      </ng-container>
+
+      <!-- Delivery deadline -->
+      <ng-container matColumnDef="deliveryDeadline">
+        <mat-header-cell *matHeaderCellDef> Delivery deadline</mat-header-cell>
+        <mat-cell *matCellDef="let element"> {{ getDeliveryDeadline(element) | date : 'short' }}
         </mat-cell>
       </ng-container>
 
@@ -95,6 +118,9 @@
           <div class="row">
             <app-buy-product-button *ngIf="availableActions.includes('buy')"
                                     [dataProduct]="element"></app-buy-product-button>
+
+            <app-cancel-purchase-button *ngIf="availableActions.includes('cancelPurchase')"
+                                        [dataProduct]="element"></app-cancel-purchase-button>
 
             <app-publish-button *ngIf="availableActions.includes('publish')"
                                 [dataProduct]="element"></app-publish-button>

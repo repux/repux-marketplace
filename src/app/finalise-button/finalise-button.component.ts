@@ -26,7 +26,8 @@ export class FinaliseButtonComponent implements OnDestroy, OnInit {
   public wallet: Wallet;
   public userIsOwner: boolean;
 
-  private _subscription: Subscription;
+  private _keysSubscription: Subscription;
+  private _walletSubscription: Subscription;
 
   constructor(
     private _repuxLibService: RepuxLibService,
@@ -40,7 +41,7 @@ export class FinaliseButtonComponent implements OnDestroy, OnInit {
   }
 
   ngOnInit() {
-    this._walletService.getWallet().subscribe(wallet => this._onWalletChange(wallet));
+    this._walletSubscription = this._walletService.getWallet().subscribe(wallet => this._onWalletChange(wallet));
   }
 
   private _onWalletChange(wallet: Wallet) {
@@ -90,7 +91,7 @@ export class FinaliseButtonComponent implements OnDestroy, OnInit {
         dialogRef = this._dialog.open(KeysGeneratorDialogComponent);
       }
 
-      this._subscription = dialogRef.afterClosed().subscribe(result => {
+      this._keysSubscription = dialogRef.afterClosed().subscribe(result => {
         if (result) {
           resolve({
             privateKey: result.privateKey,
@@ -102,8 +103,12 @@ export class FinaliseButtonComponent implements OnDestroy, OnInit {
   }
 
   ngOnDestroy() {
-    if (this._subscription) {
-      this._subscription.unsubscribe();
+    if (this._keysSubscription) {
+      this._keysSubscription.unsubscribe();
+    }
+
+    if (this._walletSubscription) {
+      this._walletSubscription.unsubscribe();
     }
   }
 }

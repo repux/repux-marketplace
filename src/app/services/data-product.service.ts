@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, OnDestroy } from '@angular/core';
 import { RepuxWeb3Service } from './repux-web3.service';
 import BigNumber from 'bignumber.js';
 import { Observable, Observer } from 'rxjs';
@@ -13,11 +13,12 @@ import { filter } from 'rxjs/internal/operators';
 import { WalletService } from './wallet.service';
 import Wallet from '../shared/models/wallet';
 import { StorageService } from './storage.service';
+import { Subscription } from 'rxjs/internal/Subscription';
 
 @Injectable({
   providedIn: 'root'
 })
-export class DataProductService {
+export class DataProductService implements OnDestroy {
   private static readonly STORAGE_PREFIX = 'DataProductService_';
   private readonly _defaultData = {
     lastBlock: 0
@@ -26,12 +27,13 @@ export class DataProductService {
   private _dataProductUpdateObservable: Observable<DataProductEvent>;
   private _wallet: Wallet;
   private _productUpdateEvent: ContractEvent;
+  private _walletSubscription: Subscription;
 
   constructor(
     private _repuxWeb3Service: RepuxWeb3Service,
     private _walletService: WalletService,
     private _storageService: StorageService) {
-    this._walletService.getWallet().subscribe(wallet => this._onWalletChange(wallet));
+    this._walletSubscription = this._walletService.getWallet().subscribe(wallet => this._onWalletChange(wallet));
   }
 
   private get _api() {
@@ -78,6 +80,10 @@ export class DataProductService {
     return this._api.disableDataProduct(dataProductAddress);
   }
 
+  cancelDataProductPurchase(dataProductAddress: string): Promise<TransactionResult> {
+    return this._api.cancelDataProductPurchase(dataProductAddress);
+  }
+
   watchForDataProductUpdate(_dataProductAddress?: string, _dataProductUpdateAction?: DataProductUpdateAction)
     : Observable<DataProductEvent> {
     if (!this._wallet) {
@@ -92,6 +98,12 @@ export class DataProductService {
       filter(event => !_dataProductAddress || _dataProductAddress === event.dataProductAddress),
       filter(event => !_dataProductUpdateAction || _dataProductUpdateAction === event.action)
     );
+  }
+
+  ngOnDestroy() {
+    if (this._walletSubscription) {
+      this._walletSubscription.unsubscribe();
+    }
   }
 
   private _getStorageKey(): string {

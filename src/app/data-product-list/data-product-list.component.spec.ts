@@ -1,16 +1,16 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { DataProductListComponent } from './data-product-list.component';
 import {
-  MatInputModule,
-  MatIconModule,
-  MatProgressSpinnerModule,
-  MatTableModule,
-  MatPaginatorModule,
   MatDialogModule,
-  MatTableDataSource, MatSortModule
+  MatIconModule,
+  MatInputModule,
+  MatPaginatorModule,
+  MatProgressSpinnerModule,
+  MatSortModule,
+  MatTableDataSource,
+  MatTableModule
 } from '@angular/material';
 import { Component, Input } from '@angular/core';
-import { BigNumber } from 'bignumber.js';
 import { DataProductListService } from '../services/data-product-list.service';
 import { from as fromPromise } from 'rxjs/index';
 import { EsResponse } from '../shared/models/es-response';
@@ -50,6 +50,12 @@ class UnpublishButtonStubComponent {
   @Input() dataProduct: string;
 }
 
+@Component({ selector: 'app-cancel-purchase-button', template: '' })
+class CancelPurchaseButtonStubComponent {
+  @Input() dataProduct: string;
+}
+
+
 @Component({ selector: 'app-data-product-transactions-list', template: '' })
 class DataProductTransactionsListStubComponent {
   @Input() dataProduct: DataProduct;
@@ -81,7 +87,8 @@ describe('DataProductListComponent', () => {
         PublishButtonStubComponent,
         UnpublishButtonStubComponent,
         DataProductListDetailDirective,
-        DataProductTransactionsListStubComponent
+        DataProductTransactionsListStubComponent,
+        CancelPurchaseButtonStubComponent
       ],
       imports: [
         SharedModule,

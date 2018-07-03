@@ -1,14 +1,15 @@
-import { Injectable } from '@angular/core';
+import { Injectable, OnDestroy } from '@angular/core';
 import { Notification } from './notification';
 import { NotificationType } from './notification-type';
 import { WalletService } from '../services/wallet.service';
 import Wallet from '../shared/models/wallet';
 import { StorageService } from '../services/storage.service';
+import { Subscription } from 'rxjs/internal/Subscription';
 
 @Injectable({
   providedIn: 'root'
 })
-export class NotificationsService {
+export class NotificationsService implements OnDestroy {
   private static readonly STORAGE_PREFIX = 'NotificationsService_';
   private readonly _defaultData = {
     notifications: []
@@ -17,12 +18,13 @@ export class NotificationsService {
   private _parsers = {};
   private _storage = localStorage;
   private _wallet: Wallet;
+  private _walletSubscription: Subscription;
 
   constructor(
     private _walletService: WalletService,
     private _storageService: StorageService
   ) {
-    this._walletService.getWallet().subscribe(wallet => this._onWalletChange(wallet));
+    this._walletSubscription = this._walletService.getWallet().subscribe(wallet => this._onWalletChange(wallet));
   }
 
   get notifications() {
@@ -36,6 +38,12 @@ export class NotificationsService {
 
   saveNotifications(): void {
     this._saveToStore(this._config);
+  }
+
+  ngOnDestroy() {
+    if (this._walletSubscription) {
+      this._walletSubscription.unsubscribe();
+    }
   }
 
   async pushNotification(notification: Notification): Promise<void> {
