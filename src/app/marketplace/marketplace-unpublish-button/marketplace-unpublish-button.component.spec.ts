@@ -6,14 +6,17 @@ import { from } from 'rxjs';
 import BigNumber from 'bignumber.js';
 import { MarketplaceUnpublishButtonComponent } from './marketplace-unpublish-button.component';
 import { MaterialModule } from '../../material.module';
+import { DataProductNotificationsService } from '../../services/data-product-notifications.service';
 
 describe('MarketplaceUnpublishButtonComponent', () => {
   let component: MarketplaceUnpublishButtonComponent;
   let fixture: ComponentFixture<MarketplaceUnpublishButtonComponent>;
+  let dataProductNotificationsService;
   const ownerAddress = '0x0000000000000000000000000000000000000000';
   const dataProductAddress = '0x1111111111111111111111111111111111111111';
 
   beforeEach(fakeAsync(() => {
+    dataProductNotificationsService = jasmine.createSpyObj('DataProductNotificationsService', [ 'removeCreatedProductAddress' ]);
     TestBed.configureTestingModule({
       declarations: [
         MarketplaceUnpublishButtonComponent
@@ -23,7 +26,8 @@ describe('MarketplaceUnpublishButtonComponent', () => {
         NoopAnimationsModule
       ],
       providers: [
-        { provide: TransactionDialogComponent, useValue: {} }
+        { provide: TransactionDialogComponent, useValue: {} },
+        { provide: DataProductNotificationsService, useValue: dataProductNotificationsService }
       ]
     })
       .compileComponents();

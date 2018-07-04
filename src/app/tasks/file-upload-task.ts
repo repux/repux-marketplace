@@ -6,6 +6,7 @@ import { DataProductService } from '../services/data-product.service';
 import { TaskType } from './task-type';
 import { UnpublishedProductsService } from '../services/unpublished-products.service';
 import { DataProduct } from '../shared/models/data-product';
+import { DataProductNotificationsService } from '../services/data-product-notifications.service';
 
 export const STATUS = {
   UPLOADING: 'Uploading',
@@ -29,6 +30,7 @@ export class FileUploadTask implements Task {
     private _repuxLibService: RepuxLibService,
     private _dataProductService: DataProductService,
     private _unpublishedProductsService: UnpublishedProductsService,
+    private _dataProductNotificationsService: DataProductNotificationsService,
     private _title: string,
     private _shortDescription: string,
     private _fullDescription: string,
@@ -134,7 +136,8 @@ export class FileUploadTask implements Task {
       this._needsUserAction = false;
       this._status = STATUS.PUBLICATION;
       this._taskManagerService.onTaskEvent();
-      await this._dataProductService.publishDataProduct(this._result, this._price, this._daysForDeliver);
+      const { address } = await this._dataProductService.publishDataProduct(this._result, this._price, this._daysForDeliver);
+      this._dataProductNotificationsService.addCreatedProductAddress(address);
       this._unpublishedProductsService.removeProduct(this._dataProduct);
       this._status = STATUS.FINISHED;
       this._finished = true;

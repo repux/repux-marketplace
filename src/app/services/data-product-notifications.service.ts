@@ -16,6 +16,7 @@ export class DataProductNotificationsService implements OnDestroy {
   private _finalisationRequests = [];
   private _awaitingFinalisation = [];
   private _purchaseSubscriptions: Subscription[] = [];
+  private _finaliseSubscriptions: Subscription[] = [];
   private _walletSubscription: Subscription;
   private _wallet: Wallet;
   private _createdProductsAddresses: string[];
@@ -36,6 +37,10 @@ export class DataProductNotificationsService implements OnDestroy {
       NotificationType.DATA_PRODUCT_PURCHASED,
       (notification: Notification) => this._parseDataProductPurchased(notification)
     );
+    this._notificationsService.addParser(
+      NotificationType.DATA_PRODUCT_FINALISED,
+      (notification: Notification) => this._parseDataProductFinalised(notification)
+    );
     this._walletSubscription = this._walletService.getWallet().subscribe(wallet => this._onWalletChange(wallet));
   }
 
@@ -43,6 +48,13 @@ export class DataProductNotificationsService implements OnDestroy {
     this._purchaseSubscriptions.push(
       this._dataProductService.watchForDataProductUpdate(productAddress, DataProductUpdateAction.PURCHASE)
         .subscribe(purchaseEvent => this._onProductPurchase(purchaseEvent))
+    );
+  }
+
+  watchForProductFinalise(productAddress: string): void {
+    this._finaliseSubscriptions.push(
+      this._dataProductService.watchForDataProductUpdate(productAddress, DataProductUpdateAction.FINALISE)
+        .subscribe(purchaseEvent => this._onProductFinalise(purchaseEvent))
     );
   }
 
@@ -104,6 +116,31 @@ export class DataProductNotificationsService implements OnDestroy {
     }
   }
 
+  addCreatedProductAddress(productAddress) {
+    this._createdProductsAddresses.push(productAddress);
+    this.watchForProductPurchase(productAddress);
+  }
+
+  removeCreatedProductAddress(productAddress) {
+    const index = this._createdProductsAddresses.indexOf(productAddress);
+    if (index !== -1) {
+      this._createdProductsAddresses.splice(index, 1);
+    }
+  }
+
+  addBoughtProductAddress(productAddress) {
+    this._boughtProductsAddresses.push(productAddress);
+    this.watchForProductPurchase(productAddress);
+    this.watchForProductFinalise(productAddress);
+  }
+
+  removeBoughtProductAddress(productAddress) {
+    const index = this._boughtProductsAddresses.indexOf(productAddress);
+    if (index !== -1) {
+      this._boughtProductsAddresses.splice(index, 1);
+    }
+  }
+
   private _onWalletChange(wallet: Wallet) {
     if (!wallet || wallet === this._wallet) {
       return;
@@ -127,15 +164,20 @@ export class DataProductNotificationsService implements OnDestroy {
     this._boughtProductsAddresses = await this._dataProductService.getBoughtDataProducts();
     this._boughtProductsAddresses.forEach(productAddress => {
       this.watchForProductPurchase(productAddress);
+      this.watchForProductFinalise(productAddress);
     });
   }
 
-  private async _onProductPurchase(purchaseEvent: DataProductEvent): Promise<void> {
+  private _onProductPurchase(purchaseEvent: DataProductEvent): Promise<void> {
     const type = this._createdProductsAddresses.includes(purchaseEvent.dataProductAddress)
       ? NotificationType.DATA_PRODUCT_TO_FINALISATION
       : NotificationType.DATA_PRODUCT_PURCHASED;
 
-    this._notificationsService.pushNotification(new Notification(type, { purchaseEvent }));
+    return this._notificationsService.pushNotification(new Notification(type, { purchaseEvent }));
+  }
+
+  private _onProductFinalise(finaliseEvent: DataProductEvent): Promise<void> {
+    return this._notificationsService.pushNotification(new Notification(NotificationType.DATA_PRODUCT_FINALISED, { finaliseEvent }));
   }
 
   private async _parseDataProductToFinalisation(notification: Notification): Promise<string | null> {
@@ -180,10 +222,28 @@ export class DataProductNotificationsService implements OnDestroy {
     return notificationMessage;
   }
 
+  private async _parseDataProductFinalised(notification: Notification) {
+    const purchaseEvent = notification.data.finaliseEvent;
+    const notificationMessage = `Your purchase for product ${purchaseEvent.dataProductAddress} is finalised.`;
+    const request = {
+      dataProductAddress: purchaseEvent.dataProductAddress,
+      buyerAddress: purchaseEvent.userAddress
+    };
+
+    this.removeFinalisationRequest(request);
+
+    return notificationMessage;
+  }
+
   private _clearSubscriptions() {
     if (this._purchaseSubscriptions.length) {
       this._purchaseSubscriptions.forEach(subscription => subscription.unsubscribe());
       this._purchaseSubscriptions = [];
+    }
+
+    if (this._finaliseSubscriptions.length) {
+      this._finaliseSubscriptions.forEach(subscription => subscription.unsubscribe());
+      this._finaliseSubscriptions = [];
     }
   }
 }

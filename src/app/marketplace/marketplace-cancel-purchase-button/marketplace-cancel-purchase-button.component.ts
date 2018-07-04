@@ -60,6 +60,7 @@ export class MarketplaceCancelPurchaseButtonComponent implements OnInit, OnDestr
           dataProductAddress: this.dataProductAddress,
           buyerAddress: this.wallet.address
         });
+        this._dataProductNotificationsService.removeBoughtProductAddress(this.dataProductAddress);
         this.dataProduct.transactions = this.dataProduct.transactions.filter(transaction => transaction !== this._transaction);
         this._transaction = null;
       }

@@ -5,7 +5,8 @@ import { RepuxLibService } from '../services/repux-lib.service';
 
 describe('FileUploadTask()', () => {
   let fileUploadTask: FileUploadTask, dataProductService, repuxLibService, fileUploader, fileUploaderUpload,
-    fileUploaderOn, taskManagerService, uploaderEventHandlers, fileUploaderTerminate, unpublishedProductsService;
+    fileUploaderOn, taskManagerService, uploaderEventHandlers, fileUploaderTerminate, unpublishedProductsService,
+    dataProductNotificationsService;
   const fileName = 'FILE_NAME';
   const publicKey = 'PUBLIC_KEY';
   const title = 'TITLE';
@@ -40,12 +41,14 @@ describe('FileUploadTask()', () => {
     dataProductService = jasmine.createSpyObj('DataProductService', [ 'publishDataProduct' ]);
     taskManagerService = jasmine.createSpyObj('TaskManagerService', [ 'onTaskEvent' ]);
     unpublishedProductsService = jasmine.createSpyObj('UnpublishedProductsService', [ 'addProduct', 'removeProduct' ]);
+    dataProductNotificationsService = jasmine.createSpyObj('DataProductNotificationsService', [ 'addCreatedProductAddress' ]);
 
     fileUploadTask = new FileUploadTask(
       <any> publicKey,
       repuxLibService,
       dataProductService,
       unpublishedProductsService,
+      dataProductNotificationsService,
       title,
       shortDescription,
       fullDescription,
@@ -69,6 +72,7 @@ describe('FileUploadTask()', () => {
         repuxLibService,
         dataProductService,
         unpublishedProductsService,
+        dataProductNotificationsService,
         title,
         shortDescription,
         fullDescription,
@@ -168,7 +172,7 @@ describe('FileUploadTask()', () => {
 
   describe('#callUserAction()', () => {
     it('should set call dataProductService.publishDataProduct and set task as finished', async () => {
-      dataProductService.publishDataProduct.and.returnValue(Promise.resolve());
+      dataProductService.publishDataProduct.and.returnValue(Promise.resolve({ address: '0x00' }));
       fileUploadTask[ '_taskManagerService' ] = taskManagerService;
       fileUploadTask[ '_needsUserAction' ] = true;
       fileUploadTask[ '_result' ] = 'RESULT';

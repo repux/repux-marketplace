@@ -13,6 +13,7 @@ import { DataProduct } from '../../shared/models/data-product';
 import {
   MarketplacePurchaseConfirmationDialogComponent
 } from '../marketplace-purchase-confirmation-dialog/marketplace-purchase-confirmation-dialog.component';
+import { DataProductNotificationsService } from '../../services/data-product-notifications.service';
 
 @Component({
   selector: 'app-marketplace-buy-product-button',
@@ -36,6 +37,7 @@ export class MarketplaceBuyProductButtonComponent implements OnInit, OnDestroy {
     private _repuxLibService: RepuxLibService,
     private _walletService: WalletService,
     private _keyStoreService: KeyStoreService,
+    private _dataProductNotificationsService: DataProductNotificationsService,
     private _dialog: MatDialog) {
   }
 
@@ -56,6 +58,7 @@ export class MarketplaceBuyProductButtonComponent implements OnInit, OnDestroy {
     this._transactionDialogSubscription = transactionDialogRef.afterClosed().subscribe(result => {
       if (result) {
         this.bought = true;
+        this._dataProductNotificationsService.addBoughtProductAddress(this.dataProductAddress);
         this._dialog.open(MarketplacePurchaseConfirmationDialogComponent);
       }
     });

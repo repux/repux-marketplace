@@ -8,6 +8,7 @@ import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { TransactionDialogComponent } from '../../shared/components/transaction-dialog/transaction-dialog.component';
 import { KeyStoreService } from '../../key-store/key-store.service';
 import { MaterialModule } from '../../material.module';
+import { DataProductNotificationsService } from '../../services/data-product-notifications.service';
 
 @Component({ selector: 'app-marketplace-download-product-button', template: '' })
 class DownloadProductButtonStubComponent {
@@ -17,13 +18,14 @@ class DownloadProductButtonStubComponent {
 describe('MarketplaceBuyProductButtonComponent', () => {
   let component: MarketplaceBuyProductButtonComponent;
   let fixture: ComponentFixture<MarketplaceBuyProductButtonComponent>;
-  let repuxLibServiceSpy, keyStoreServiceSpy;
+  let repuxLibServiceSpy, keyStoreServiceSpy, dataProductNotificationsService;
   const dataProductAddress = '0x1111111111111111111111111111111111111111';
   const buyerAddress = '0x0000000000000000000000000000000000000000';
 
   beforeEach(fakeAsync(() => {
     repuxLibServiceSpy = jasmine.createSpyObj('RepuxLibService', [ 'getInstance', 'getClass' ]);
     keyStoreServiceSpy = jasmine.createSpyObj('KeyStoreService', [ 'hasKeys' ]);
+    dataProductNotificationsService = jasmine.createSpyObj('DataProductNotificationsService', [ 'addBoughtProductAddress' ]);
     TestBed.configureTestingModule({
       declarations: [
         MarketplaceBuyProductButtonComponent,
@@ -36,7 +38,8 @@ describe('MarketplaceBuyProductButtonComponent', () => {
       providers: [
         { provide: RepuxLibService, useValue: repuxLibServiceSpy },
         { provide: KeyStoreService, useValue: keyStoreServiceSpy },
-        { provide: TransactionDialogComponent, useValue: {} }
+        { provide: TransactionDialogComponent, useValue: {} },
+        { provide: DataProductNotificationsService, useValue: dataProductNotificationsService }
       ]
     })
       .compileComponents();

@@ -6,6 +6,7 @@ import { WalletService } from '../../services/wallet.service';
 import Wallet from '../../shared/models/wallet';
 import { TransactionDialogComponent } from '../../shared/components/transaction-dialog/transaction-dialog.component';
 import { Subscription } from 'rxjs/internal/Subscription';
+import { DataProductNotificationsService } from '../../services/data-product-notifications.service';
 
 @Component({
   selector: 'app-marketplace-unpublish-button',
@@ -23,6 +24,7 @@ export class MarketplaceUnpublishButtonComponent implements OnInit, OnDestroy {
   constructor(
     private _walletService: WalletService,
     private _dataProductService: DataProductService,
+    private _dataProductNotificationsService: DataProductNotificationsService,
     private _dialog: MatDialog
   ) {
   }
@@ -30,15 +32,6 @@ export class MarketplaceUnpublishButtonComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.dataProductAddress = this.dataProduct.address;
     this._walletSubscription = this._walletService.getWallet().subscribe(wallet => this._onWalletChange(wallet));
-  }
-
-  private _onWalletChange(wallet: Wallet) {
-    if (!wallet || wallet === this.wallet) {
-      return;
-    }
-
-    this.wallet = wallet;
-    this.userIsOwner = this.getUserIsOwner();
   }
 
   getUserIsOwner(): boolean {
@@ -51,6 +44,7 @@ export class MarketplaceUnpublishButtonComponent implements OnInit, OnDestroy {
     });
     transactionDialogRef.afterClosed().subscribe(result => {
       if (result) {
+        this._dataProductNotificationsService.removeCreatedProductAddress(this.dataProductAddress);
         this.dataProduct.disabled = true;
       }
     });
@@ -63,5 +57,14 @@ export class MarketplaceUnpublishButtonComponent implements OnInit, OnDestroy {
     if (this._walletSubscription) {
       this._walletSubscription.unsubscribe();
     }
+  }
+
+  private _onWalletChange(wallet: Wallet) {
+    if (!wallet || wallet === this.wallet) {
+      return;
+    }
+
+    this.wallet = wallet;
+    this.userIsOwner = this.getUserIsOwner();
   }
 }
