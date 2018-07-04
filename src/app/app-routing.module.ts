@@ -1,35 +1,35 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { SellComponent } from './sell/sell.component';
-import { MyActiveListingsComponent } from './sell/my-active-listings/my-active-listings.component';
-import { PendingFinalisationComponent } from './sell/pending-finalisation/pending-finalisation.component';
-import { MarketplaceComponent } from './marketplace/marketplace.component';
+import { MarketplaceSellComponent } from './marketplace/marketplace-sell.component';
+import { MarketplaceSellMyActiveListingsComponent } from './marketplace/marketplace-sell-my-active-listings.component';
+import { MarketplaceSellPendingFinalisationComponent } from './marketplace/marketplace-sell-pending-finalisation.component';
+import { MarketplaceBrowseComponent } from './marketplace/marketplace-browse.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
-import { UnpublishedComponent } from './sell/unpublished/unpublished.component';
-import { BuyingComponent } from './buying/buying.component';
-import { ReadyToDownloadComponent } from './buying/ready-to-download/ready-to-download.component';
-import { AwaitingFinalisationComponent } from './buying/awaiting-finalisation/awaiting-finalisation.component';
+import { MarketplaceSellUnpublishedComponent } from './marketplace/marketplace-sell-unpublished.component';
+import { MarketplaceBuyingComponent } from './marketplace/marketplace-buying.component';
+import { MarketplaceBuyingReadyToDownloadComponent } from './marketplace/marketplace-buying-ready-to-download.component';
+import { MarketplaceBuyingAwaitingFinalisationComponent } from './marketplace/marketplace-buying-awaiting-finalisation.component';
 import { SettingsIndexComponent } from './settings/settings-index/settings-index.component';
-import { ProductDetailsComponent } from './product-details/product-details.component';
+import { MarketplaceProductDetailsComponent } from './marketplace/marketplace-product-details.component';
 
 const routes: Routes = [
   { path: '', redirectTo: '/dashboard', pathMatch: 'full' },
   { path: 'dashboard', component: DashboardComponent },
-  { path: 'marketplace', component: MarketplaceComponent },
-  { path: 'marketplace/:address', component: ProductDetailsComponent },
+  { path: 'marketplace', component: MarketplaceBrowseComponent },
+  { path: 'marketplace/:address', component: MarketplaceProductDetailsComponent },
   {
-    path: 'sell', component: SellComponent, children: [
+    path: 'sell', component: MarketplaceSellComponent, children: [
       { path: '', redirectTo: 'my-active-listings', pathMatch: 'full' },
-      { path: 'my-active-listings', component: MyActiveListingsComponent },
-      { path: 'unpublished', component: UnpublishedComponent },
-      { path: 'pending-finalisation', component: PendingFinalisationComponent }
+      { path: 'my-active-listings', component: MarketplaceSellMyActiveListingsComponent },
+      { path: 'marketplace-sell-unpublished', component: MarketplaceSellUnpublishedComponent },
+      { path: 'pending-finalisation', component: MarketplaceSellPendingFinalisationComponent }
     ]
   },
   {
-    path: 'buying', component: BuyingComponent, children: [
+    path: 'buying', component: MarketplaceBuyingComponent, children: [
       { path: '', redirectTo: 'ready-to-download', pathMatch: 'full' },
-      { path: 'ready-to-download', component: ReadyToDownloadComponent },
-      { path: 'awaiting-finalisation', component: AwaitingFinalisationComponent }
+      { path: 'ready-to-download', component: MarketplaceBuyingReadyToDownloadComponent },
+      { path: 'awaiting-finalisation', component: MarketplaceBuyingAwaitingFinalisationComponent }
     ]
   },
   { path: 'settings', component: SettingsIndexComponent }

@@ -1,0 +1,157 @@
+<div *ngIf="dataSource">
+
+  <mat-form-field *ngIf="showSearch">
+    <mat-icon class="search-icon" matPrefix>search</mat-icon>
+
+    <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Search">
+  </mat-form-field>
+
+  <div class="data-container">
+    <div class="loading-shade" *ngIf="isLoadingResults">
+      <mat-spinner *ngIf="isLoadingResults"></mat-spinner>
+    </div>
+
+    <mat-table #table [dataSource]="dataSource" matSort (matSortChange)="sortChanged($event)">
+
+      <!-- Name Column -->
+      <ng-container matColumnDef="name">
+        <mat-header-cell *matHeaderCellDef mat-sort-header [disabled]="enableSorting"> File name</mat-header-cell>
+        <mat-cell *matCellDef="let element"> {{element.name}}</mat-cell>
+      </ng-container>
+
+      <!-- Title Column -->
+      <ng-container matColumnDef="title">
+        <mat-header-cell *matHeaderCellDef mat-sort-header [disabled]="enableSorting"> Title</mat-header-cell>
+        <mat-cell *matCellDef="let element"> {{element.title}}</mat-cell>
+      </ng-container>
+
+      <!-- Categories Column -->
+      <ng-container matColumnDef="category">
+        <mat-header-cell *matHeaderCellDef> Categories</mat-header-cell>
+        <mat-cell *matCellDef="let element"> {{element.category | array_join: ', '}}</mat-cell>
+      </ng-container>
+      <!-- Size Column -->
+      <ng-container matColumnDef="size">
+        <mat-header-cell *matHeaderCellDef mat-sort-header [disabled]="enableSorting"> Size</mat-header-cell>
+        <mat-cell *matCellDef="let element"> {{ element.size | fileSize }}</mat-cell>
+      </ng-container>
+
+      <!-- Price Column -->
+      <ng-container matColumnDef="price">
+        <mat-header-cell *matHeaderCellDef mat-sort-header [disabled]="enableSorting"> List price</mat-header-cell>
+        <mat-cell *matCellDef="let element"> {{ element.price.toString() | currency : '' :
+          currencyName :
+          currencyFormat }}
+        </mat-cell>
+      </ng-container>
+
+      <!-- Delivery time Column -->
+      <ng-container matColumnDef="daysForDeliver">
+        <mat-header-cell *matHeaderCellDef mat-sort-header [disabled]="enableSorting"> Delivery time</mat-header-cell>
+        <mat-cell *matCellDef="let element"> {{ element.daysForDeliver }}</mat-cell>
+      </ng-container>
+
+      <!-- Times purchased Column -->
+      <ng-container matColumnDef="timesPurchased">
+        <mat-header-cell *matHeaderCellDef> Times purchased</mat-header-cell>
+        <mat-cell *matCellDef="let element"> {{ getTimesPurchased(element) }}</mat-cell>
+      </ng-container>
+
+      <!-- Total earnings Column -->
+      <ng-container matColumnDef="totalEarnings">
+        <mat-header-cell *matHeaderCellDef> Total earnings</mat-header-cell>
+        <mat-cell *matCellDef="let element"> {{ getTotalEarnings(element).toString() | currency : '' :
+          currencyName : currencyFormat }}
+        </mat-cell>
+      </ng-container>
+
+      <!-- Total deposit Column -->
+      <ng-container matColumnDef="fundsToWithdraw">
+        <mat-header-cell *matHeaderCellDef>
+          <div class="row">
+            Total deposit
+            <mat-icon
+                matTooltip="Funds accumulated in the product Smart Contract that can be released using the Withdraw function">
+              help
+            </mat-icon>
+          </div>
+        </mat-header-cell>
+        <mat-cell *matCellDef="let element"> {{ element.fundsToWithdraw.toString() | currency : '' :
+          currencyName : currencyFormat }}
+        </mat-cell>
+      </ng-container>
+
+      <!-- Times purchased Column -->
+      <ng-container matColumnDef="pendingFinalisationRequests">
+        <mat-header-cell *matHeaderCellDef> Pending finalisation requests</mat-header-cell>
+        <mat-cell *matCellDef="let element">
+          <button mat-icon-button
+                  routerLink="/sell/pending-finalisation"
+                  *ngIf="!disablePendingFinalisation"
+                  color="primary">
+            {{ getTransactionsToFinalisation(element).length }}
+          </button>
+          <span *ngIf="disablePendingFinalisation">
+            {{ getTransactionsToFinalisation(element).length }}
+          </span>
+        </mat-cell>
+      </ng-container>
+
+      <!-- Transaction date -->
+      <ng-container matColumnDef="transactionDate">
+        <mat-header-cell *matHeaderCellDef> Transaction date</mat-header-cell>
+        <mat-cell *matCellDef="let element"> {{ getTransactionDate(element) | date : 'short' }}
+        </mat-cell>
+      </ng-container>
+
+      <!-- Delivery deadline -->
+      <ng-container matColumnDef="deliveryDeadline">
+        <mat-header-cell *matHeaderCellDef> Delivery deadline</mat-header-cell>
+        <mat-cell *matCellDef="let element"> {{ getDeliveryDeadline(element) | date : 'short' }}
+        </mat-cell>
+      </ng-container>
+
+      <!-- Actions Column -->
+      <ng-container matColumnDef="actions">
+        <mat-header-cell *matHeaderCellDef></mat-header-cell>
+        <mat-cell *matCellDef="let element">
+          <div class="row">
+            <app-marketplace-buy-product-button *ngIf="availableActions.includes('buy')"
+                                    [dataProduct]="element"></app-marketplace-buy-product-button>
+
+            <app-marketplace-cancel-purchase-button *ngIf="availableActions.includes('cancelPurchase')"
+                                        [dataProduct]="element"></app-marketplace-cancel-purchase-button>
+
+            <app-marketplace-publish-button *ngIf="availableActions.includes('publish')"
+                                [dataProduct]="element"></app-marketplace-publish-button>
+
+            <app-marketplace-unpublish-button *ngIf="availableActions.includes('unpublish')"
+                                  [dataProduct]="element"></app-marketplace-unpublish-button>
+
+            <app-marketplace-withdraw-button *ngIf="availableActions.includes('withdraw')"
+                                 [dataProduct]="element"></app-marketplace-withdraw-button>
+          </div>
+        </mat-cell>
+      </ng-container>
+
+      <mat-row mat-header-row *matHeaderRowDef="displayedColumns"></mat-row>
+      <mat-row mat-row *matRowDef="let row; columns: displayedColumns;"
+               [routerLink]="['/marketplace', row.address]"
+               [appMarketplaceDataProductListDetailRow]="row"
+               [appMarketplaceDataProductListDetailTpl]="tpl"
+               [class.disabled]="row.disabled"></mat-row>
+    </mat-table>
+  </div>
+
+  <mat-paginator (page)="pageChanged($event)" [length]="esDataProducts.total" [(pageSize)]="size"
+                 [pageSizeOptions]="pageSizeOptions" *ngIf="showPaginator"></mat-paginator>
+</div>
+
+<ng-template #tpl let-element>
+  <div *ngIf="displayPendingTransactions && getTransactionsToFinalisation(element).length" class="details">
+    <strong class="detail-header">Transactions:</strong>
+    <app-marketplace-data-product-transactions-list
+        [dataProduct]="element"
+        [transactions]="getTransactionsToFinalisation(element)"></app-marketplace-data-product-transactions-list>
+  </div>
+</ng-template>
