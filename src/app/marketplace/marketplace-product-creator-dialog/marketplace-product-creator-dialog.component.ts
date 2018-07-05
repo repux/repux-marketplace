@@ -16,6 +16,7 @@ import { UnpublishedProductsService } from '../../services/unpublished-products.
 import {
   MarketplaceProductCategorySelectorComponent
 } from '../marketplace-product-category-selector/marketplace-product-category-selector.component';
+import { DataProductNotificationsService } from '../../services/data-product-notifications.service';
 
 @Component({
   selector: 'app-marketplace-product-creator-dialog',
@@ -63,6 +64,7 @@ export class MarketplaceProductCreatorDialogComponent implements OnDestroy {
     private dataProductService: DataProductService,
     private taskManagerService: TaskManagerService,
     private _unpublishedProductsService: UnpublishedProductsService,
+    private _dataProductNotificationsService: DataProductNotificationsService,
     private dialog: MatDialog,
     public dialogRef: MatDialogRef<MarketplaceProductCreatorDialogComponent>) {
     this.formGroup = new FormGroup({
@@ -92,6 +94,7 @@ export class MarketplaceProductCreatorDialogComponent implements OnDestroy {
       this.repuxLibService,
       this.dataProductService,
       this._unpublishedProductsService,
+      this._dataProductNotificationsService,
       this.formGroup.value.title,
       this.formGroup.value.shortDescription,
       this.formGroup.value.fullDescription,

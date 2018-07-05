@@ -65,7 +65,7 @@ describe('DataProductNotificationsService', () => {
 
   describe('#constructor()', () => {
     it('should add parser to notificationsService', () => {
-      expect(notificationsService.addParser.calls.count()).toBe(2);
+      expect(notificationsService.addParser.calls.count()).toBe(3);
       expect(notificationsService.addParser.calls.allArgs()[ 0 ][ 0 ]).toBe(NotificationType.DATA_PRODUCT_TO_FINALISATION);
       expect(typeof notificationsService.addParser.calls.allArgs()[ 0 ][ 1 ]).toBe('function');
       expect(dataProductService.getCreatedDataProducts.calls.count()).toBe(1);

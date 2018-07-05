@@ -14,9 +14,10 @@ import { MaterialModule } from '../../material.module';
 import {
   MarketplaceProductCategorySelectorComponent
 } from '../marketplace-product-category-selector/marketplace-product-category-selector.component';
+import { DataProductNotificationsService } from '../../services/data-product-notifications.service';
 
 describe('MarketplaceProductCreatorDialogComponent', () => {
-  let keyStoreService, repuxLibService, dataProductService, taskManagerService, matDialog, matDialogRef,
+  let keyStoreService, repuxLibService, dataProductService, dataProductNotificationsService, taskManagerService, matDialog, matDialogRef,
     getKeys, unpublishedProductsService;
   let component: MarketplaceProductCreatorDialogComponent;
   let fixture: ComponentFixture<MarketplaceProductCreatorDialogComponent>;
@@ -29,6 +30,7 @@ describe('MarketplaceProductCreatorDialogComponent', () => {
     });
 
     dataProductService = jasmine.createSpyObj('DataProductService', [ 'publishDataProduct' ]);
+    dataProductNotificationsService = jasmine.createSpyObj('DataProductNotificationsService', [ 'addCreatedProductAddress' ]);
     taskManagerService = jasmine.createSpyObj('TaskManagerService', [ 'addTask' ]);
     unpublishedProductsService = jasmine.createSpyObj('UnpublishedProductsService', [ 'addProduct', 'removeProduct' ]);
     matDialogRef = jasmine.createSpyObj('MatDialogRef', [ 'close', 'afterClosed' ]);
@@ -53,7 +55,8 @@ describe('MarketplaceProductCreatorDialogComponent', () => {
         { provide: MatDialogRef, useValue: matDialogRef },
         { provide: RepuxLibService, useValue: repuxLibService },
         { provide: TaskManagerService, useValue: taskManagerService },
-        { provide: DataProductService, useValue: dataProductService }
+        { provide: DataProductService, useValue: dataProductService },
+        { provide: DataProductNotificationsService, useValue: dataProductNotificationsService }
       ]
     }).compileComponents();
   }));
@@ -67,7 +70,7 @@ describe('MarketplaceProductCreatorDialogComponent', () => {
   describe('#constructor()', () => {
     it('should initialize formGroup property', () => {
       component = new MarketplaceProductCreatorDialogComponent(keyStoreService, repuxLibService,
-        dataProductService, taskManagerService, unpublishedProductsService, matDialog, matDialogRef);
+        dataProductService, dataProductNotificationsService, taskManagerService, unpublishedProductsService, matDialog, matDialogRef);
       expect(component.formGroup.controls[ 'title' ]).toBe(component.titleFormControl);
       expect(component.formGroup.controls[ 'shortDescription' ]).toBe(component.shortDescriptionFormControl);
       expect(component.formGroup.controls[ 'fullDescription' ]).toBe(component.fullDescriptionFormControl);

@@ -30,6 +30,7 @@ describe('NotificationsService', () => {
     service = TestBed.get(NotificationsService);
     await service.addParser(NotificationType.DATA_PRODUCT_PURCHASED, (notification: Notification) => Promise.resolve('RESULT'));
     await service.addParser(NotificationType.DATA_PRODUCT_TO_FINALISATION, (notification: Notification) => Promise.resolve('RESULT'));
+    await service.addParser(NotificationType.DATA_PRODUCT_FINALISED, (notification: Notification) => Promise.resolve('RESULT'));
     exampleNotification = new Notification(NotificationType.DATA_PRODUCT_TO_FINALISATION, {});
   });
 

@@ -12,6 +12,15 @@ export class MarketplaceBuyingReadyToDownloadComponent implements OnDestroy {
   public availableActions = [
     'buy'
   ];
+  public displayedColumns = [
+    'name',
+    'title',
+    'category',
+    'size',
+    'price',
+    'transactionDate',
+    'actions'
+  ];
   public staticQuery = {};
 
   private _wallet: Wallet;
@@ -22,6 +31,14 @@ export class MarketplaceBuyingReadyToDownloadComponent implements OnDestroy {
   ) {
     this.staticQuery = this._getStaticQuery('');
     this._walletSubscription = this._walletService.getWallet().subscribe(wallet => this._onWalletChange(wallet));
+  }
+
+  get buyerAddress() {
+    if (!this._wallet) {
+      return;
+    }
+
+    return this._wallet.address;
   }
 
   ngOnDestroy() {

@@ -9,7 +9,9 @@ import { MaterialModule } from '../material.module';
 @Component({ selector: 'app-data-product-list', template: '' })
 class DataProductListStubComponent {
   @Input() availableActions: string[];
+  @Input() displayedColumns: string[];
   @Input() staticQuery;
+  @Input() buyerAddress: string;
 }
 
 describe('MarketplaceBuyingReadyToDownloadComponent', () => {
