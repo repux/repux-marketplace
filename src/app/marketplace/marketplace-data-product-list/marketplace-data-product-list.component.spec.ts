@@ -259,7 +259,7 @@ describe('MarketplaceDataProductListComponent', () => {
       expect(table.querySelector('mat-header-cell:nth-child(2)').getAttribute('mat-sort-header')).not.toBeNull();
       expect(table.querySelector('mat-header-cell:nth-child(3)').textContent.trim()).toBe('Categories');
       expect(table.querySelector('mat-header-cell:nth-child(3)').getAttribute('mat-sort-header')).toBeNull();
-      expect(table.querySelector('mat-header-cell:nth-child(4)').textContent.trim()).toBe('Delivery time');
+      expect(table.querySelector('mat-header-cell:nth-child(4)').textContent.trim()).toBe('Delivery time  help');
       expect(table.querySelector('mat-header-cell:nth-child(4)').getAttribute('mat-sort-header')).not.toBeNull();
       expect(table.querySelector('mat-header-cell:nth-child(5)').textContent.trim()).toBe('Size');
       expect(table.querySelector('mat-header-cell:nth-child(5)').getAttribute('mat-sort-header')).not.toBeNull();

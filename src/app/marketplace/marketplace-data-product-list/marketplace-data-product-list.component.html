@@ -47,7 +47,12 @@
 
       <!-- Delivery time Column -->
       <ng-container matColumnDef="daysForDeliver">
-        <mat-header-cell *matHeaderCellDef mat-sort-header [disabled]="enableSorting"> Delivery time</mat-header-cell>
+        <mat-header-cell *matHeaderCellDef mat-sort-header [disabled]="enableSorting">
+          Delivery time
+          <mat-icon matTooltip="Max number of days for seller to finalise transaction">
+            help
+          </mat-icon>
+        </mat-header-cell>
         <mat-cell *matCellDef="let element"> {{ element.daysForDeliver }}</mat-cell>
       </ng-container>
 
@@ -106,7 +111,11 @@
 
       <!-- Delivery deadline -->
       <ng-container matColumnDef="deliveryDeadline">
-        <mat-header-cell *matHeaderCellDef> Delivery deadline</mat-header-cell>
+        <mat-header-cell *matHeaderCellDef> Delivery deadline
+          <mat-icon matTooltip="Once passed and seller didn't finalise the transaction, buyer can withdraw money and transaction will be cancelled">
+            help
+          </mat-icon>
+        </mat-header-cell>
         <mat-cell *matCellDef="let element"> {{ getDeliveryDeadline(element) | date : 'short' }}
         </mat-cell>
       </ng-container>
@@ -114,7 +123,7 @@
       <!-- Actions Column -->
       <ng-container matColumnDef="actions">
         <mat-header-cell *matHeaderCellDef></mat-header-cell>
-        <mat-cell *matCellDef="let element">
+        <mat-cell *matCellDef="let element" (click)="$event.stopPropagation()">
           <div class="row">
             <app-marketplace-buy-product-button *ngIf="availableActions.includes('buy')"
                                     [dataProduct]="element"></app-marketplace-buy-product-button>
@@ -136,7 +145,7 @@
 
       <mat-row mat-header-row *matHeaderRowDef="displayedColumns"></mat-row>
       <mat-row mat-row *matRowDef="let row; columns: displayedColumns;"
-               [routerLink]="['/marketplace', row.address]"
+               [routerLink]="row.address ? ['/marketplace', row.address] : null"
                [appMarketplaceDataProductListDetailRow]="row"
                [appMarketplaceDataProductListDetailTpl]="tpl"
                [class.disabled]="row.disabled"></mat-row>
