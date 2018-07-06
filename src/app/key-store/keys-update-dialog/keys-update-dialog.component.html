@@ -1,8 +1,15 @@
 <form [formGroup]="formGroup" (ngSubmit)="upload()">
   <h2 mat-dialog-title>Upload new private/public key pair</h2>
   <mat-dialog-content class="mat-typography">
-    <p>Now you can add new/replace existing private/public key pair in browser storage. Please provide separate keys in JSON Web Key format.</p>
-    <p>Keys will be stored in your browser secured with your personal password.</p>
+    <div *ngIf="noKeyStore; else hasKeys">
+      <p>Now you can add new/replace existing private/public key pair in browser storage. Please provide separate keys in JSON Web Key format.</p>
+      <p>Keys will be stored in your browser secured with your personal password.</p>
+    </div>
+    <ng-template #hasKeys>
+      <p>Since you've already stored keys in browser storage we need existing your personal password to update public/private key pair.</p>
+    </ng-template>
+
+
 
     <div class="field-row">
       <app-file-input #filePrivateKeyInput

@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { RepuxLibService } from '../../services/repux-lib.service';
-import { FormControl, FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { KeyStoreService } from '../key-store.service';
 import { MatDialogRef } from '@angular/material';
+import { ValidatePassword } from '../key-store.validator';
 
 @Component({
   selector: 'app-keys-generator-dialog',
@@ -11,18 +12,26 @@ import { MatDialogRef } from '@angular/material';
 })
 export class KeysGeneratorDialogComponent implements OnInit {
   public formGroup: FormGroup;
+  public noKeyStore: boolean;
 
   constructor(
+    private fb: FormBuilder,
     private repuxLibService: RepuxLibService,
     private keyStoreService: KeyStoreService,
     private dialogRef: MatDialogRef<KeysGeneratorDialogComponent>
   ) {
-    this.formGroup = new FormGroup({
-      password: new FormControl()
+    const validators = [ Validators.required ];
+    if (this.keyStoreService.hasKeys()) {
+      validators.push(ValidatePassword);
+    }
+
+    this.formGroup = this.fb.group({
+      password: [ '', validators ]
     });
   }
 
   ngOnInit() {
+    this.noKeyStore = !this.keyStoreService.hasKeys();
   }
 
   async generate() {
@@ -33,7 +42,10 @@ export class KeysGeneratorDialogComponent implements OnInit {
     const password = this.formGroup.value.password;
     const keys = await this.repuxLibService.getClass().generateAsymmetricKeyPair();
 
-    this.keyStoreService.savePasswordAsHash(password);
+    if (!this.keyStoreService.hasKeys()) {
+      this.keyStoreService.savePasswordAsHash(password);
+    }
+
     await this.keyStoreService.store(KeyStoreService.PRIVATE_KEY, keys.privateKey, password);
     await this.keyStoreService.store(KeyStoreService.PUBLIC_KEY, keys.publicKey, password);
 
