@@ -1,9 +1,14 @@
 <form [formGroup]="formGroup" (ngSubmit)="generate()">
   <h2 mat-dialog-title>Public - private keys generation</h2>
   <mat-dialog-content class="mat-typography">
-    <p>Now we'll generate public/private key pair necessary for files encryption. This is a very important step and it
-      will take a while.</p>
-    <p>Keys will be stored in your browser secured with your personal password.</p>
+    <div *ngIf="noKeyStore; else hasKeys">
+      <p>Now we'll generate public/private key pair necessary for files encryption. This is a very important step and it
+        will take a while.</p>
+      <p>Keys will be stored in your browser secured with your personal password.</p>
+    </div>
+    <ng-template #hasKeys>
+      <p>Since you've already stored keys in browser storage we need existing your personal password to re-generate public/private key pair.</p>
+    </ng-template>
     <mat-form-field class="field-row">
       <input matInput type="password"
              placeholder="Personal password" required formControlName="password">

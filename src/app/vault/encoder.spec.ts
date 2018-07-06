@@ -28,7 +28,7 @@ describe('Encoder', () => {
   it('should create password based encryption key', async () => {
     const password = 'myPassword';
     const salt = crypto.getRandomValues(new Uint8Array(Encoder.SALT_LENGTH));
-    const key = await Encoder.generateEncryptionKey(BufferUtil.stringToBuffer(password), salt, Encoder.ITERATION_COUNT);
+    const key = await Encoder.generateEncryptionKey(BufferUtil.stringToBuffer(password), <Uint8Array>salt, Encoder.ITERATION_COUNT);
 
     expect(key.algorithm).toEqual(Encoder.ALGORITHM);
     expect(key.type).toEqual('secret');

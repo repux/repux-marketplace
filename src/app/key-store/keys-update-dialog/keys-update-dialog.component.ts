@@ -1,10 +1,11 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { RepuxLibService } from '../../services/repux-lib.service';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { KeyStoreService } from '../key-store.service';
 import { MatDialogRef } from '@angular/material';
 import { FileInputComponent } from '../../shared/components/file-input/file-input.component';
 import { fileToString } from '../../shared/utils/file-to-string';
+import { ValidatePassword } from '../key-store.validator';
 
 @Component({
   selector: 'app-keys-update-dialog',
@@ -19,23 +20,31 @@ export class KeysUpdateDialogComponent implements OnInit {
   public filePublicKeyFormControl = new FormControl('', [
     Validators.required
   ]);
+  public noKeyStore: boolean;
 
   @ViewChild('filePrivateKeyInput') filePrivateKeyInput: FileInputComponent;
   @ViewChild('filePublicKeyInput') filePublicKeyInput: FileInputComponent;
 
   constructor(
+    private fb: FormBuilder,
     private repuxLibService: RepuxLibService,
     private keyStoreService: KeyStoreService,
     private dialogRef: MatDialogRef<KeysUpdateDialogComponent>
   ) {
-    this.formGroup = new FormGroup({
-      password: new FormControl(),
+    const validators = [ Validators.required ];
+    if (this.keyStoreService.hasKeys()) {
+      validators.push(ValidatePassword);
+    }
+
+    this.formGroup = this.fb.group({
       filePrivateKey: this.filePrivateKeyFormControl,
-      filePublicKey: this.filePublicKeyFormControl
+      filePublicKey: this.filePublicKeyFormControl,
+      password: [ '', validators ]
     });
   }
 
   ngOnInit() {
+    this.noKeyStore = !this.keyStoreService.hasKeys();
   }
 
   async upload() {
@@ -49,7 +58,10 @@ export class KeysUpdateDialogComponent implements OnInit {
     const privateKey = JSON.parse(privateKeyString) as JsonWebKey;
     const publicKey = JSON.parse(publicKeyString) as JsonWebKey;
 
-    this.keyStoreService.savePasswordAsHash(password);
+    if (!this.keyStoreService.hasKeys()) {
+      this.keyStoreService.savePasswordAsHash(password);
+    }
+
     await this.keyStoreService.store(KeyStoreService.PRIVATE_KEY, privateKey, password);
     await this.keyStoreService.store(KeyStoreService.PUBLIC_KEY, publicKey, password);
 

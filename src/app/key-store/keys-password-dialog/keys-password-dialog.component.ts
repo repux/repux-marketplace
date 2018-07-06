@@ -1,16 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { KeysGeneratorDialogComponent } from '../keys-generator-dialog/keys-generator-dialog.component';
 import { MatDialogRef } from '@angular/material';
-import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { KeyStoreService } from '../key-store.service';
-
-function ValidateEmail(c: FormControl) {
-  return KeyStoreService.isPasswordValid(c.value) ? null : {
-    validatePassword: {
-      valid: false
-    }
-  };
-}
+import { ValidatePassword } from '../key-store.validator';
 
 @Component({
   selector: 'app-keys-password-dialog',
@@ -26,7 +19,7 @@ export class KeysPasswordDialogComponent implements OnInit {
     private dialogRef: MatDialogRef<KeysGeneratorDialogComponent>
   ) {
     this.formGroup = this.fb.group({
-      password: [ '', [ Validators.required, ValidateEmail ] ]
+      password: [ '', [ Validators.required, ValidatePassword ] ]
     });
   }
 
