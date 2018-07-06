@@ -1,5 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { RepuxWeb3Service, RepuxWeb3ServiceFactory } from './repux-web3.service';
+import RepuxWeb3Api from 'repux-web3-api/repux-web3-api';
 
 const balanceInWei = 1000000000000000000;
 const balanceInEther = 1;
@@ -64,8 +65,8 @@ describe('RepuxWeb3Service', () => {
       expect(repuxWeb3Service.isProviderAvailable()).toBeTruthy();
     });
 
-    it('should return false when web3 provider is not set', () => {
-      repuxWeb3ServiceNoWeb3 = RepuxWeb3ServiceFactory();
+    it('should return false when web3 provider is not set', async () => {
+      repuxWeb3ServiceNoWeb3 = await RepuxWeb3ServiceFactory();
       expect(repuxWeb3ServiceNoWeb3.isProviderAvailable()).toBeFalsy();
     });
   });
@@ -76,7 +77,7 @@ describe('RepuxWeb3Service', () => {
     });
 
     it('should return false when account is not available', async () => {
-      repuxWeb3ServiceNoWeb3 = RepuxWeb3ServiceFactory();
+      repuxWeb3ServiceNoWeb3 = await RepuxWeb3ServiceFactory();
       expect(await repuxWeb3ServiceNoWeb3.isDefaultAccountAvailable()).toBeFalsy();
     });
   });
@@ -89,9 +90,9 @@ describe('RepuxWeb3Service', () => {
   });
 
   describe('#getRepuxApiInstance()', () => {
-    it('should return web3 instance', () => {
+    it('should return web3 instance', async () => {
       const service = new RepuxWeb3Service('Web3', 'RepuxWeb3Api');
-      expect(service.getRepuxApiInstance()).toBe('RepuxWeb3Api');
+      expect(await service.getRepuxApiInstance()).toBe('RepuxWeb3Api');
     });
   });
 });

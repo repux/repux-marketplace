@@ -15,7 +15,7 @@ const web3Mock = {
 };
 
 const repuxWeb3ApiMock = {
-  getDefaultAccount() {
+  async getDefaultAccount() {
     return web3Mock.eth.accounts[ 0 ];
   },
 
@@ -77,7 +77,7 @@ describe('WalletService', () => {
       const wallet = await walletService.getWalletData();
       expect(wallet.address).toEqual(web3Mock.eth.accounts[ 0 ]);
       expect(wallet.balance).toEqual(balanceInEther);
-      expect(repuxWeb3ServiceSpy.getRepuxApiInstance.calls.count()).toBe(2);
+      expect(repuxWeb3ServiceSpy.getRepuxApiInstance.calls.count()).toBe(1);
     });
   });
 });

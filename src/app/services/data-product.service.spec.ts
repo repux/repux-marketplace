@@ -36,11 +36,15 @@ describe('DataProductService', () => {
   });
 
   describe('#get _api()', () => {
-    it('should return result of _repuxWeb3Service.getRepuxApiInstance function', () => {
+    it('should return result of _repuxWeb3Service.getRepuxApiInstance function', (done) => {
       const expectedResult = 'EXPECTED_RESULT';
       repuxWeb3ServiceSpy.getRepuxApiInstance.and.returnValue(expectedResult);
-      expect(service[ '_api' ]).toBe(<any> expectedResult);
-      expect(repuxWeb3ServiceSpy.getRepuxApiInstance.calls.count()).toBe(1);
+
+      service[ '_api' ].then(api => {
+        expect(api).toBe(<any> expectedResult);
+        expect(repuxWeb3ServiceSpy.getRepuxApiInstance.calls.count()).toBe(1);
+        done();
+      });
     });
   });
 
@@ -89,39 +93,21 @@ describe('DataProductService', () => {
     });
   });
 
-  describe('#_getDebouncedPromise()', () => {
-    it('should return promise if it exists in _promises array', () => {
-      const expectedResult = Promise.resolve([ 'PRODUCT' ]);
-      service[ '_promises' ][ 'boughtData' ] = expectedResult;
-      expect(service[ '_getDebouncedPromise' ]('boughtData', 'getBoughtDataProducts')).toEqual(expectedResult);
-    });
-
-    it('should return new promise if it doesn\'t exists in _promises array', () => {
-      const expectedResult = Promise.resolve([ 'PRODUCT' ]);
-      repuxWeb3ServiceSpy.getRepuxApiInstance.and.returnValue({
-        getBoughtDataProducts() {
-          return expectedResult;
-        }
-      });
-      expect(service[ '_getDebouncedPromise' ]('boughtData', 'getBoughtDataProducts')).toEqual(expectedResult);
-    });
-  });
-
   describe('#getDataProductData()', () => {
-    it('should call getDataProduct on repuxWeb3Api instance', () => {
+    it('should call getDataProduct on repuxWeb3Api instance', async () => {
       const getDataProduct = jasmine.createSpy();
       repuxWeb3ServiceSpy.getRepuxApiInstance.and.returnValue({ getDataProduct });
-      service.getDataProductData(productAddress);
+      await service.getDataProductData(productAddress);
       expect(getDataProduct.calls.count()).toBe(1);
       expect(getDataProduct.calls.allArgs()[ 0 ][ 0 ]).toBe(productAddress);
     });
   });
 
   describe('#getTransactionData()', () => {
-    it('should call getDataProduct on repuxWeb3Api instance', () => {
+    it('should call getDataProduct on repuxWeb3Api instance', async () => {
       const getDataProductTransaction = jasmine.createSpy();
       repuxWeb3ServiceSpy.getRepuxApiInstance.and.returnValue({ getDataProductTransaction });
-      service.getTransactionData(productAddress, walletAddress);
+      await service.getTransactionData(productAddress, walletAddress);
       expect(getDataProductTransaction.calls.count()).toBe(1);
       expect(getDataProductTransaction.calls.allArgs()[ 0 ][ 0 ]).toBe(productAddress);
       expect(getDataProductTransaction.calls.allArgs()[ 0 ][ 1 ]).toBe(walletAddress);
@@ -152,11 +138,11 @@ describe('DataProductService', () => {
   });
 
   describe('#purchaseDataProduct()', () => {
-    it('should call purchaseDataProduct on repuxWeb3Api instance', () => {
+    it('should call purchaseDataProduct on repuxWeb3Api instance', async () => {
       const buyerPublicKey = 'PUBLIC_KEY';
       const purchaseDataProduct = jasmine.createSpy();
       repuxWeb3ServiceSpy.getRepuxApiInstance.and.returnValue({ purchaseDataProduct });
-      service.purchaseDataProduct(productAddress, buyerPublicKey);
+      await service.purchaseDataProduct(productAddress, buyerPublicKey);
       expect(purchaseDataProduct.calls.count()).toBe(1);
       expect(purchaseDataProduct.calls.allArgs()[ 0 ][ 0 ]).toBe(productAddress);
       expect(purchaseDataProduct.calls.allArgs()[ 0 ][ 1 ]).toBe(buyerPublicKey);
@@ -164,57 +150,15 @@ describe('DataProductService', () => {
   });
 
   describe('#finaliseDataProductPurchase()', () => {
-    it('should call finaliseDataProductPurchase on repuxWeb3Api instance', () => {
+    it('should call finaliseDataProductPurchase on repuxWeb3Api instance', async () => {
       const metaHash = 'SOME_HASH';
       const finaliseDataProductPurchase = jasmine.createSpy();
       repuxWeb3ServiceSpy.getRepuxApiInstance.and.returnValue({ finaliseDataProductPurchase });
-      service.finaliseDataProductPurchase(productAddress, walletAddress, metaHash);
+      await service.finaliseDataProductPurchase(productAddress, walletAddress, metaHash);
       expect(finaliseDataProductPurchase.calls.count()).toBe(1);
       expect(finaliseDataProductPurchase.calls.allArgs()[ 0 ][ 0 ]).toBe(productAddress);
       expect(finaliseDataProductPurchase.calls.allArgs()[ 0 ][ 1 ]).toBe(walletAddress);
       expect(finaliseDataProductPurchase.calls.allArgs()[ 0 ][ 2 ]).toBe(metaHash);
-    });
-  });
-
-  describe('#getBoughtDataProducts()', () => {
-    it('should call _getDebouncedPromise', async () => {
-      const expectedResult = [];
-      const getDebouncedPromise = jasmine.createSpy();
-      getDebouncedPromise.and.returnValue(Promise.resolve(expectedResult));
-      service[ '_getDebouncedPromise' ] = getDebouncedPromise;
-      const result = await service.getBoughtDataProducts();
-      expect(result).toEqual(<any> expectedResult);
-      expect(getDebouncedPromise.calls.count()).toBe(1);
-      expect(getDebouncedPromise.calls.allArgs()[ 0 ][ 0 ]).toBe('boughtData');
-      expect(getDebouncedPromise.calls.allArgs()[ 0 ][ 1 ]).toBe('getBoughtDataProducts');
-    });
-  });
-
-  describe('#getBoughtAndFinalisedDataProducts()', () => {
-    it('should call _getDebouncedPromise', async () => {
-      const expectedResult = [];
-      const getDebouncedPromise = jasmine.createSpy();
-      getDebouncedPromise.and.returnValue(Promise.resolve(expectedResult));
-      service[ '_getDebouncedPromise' ] = getDebouncedPromise;
-      const result = await service.getBoughtAndFinalisedDataProducts();
-      expect(result).toEqual(<any> expectedResult);
-      expect(getDebouncedPromise.calls.count()).toBe(1);
-      expect(getDebouncedPromise.calls.allArgs()[ 0 ][ 0 ]).toBe('boughtAndFinalisedData');
-      expect(getDebouncedPromise.calls.allArgs()[ 0 ][ 1 ]).toBe('getBoughtAndFinalisedDataProducts');
-    });
-  });
-
-  describe('#getCreatedDataProducts()', () => {
-    it('should call _getDebouncedPromise', async () => {
-      const expectedResult = [];
-      const getDebouncedPromise = jasmine.createSpy();
-      getDebouncedPromise.and.returnValue(Promise.resolve(expectedResult));
-      service[ '_getDebouncedPromise' ] = getDebouncedPromise;
-      const result = await service.getCreatedDataProducts();
-      expect(result).toEqual(<any> expectedResult);
-      expect(getDebouncedPromise.calls.count()).toBe(1);
-      expect(getDebouncedPromise.calls.allArgs()[ 0 ][ 0 ]).toBe('createdData');
-      expect(getDebouncedPromise.calls.allArgs()[ 0 ][ 1 ]).toBe('getCreatedDataProducts');
     });
   });
 
