@@ -48,8 +48,11 @@ export class WalletService implements OnDestroy {
     const currentStatus = await this.detectMetamaskStatus();
     let currentAccount;
 
-    if (this.repuxWeb3Service.getRepuxApiInstance()) {
-      currentAccount = await this.repuxWeb3Service.getRepuxApiInstance().getDefaultAccount();
+    const web3Service: RepuxWeb3Service = await this.repuxWeb3Service;
+    const repuxApi = await web3Service.getRepuxApiInstance();
+
+    if (repuxApi) {
+      currentAccount = await repuxApi.getDefaultAccount();
     }
 
     if (currentStatus !== this.metamaskStatus) {
@@ -74,15 +77,17 @@ export class WalletService implements OnDestroy {
   }
 
   async detectMetamaskStatus(): Promise<MetamaskStatus> {
-    if (!this.repuxWeb3Service.isProviderAvailable()) {
+    const web3Service = await this.repuxWeb3Service;
+
+    if (!web3Service.isProviderAvailable()) {
       return MetamaskStatus.NotInstalled;
     }
 
-    if (!(await this.repuxWeb3Service.isNetworkCorrect())) {
+    if (!(await web3Service.isNetworkCorrect())) {
       return MetamaskStatus.WrongNetwork;
     }
 
-    if (!(await this.repuxWeb3Service.isDefaultAccountAvailable())) {
+    if (!(await web3Service.isDefaultAccountAvailable())) {
       return MetamaskStatus.NotLoggedIn;
     }
 
@@ -98,12 +103,15 @@ export class WalletService implements OnDestroy {
   }
 
   async getWalletData(): Promise<Wallet> {
-    if (!(await this.repuxWeb3Service.isDefaultAccountAvailable())) {
+    const web3Service = await this.repuxWeb3Service;
+    if (!(await web3Service.isDefaultAccountAvailable())) {
       return;
     }
 
-    const defaultAccount = await this.repuxWeb3Service.getRepuxApiInstance().getDefaultAccount();
-    const accountBalance = await this.repuxWeb3Service.getRepuxApiInstance().getBalance();
+    const web3Api = await web3Service.getRepuxApiInstance();
+    const defaultAccount = await web3Api.getDefaultAccount();
+    const accountBalance = await web3Api.getBalance();
+
     return new Wallet(defaultAccount, +accountBalance.toString());
   }
 

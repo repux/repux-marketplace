@@ -1,6 +1,5 @@
 import { Injectable, OnDestroy } from '@angular/core';
 import { RepuxWeb3Service } from './repux-web3.service';
-import BigNumber from 'bignumber.js';
 import { Observable, Observer } from 'rxjs';
 import {
   ContractEvent,
@@ -14,6 +13,8 @@ import { WalletService } from './wallet.service';
 import Wallet from '../shared/models/wallet';
 import { StorageService } from './storage.service';
 import { Subscription } from 'rxjs/internal/Subscription';
+import RepuxWeb3Api from 'repux-web3-api/repux-web3-api';
+import BigNumber from 'bignumber.js';
 
 @Injectable({
   providedIn: 'root'
@@ -36,52 +37,59 @@ export class DataProductService implements OnDestroy {
     this._walletSubscription = this._walletService.getWallet().subscribe(wallet => this._onWalletChange(wallet));
   }
 
-  private get _api() {
-    return this._repuxWeb3Service.getRepuxApiInstance();
+  private get _api(): Promise<RepuxWeb3Api> {
+    return new Promise<RepuxWeb3Api>(async (resolve) => {
+      const web3Service: RepuxWeb3Service = await this._repuxWeb3Service;
+      const repuxWeb3Api = await web3Service.getRepuxApiInstance();
+      resolve(repuxWeb3Api);
+    });
   }
 
-  getDataProductData(dataProductAddress: string) {
-    return this._api.getDataProduct(dataProductAddress);
+  async getDataProductData(dataProductAddress: string) {
+    return (await this._api).getDataProduct(dataProductAddress);
   }
 
-  getTransactionData(dataProductAddress: string, buyerAddress: string): Promise<DataProductTransaction> {
-    return this._api.getDataProductTransaction(dataProductAddress, buyerAddress);
+  async getTransactionData(dataProductAddress: string, buyerAddress: string): Promise<DataProductTransaction> {
+    return (await this._api).getDataProductTransaction(dataProductAddress, buyerAddress);
   }
 
-  publishDataProduct(metaFileHash: string, price: BigNumber, daysForDeliver: number): Promise<TransactionResult> {
-    return this._api.createDataProduct(metaFileHash, price, daysForDeliver);
+  async publishDataProduct(metaFileHash: string, price: BigNumber, daysForDeliver: number): Promise<TransactionResult> {
+    return (await this._api).createDataProduct(metaFileHash, price, daysForDeliver);
   }
 
-  purchaseDataProduct(dataProductAddress: string, buyerPublicKey: string): Promise<TransactionResult> {
-    return this._api.purchaseDataProduct(dataProductAddress, buyerPublicKey);
+  async purchaseDataProduct(dataProductAddress: string, buyerPublicKey: string): Promise<TransactionResult> {
+    return (await this._api).purchaseDataProduct(dataProductAddress, buyerPublicKey);
   }
 
-  finaliseDataProductPurchase(dataProductAddress: string, buyerAddress: string, buyerMetaHash: string): Promise<TransactionResult> {
-    return this._api.finaliseDataProductPurchase(dataProductAddress, buyerAddress, buyerMetaHash);
+  async finaliseDataProductPurchase(dataProductAddress: string, buyerAddress: string, buyerMetaHash: string): Promise<TransactionResult> {
+    return (await this._api).finaliseDataProductPurchase(dataProductAddress, buyerAddress, buyerMetaHash);
   }
 
-  getBoughtDataProducts(): Promise<string[]> {
-    return this._getDebouncedPromise('boughtData', 'getBoughtDataProducts');
+  async getBoughtDataProducts(): Promise<string[]> {
+    const api: RepuxWeb3Api = await this._api;
+    return api.getBoughtDataProducts();
   }
 
-  getBoughtAndFinalisedDataProducts(): Promise<string[]> {
-    return this._getDebouncedPromise('boughtAndFinalisedData', 'getBoughtAndFinalisedDataProducts');
+  async getBoughtAndFinalisedDataProducts(): Promise<string[]> {
+    const api: RepuxWeb3Api = await this._api;
+    return api.getBoughtAndFinalisedDataProducts();
   }
 
-  getCreatedDataProducts(): Promise<string[]> {
-    return this._getDebouncedPromise('createdData', 'getCreatedDataProducts');
+  async getCreatedDataProducts(): Promise<string[]> {
+    const api: RepuxWeb3Api = await this._api;
+    return api.getCreatedDataProducts();
   }
 
-  withdrawFundsFromDataProduct(dataProductAddress: string): Promise<TransactionResult> {
-    return this._api.withdrawFundsFromDataProduct(dataProductAddress);
+  async withdrawFundsFromDataProduct(dataProductAddress: string): Promise<TransactionResult> {
+    return (await this._api).withdrawFundsFromDataProduct(dataProductAddress);
   }
 
-  disableDataProduct(dataProductAddress: string): Promise<TransactionResult> {
-    return this._api.disableDataProduct(dataProductAddress);
+  async disableDataProduct(dataProductAddress: string): Promise<TransactionResult> {
+    return (await this._api).disableDataProduct(dataProductAddress);
   }
 
-  cancelDataProductPurchase(dataProductAddress: string): Promise<TransactionResult> {
-    return this._api.cancelDataProductPurchase(dataProductAddress);
+  async cancelDataProductPurchase(dataProductAddress: string): Promise<TransactionResult> {
+    return (await this._api).cancelDataProductPurchase(dataProductAddress);
   }
 
   watchForDataProductUpdate(_dataProductAddress?: string, _dataProductUpdateAction?: DataProductUpdateAction)
@@ -149,28 +157,17 @@ export class DataProductService implements OnDestroy {
     this._saveToStore(config);
   }
 
-  private _getDebouncedPromise(promiseName, functionName) {
-    if (this._promises[ promiseName ]) {
-      return this._promises[ promiseName ];
-    }
-
-    this._promises[ promiseName ] = this._api[ functionName ]();
-    this._promises[ promiseName ]
-      .then(() => delete this._promises[ promiseName ])
-      .catch(() => delete this._promises[ promiseName ]);
-
-    return this._promises[ promiseName ];
-  }
-
   private _dataProductUpdateObserver(observer: Observer<DataProductEvent>) {
     const config = {
       fromBlock: this._getLastReadBlock() + 1,
       toBlock: 'latest'
     };
 
-    this._api.watchForDataProductUpdate(config, (result: DataProductEvent) => {
-      this._setLastReadBlock(result.blockNumber);
-      observer.next(result);
-    }).then(event => this._productUpdateEvent = event);
+    this._api.then(api => {
+      api.watchForDataProductUpdate(config, (result: DataProductEvent) => {
+        this._setLastReadBlock(result.blockNumber);
+        observer.next(result);
+      }).then(event => this._productUpdateEvent = event);
+    });
   }
 }

@@ -25,6 +25,10 @@ export class RepuxWeb3Service {
   }
 
   async isNetworkCorrect(): Promise<boolean> {
+    if (!this.repuxWeb3Api) {
+      return false;
+    }
+
     const netId = await this.repuxWeb3Api.getNetworkId();
     return +netId >= environment.networkId;
   }
@@ -33,12 +37,12 @@ export class RepuxWeb3Service {
     return this.web3;
   }
 
-  getRepuxApiInstance(): RepuxWeb3Api {
+  getRepuxApiInstance(): Promise<RepuxWeb3Api> {
     return this.repuxWeb3Api;
   }
 }
 
-export function RepuxWeb3ServiceFactory() {
+export async function RepuxWeb3ServiceFactory(): Promise<RepuxWeb3Api> {
   const web3Provider = window.web3;
   let repuxWeb3Api;
 
@@ -47,6 +51,13 @@ export function RepuxWeb3ServiceFactory() {
       REGISTRY_CONTRACT_ADDRESS: environment.repux.registryContractAddress,
       DEMOTOKEN_CONTRACT_ADDRESS: environment.repux.demoTokenContractAddress
     });
+
+    try {
+      await repuxWeb3Api.init();
+    } catch (err) {
+      console.log(err);
+      return new RepuxWeb3Service(web3Provider, undefined);
+    }
   }
 
   return new RepuxWeb3Service(web3Provider, repuxWeb3Api);
