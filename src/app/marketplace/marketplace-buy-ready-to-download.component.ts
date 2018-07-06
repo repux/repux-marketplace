@@ -4,22 +4,21 @@ import { WalletService } from '../services/wallet.service';
 import { Subscription } from 'rxjs/internal/Subscription';
 
 @Component({
-  selector: 'app-marketplace-buying-awaiting-finalisation',
-  templateUrl: './marketplace-buying-awaiting-finalisation.component.html',
-  styleUrls: [ './marketplace-buying-awaiting-finalisation.component.scss' ]
+  selector: 'app-marketplace-buy-ready-to-download',
+  templateUrl: './marketplace-buy-ready-to-download.component.html',
+  styleUrls: [ './marketplace-buy-ready-to-download.component.scss' ]
 })
-export class MarketplaceBuyingAwaitingFinalisationComponent implements OnDestroy {
+export class MarketplaceBuyReadyToDownloadComponent implements OnDestroy {
   public availableActions = [
-    'cancelPurchase'
+    'buy'
   ];
   public displayedColumns = [
     'name',
     'title',
     'category',
+    'size',
     'price',
     'transactionDate',
-    'daysForDeliver',
-    'deliveryDeadline',
     'actions'
   ];
   public staticQuery = {};
@@ -68,7 +67,7 @@ export class MarketplaceBuyingAwaitingFinalisationComponent implements OnDestroy
                 bool: {
                   must: [
                     { match: { 'transactions.buyerAddress': walletAddress } },
-                    { match: { 'transactions.finalised': false } }
+                    { match: { 'transactions.finalised': true } }
                   ]
                 }
               }

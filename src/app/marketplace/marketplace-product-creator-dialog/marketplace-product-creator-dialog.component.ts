@@ -102,6 +102,7 @@ export class MarketplaceProductCreatorDialogComponent implements OnDestroy {
       new BigNumber(this.formGroup.value.price),
       this.fileInput.value[ 0 ],
       this.formGroup.value.daysForDeliver,
+      this.dialog
     );
 
     this.taskManagerService.addTask(fileUploadTask);

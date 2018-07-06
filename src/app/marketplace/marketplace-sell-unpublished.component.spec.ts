@@ -3,6 +3,7 @@ import { MarketplaceSellUnpublishedComponent } from './marketplace-sell-unpublis
 import { Component, Input } from '@angular/core';
 import { DataProduct } from '../shared/models/data-product';
 import { UnpublishedProductsService } from '../services/unpublished-products.service';
+import { BehaviorSubject } from 'rxjs/internal/BehaviorSubject';
 
 @Component({ selector: 'app-data-product-list', template: '' })
 class DataProductListStubComponent {
@@ -17,11 +18,12 @@ describe('MarketplaceSellUnpublishedComponent', () => {
   let component: MarketplaceSellUnpublishedComponent;
   let fixture: ComponentFixture<MarketplaceSellUnpublishedComponent>;
   let unpublishedProductsService;
+  const dataProduct = new DataProduct();
 
   beforeEach(fakeAsync(() => {
-    unpublishedProductsService = {
-      products: [ 'DATA_PRODUCT' ]
-    };
+    unpublishedProductsService = jasmine.createSpyObj('UnpublishedProductsService', [ 'getProducts' ]);
+    unpublishedProductsService.getProducts.and.returnValue(new BehaviorSubject<DataProduct[]>([ dataProduct ]));
+
     TestBed.configureTestingModule({
       declarations: [
         MarketplaceSellUnpublishedComponent,
@@ -41,7 +43,7 @@ describe('MarketplaceSellUnpublishedComponent', () => {
 
   describe('#get dataProducts()', () => {
     it('should return products array from unpublishedProductsService', () => {
-      expect(component.dataProducts).toEqual(<any> [ 'DATA_PRODUCT' ]);
+      expect(component.dataProducts).toEqual([ dataProduct ]);
     });
   });
 });

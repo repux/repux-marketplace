@@ -1,9 +1,9 @@
 import { ComponentFixture, fakeAsync, TestBed } from '@angular/core/testing';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { WalletService } from '../services/wallet.service';
-import { MarketplaceBuyingAwaitingFinalisationComponent } from './marketplace-buying-awaiting-finalisation.component';
 import Wallet from '../shared/models/wallet';
 import { Component, Input } from '@angular/core';
+import { MarketplaceBuyReadyToDownloadComponent } from './marketplace-buy-ready-to-download.component';
 import { MaterialModule } from '../material.module';
 
 @Component({ selector: 'app-data-product-list', template: '' })
@@ -14,9 +14,9 @@ class DataProductListStubComponent {
   @Input() buyerAddress: string;
 }
 
-describe('MarketplaceBuyingAwaitingFinalisationComponent', () => {
-  let component: MarketplaceBuyingAwaitingFinalisationComponent;
-  let fixture: ComponentFixture<MarketplaceBuyingAwaitingFinalisationComponent>;
+describe('MarketplaceBuyReadyToDownloadComponent', () => {
+  let component: MarketplaceBuyReadyToDownloadComponent;
+  let fixture: ComponentFixture<MarketplaceBuyReadyToDownloadComponent>;
   let walletServiceSpy;
   const buyerAddress = '0x00';
 
@@ -28,7 +28,7 @@ describe('MarketplaceBuyingAwaitingFinalisationComponent', () => {
     });
     TestBed.configureTestingModule({
       declarations: [
-        MarketplaceBuyingAwaitingFinalisationComponent,
+        MarketplaceBuyReadyToDownloadComponent,
         DataProductListStubComponent
       ],
       imports: [
@@ -41,20 +41,11 @@ describe('MarketplaceBuyingAwaitingFinalisationComponent', () => {
     })
       .compileComponents();
 
-    fixture = TestBed.createComponent(MarketplaceBuyingAwaitingFinalisationComponent);
+    fixture = TestBed.createComponent(MarketplaceBuyReadyToDownloadComponent);
     component = fixture.componentInstance;
 
     fixture.detectChanges();
   }));
-
-  describe('#get buyerAddress()', () => {
-    it('should return wallet address', () => {
-      const expectedResult = buyerAddress;
-      expect(component.buyerAddress).toBeUndefined();
-      component[ '_wallet' ] = new Wallet(expectedResult, 1);
-      expect(component.buyerAddress).toBe(expectedResult);
-    });
-  });
 
   describe('#_onWalletChange()', () => {
     it('should set _wallet and staticQuery', () => {
@@ -82,7 +73,7 @@ describe('MarketplaceBuyingAwaitingFinalisationComponent', () => {
                   bool: {
                     must: [
                       { match: { 'transactions.buyerAddress': wallet.address } },
-                      { match: { 'transactions.finalised': false } }
+                      { match: { 'transactions.finalised': true } }
                     ]
                   }
                 }

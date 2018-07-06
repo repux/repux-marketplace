@@ -35,10 +35,10 @@ describe('NotificationsService', () => {
   });
 
   describe('#addParser()', () => {
-    it('should add parser function to specified notification type and call _init method', () => {
+    it('should add parser function to specified notification type and call _init method', async () => {
       service[ '_init' ] = jasmine.createSpy();
       const parser = (notification: Notification) => Promise.resolve('RESULT');
-      service.addParser(NotificationType.DATA_PRODUCT_TO_FINALISATION, parser);
+      await service.addParser(NotificationType.DATA_PRODUCT_TO_FINALISATION, parser);
       expect(service[ '_parsers' ][ NotificationType.DATA_PRODUCT_TO_FINALISATION ]).toEqual(parser);
       expect((<any> service[ '_init' ]).calls.count()).toBe(1);
     });

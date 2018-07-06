@@ -76,7 +76,7 @@
           <div class="row">
             Total deposit
             <mat-icon
-                matTooltip="Funds accumulated in the product Smart Contract that can be released using the Withdraw function">
+              matTooltip="Funds accumulated in the product Smart Contract that can be released using the Withdraw function">
               help
             </mat-icon>
           </div>
@@ -112,7 +112,8 @@
       <!-- Delivery deadline -->
       <ng-container matColumnDef="deliveryDeadline">
         <mat-header-cell *matHeaderCellDef> Delivery deadline
-          <mat-icon matTooltip="Once passed and seller didn't finalise the transaction, buyer can withdraw money and transaction will be cancelled">
+          <mat-icon
+            matTooltip="Once passed and seller didn't finalise the transaction, buyer can withdraw money and transaction will be cancelled">
             help
           </mat-icon>
         </mat-header-cell>
@@ -126,19 +127,19 @@
         <mat-cell *matCellDef="let element" (click)="$event.stopPropagation()">
           <div class="row">
             <app-marketplace-buy-product-button *ngIf="availableActions.includes('buy')"
-                                    [dataProduct]="element"></app-marketplace-buy-product-button>
+                                                [dataProduct]="element"></app-marketplace-buy-product-button>
 
             <app-marketplace-cancel-purchase-button *ngIf="availableActions.includes('cancelPurchase')"
-                                        [dataProduct]="element"></app-marketplace-cancel-purchase-button>
+                                                    [dataProduct]="element"></app-marketplace-cancel-purchase-button>
 
             <app-marketplace-publish-button *ngIf="availableActions.includes('publish')"
-                                [dataProduct]="element"></app-marketplace-publish-button>
+                                            [dataProduct]="element"></app-marketplace-publish-button>
 
             <app-marketplace-unpublish-button *ngIf="availableActions.includes('unpublish')"
-                                  [dataProduct]="element"></app-marketplace-unpublish-button>
+                                              [dataProduct]="element"></app-marketplace-unpublish-button>
 
             <app-marketplace-withdraw-button *ngIf="availableActions.includes('withdraw')"
-                                 [dataProduct]="element"></app-marketplace-withdraw-button>
+                                             [dataProduct]="element"></app-marketplace-withdraw-button>
           </div>
         </mat-cell>
       </ng-container>
@@ -160,7 +161,8 @@
   <div *ngIf="displayPendingTransactions && getTransactionsToFinalisation(element).length" class="details">
     <strong class="detail-header">Transactions:</strong>
     <app-marketplace-data-product-transactions-list
-        [dataProduct]="element"
-        [transactions]="getTransactionsToFinalisation(element)"></app-marketplace-data-product-transactions-list>
+      [dataProduct]="element"
+      [transactions]="getTransactionsToFinalisation(element)"
+      (finaliseSuccess)="onFinaliseSuccess($event)"></app-marketplace-data-product-transactions-list>
   </div>
 </ng-template>

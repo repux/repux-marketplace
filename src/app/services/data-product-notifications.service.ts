@@ -7,105 +7,65 @@ import { Injectable, OnDestroy } from '@angular/core';
 import { Subscription } from 'rxjs/internal/Subscription';
 import Wallet from '../shared/models/wallet';
 import { WalletService } from './wallet.service';
+import { PendingFinalisationService } from './data-product-notifications/pending-finalisation.service';
+import { AwaitingFinalisationService } from './data-product-notifications/awaiting-finalisation.service';
+import { ReadyToDownloadService } from './data-product-notifications/ready-to-download.service';
 import { BehaviorSubject } from 'rxjs/internal/BehaviorSubject';
+import { DataProductNotificationInterface } from './data-product-notifications/data-product-notification-interface';
+
+export interface PurchaseEntry {
+  dataProductAddress: string;
+  buyerAddress: string;
+}
 
 @Injectable({
   providedIn: 'root'
 })
 export class DataProductNotificationsService implements OnDestroy {
-  private _finalisationRequests = [];
-  private _awaitingFinalisation = [];
-  private _purchaseSubscriptions: Subscription[] = [];
-  private _finaliseSubscriptions: Subscription[] = [];
+  private _subscriptions: Subscription[] = [];
   private _walletSubscription: Subscription;
   private _wallet: Wallet;
-  private _createdProductsAddresses: string[];
-  private _boughtProductsAddresses: string[];
-  private _finalisationRequestsSubject = new BehaviorSubject<string[]>([]);
-  private _awaitingFinalisationSubject = new BehaviorSubject<string[]>([]);
+  private _parsersInitialized: boolean;
+  private _createdProductsAddressesSubject = new BehaviorSubject<string[]>([]);
+  private _boughtProductsAddressesSubject = new BehaviorSubject<string[]>([]);
+  private _parsers: DataProductNotificationInterface[];
 
   constructor(
     private _notificationsService: NotificationsService,
     private _dataProductService: DataProductService,
-    private _walletService: WalletService
+    private _walletService: WalletService,
+    private _pendingFinalisationService: PendingFinalisationService,
+    private _awaitingFinalisationService: AwaitingFinalisationService,
+    private _readyToDownloadService: ReadyToDownloadService
   ) {
-    this._notificationsService.addParser(
-      NotificationType.DATA_PRODUCT_TO_FINALISATION,
-      (notification: Notification) => this._parseDataProductToFinalisation(notification)
-    );
-    this._notificationsService.addParser(
-      NotificationType.DATA_PRODUCT_PURCHASED,
-      (notification: Notification) => this._parseDataProductPurchased(notification)
-    );
-    this._notificationsService.addParser(
-      NotificationType.DATA_PRODUCT_FINALISED,
-      (notification: Notification) => this._parseDataProductFinalised(notification)
-    );
+    this._parsers = [
+      _pendingFinalisationService,
+      _awaitingFinalisationService,
+      _readyToDownloadService
+    ];
+
     this._walletSubscription = this._walletService.getWallet().subscribe(wallet => this._onWalletChange(wallet));
   }
 
   watchForProductPurchase(productAddress: string): void {
-    this._purchaseSubscriptions.push(
+    this._subscriptions.push(
       this._dataProductService.watchForDataProductUpdate(productAddress, DataProductUpdateAction.PURCHASE)
         .subscribe(purchaseEvent => this._onProductPurchase(purchaseEvent))
     );
   }
 
+  watchForAllProductPurchases(): void {
+    this._subscriptions.push(
+      this._dataProductService.watchForDataProductUpdate(null, DataProductUpdateAction.PURCHASE)
+        .subscribe(purchaseEvent => this._onProductPurchase(purchaseEvent))
+    );
+  }
+
   watchForProductFinalise(productAddress: string): void {
-    this._finaliseSubscriptions.push(
+    this._subscriptions.push(
       this._dataProductService.watchForDataProductUpdate(productAddress, DataProductUpdateAction.FINALISE)
         .subscribe(purchaseEvent => this._onProductFinalise(purchaseEvent))
     );
-  }
-
-  findFinalisationRequest(_request: { dataProductAddress: string, buyerAddress: string }) {
-    return this._finalisationRequests.find(request =>
-      request.dataProductAddress === _request.dataProductAddress &&
-      request.buyerAddress === _request.buyerAddress
-    );
-  }
-
-  addFinalisationRequest(request: { dataProductAddress: string, buyerAddress: string }) {
-    this._finalisationRequests.push(request);
-    this._finalisationRequestsSubject.next(this._finalisationRequests);
-  }
-
-  removeFinalisationRequest(request: { dataProductAddress: string, buyerAddress: string }) {
-    const foundRequest = this.findFinalisationRequest(request);
-    if (foundRequest) {
-      const index = this._finalisationRequests.indexOf(foundRequest);
-      this._finalisationRequests.splice(index, 1);
-      this._finalisationRequestsSubject.next(this._finalisationRequests);
-    }
-  }
-
-  findAwaitingFinalisation(_request: { dataProductAddress: string, buyerAddress: string }) {
-    return this._awaitingFinalisation.find(request =>
-      request.dataProductAddress === _request.dataProductAddress &&
-      request.buyerAddress === _request.buyerAddress
-    );
-  }
-
-  addAwaitingFinalisation(request: { dataProductAddress: string, buyerAddress: string }) {
-    this._awaitingFinalisation.push(request);
-    this._awaitingFinalisationSubject.next(this._awaitingFinalisation);
-  }
-
-  removeAwaitingFinalisation(request: { dataProductAddress: string, buyerAddress: string }) {
-    const foundRequest = this.findAwaitingFinalisation(request);
-    if (foundRequest) {
-      const index = this._awaitingFinalisation.indexOf(foundRequest);
-      this._awaitingFinalisation.splice(index, 1);
-      this._awaitingFinalisationSubject.next(this._awaitingFinalisation);
-    }
-  }
-
-  getFinalisationRequests() {
-    return this._finalisationRequestsSubject.asObservable();
-  }
-
-  getAwaitingFinalisation() {
-    return this._awaitingFinalisationSubject.asObservable();
   }
 
   ngOnDestroy() {
@@ -117,62 +77,82 @@ export class DataProductNotificationsService implements OnDestroy {
   }
 
   addCreatedProductAddress(productAddress) {
-    this._createdProductsAddresses.push(productAddress);
-    this.watchForProductPurchase(productAddress);
+    const currentValue = this._createdProductsAddressesSubject.getValue();
+    if (!currentValue.includes(productAddress)) {
+      this._createdProductsAddressesSubject.next([ ...currentValue, productAddress ]);
+      this.watchForProductPurchase(productAddress);
+    }
   }
 
   removeCreatedProductAddress(productAddress) {
-    const index = this._createdProductsAddresses.indexOf(productAddress);
-    if (index !== -1) {
-      this._createdProductsAddresses.splice(index, 1);
-    }
+    this._createdProductsAddressesSubject.next(
+      this._createdProductsAddressesSubject.getValue()
+        .filter(createdProductAddress => createdProductAddress !== productAddress)
+    );
+
+    this._clearSubscriptions();
+    this._initSubscriptions();
   }
 
   addBoughtProductAddress(productAddress) {
-    this._boughtProductsAddresses.push(productAddress);
-    this.watchForProductPurchase(productAddress);
-    this.watchForProductFinalise(productAddress);
-  }
-
-  removeBoughtProductAddress(productAddress) {
-    const index = this._boughtProductsAddresses.indexOf(productAddress);
-    if (index !== -1) {
-      this._boughtProductsAddresses.splice(index, 1);
+    const currentValue = this._boughtProductsAddressesSubject.getValue();
+    if (!currentValue.includes(productAddress)) {
+      this._boughtProductsAddressesSubject.next([ ...currentValue, productAddress ]);
+      this.watchForProductPurchase(productAddress);
     }
   }
 
-  private _onWalletChange(wallet: Wallet) {
+  removeBoughtProductAddress(productAddress) {
+    this._boughtProductsAddressesSubject.next(
+      this._boughtProductsAddressesSubject.getValue()
+        .filter(createdProductAddress => createdProductAddress !== productAddress)
+    );
+
+    this._clearSubscriptions();
+    this._initSubscriptions();
+  }
+
+  getCreatedProductsAddresses() {
+    return this._createdProductsAddressesSubject.asObservable();
+  }
+
+  getBoughtProductsAddresses() {
+    return this._boughtProductsAddressesSubject.asObservable();
+  }
+
+  private async _onWalletChange(wallet: Wallet): Promise<void> {
     if (!wallet || wallet === this._wallet) {
       return;
     }
 
     this._wallet = wallet;
-    this._finalisationRequests = [];
-    this._finalisationRequestsSubject.next(this._finalisationRequests);
-    this._awaitingFinalisation = [];
-    this._awaitingFinalisationSubject.next(this._awaitingFinalisation);
-    this._clearSubscriptions();
-    this._init();
+    return this._init();
   }
 
   private async _init(): Promise<void> {
-    this._createdProductsAddresses = await this._dataProductService.getCreatedDataProducts();
-    this._createdProductsAddresses.forEach(productAddress => {
-      this.watchForProductPurchase(productAddress);
+    this._parsers.forEach(parser => {
+      parser.reset();
     });
 
-    this._boughtProductsAddresses = await this._dataProductService.getBoughtDataProducts();
-    this._boughtProductsAddresses.forEach(productAddress => {
-      this.watchForProductPurchase(productAddress);
-      this.watchForProductFinalise(productAddress);
-    });
+    this._createdProductsAddressesSubject.next(await this._dataProductService.getCreatedDataProducts());
+    this._boughtProductsAddressesSubject.next(await this._dataProductService.getBoughtDataProducts());
+
+    this._initParsers();
+    this._clearSubscriptions();
+    this._initSubscriptions();
   }
 
   private _onProductPurchase(purchaseEvent: DataProductEvent): Promise<void> {
-    const type = this._createdProductsAddresses.includes(purchaseEvent.dataProductAddress)
+    const type = this._createdProductsAddressesSubject.getValue().includes(purchaseEvent.dataProductAddress)
       ? NotificationType.DATA_PRODUCT_TO_FINALISATION
       : NotificationType.DATA_PRODUCT_PURCHASED;
 
+    if (type === NotificationType.DATA_PRODUCT_PURCHASED &&
+      purchaseEvent.userAddress !== this._wallet.address) {
+      return;
+    }
+
+    this.addBoughtProductAddress(purchaseEvent.dataProductAddress);
     return this._notificationsService.pushNotification(new Notification(type, { purchaseEvent }));
   }
 
@@ -180,70 +160,36 @@ export class DataProductNotificationsService implements OnDestroy {
     return this._notificationsService.pushNotification(new Notification(NotificationType.DATA_PRODUCT_FINALISED, { finaliseEvent }));
   }
 
-  private async _parseDataProductToFinalisation(notification: Notification): Promise<string | null> {
-    const purchaseEvent = notification.data.purchaseEvent;
-    const transaction = await this._dataProductService.getTransactionData(purchaseEvent.dataProductAddress, purchaseEvent.userAddress);
-    const notificationMessage = `User with account ${purchaseEvent.userAddress} purchased your product ` +
-      `${purchaseEvent.dataProductAddress}. Please finalise this transaction.`;
-    const request = {
-      dataProductAddress: purchaseEvent.dataProductAddress,
-      buyerAddress: purchaseEvent.userAddress
-    };
-
-    if (!transaction || transaction.finalised || this.findFinalisationRequest(request)) {
-      notification.read = true;
-      this._notificationsService.saveNotifications();
-      return notificationMessage;
-    }
-
-    this.addFinalisationRequest(request);
-
-    return notificationMessage;
-  }
-
-  private async _parseDataProductPurchased(notification: Notification): Promise<string | null> {
-    const purchaseEvent = notification.data.purchaseEvent;
-    const transaction = await this._dataProductService.getTransactionData(purchaseEvent.dataProductAddress, purchaseEvent.userAddress);
-    const notificationMessage = `You have purchased product ${purchaseEvent.dataProductAddress} ` +
-      `Please wait to transaction finalisation.`;
-    const request = {
-      dataProductAddress: purchaseEvent.dataProductAddress,
-      buyerAddress: purchaseEvent.userAddress
-    };
-
-    if (!transaction || transaction.finalised || this.findAwaitingFinalisation(request)) {
-      notification.read = true;
-      this._notificationsService.saveNotifications();
-      return notificationMessage;
-    }
-
-    this.addAwaitingFinalisation(request);
-
-    return notificationMessage;
-  }
-
-  private async _parseDataProductFinalised(notification: Notification) {
-    const purchaseEvent = notification.data.finaliseEvent;
-    const notificationMessage = `Your purchase for product ${purchaseEvent.dataProductAddress} is finalised.`;
-    const request = {
-      dataProductAddress: purchaseEvent.dataProductAddress,
-      buyerAddress: purchaseEvent.userAddress
-    };
-
-    this.removeFinalisationRequest(request);
-
-    return notificationMessage;
-  }
-
   private _clearSubscriptions() {
-    if (this._purchaseSubscriptions.length) {
-      this._purchaseSubscriptions.forEach(subscription => subscription.unsubscribe());
-      this._purchaseSubscriptions = [];
+    if (this._subscriptions.length) {
+      this._subscriptions.forEach(subscription => subscription.unsubscribe());
+      this._subscriptions = [];
     }
+  }
 
-    if (this._finaliseSubscriptions.length) {
-      this._finaliseSubscriptions.forEach(subscription => subscription.unsubscribe());
-      this._finaliseSubscriptions = [];
+  private _initSubscriptions() {
+    this._createdProductsAddressesSubject.getValue().forEach(productAddress => {
+      this.watchForProductPurchase(productAddress);
+    });
+
+    this._boughtProductsAddressesSubject.getValue().forEach(productAddress => {
+      this.watchForProductFinalise(productAddress);
+    });
+
+    this.watchForAllProductPurchases();
+  }
+
+  private _initParsers() {
+    if (!this._parsersInitialized) {
+
+      this._parsers.forEach(async parser => {
+        await this._notificationsService.addParser(
+          parser.notificationType,
+          (notification: Notification) => parser.parse(notification)
+        );
+      });
+
+      this._parsersInitialized = true;
     }
   }
 }

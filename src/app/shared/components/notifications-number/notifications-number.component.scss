@@ -1,0 +1,11 @@
+.mat-chip-list {
+  display: block;
+
+  &:focus {
+    outline: none;
+  }
+}
+
+.mat-chip {
+  cursor: pointer;
+}

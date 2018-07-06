@@ -19,16 +19,19 @@ export class MarketplacePublishButtonComponent implements OnDestroy {
   public wallet: Wallet;
 
   private _transactionDialogSubscription: Subscription;
+  private _unpublishedProductsSubscription: Subscription;
+  private _products: DataProduct[];
 
   constructor(
     private _unpublishedProductsService: UnpublishedProductsService,
     private _dataProductService: DataProductService,
     private _dialog: MatDialog
   ) {
+    this._unpublishedProductsSubscription = this._unpublishedProductsService.getProducts().subscribe(products => this._products = products);
   }
 
   get isUnpublished() {
-    return this._unpublishedProductsService.products.find(dataProduct => dataProduct.sellerMetaHash === this.dataProduct.sellerMetaHash);
+    return this._products.find(dataProduct => dataProduct.sellerMetaHash === this.dataProduct.sellerMetaHash);
   }
 
   async publish() {
@@ -67,6 +70,10 @@ export class MarketplacePublishButtonComponent implements OnDestroy {
 
   ngOnDestroy() {
     this._unsubscribeTransactionDialog();
+
+    if (this._unpublishedProductsSubscription) {
+      this._unpublishedProductsSubscription.unsubscribe();
+    }
   }
 
   private _unsubscribeTransactionDialog() {

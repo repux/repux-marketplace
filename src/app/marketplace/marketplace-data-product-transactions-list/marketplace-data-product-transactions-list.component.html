@@ -34,7 +34,8 @@
     <mat-cell *matCellDef="let element">
       <div class="row">
         <app-marketplace-finalise-button [transaction]="element"
-                              [dataProduct]="dataProduct"></app-marketplace-finalise-button>
+                                         [dataProduct]="dataProduct"
+                                         (success)="onFinaliseSuccess($event)"></app-marketplace-finalise-button>
       </div>
     </mat-cell>
   </ng-container>

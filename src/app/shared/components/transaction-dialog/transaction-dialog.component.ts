@@ -16,15 +16,17 @@ export class TransactionDialogComponent {
   }
 
   public async callTransaction() {
+    let result;
+
     try {
       this.error = null;
-      await this.transaction();
+      result = await this.transaction();
     } catch (error) {
       this.error = error.message;
     }
 
     if (!this.error) {
-      this.dialogRef.close(true);
+      this.dialogRef.close(result || true);
     }
   }
 }

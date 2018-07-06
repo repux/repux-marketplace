@@ -8,14 +8,16 @@ import { KeyStoreService } from '../key-store/key-store.service';
 import { MatDialog } from '@angular/material';
 import { Subscription } from 'rxjs';
 import { TaskType } from './task-type';
+import { PendingFinalisationService } from '../services/data-product-notifications/pending-finalisation.service';
+import { TransactionDialogComponent } from '../shared/components/transaction-dialog/transaction-dialog.component';
+import { AsyncSubject } from 'rxjs/internal/AsyncSubject';
 
 export const STATUS = {
   REENCRYPTION: 'Reencryption',
-  WAITING_FOR_FINALISATION: 'Waiting for finalisation',
   FINISHED: 'Finished',
   CANCELED: 'Canceled',
   PENDING_FINALISATION: 'Pending finalisation',
-  REJECTED: 'Transaction rejected, try again'
+  REJECTED: 'Transaction rejected'
 };
 
 export class FileReencryptionTask implements Task {
@@ -25,6 +27,8 @@ export class FileReencryptionTask implements Task {
   private _reencryptor;
   private _result: string;
   private _taskManagerService: TaskManagerService;
+  private _finishSubject = new AsyncSubject();
+  private _transactionDialogSubscription: Subscription;
 
   constructor(
     private _dataProductAddress: string,
@@ -35,6 +39,7 @@ export class FileReencryptionTask implements Task {
     private _repuxLibService: RepuxLibService,
     private _dataProductService: DataProductService,
     private _keyStoreService: KeyStoreService,
+    private _pendingFinalisationService: PendingFinalisationService,
     private _dialog: MatDialog
   ) {
     this._name = `Selling ${this._dataProductAddress}`;
@@ -99,13 +104,13 @@ export class FileReencryptionTask implements Task {
         this._finished = true;
         this._errors.push(error);
         this._status = STATUS.CANCELED;
+        this._emitFinish(false);
+        this.destroy();
       })
       .on('finish', (eventType, result) => {
         this._progress = 100;
         this._result = result;
-        this._needsUserAction = true;
-        this._userActionName = 'Finalise';
-        this._status = STATUS.WAITING_FOR_FINALISATION;
+        this._finalise();
       })
       .on('progress, error, finish', () => {
         this._taskManagerService.onTaskEvent();
@@ -118,22 +123,74 @@ export class FileReencryptionTask implements Task {
     this._errors.push(STATUS.CANCELED);
     this._status = STATUS.CANCELED;
     this._taskManagerService.onTaskEvent();
+    this._emitFinish(false);
+    this.destroy();
+  }
+
+  onFinish() {
+    return this._finishSubject.asObservable();
+  }
+
+  destroy() {
+    this._unsubscribeTransactionDialog();
+
+    if (this._subscription) {
+      this._subscription.unsubscribe();
+      this._subscription = null;
+    }
   }
 
   async callUserAction(): Promise<any> {
-    try {
-      this._needsUserAction = false;
-      this._status = STATUS.PENDING_FINALISATION;
-      this._taskManagerService.onTaskEvent();
-      await this._dataProductService.finaliseDataProductPurchase(this._dataProductAddress, this._buyerAddress, this._result);
-      this._status = STATUS.FINISHED;
+    return;
+  }
+
+  private _emitFinish(value): void {
+    this._finishSubject.next(value);
+    this._finishSubject.complete();
+  }
+
+  private async _finalise(): Promise<any> {
+    this._status = STATUS.PENDING_FINALISATION;
+    this._taskManagerService.onTaskEvent();
+
+    const transactionDialogRef = this._dialog.open(TransactionDialogComponent, {
+      disableClose: true
+    });
+
+    this._unsubscribeTransactionDialog();
+    this._transactionDialogSubscription = transactionDialogRef.afterClosed().subscribe(result => {
       this._finished = true;
+
+      if (result) {
+        this._status = STATUS.FINISHED;
+        this._pendingFinalisationService.remove({
+          dataProductAddress: this._dataProductAddress,
+          buyerAddress: this._buyerAddress
+        });
+      } else {
+        this._errors.push(STATUS.REJECTED);
+        this._status = STATUS.REJECTED;
+      }
+
       this._taskManagerService.onTaskEvent();
-    } catch (error) {
-      console.warn(error);
-      this._needsUserAction = true;
-      this._status = STATUS.REJECTED;
-      this._taskManagerService.onTaskEvent();
+      this._emitFinish(result);
+      this.destroy();
+    });
+
+    const transactionDialog: TransactionDialogComponent = transactionDialogRef.componentInstance;
+    transactionDialog.transaction = () => this._dataProductService.finaliseDataProductPurchase(
+      this._dataProductAddress,
+      this._buyerAddress,
+      this._result
+    );
+
+    return transactionDialog.callTransaction();
+  }
+
+  private _unsubscribeTransactionDialog() {
+    if (this._transactionDialogSubscription) {
+      this._transactionDialogSubscription.unsubscribe();
+      this._transactionDialogSubscription = null;
     }
   }
 

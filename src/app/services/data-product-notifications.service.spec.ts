@@ -1,20 +1,16 @@
 import { DataProductNotificationsService } from './data-product-notifications.service';
-import { DataProductService } from './data-product.service';
-import { RepuxLibService } from './repux-lib.service';
-import { NotificationsService } from '../notifications/notifications.service';
-import { MatDialog } from '@angular/material';
-import { KeyStoreService } from '../key-store/key-store.service';
-import { TaskManagerService } from './task-manager.service';
 import { NotificationType } from '../notifications/notification-type';
 import { DataProductUpdateAction } from 'repux-web3-api';
 import { Notification } from '../notifications/notification';
-import BigNumber from 'bignumber.js';
 import Wallet from '../shared/models/wallet';
+import { PendingFinalisationService } from './data-product-notifications/pending-finalisation.service';
+import { AwaitingFinalisationService } from './data-product-notifications/awaiting-finalisation.service';
+import { ReadyToDownloadService } from './data-product-notifications/ready-to-download.service';
 
 describe('DataProductNotificationsService', () => {
   let service: DataProductNotificationsService;
   let notificationsService, repuxLibService, dataProductService, keyStoreService, taskManagerService, matDialog,
-    walletService;
+    walletService, pendingFinalisationService, awaitingFinalisationService, readyToDownloadService;
   const productAddress = '0x1111111111111111111111111111111111111111';
   const walletAddress = '0x0000000000000000000000000000000000000000';
 
@@ -29,7 +25,13 @@ describe('DataProductNotificationsService', () => {
     );
     dataProductService = jasmine.createSpyObj(
       'DataProductService',
-      [ 'getCreatedDataProducts', 'getBoughtDataProducts', 'watchForDataProductUpdate', 'getDataProductData', 'getTransactionData' ]
+      [
+        'getCreatedDataProducts',
+        'getBoughtDataProducts',
+        'watchForDataProductUpdate',
+        'getDataProductData',
+        'getTransactionData'
+      ]
     );
     keyStoreService = jasmine.createSpyObj(
       'KeyStoreService',
@@ -55,20 +57,36 @@ describe('DataProductNotificationsService', () => {
     });
     dataProductService.getCreatedDataProducts.and.returnValue(Promise.resolve([]));
     dataProductService.getBoughtDataProducts.and.returnValue(Promise.resolve([]));
+    pendingFinalisationService = new PendingFinalisationService(dataProductService, notificationsService);
+    awaitingFinalisationService = new AwaitingFinalisationService(dataProductService, notificationsService);
+    readyToDownloadService = new ReadyToDownloadService(
+      dataProductService,
+      notificationsService,
+      awaitingFinalisationService,
+      pendingFinalisationService
+    );
 
     service = new DataProductNotificationsService(
       notificationsService,
       dataProductService,
-      walletService
+      walletService,
+      pendingFinalisationService,
+      awaitingFinalisationService,
+      readyToDownloadService
     );
   });
 
   describe('#constructor()', () => {
-    it('should add parser to notificationsService', () => {
-      expect(notificationsService.addParser.calls.count()).toBe(3);
-      expect(notificationsService.addParser.calls.allArgs()[ 0 ][ 0 ]).toBe(NotificationType.DATA_PRODUCT_TO_FINALISATION);
-      expect(typeof notificationsService.addParser.calls.allArgs()[ 0 ][ 1 ]).toBe('function');
-      expect(dataProductService.getCreatedDataProducts.calls.count()).toBe(1);
+    it('should call getWallet on WalletService', () => {
+      expect(walletService.getWallet.calls.count()).toBe(1);
+    });
+
+    it('should initialise _parsers array', () => {
+      expect(service[ '_parsers' ]).toEqual([
+        pendingFinalisationService,
+        awaitingFinalisationService,
+        readyToDownloadService
+      ]);
     });
   });
 
@@ -76,11 +94,14 @@ describe('DataProductNotificationsService', () => {
     it('should create watchers for all products created by user', async () => {
       dataProductService.getCreatedDataProducts.and.returnValue(Promise.resolve([ productAddress ]));
       const watchForProductPurchase = jasmine.createSpy();
+      const watchForAllProductPurchases = jasmine.createSpy();
       service[ 'watchForProductPurchase' ] = watchForProductPurchase;
+      service[ 'watchForAllProductPurchases' ] = watchForAllProductPurchases;
 
       await service[ '_init' ]();
-      expect(watchForProductPurchase.calls.count()).toBe(1);
+      expect(watchForProductPurchase.calls.count()).toBe(2);
       expect(watchForProductPurchase.calls.allArgs()[ 0 ][ 0 ]).toBe(productAddress);
+      expect(watchForAllProductPurchases.calls.count()).toBe(2);
     });
   });
 
@@ -114,72 +135,22 @@ describe('DataProductNotificationsService', () => {
     it('should call pushNotification method on NotificationsService instance', () => {
       const purchaseEvent = {
         dataProductAddress: productAddress,
-        userAddress: '0x01',
+        userAddress: walletAddress,
         dataProductUpdateAction: DataProductUpdateAction.PURCHASE,
         blockNumber: 1
       };
 
+      const watchForProductPurchase = jasmine.createSpy();
+      service[ 'watchForProductPurchase' ] = watchForProductPurchase;
       service[ '_createdProductsAddresses' ] = [ productAddress ];
+
       service[ '_onProductPurchase' ](purchaseEvent);
+      expect(watchForProductPurchase.calls.count()).toBe(1);
       expect(notificationsService.pushNotification.calls.count()).toBe(1);
       expect(notificationsService.pushNotification.calls.allArgs()[ 0 ][ 0 ]).toEqual(new Notification(
-        NotificationType.DATA_PRODUCT_TO_FINALISATION, {
+        NotificationType.DATA_PRODUCT_PURCHASED, {
           purchaseEvent
         }));
-    });
-  });
-
-  describe('#_parseDataProductToFinalisation()', () => {
-    it('should return correct notification message when transaction is finalised', async () => {
-      dataProductService.getTransactionData.and.returnValue({
-        publicKey: 'PUBLIC_KEY',
-        buyerMetaHash: 'BUYER_META_HASH',
-        price: new BigNumber(1),
-        purchased: true,
-        finalised: true,
-        rated: false,
-        rating: new BigNumber(0)
-      });
-      const purchaseEvent = {
-        dataProductAddress: productAddress,
-        userAddress: '0x01',
-        dataProductUpdateAction: DataProductUpdateAction.PURCHASE,
-        blockNumber: 1
-      };
-      const notification = new Notification(NotificationType.DATA_PRODUCT_TO_FINALISATION, {
-        purchaseEvent
-      });
-
-      const result = await service[ '_parseDataProductToFinalisation' ](notification);
-      expect(notification.read).toBeTruthy();
-      expect(result).toBe(`User with account 0x01 purchased your product ${productAddress}. Please finalise this transaction.`);
-    });
-  });
-
-  describe('#_parseDataProductPurchased()', () => {
-    it('should return correct notification message when transaction is finalised', async () => {
-      dataProductService.getTransactionData.and.returnValue({
-        publicKey: 'PUBLIC_KEY',
-        buyerMetaHash: 'BUYER_META_HASH',
-        price: new BigNumber(1),
-        purchased: true,
-        finalised: true,
-        rated: false,
-        rating: new BigNumber(0)
-      });
-      const purchaseEvent = {
-        dataProductAddress: productAddress,
-        userAddress: '0x01',
-        dataProductUpdateAction: DataProductUpdateAction.PURCHASE,
-        blockNumber: 1
-      };
-      const notification = new Notification(NotificationType.DATA_PRODUCT_PURCHASED, {
-        purchaseEvent
-      });
-
-      const result = await service[ '_parseDataProductPurchased' ](notification);
-      expect(notification.read).toBeTruthy();
-      expect(result).toBe(`You have purchased product ${productAddress} Please wait to transaction finalisation.`);
     });
   });
 })

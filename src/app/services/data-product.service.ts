@@ -1,6 +1,6 @@
 import { Injectable, OnDestroy } from '@angular/core';
 import { RepuxWeb3Service } from './repux-web3.service';
-import { Observable, Observer } from 'rxjs';
+import { Observable } from 'rxjs';
 import {
   ContractEvent,
   DataProductEvent,
@@ -15,6 +15,7 @@ import { StorageService } from './storage.service';
 import { Subscription } from 'rxjs/internal/Subscription';
 import RepuxWeb3Api from 'repux-web3-api/repux-web3-api';
 import BigNumber from 'bignumber.js';
+import { ReplaySubject } from 'rxjs/internal/ReplaySubject';
 
 @Injectable({
   providedIn: 'root'
@@ -29,6 +30,7 @@ export class DataProductService implements OnDestroy {
   private _wallet: Wallet;
   private _productUpdateEvent: ContractEvent;
   private _walletSubscription: Subscription;
+  private _dataProductUpdateSubject: ReplaySubject<DataProductEvent>;
 
   constructor(
     private _repuxWeb3Service: RepuxWeb3Service,
@@ -99,7 +101,7 @@ export class DataProductService implements OnDestroy {
     }
 
     if (!this._dataProductUpdateObservable) {
-      this._dataProductUpdateObservable = new Observable(observer => this._dataProductUpdateObserver(observer));
+      this._dataProductUpdateObservable = this._createDataProductUpdateObserver();
     }
 
     return this._dataProductUpdateObservable.pipe(
@@ -142,6 +144,7 @@ export class DataProductService implements OnDestroy {
     if (this._productUpdateEvent) {
       this._productUpdateEvent.stopWatching();
       this._productUpdateEvent = null;
+      this._dataProductUpdateSubject.complete();
       this._dataProductUpdateObservable = null;
     }
   }
@@ -157,7 +160,9 @@ export class DataProductService implements OnDestroy {
     this._saveToStore(config);
   }
 
-  private _dataProductUpdateObserver(observer: Observer<DataProductEvent>) {
+  private _createDataProductUpdateObserver(): Observable<DataProductEvent> {
+    this._dataProductUpdateSubject = new ReplaySubject<DataProductEvent>();
+
     const config = {
       fromBlock: this._getLastReadBlock() + 1,
       toBlock: 'latest'
@@ -166,8 +171,10 @@ export class DataProductService implements OnDestroy {
     this._api.then(api => {
       api.watchForDataProductUpdate(config, (result: DataProductEvent) => {
         this._setLastReadBlock(result.blockNumber);
-        observer.next(result);
+        this._dataProductUpdateSubject.next(result);
       }).then(event => this._productUpdateEvent = event);
     });
+
+    return this._dataProductUpdateSubject.asObservable();
   }
 }

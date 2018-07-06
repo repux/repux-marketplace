@@ -6,6 +6,8 @@ import { MarketplacePublishButtonComponent } from './marketplace-publish-button.
 import { UnpublishedProductsService } from '../../services/unpublished-products.service';
 import { DataProductService } from '../../services/data-product.service';
 import { MaterialModule } from '../../material.module';
+import { BehaviorSubject } from 'rxjs/internal/BehaviorSubject';
+import { DataProduct } from '../../shared/models/data-product';
 
 describe('MarketplacePublishButtonComponent', () => {
   let component: MarketplacePublishButtonComponent;
@@ -16,10 +18,8 @@ describe('MarketplacePublishButtonComponent', () => {
   const sellerMetaHash = 'SELLER_META_HASH';
 
   beforeEach(fakeAsync(() => {
-    unpublishedProductsServiceSpy = jasmine.createSpyObj('UnpublishedProductsService', [ 'removeProduct' ]);
-    unpublishedProductsServiceSpy[ 'products' ] = [ {
-      sellerMetaHash
-    } ];
+    unpublishedProductsServiceSpy = jasmine.createSpyObj('UnpublishedProductsService', [ 'removeProduct', 'getProducts' ]);
+    unpublishedProductsServiceSpy.getProducts.and.returnValue(new BehaviorSubject<DataProduct[]>([ new DataProduct() ]));
     dataProductServiceSpy = jasmine.createSpyObj('DataProductService', [ 'publishDataProduct' ]);
     TestBed.configureTestingModule({
       declarations: [

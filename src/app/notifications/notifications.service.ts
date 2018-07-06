@@ -17,7 +17,6 @@ export class NotificationsService implements OnDestroy {
   private _config;
   private _parsers = {};
   private _storage = localStorage;
-  private _wallet: Wallet;
   private _walletSubscription: Subscription;
 
   constructor(
@@ -27,13 +26,19 @@ export class NotificationsService implements OnDestroy {
     this._walletSubscription = this._walletService.getWallet().subscribe(wallet => this._onWalletChange(wallet));
   }
 
+  private _wallet: Wallet;
+
+  get wallet() {
+    return this._wallet;
+  }
+
   get notifications() {
     return Object.freeze(Object.assign([], this._config.notifications));
   }
 
-  addParser(type: NotificationType, parser: (notification: Notification) => Promise<string | null>): void {
+  addParser(type: NotificationType, parser: (notification: Notification) => Promise<string | null>): Promise<void> {
     this._parsers[ type ] = parser;
-    this._init();
+    return this._init();
   }
 
   saveNotifications(): void {
@@ -71,13 +76,13 @@ export class NotificationsService implements OnDestroy {
     return NotificationsService.STORAGE_PREFIX + this._wallet.address;
   }
 
-  private _onWalletChange(wallet: Wallet) {
+  private _onWalletChange(wallet: Wallet): Promise<void> {
     if (!wallet || wallet === this._wallet) {
       return;
     }
 
     this._wallet = wallet;
-    this._init();
+    return this._init();
   }
 
   private async _parseNotification(notification: Notification): Promise<void> {
@@ -91,7 +96,7 @@ export class NotificationsService implements OnDestroy {
     console.log('NOTIFICATION: ', notificationBody);
   }
 
-  private _init(): void {
+  private _init(): Promise<void> {
     if (!this._wallet) {
       return;
     }
@@ -100,9 +105,15 @@ export class NotificationsService implements OnDestroy {
       return;
     }
 
-    this._config = this._readFromStore();
-    this._config.notifications.forEach((notification: Notification) => {
-      this._parseNotification(notification);
+    return new Promise(resolve => {
+      setTimeout(() => {
+        this._config = this._readFromStore();
+        this._config.notifications.forEach(async (notification: Notification) => {
+          await this._parseNotification(notification);
+        });
+
+        resolve();
+      });
     });
   }
 }

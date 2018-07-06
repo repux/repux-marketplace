@@ -7,6 +7,9 @@ import { TaskType } from './task-type';
 import { UnpublishedProductsService } from '../services/unpublished-products.service';
 import { DataProduct } from '../shared/models/data-product';
 import { DataProductNotificationsService } from '../services/data-product-notifications.service';
+import { TransactionDialogComponent } from '../shared/components/transaction-dialog/transaction-dialog.component';
+import { Subscription } from 'rxjs/index';
+import { MatDialog } from '@angular/material';
 
 export const STATUS = {
   UPLOADING: 'Uploading',
@@ -14,7 +17,7 @@ export const STATUS = {
   FINISHED: 'Finished',
   CANCELED: 'Canceled',
   PUBLICATION: 'Publication',
-  PUBLICATION_REJECTED: 'Publication rejected, try again'
+  PUBLICATION_REJECTED: 'Publication rejected'
 };
 
 export class FileUploadTask implements Task {
@@ -24,6 +27,7 @@ export class FileUploadTask implements Task {
   private _result: string;
   private _taskManagerService: TaskManagerService;
   private _dataProduct: DataProduct;
+  private _transactionDialogSubscription: Subscription;
 
   constructor(
     private _publicKey: JsonWebKey,
@@ -37,7 +41,8 @@ export class FileUploadTask implements Task {
     private _category: string[],
     private _price: BigNumber,
     private _file: File,
-    private _daysForDeliver: number
+    private _daysForDeliver: number,
+    private _dialog: MatDialog
   ) {
     this._name = `Creating ${this._file.name}`;
     this._uploader = this._repuxLibService.getInstance().createFileUploader();
@@ -105,6 +110,7 @@ export class FileUploadTask implements Task {
         this._finished = true;
         this._errors.push(error);
         this._status = STATUS.CANCELED;
+        this.destroy();
       })
       .on('finish', (eventType, result) => {
         this._progress = 100;
@@ -125,6 +131,11 @@ export class FileUploadTask implements Task {
     this._errors.push(STATUS.CANCELED);
     this._status = STATUS.CANCELED;
     this._taskManagerService.onTaskEvent();
+    this.destroy();
+  }
+
+  destroy() {
+    this._unsubscribeTransactionDialog();
   }
 
   async callUserAction(): Promise<any> {
@@ -132,22 +143,35 @@ export class FileUploadTask implements Task {
       return;
     }
 
-    try {
-      this._needsUserAction = false;
-      this._status = STATUS.PUBLICATION;
-      this._taskManagerService.onTaskEvent();
-      const { address } = await this._dataProductService.publishDataProduct(this._result, this._price, this._daysForDeliver);
-      this._dataProductNotificationsService.addCreatedProductAddress(address);
-      this._unpublishedProductsService.removeProduct(this._dataProduct);
-      this._status = STATUS.FINISHED;
+    this._needsUserAction = false;
+    this._status = STATUS.PUBLICATION;
+    this._taskManagerService.onTaskEvent();
+
+    const transactionDialogRef = this._dialog.open(TransactionDialogComponent, {
+      disableClose: true
+    });
+
+    this._unsubscribeTransactionDialog();
+    this._transactionDialogSubscription = transactionDialogRef.afterClosed().subscribe(result => {
       this._finished = true;
+
+      if (result) {
+        this._dataProductNotificationsService.addCreatedProductAddress(result.address);
+        this._unpublishedProductsService.removeProduct(this._dataProduct);
+        this._status = STATUS.FINISHED;
+      } else {
+        this._errors.push(STATUS.PUBLICATION_REJECTED);
+        this._status = STATUS.PUBLICATION_REJECTED;
+      }
+
       this._taskManagerService.onTaskEvent();
-    } catch (error) {
-      console.warn(error);
-      this._needsUserAction = true;
-      this._status = STATUS.PUBLICATION_REJECTED;
-      this._taskManagerService.onTaskEvent();
-    }
+      this.destroy();
+    });
+
+    const transactionDialog: TransactionDialogComponent = transactionDialogRef.componentInstance;
+    transactionDialog.transaction = () => this._dataProductService.publishDataProduct(this._result, this._price, this._daysForDeliver);
+
+    return transactionDialog.callTransaction();
   }
 
   _createMetadata() {
@@ -158,6 +182,13 @@ export class FileUploadTask implements Task {
       category: this._category,
       price: this._price
     };
+  }
+
+  private _unsubscribeTransactionDialog() {
+    if (this._transactionDialogSubscription) {
+      this._transactionDialogSubscription.unsubscribe();
+      this._transactionDialogSubscription = null;
+    }
   }
 
   private _saveProduct() {

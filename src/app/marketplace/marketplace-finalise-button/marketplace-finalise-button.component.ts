@@ -1,4 +1,4 @@
-import { Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { MatDialog } from '@angular/material';
 import { DataProductTransaction } from '../../shared/models/data-product-transaction';
 import { KeysGeneratorDialogComponent } from '../../key-store/keys-generator-dialog/keys-generator-dialog.component';
@@ -10,9 +10,9 @@ import { DataProduct } from '../../shared/models/data-product';
 import { RepuxLibService } from '../../services/repux-lib.service';
 import { DataProductService } from '../../services/data-product.service';
 import { TaskManagerService } from '../../services/task-manager.service';
-import { DataProductNotificationsService } from '../../services/data-product-notifications.service';
 import Wallet from '../../shared/models/wallet';
 import { WalletService } from '../../services/wallet.service';
+import { PendingFinalisationService } from '../../services/data-product-notifications/pending-finalisation.service';
 
 @Component({
   selector: 'app-marketplace-finalise-button',
@@ -22,19 +22,22 @@ import { WalletService } from '../../services/wallet.service';
 export class MarketplaceFinaliseButtonComponent implements OnDestroy, OnInit {
   @Input() transaction: DataProductTransaction;
   @Input() dataProduct: DataProduct;
+  @Output() success = new EventEmitter<DataProductTransaction>();
 
   public wallet: Wallet;
   public userIsOwner: boolean;
+  public FileReencryptionTaskClass = FileReencryptionTask;
 
   private _keysSubscription: Subscription;
   private _walletSubscription: Subscription;
+  private _reencryptionSubscription: Subscription;
 
   constructor(
     private _repuxLibService: RepuxLibService,
     private _dataProductService: DataProductService,
     private _keyStoreService: KeyStoreService,
     private _taskManagerService: TaskManagerService,
-    private _dataProductNotificationsService: DataProductNotificationsService,
+    private _pendingFinalisationService: PendingFinalisationService,
     private _walletService: WalletService,
     private _dialog: MatDialog
   ) {
@@ -42,15 +45,6 @@ export class MarketplaceFinaliseButtonComponent implements OnDestroy, OnInit {
 
   ngOnInit() {
     this._walletSubscription = this._walletService.getWallet().subscribe(wallet => this._onWalletChange(wallet));
-  }
-
-  private _onWalletChange(wallet: Wallet) {
-    if (!wallet || wallet === this.wallet) {
-      return;
-    }
-
-    this.wallet = wallet;
-    this.userIsOwner = this.getUserIsOwner();
   }
 
   getUserIsOwner(): boolean {
@@ -61,7 +55,7 @@ export class MarketplaceFinaliseButtonComponent implements OnDestroy, OnInit {
     const { privateKey } = await this._getKeys();
     const publicKey = this._repuxLibService.getClass().deserializePublicKey(this.transaction.publicKey);
 
-    const fileReencryptionTask = new FileReencryptionTask(
+    const fileReencryptionTask = new this.FileReencryptionTaskClass(
       this.dataProduct.address,
       this.transaction.buyerAddress,
       this.dataProduct.sellerMetaHash,
@@ -70,15 +64,46 @@ export class MarketplaceFinaliseButtonComponent implements OnDestroy, OnInit {
       this._repuxLibService,
       this._dataProductService,
       this._keyStoreService,
+      this._pendingFinalisationService,
       this._dialog
     );
 
-    this._taskManagerService.addTask(fileReencryptionTask);
-    this.transaction.finalised = true;
-    this._dataProductNotificationsService.removeFinalisationRequest({
-      dataProductAddress: this.dataProduct.address,
-      buyerAddress: this.transaction.buyerAddress
+    return new Promise(resolve => {
+      this._reencryptionSubscription = fileReencryptionTask.onFinish().subscribe(result => {
+        if (result) {
+          this.transaction.finalised = true;
+          this.success.emit(this.transaction);
+        }
+
+        this._reencryptionSubscription.unsubscribe();
+        resolve();
+      });
+
+      this._taskManagerService.addTask(fileReencryptionTask);
     });
+  }
+
+  ngOnDestroy() {
+    if (this._keysSubscription) {
+      this._keysSubscription.unsubscribe();
+    }
+
+    if (this._walletSubscription) {
+      this._walletSubscription.unsubscribe();
+    }
+
+    if (this._reencryptionSubscription) {
+      this._reencryptionSubscription.unsubscribe();
+    }
+  }
+
+  private _onWalletChange(wallet: Wallet) {
+    if (!wallet || wallet === this.wallet) {
+      return;
+    }
+
+    this.wallet = wallet;
+    this.userIsOwner = this.getUserIsOwner();
   }
 
   private _getKeys(): Promise<{ privateKey: JsonWebKey, publicKey: JsonWebKey }> {
@@ -100,15 +125,5 @@ export class MarketplaceFinaliseButtonComponent implements OnDestroy, OnInit {
         }
       });
     });
-  }
-
-  ngOnDestroy() {
-    if (this._keysSubscription) {
-      this._keysSubscription.unsubscribe();
-    }
-
-    if (this._walletSubscription) {
-      this._walletSubscription.unsubscribe();
-    }
   }
 }
