@@ -19,6 +19,7 @@ export const environment = {
   production: isProduction,
   networkId: 1,
   networkName: 'Main Ethereum Network',
+  intercomAppId: 'od9ohq7y',
   repux: {
     metaindexer: {
       protocol: '${MARKETPLACE_METAINDEXER_PROTOCOL}' || 'https',
