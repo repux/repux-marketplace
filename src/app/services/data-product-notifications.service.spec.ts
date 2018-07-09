@@ -21,7 +21,7 @@ describe('DataProductNotificationsService', () => {
     );
     repuxLibService = jasmine.createSpyObj(
       'RepuxLibService',
-      [ 'getClass', 'getInstance' ]
+      [ 'getInstance' ]
     );
     dataProductService = jasmine.createSpyObj(
       'DataProductService',

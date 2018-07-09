@@ -1,4 +1,5 @@
 import { FileReencryptionTask, STATUS } from './file-reencryption-task';
+import { EventType } from 'repux-lib';
 
 describe('FileReencryptionTask', () => {
   let fileReencryptorReencrypt, reencryptorEventHandlers, fileReencryptorOn, fileReencryptorTerminate, fileReencryptor, repuxLibService,
@@ -102,7 +103,7 @@ describe('FileReencryptionTask', () => {
     it('should update _progress when progress event is received', () => {
       fileReencryptionTask.run(<any> taskManagerService);
 
-      reencryptorEventHandlers[ 'progress' ]('progress', 0.15);
+      reencryptorEventHandlers[ EventType.PROGRESS ](EventType.PROGRESS, 0.15);
       expect(fileReencryptionTask.progress).toBe(15);
     });
 
@@ -111,7 +112,7 @@ describe('FileReencryptionTask', () => {
 
       fileReencryptionTask.run(<any> taskManagerService);
 
-      reencryptorEventHandlers[ 'error' ]('error', errorMessage);
+      reencryptorEventHandlers[ EventType.ERROR ](EventType.ERROR, errorMessage);
       expect(fileReencryptionTask.errors).toEqual([ errorMessage ]);
       expect(fileReencryptionTask.finished).toBeTruthy();
       expect(fileReencryptionTask.status).toBe(STATUS.CANCELED);
@@ -123,7 +124,7 @@ describe('FileReencryptionTask', () => {
 
       fileReencryptionTask.run(<any> taskManagerService);
 
-      reencryptorEventHandlers[ 'finish' ]('finish', result);
+      reencryptorEventHandlers[ EventType.FINISH ](EventType.FINISH, result);
       expect(fileReencryptionTask[ '_result' ]).toEqual(result);
       expect(fileReencryptionTask.progress).toEqual(100);
       expect(fileReencryptionTask.needsUserAction).toBeFalsy();
@@ -131,10 +132,11 @@ describe('FileReencryptionTask', () => {
 
     it('should call taskManagerService.onTaskEvent() when any event is received', () => {
       fileReencryptionTask.run(<any> taskManagerService);
+      const events = `${EventType.PROGRESS},${EventType.ERROR},${EventType.FINISH}`;
 
-      reencryptorEventHandlers[ 'progress, error, finish' ]('progress', 0);
-      reencryptorEventHandlers[ 'progress, error, finish' ]('error', '');
-      reencryptorEventHandlers[ 'progress, error, finish' ]('finish', '');
+      reencryptorEventHandlers[ events ](EventType.PROGRESS, 0);
+      reencryptorEventHandlers[ events ](EventType.ERROR, '');
+      reencryptorEventHandlers[ events ](EventType.FINISH, '');
       expect(taskManagerService.onTaskEvent.calls.count()).toBe(3);
     });
   });

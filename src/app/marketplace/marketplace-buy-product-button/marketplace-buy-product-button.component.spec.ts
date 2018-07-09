@@ -23,7 +23,7 @@ describe('MarketplaceBuyProductButtonComponent', () => {
   const buyerAddress = '0x0000000000000000000000000000000000000000';
 
   beforeEach(fakeAsync(() => {
-    repuxLibServiceSpy = jasmine.createSpyObj('RepuxLibService', [ 'getInstance', 'getClass' ]);
+    repuxLibServiceSpy = jasmine.createSpyObj('RepuxLibService', [ 'getInstance' ]);
     keyStoreServiceSpy = jasmine.createSpyObj('KeyStoreService', [ 'hasKeys' ]);
     dataProductNotificationsService = jasmine.createSpyObj('DataProductNotificationsService', [ 'addBoughtProductAddress' ]);
     TestBed.configureTestingModule({
@@ -106,7 +106,7 @@ describe('MarketplaceBuyProductButtonComponent', () => {
       component[ '_getKeys' ] = getKeys;
       const serializePublicKey = jasmine.createSpy();
       serializePublicKey.and.callFake(key => 'SERIALIZED_' + key);
-      repuxLibServiceSpy.getClass.and.returnValue({
+      repuxLibServiceSpy.getInstance.and.returnValue({
         serializePublicKey
       });
       const callTransaction = jasmine.createSpy();

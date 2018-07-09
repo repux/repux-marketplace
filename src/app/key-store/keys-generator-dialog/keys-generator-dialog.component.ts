@@ -40,7 +40,7 @@ export class KeysGeneratorDialogComponent implements OnInit {
     }
 
     const password = this.formGroup.value.password;
-    const keys = await this.repuxLibService.getClass().generateAsymmetricKeyPair();
+    const keys = await this.repuxLibService.getInstance().generateAsymmetricKeyPair();
 
     if (!this.keyStoreService.hasKeys()) {
       this.keyStoreService.savePasswordAsHash(password);

@@ -1,4 +1,5 @@
 import { FileDownloadTask, STATUS } from './file-download-task';
+import { EventType } from 'repux-lib';
 
 describe('FileDownloadTask', () => {
   let fileDownloaderDownload, downloaderEventHandler, fileDownloaderOn, fileDownloaderTerminate, fileDownloader, repuxLibService,
@@ -70,7 +71,7 @@ describe('FileDownloadTask', () => {
     it('should update _progress when progress event is received', () => {
       fileDownloadTask.run(<any> taskManagerService);
 
-      downloaderEventHandler[ 'progress' ]('progress', 0.15);
+      downloaderEventHandler[ EventType.PROGRESS ](EventType.PROGRESS, 0.15);
       expect(fileDownloadTask.progress).toBe(15);
     });
 
@@ -79,7 +80,7 @@ describe('FileDownloadTask', () => {
 
       fileDownloadTask.run(<any> taskManagerService);
 
-      downloaderEventHandler[ 'error' ]('error', errorMessage);
+      downloaderEventHandler[ EventType.ERROR ](EventType.ERROR, errorMessage);
       expect(fileDownloadTask.errors).toEqual([ errorMessage ]);
       expect(fileDownloadTask.finished).toBeTruthy();
       expect(fileDownloadTask.status).toBe(STATUS.CANCELED);
@@ -91,7 +92,7 @@ describe('FileDownloadTask', () => {
 
       fileDownloadTask.run(<any> taskManagerService);
 
-      downloaderEventHandler[ 'finish' ]('finish', result);
+      downloaderEventHandler[ EventType.FINISH ](EventType.FINISH, result);
       expect(fileDownloadTask[ '_result' ]).toEqual(result);
       expect(fileDownloadTask.progress).toEqual(100);
       expect(fileDownloadTask.needsUserAction).toBeFalsy();
@@ -102,10 +103,11 @@ describe('FileDownloadTask', () => {
 
     it('should call taskManagerService.onTaskEvent() when any event is received', () => {
       fileDownloadTask.run(<any> taskManagerService);
+      const events = `${EventType.PROGRESS},${EventType.ERROR},${EventType.FINISH}`;
 
-      downloaderEventHandler[ 'progress, error, finish' ]('progress', 0);
-      downloaderEventHandler[ 'progress, error, finish' ]('error', '');
-      downloaderEventHandler[ 'progress, error, finish' ]('finish', '');
+      downloaderEventHandler[ events ](EventType.PROGRESS, 0);
+      downloaderEventHandler[ events ](EventType.ERROR, '');
+      downloaderEventHandler[ events ](EventType.FINISH, '');
       expect(taskManagerService.onTaskEvent.calls.count()).toBe(3);
     });
   });

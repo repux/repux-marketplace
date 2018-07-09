@@ -3,6 +3,7 @@ import { RepuxLibService } from '../services/repux-lib.service';
 import { TaskManagerService } from '../services/task-manager.service';
 import { BlobDownloader } from '../shared/utils/blob-downloader';
 import { TaskType } from './task-type';
+import { EventType, FileDownloader } from 'repux-lib';
 
 export const STATUS = {
   DOWNLOADING: 'Downloading',
@@ -13,7 +14,7 @@ export const STATUS = {
 export class FileDownloadTask implements Task {
   public readonly walletSpecific = false;
   public readonly taskType = TaskType.DOWNLOAD;
-  private _downloader;
+  private _downloader: FileDownloader;
   private _result: string;
   private _taskManagerService: TaskManagerService;
 
@@ -79,22 +80,22 @@ export class FileDownloadTask implements Task {
     this._taskManagerService = taskManagerService;
 
     this._downloader.download(this._buyerPrivateKey, this._metaFileHash)
-      .on('progress', (eventType, progress) => {
+      .on(EventType.PROGRESS, (eventType, progress) => {
         this._progress = progress * 100;
       })
-      .on('error', (eventType, error) => {
+      .on(EventType.ERROR, (eventType, error) => {
         this._finished = true;
         this._errors.push(error);
         this._status = STATUS.CANCELED;
       })
-      .on('finish', (eventType, result) => {
+      .on(EventType.FINISH, (eventType, result) => {
         this._progress = 100;
         this._finished = true;
         this._result = result;
         this._status = STATUS.FINISHED;
         new BlobDownloader().downloadBlob(result.fileURL, result.fileName);
       })
-      .on('progress, error, finish', () => {
+      .on([ EventType.PROGRESS, EventType.ERROR, EventType.FINISH ], () => {
         this._taskManagerService.onTaskEvent();
       });
   }

@@ -11,6 +11,7 @@ import { TaskType } from './task-type';
 import { PendingFinalisationService } from '../services/data-product-notifications/pending-finalisation.service';
 import { TransactionDialogComponent } from '../shared/components/transaction-dialog/transaction-dialog.component';
 import { AsyncSubject } from 'rxjs/internal/AsyncSubject';
+import { FileReencryptor, EventType } from 'repux-lib';
 
 export const STATUS = {
   REENCRYPTION: 'Reencryption',
@@ -24,7 +25,7 @@ export class FileReencryptionTask implements Task {
   public readonly walletSpecific = true;
   public readonly taskType = TaskType.REENCRYPTION;
   private _subscription: Subscription;
-  private _reencryptor;
+  private _reencryptor: FileReencryptor;
   private _result: string;
   private _taskManagerService: TaskManagerService;
   private _finishSubject = new AsyncSubject();
@@ -97,22 +98,22 @@ export class FileReencryptionTask implements Task {
     this._taskManagerService = taskManagerService;
 
     this._reencryptor.reencrypt(this._sellerPrivateKey, this._buyerPublicKey, this._metaFileHash)
-      .on('progress', (eventType, progress) => {
+      .on(EventType.PROGRESS, (eventType, progress) => {
         this._progress = progress * 100;
       })
-      .on('error', (eventType, error) => {
+      .on(EventType.ERROR, (eventType, error) => {
         this._finished = true;
         this._errors.push(error);
         this._status = STATUS.CANCELED;
         this._emitFinish(false);
         this.destroy();
       })
-      .on('finish', (eventType, result) => {
+      .on(EventType.FINISH, (eventType, result) => {
         this._progress = 100;
         this._result = result;
         this._finalise();
       })
-      .on('progress, error, finish', () => {
+      .on([ EventType.PROGRESS, EventType.ERROR, EventType.FINISH ], () => {
         this._taskManagerService.onTaskEvent();
       });
   }
