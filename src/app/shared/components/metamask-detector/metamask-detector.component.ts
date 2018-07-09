@@ -7,7 +7,7 @@ const Messages = {
   // tslint:disable:max-line-length
   [ MetamaskStatus.WrongNetwork ]: `Oops, seems like you're on wrong network! Open MetaMask and please, switch to ${environment.networkName} .`,
   [ MetamaskStatus.NotInstalled ]: 'You need a secure wallet like MetaMask to browse through Marketplace. ' +
-  'As soon as the extension is installed the warning will be gone.',
+  'As soon as the extension is installed please reload the page and warning will be gone.',
   [ MetamaskStatus.NotLoggedIn ]: 'You need login to MetaMask and import RepuX account.'
 };
 
