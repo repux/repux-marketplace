@@ -20,6 +20,7 @@ export const environment = {
   networkId: 1,
   networkName: 'Main Ethereum Network',
   intercomAppId: 'od9ohq7y',
+  gtmId: 'GTM-PG3BBGT',
   repux: {
     metaindexer: {
       protocol: '${MARKETPLACE_METAINDEXER_PROTOCOL}' || 'https',

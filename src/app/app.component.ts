@@ -5,6 +5,7 @@ import { map } from 'rxjs/operators';
 import { Observable } from 'rxjs/index';
 import { environment } from '../environments/environment';
 import { WalletService } from './services/wallet.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-root',
@@ -37,6 +38,7 @@ export class AppComponent implements OnInit {
   ];
 
   constructor(
+    private router: Router,
     private breakpointObserver: BreakpointObserver,
     private webpushNotificationService: WebpushNotificationService,
     private walletService: WalletService
@@ -54,6 +56,10 @@ export class AppComponent implements OnInit {
       if (wallet) {
         (<any>window).Intercom('update', {
           user_id: wallet.address
+        });
+
+        (<any>window).dataLayer.push({
+          userId: wallet.address
         });
       }
     });
