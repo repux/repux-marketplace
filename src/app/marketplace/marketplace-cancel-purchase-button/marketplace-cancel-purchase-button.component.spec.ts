@@ -8,11 +8,12 @@ import { ClockService } from '../../services/clock.service';
 import Wallet from '../../shared/models/wallet';
 import { DataProductNotificationsService } from '../../services/data-product-notifications.service';
 import { MaterialModule } from '../../material.module';
+import { AwaitingFinalisationService } from '../../services/data-product-notifications/awaiting-finalisation.service';
 
 describe('MarketplaceCancelPurchaseButtonComponent', () => {
   let component: MarketplaceCancelPurchaseButtonComponent;
   let fixture: ComponentFixture<MarketplaceCancelPurchaseButtonComponent>;
-  let walletServiceSpy, dataProductServiceSpy, clockServiceSpy, dataProductNotifivationsServiceSpy;
+  let walletServiceSpy, dataProductServiceSpy, clockServiceSpy, dataProductNotifivationsServiceSpy, awaitingFinalisationServiceSpy;
   const dataProductAddress = '0x1111111111111111111111111111111111111111';
   const buyerAddress = '0x0000000000000000000000000000000000000000';
 
@@ -27,8 +28,9 @@ describe('MarketplaceCancelPurchaseButtonComponent', () => {
       subscribe() {
       }
     });
-    dataProductNotifivationsServiceSpy = jasmine.createSpyObj('DataProductNotificationsService', [ 'getAwaitingFinalisation' ]);
-    dataProductNotifivationsServiceSpy.getAwaitingFinalisation.and.returnValue({
+    dataProductNotifivationsServiceSpy = jasmine.createSpyObj('DataProductNotificationsService', [ 'removeBoughtProductAddress' ]);
+    awaitingFinalisationServiceSpy = jasmine.createSpyObj('AwaitingFinalisationService', [ 'getEntries' ]);
+    awaitingFinalisationServiceSpy.getEntries.and.returnValue({
       subscribe() {
       }
     });
@@ -46,7 +48,8 @@ describe('MarketplaceCancelPurchaseButtonComponent', () => {
         { provide: DataProductService, useValue: dataProductServiceSpy },
         { provide: WalletService, useValue: walletServiceSpy },
         { provide: ClockService, useValue: clockServiceSpy },
-        { provide: DataProductNotificationsService, useValue: dataProductNotifivationsServiceSpy }
+        { provide: DataProductNotificationsService, useValue: dataProductNotifivationsServiceSpy },
+        { provide: AwaitingFinalisationService, useValue: awaitingFinalisationServiceSpy }
       ]
     })
       .compileComponents();
@@ -69,7 +72,7 @@ describe('MarketplaceCancelPurchaseButtonComponent', () => {
       expect(component.dataProductAddress).toBe(dataProductAddress);
       expect(clockServiceSpy.onEachSecond.calls.count()).toBe(1);
       expect(walletServiceSpy.getWallet.calls.count()).toBe(1);
-      expect(dataProductNotifivationsServiceSpy.getAwaitingFinalisation.calls.count()).toBe(1);
+      expect(awaitingFinalisationServiceSpy.getEntries.calls.count()).toBe(1);
     });
   });
 

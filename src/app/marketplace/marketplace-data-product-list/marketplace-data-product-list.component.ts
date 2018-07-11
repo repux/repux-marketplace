@@ -9,8 +9,8 @@ import { DataProductTransaction } from '../../shared/models/data-product-transac
 import { BigNumber } from 'bignumber.js';
 import { DataProduct } from '../../shared/models/data-product';
 import { deepCopy } from '../../shared/utils/deep-copy';
-import { DataProductNotificationsService } from '../../services/data-product-notifications.service';
 import { Subscription } from 'rxjs/internal/Subscription';
+import { PendingFinalisationService } from '../../services/data-product-notifications/pending-finalisation.service';
 
 const DAY_IN_MILLISECONDS = 24 * 60 * 60 * 1000;
 
@@ -65,11 +65,12 @@ export class MarketplaceDataProductListComponent implements OnChanges, OnDestroy
 
   constructor(
     public dataProductListService: DataProductListService,
-    private _dataProductNotificationsService: DataProductNotificationsService) {
+    private _pendingFinalisationService: PendingFinalisationService) {
     this.size = this.pageSizeOptions[ 0 ];
   }
 
   ngOnChanges() {
+    this.reloadRecords();
     return this.refreshData();
   }
 
@@ -109,8 +110,7 @@ export class MarketplaceDataProductListComponent implements OnChanges, OnDestroy
 
   refreshData(): Promise<void> {
     if (this.dataProducts) {
-      this.dataSource = new MatTableDataSource(this.dataProducts);
-      this.isLoadingResults = false;
+      this.reloadRecords();
       return;
     }
 
@@ -129,9 +129,7 @@ export class MarketplaceDataProductListComponent implements OnChanges, OnDestroy
       this._dataProductsSubscription = this.dataProductListService.getFiles(query, this.sort, this.size, this.from)
         .subscribe(esDataProducts => {
           this.esDataProducts = esDataProducts;
-          const dataProducts = this.esDataProducts.hits.map((esDataProduct: EsDataProduct) => esDataProduct.source);
-          this.dataSource = new MatTableDataSource(dataProducts);
-          this.isLoadingResults = false;
+          this.reloadRecords();
           resolve();
         });
     });
@@ -147,13 +145,13 @@ export class MarketplaceDataProductListComponent implements OnChanges, OnDestroy
   }
 
   getTransactionsToFinalisation(dataProduct: DataProduct): DataProductTransaction[] {
-    return dataProduct.transactions.filter(transaction =>
-      !transaction.finalised &&
-      this._dataProductNotificationsService.findFinalisationRequest({
-        dataProductAddress: dataProduct.address,
-        buyerAddress: transaction.buyerAddress
-      })
-    );
+    return dataProduct.transactions.filter(transaction => {
+      return !transaction.finalised &&
+        this._pendingFinalisationService.find({
+          dataProductAddress: dataProduct.address,
+          buyerAddress: transaction.buyerAddress
+        });
+    });
   }
 
   getTransactionDate(dataProduct: DataProduct) {
@@ -176,8 +174,30 @@ export class MarketplaceDataProductListComponent implements OnChanges, OnDestroy
     return transaction.deliveryDeadline;
   }
 
+  onFinaliseSuccess(event: { dataProduct: DataProduct, transaction: DataProductTransaction }) {
+    if (this.dataProducts) {
+      this.dataProducts = this.dataProducts.filter(dataProduct => dataProduct.address !== event.dataProduct.address);
+    } else {
+      this.esDataProducts.hits = this.esDataProducts.hits
+        .filter((esDataProduct: EsDataProduct) => esDataProduct.id !== event.dataProduct.address);
+    }
+
+    this.reloadRecords();
+  }
+
   ngOnDestroy() {
     this._unsubscribeDataProducts();
+  }
+
+  reloadRecords() {
+    if (this.dataProducts) {
+      this.dataSource = new MatTableDataSource(this.dataProducts);
+    } else if (this.esDataProducts) {
+      const dataProducts = this.esDataProducts.hits.map((esDataProduct: EsDataProduct) => esDataProduct.source);
+      this.dataSource = new MatTableDataSource(dataProducts);
+    }
+
+    this.isLoadingResults = false;
   }
 
   private _findTransactionByCurrentBuyerAddress(dataProduct: DataProduct) {

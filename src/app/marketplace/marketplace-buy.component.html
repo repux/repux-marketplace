@@ -5,9 +5,7 @@
      routerLinkActive #rla="routerLinkActive"
      [active]="rla.isActive">
     <span class="text">{{link.label}}</span>
-    <mat-chip-list>
-      <mat-chip *ngIf="link.items.length" color="accent" selected="true">{{link.items.length}}</mat-chip>
-    </mat-chip-list>
+    <app-notifications-number [number]="link.items.length"></app-notifications-number>
   </a>
 </nav>
 

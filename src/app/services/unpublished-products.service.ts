@@ -3,6 +3,8 @@ import { StorageService } from './storage.service';
 import { DataProduct } from '../shared/models/data-product';
 import { TaskManagerService } from './task-manager.service';
 import { FileUploadTask } from '../tasks/file-upload-task';
+import { BehaviorSubject } from 'rxjs/internal/BehaviorSubject';
+import { Observable } from 'rxjs/internal/Observable';
 
 @Injectable({
   providedIn: 'root'
@@ -13,26 +15,30 @@ export class UnpublishedProductsService {
     dataProducts: []
   };
   private readonly _config;
+  private _productsSubject = new BehaviorSubject<DataProduct[]>([]);
 
   constructor(
     private _taskManagerService: TaskManagerService,
     private _storageService: StorageService) {
     this._config = this._readFromStore();
+    this._productsSubject.next(this._config.dataProducts.slice());
   }
 
-  get products() {
-    return this._config.dataProducts;
+  getProducts(): Observable<DataProduct[]> {
+    return this._productsSubject.asObservable();
   }
 
-  addProduct(dataProduct: DataProduct) {
+  addProduct(dataProduct: DataProduct): void {
     this._config.dataProducts.push(dataProduct);
+    this._productsSubject.next(this._config.dataProducts.slice());
     this._saveToStore(this._config);
   }
 
-  removeProduct(dataProduct: DataProduct) {
+  removeProduct(dataProduct: DataProduct): void {
     const index = this._config.dataProducts.indexOf(dataProduct);
     if (index !== -1) {
       this._config.dataProducts.splice(index, 1);
+      this._productsSubject.next(this._config.dataProducts.slice());
       this._saveToStore(this._config);
     }
 

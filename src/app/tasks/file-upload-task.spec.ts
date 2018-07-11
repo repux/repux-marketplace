@@ -1,12 +1,10 @@
 import { FileUploadTask, STATUS } from './file-upload-task';
 import BigNumber from 'bignumber.js';
-import { DataProductService } from '../services/data-product.service';
-import { RepuxLibService } from '../services/repux-lib.service';
 
 describe('FileUploadTask()', () => {
   let fileUploadTask: FileUploadTask, dataProductService, repuxLibService, fileUploader, fileUploaderUpload,
     fileUploaderOn, taskManagerService, uploaderEventHandlers, fileUploaderTerminate, unpublishedProductsService,
-    dataProductNotificationsService;
+    dataProductNotificationsService, matDialog, callTransaction, transactionResult;
   const fileName = 'FILE_NAME';
   const publicKey = 'PUBLIC_KEY';
   const title = 'TITLE';
@@ -42,6 +40,21 @@ describe('FileUploadTask()', () => {
     taskManagerService = jasmine.createSpyObj('TaskManagerService', [ 'onTaskEvent' ]);
     unpublishedProductsService = jasmine.createSpyObj('UnpublishedProductsService', [ 'addProduct', 'removeProduct' ]);
     dataProductNotificationsService = jasmine.createSpyObj('DataProductNotificationsService', [ 'addCreatedProductAddress' ]);
+    callTransaction = jasmine.createSpy();
+    matDialog = jasmine.createSpyObj('MatDialog', [ 'open' ]);
+    transactionResult = true;
+    matDialog.open.and.returnValue({
+      componentInstance: {
+        callTransaction
+      },
+      afterClosed() {
+        return {
+          subscribe(callback) {
+            callback(transactionResult);
+          }
+        };
+      }
+    });
 
     fileUploadTask = new FileUploadTask(
       <any> publicKey,
@@ -55,7 +68,8 @@ describe('FileUploadTask()', () => {
       category,
       price,
       <any> file,
-      1
+      1,
+      matDialog
     );
   });
 
@@ -79,7 +93,8 @@ describe('FileUploadTask()', () => {
         category,
         price,
         <any> file,
-        1
+        1,
+        matDialog
       );
 
       expect(<any> fileUploadTask[ '_publicKey' ]).toBe(publicKey);
@@ -92,19 +107,21 @@ describe('FileUploadTask()', () => {
       expect(fileUploadTask[ '_price' ]).toBe(price);
       expect(<any> fileUploadTask[ '_file' ]).toBe(file);
       expect(fileUploadTask[ '_uploader' ]).toBe(fileUploader);
-      expect(fileUploadTask[ '_name' ]).toBe('Creating ' + fileName);
+      expect(fileUploadTask.name).toBe('Creating ' + fileName);
     });
   });
 
   describe('#run()', () => {
     it('should change status and assign taskManagerService', () => {
       fileUploadTask.run(<any> taskManagerService);
+
       expect(<any> fileUploadTask[ '_taskManagerService' ]).toBe(taskManagerService);
       expect(fileUploadTask.status).toBe(STATUS.UPLOADING);
     });
 
     it('should call upload function on _upload property', () => {
       fileUploadTask.run(<any> taskManagerService);
+
       expect(fileUploaderUpload.calls.count()).toBe(1);
       expect(fileUploaderUpload.calls.allArgs()[ 0 ][ 0 ]).toBe(publicKey);
       expect(fileUploaderUpload.calls.allArgs()[ 0 ][ 1 ]).toBe(file);
@@ -119,33 +136,39 @@ describe('FileUploadTask()', () => {
 
     it('should update _progress when progress event is received', () => {
       fileUploadTask.run(<any> taskManagerService);
+
       uploaderEventHandlers[ 'progress' ]('progress', 0.15);
-      expect(fileUploadTask[ '_progress' ]).toBe(15);
+      expect(fileUploadTask.progress).toBe(15);
     });
 
     it('should update _finished, _errors, and _status when error event is received', () => {
       const errorMessage = 'ERROR_MESSAGE';
+
       fileUploadTask.run(<any> taskManagerService);
+
       uploaderEventHandlers[ 'error' ]('error', errorMessage);
-      expect(fileUploadTask[ '_errors' ]).toEqual([ errorMessage ]);
-      expect(fileUploadTask[ '_finished' ]).toBeTruthy();
-      expect(fileUploadTask[ '_status' ]).toBe(STATUS.CANCELED);
+      expect(fileUploadTask.errors).toEqual([ errorMessage ]);
+      expect(fileUploadTask.finished).toBeTruthy();
+      expect(fileUploadTask.status).toBe(STATUS.CANCELED);
     });
 
     it('should update _progress, _result, _needsUserAction, _userActionName and _status when ' +
       'finish event is received', () => {
       const result = 'RESULT';
+
       fileUploadTask.run(<any> taskManagerService);
+
       uploaderEventHandlers[ 'finish' ]('finish', result);
-      expect(fileUploadTask[ '_progress' ]).toEqual(100);
       expect(fileUploadTask[ '_result' ]).toEqual(result);
-      expect(fileUploadTask[ '_needsUserAction' ]).toBeTruthy();
-      expect(fileUploadTask[ '_userActionName' ]).toBe('Publish');
-      expect(fileUploadTask[ '_status' ]).toBe(STATUS.WAITING_FOR_PUBLICATION);
+      expect(fileUploadTask.progress).toEqual(100);
+      expect(fileUploadTask.needsUserAction).toBeTruthy();
+      expect(fileUploadTask.userActionName).toBe('Publish');
+      expect(fileUploadTask.status).toBe(STATUS.WAITING_FOR_PUBLICATION);
     });
 
     it('should call taskManagerService.onTaskEvent() when any event is received', () => {
       fileUploadTask.run(<any> taskManagerService);
+
       uploaderEventHandlers[ 'progress, error, finish' ]('progress', 0);
       uploaderEventHandlers[ 'progress, error, finish' ]('error', '');
       uploaderEventHandlers[ 'progress, error, finish' ]('finish', '');
@@ -156,7 +179,9 @@ describe('FileUploadTask()', () => {
   describe('#cancel()', () => {
     it('should terminate task and set status as canceled', () => {
       fileUploadTask[ '_taskManagerService' ] = taskManagerService;
+
       fileUploadTask.cancel();
+
       expect(fileUploader.terminate.calls.count()).toBe(1);
       expect(fileUploadTask[ '_finished' ]).toBeTruthy();
       expect(fileUploadTask[ '_errors' ]).toEqual([ STATUS.CANCELED ]);
@@ -165,7 +190,9 @@ describe('FileUploadTask()', () => {
 
     it('should call taskManagerService.onTaskEvent()', () => {
       fileUploadTask[ '_taskManagerService' ] = taskManagerService;
+
       fileUploadTask.cancel();
+
       expect(taskManagerService.onTaskEvent.calls.count()).toBe(1);
     });
   });
@@ -177,10 +204,17 @@ describe('FileUploadTask()', () => {
       fileUploadTask[ '_needsUserAction' ] = true;
       fileUploadTask[ '_result' ] = 'RESULT';
       fileUploadTask[ '_price' ] = new BigNumber(1);
+
+      transactionResult = true;
+      callTransaction.and.callFake(function () {
+        this.transaction();
+      });
+
       await fileUploadTask.callUserAction();
-      expect(fileUploadTask[ '_needsUserAction' ]).toBeFalsy();
-      expect(fileUploadTask[ '_status' ]).toBe(STATUS.FINISHED);
-      expect(fileUploadTask[ '_finished' ]).toBeTruthy();
+
+      expect(fileUploadTask.needsUserAction).toBeFalsy();
+      expect(fileUploadTask.status).toBe(STATUS.FINISHED);
+      expect(fileUploadTask.finished).toBeTruthy();
       expect(dataProductService.publishDataProduct.calls.allArgs()[ 0 ][ 0 ]).toBe(fileUploadTask[ '_result' ]);
       expect(dataProductService.publishDataProduct.calls.allArgs()[ 0 ][ 1 ]).toBe(fileUploadTask[ '_price' ]);
       expect(taskManagerService.onTaskEvent.calls.count()).toBe(2);
@@ -193,10 +227,17 @@ describe('FileUploadTask()', () => {
       fileUploadTask[ '_needsUserAction' ] = true;
       fileUploadTask[ '_result' ] = 'RESULT';
       fileUploadTask[ '_price' ] = new BigNumber(1);
+
+      transactionResult = false;
+      callTransaction.and.callFake(function () {
+        this.transaction();
+      });
+
       await fileUploadTask.callUserAction();
-      expect(fileUploadTask[ '_needsUserAction' ]).toBeTruthy();
-      expect(fileUploadTask[ '_status' ]).toBe(STATUS.PUBLICATION_REJECTED);
-      expect(fileUploadTask[ '_finished' ]).toBeFalsy();
+
+      expect(fileUploadTask.needsUserAction).toBeFalsy();
+      expect(fileUploadTask.status).toBe(STATUS.PUBLICATION_REJECTED);
+      expect(fileUploadTask.finished).toBeTruthy();
       expect(taskManagerService.onTaskEvent.calls.count()).toBe(2);
     });
   });

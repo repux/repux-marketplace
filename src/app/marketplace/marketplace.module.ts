@@ -6,12 +6,12 @@ import { MarketplaceProductDetailsComponent } from './marketplace-product-detail
 import { SharedModule } from '../shared/shared.module';
 import { KeyStoreModule } from '../key-store/key-store.module';
 import { MarketplaceSellComponent } from './marketplace-sell.component';
-import { MarketplaceBuyingComponent } from './marketplace-buying.component';
+import { MarketplaceBuyComponent } from './marketplace-buy.component';
 import { MarketplaceSellMyActiveListingsComponent } from './marketplace-sell-my-active-listings.component';
 import { MarketplaceSellPendingFinalisationComponent } from './marketplace-sell-pending-finalisation.component';
 import { MarketplaceSellUnpublishedComponent } from './marketplace-sell-unpublished.component';
-import { MarketplaceBuyingAwaitingFinalisationComponent } from './marketplace-buying-awaiting-finalisation.component';
-import { MarketplaceBuyingReadyToDownloadComponent } from './marketplace-buying-ready-to-download.component';
+import { MarketplaceBuyAwaitingFinalisationComponent } from './marketplace-buy-awaiting-finalisation.component';
+import { MarketplaceBuyReadyToDownloadComponent } from './marketplace-buy-ready-to-download.component';
 import { MarketplaceDataProductListComponent } from './marketplace-data-product-list/marketplace-data-product-list.component';
 import { MarketplaceDataProductListDetailDirective } from './marketplace-data-product-list/marketplace-data-product-list-detail.directive';
 import { AppRoutingModule } from '../app-routing.module';
@@ -56,9 +56,9 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
     MarketplaceSellMyActiveListingsComponent,
     MarketplaceSellPendingFinalisationComponent,
     MarketplaceSellUnpublishedComponent,
-    MarketplaceBuyingComponent,
-    MarketplaceBuyingAwaitingFinalisationComponent,
-    MarketplaceBuyingReadyToDownloadComponent,
+    MarketplaceBuyComponent,
+    MarketplaceBuyAwaitingFinalisationComponent,
+    MarketplaceBuyReadyToDownloadComponent,
     MarketplaceProductDetailsComponent,
 
     MarketplaceBuyProductButtonComponent,
@@ -81,9 +81,9 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
     MarketplaceSellMyActiveListingsComponent,
     MarketplaceSellPendingFinalisationComponent,
     MarketplaceSellUnpublishedComponent,
-    MarketplaceBuyingComponent,
-    MarketplaceBuyingAwaitingFinalisationComponent,
-    MarketplaceBuyingReadyToDownloadComponent,
+    MarketplaceBuyComponent,
+    MarketplaceBuyAwaitingFinalisationComponent,
+    MarketplaceBuyReadyToDownloadComponent,
     MarketplaceProductDetailsComponent
   ],
   entryComponents: [

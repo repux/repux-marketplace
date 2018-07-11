@@ -1,5 +1,4 @@
 import { FileDownloadTask, STATUS } from './file-download-task';
-import { RepuxLibService } from '../services/repux-lib.service';
 
 describe('FileDownloadTask', () => {
   let fileDownloaderDownload, downloaderEventHandler, fileDownloaderOn, fileDownloaderTerminate, fileDownloader, repuxLibService,
@@ -48,19 +47,21 @@ describe('FileDownloadTask', () => {
       expect(fileDownloadTask[ '_buyerPrivateKey' ]).toBe(privateKey);
       expect(fileDownloadTask[ '_repuxLibService' ]).toBe(repuxLibService);
       expect(fileDownloadTask[ '_downloader' ]).toBe(fileDownloader);
-      expect(fileDownloadTask[ '_name' ]).toBe('Downloading ' + productAddress);
+      expect(fileDownloadTask.name).toBe('Downloading ' + productAddress);
     });
   });
 
   describe('#run()', () => {
     it('should change status and assign taskManagerService', () => {
       fileDownloadTask.run(<any> taskManagerService);
+
       expect(<any> fileDownloadTask[ '_taskManagerService' ]).toBe(taskManagerService);
       expect(fileDownloadTask.status).toBe(STATUS.DOWNLOADING);
     });
 
     it('should call download function on _downloader object', () => {
       fileDownloadTask.run(<any> taskManagerService);
+
       expect(fileDownloaderDownload.calls.count()).toBe(1);
       expect(fileDownloaderDownload.calls.allArgs()[ 0 ][ 0 ]).toBe(privateKey);
       expect(fileDownloaderDownload.calls.allArgs()[ 0 ][ 1 ]).toBe(fileHash);
@@ -68,34 +69,40 @@ describe('FileDownloadTask', () => {
 
     it('should update _progress when progress event is received', () => {
       fileDownloadTask.run(<any> taskManagerService);
+
       downloaderEventHandler[ 'progress' ]('progress', 0.15);
-      expect(fileDownloadTask[ '_progress' ]).toBe(15);
+      expect(fileDownloadTask.progress).toBe(15);
     });
 
     it('should update _finished, _errors, and _status when error event is received', () => {
       const errorMessage = 'ERROR_MESSAGE';
+
       fileDownloadTask.run(<any> taskManagerService);
+
       downloaderEventHandler[ 'error' ]('error', errorMessage);
-      expect(fileDownloadTask[ '_errors' ]).toEqual([ errorMessage ]);
-      expect(fileDownloadTask[ '_finished' ]).toBeTruthy();
-      expect(fileDownloadTask[ '_status' ]).toBe(STATUS.CANCELED);
+      expect(fileDownloadTask.errors).toEqual([ errorMessage ]);
+      expect(fileDownloadTask.finished).toBeTruthy();
+      expect(fileDownloadTask.status).toBe(STATUS.CANCELED);
     });
 
     it('should update _progress, _result, _needsUserAction, _userActionName and _status when ' +
       'finish event is received', () => {
       const result = 'RESULT';
+
       fileDownloadTask.run(<any> taskManagerService);
+
       downloaderEventHandler[ 'finish' ]('finish', result);
-      expect(fileDownloadTask[ '_progress' ]).toEqual(100);
       expect(fileDownloadTask[ '_result' ]).toEqual(result);
-      expect(fileDownloadTask[ '_needsUserAction' ]).toBeFalsy();
-      expect(fileDownloadTask[ '_userActionName' ]).toBeFalsy();
-      expect(fileDownloadTask[ '_finished' ]).toBeTruthy();
-      expect(fileDownloadTask[ '_status' ]).toBe(STATUS.FINISHED);
+      expect(fileDownloadTask.progress).toEqual(100);
+      expect(fileDownloadTask.needsUserAction).toBeFalsy();
+      expect(fileDownloadTask.userActionName).toBeFalsy();
+      expect(fileDownloadTask.finished).toBeTruthy();
+      expect(fileDownloadTask.status).toBe(STATUS.FINISHED);
     });
 
     it('should call taskManagerService.onTaskEvent() when any event is received', () => {
       fileDownloadTask.run(<any> taskManagerService);
+
       downloaderEventHandler[ 'progress, error, finish' ]('progress', 0);
       downloaderEventHandler[ 'progress, error, finish' ]('error', '');
       downloaderEventHandler[ 'progress, error, finish' ]('finish', '');
@@ -106,16 +113,20 @@ describe('FileDownloadTask', () => {
   describe('#cancel()', () => {
     it('should terminate task and set status as canceled', () => {
       fileDownloadTask[ '_taskManagerService' ] = taskManagerService;
+
       fileDownloadTask.cancel();
+
       expect(fileDownloader.terminate.calls.count()).toBe(1);
-      expect(fileDownloadTask[ '_finished' ]).toBeTruthy();
-      expect(fileDownloadTask[ '_errors' ]).toEqual([ STATUS.CANCELED ]);
-      expect(fileDownloadTask[ '_status' ]).toBe(STATUS.CANCELED);
+      expect(fileDownloadTask.finished).toBeTruthy();
+      expect(fileDownloadTask.errors).toEqual([ STATUS.CANCELED ]);
+      expect(fileDownloadTask.status).toBe(STATUS.CANCELED);
     });
 
     it('should call taskManagerService.onTaskEvent()', () => {
       fileDownloadTask[ '_taskManagerService' ] = taskManagerService;
+
       fileDownloadTask.cancel();
+
       expect(taskManagerService.onTaskEvent.calls.count()).toBe(1);
     });
   });

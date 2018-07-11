@@ -1,5 +1,4 @@
 import { ProductCategoryService } from './product-category.service';
-import { defer } from 'rxjs/index';
 
 describe('ProductCategoryService', () => {
   let service: ProductCategoryService;

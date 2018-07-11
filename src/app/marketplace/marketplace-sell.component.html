@@ -5,21 +5,19 @@
      routerLinkActive #rla="routerLinkActive"
      [active]="rla.isActive">
     <span class="text">{{link.label}}</span>
-    <mat-chip-list>
-      <mat-chip *ngIf="link.items.length" color="accent" selected="true">{{link.items.length}}</mat-chip>
-    </mat-chip-list>
+    <app-notifications-number [number]="link.items.length"></app-notifications-number>
   </a>
 </nav>
 
 <router-outlet></router-outlet>
 
 <button
-    class="add-product-button"
-    [class.navigation-opened]="!(isHandset$ | async)"
-    mat-fab
-    (click)="openProductCreatorDialog()"
-    matTooltip="Create new product"
-    matTooltipPosition="before">
+  class="add-product-button"
+  [class.navigation-opened]="!(isHandset$ | async)"
+  mat-fab
+  (click)="openProductCreatorDialog()"
+  matTooltip="Create new product"
+  matTooltipPosition="before">
   <mat-icon aria-label="Add file">add</mat-icon>
 </button>
 

@@ -1,6 +1,5 @@
 import { TestBed } from '@angular/core/testing';
 import { RepuxWeb3Service, RepuxWeb3ServiceFactory } from './repux-web3.service';
-import RepuxWeb3Api from 'repux-web3-api/repux-web3-api';
 
 const balanceInWei = 1000000000000000000;
 const balanceInEther = 1;

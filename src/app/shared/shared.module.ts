@@ -11,6 +11,7 @@ import { TransactionDialogComponent } from './components/transaction-dialog/tran
 import { MetamaskDetectorComponent } from './components/metamask-detector/metamask-detector.component';
 import { TaskManagerComponent } from './components/task-manager/task-manager.component';
 import { MaterialModule } from '../material.module';
+import { NotificationsNumberComponent } from './components/notifications-number/notifications-number.component';
 
 @NgModule({
   imports: [
@@ -28,6 +29,7 @@ import { MaterialModule } from '../material.module';
     ConfirmationDialogComponent,
     TransactionDialogComponent,
     TaskManagerComponent,
+    NotificationsNumberComponent,
     ArrayJoinPipe,
     FileSizePipe,
     CurrencyRepuxPipe
@@ -38,6 +40,7 @@ import { MaterialModule } from '../material.module';
     ConfirmationDialogComponent,
     TransactionDialogComponent,
     TaskManagerComponent,
+    NotificationsNumberComponent,
     ArrayJoinPipe,
     FileSizePipe,
     CurrencyRepuxPipe

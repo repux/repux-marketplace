@@ -9,6 +9,7 @@ import { Subscription } from 'rxjs/internal/Subscription';
 import { DataProductTransaction } from '../../shared/models/data-product-transaction';
 import { TransactionDialogComponent } from '../../shared/components/transaction-dialog/transaction-dialog.component';
 import { DataProductNotificationsService } from '../../services/data-product-notifications.service';
+import { AwaitingFinalisationService } from '../../services/data-product-notifications/awaiting-finalisation.service';
 
 @Component({
   selector: 'app-marketplace-cancel-purchase-button',
@@ -33,7 +34,8 @@ export class MarketplaceCancelPurchaseButtonComponent implements OnInit, OnDestr
     private _dataProductService: DataProductService,
     private _dialog: MatDialog,
     private _clockService: ClockService,
-    private _dataProductNotificationsService: DataProductNotificationsService
+    private _dataProductNotificationsService: DataProductNotificationsService,
+    private _awaitingFinalisationService: AwaitingFinalisationService
   ) {
   }
 
@@ -41,8 +43,8 @@ export class MarketplaceCancelPurchaseButtonComponent implements OnInit, OnDestr
     this.dataProductAddress = this.dataProduct.address;
     this._walletSubscription = this._walletService.getWallet().subscribe(wallet => this._onWalletChange(wallet));
     this._clockSubscription = this._clockService.onEachSecond().subscribe(date => this._checkIfAfterDeliveryDeadline(date));
-    this._awaitingFinalisationSubscription = this._dataProductNotificationsService.getAwaitingFinalisation()
-      .subscribe(() => this._checkIfIsAwaiting());
+    this._awaitingFinalisationSubscription = this._awaitingFinalisationService.getEntries()
+      .subscribe(() => this._checkIfIsPending());
   }
 
   getUserIsBuyer(): boolean {
@@ -56,7 +58,7 @@ export class MarketplaceCancelPurchaseButtonComponent implements OnInit, OnDestr
     this._unsubscribeTransactionDialog();
     this._transactionDialogSubscription = transactionDialogRef.afterClosed().subscribe(result => {
       if (result) {
-        this._dataProductNotificationsService.removeAwaitingFinalisation({
+        this._awaitingFinalisationService.remove({
           dataProductAddress: this.dataProductAddress,
           buyerAddress: this.wallet.address
         });
@@ -120,10 +122,10 @@ export class MarketplaceCancelPurchaseButtonComponent implements OnInit, OnDestr
     }
   }
 
-  private _checkIfIsAwaiting() {
-    this.isAwaiting = this._dataProductNotificationsService.findAwaitingFinalisation({
+  private _checkIfIsPending() {
+    this.isAwaiting = Boolean(this._awaitingFinalisationService.find({
       dataProductAddress: this.dataProductAddress,
       buyerAddress: this.wallet.address
-    });
+    }));
   }
 }

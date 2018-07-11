@@ -1,6 +1,6 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { MarketplaceProductCreatorDialogComponent } from './marketplace-product-creator-dialog.component';
-import { MatDialog, MatDialogRef } from '@angular/material';
+import { MatDialogRef } from '@angular/material';
 import { TaskManagerService } from '../../services/task-manager.service';
 import { RepuxLibService } from '../../services/repux-lib.service';
 import { DataProductService } from '../../services/data-product.service';

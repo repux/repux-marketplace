@@ -12,12 +12,14 @@ import { RepuxLibService } from '../../services/repux-lib.service';
 import { TaskManagerService } from '../../services/task-manager.service';
 import { DataProductService } from '../../services/data-product.service';
 import { MaterialModule } from '../../material.module';
+import { FileReencryptionTask } from '../../tasks/file-reencryption-task';
+import { PendingFinalisationService } from '../../services/data-product-notifications/pending-finalisation.service';
 
 describe('MarketplaceFinaliseButtonComponent', () => {
   let component: MarketplaceFinaliseButtonComponent;
   let fixture: ComponentFixture<MarketplaceFinaliseButtonComponent>;
   let keyStoreService, matDialog, dataProductNotificationsService, repuxLibService, taskManagerService,
-    dataProductService;
+    dataProductService, fileReencryptionTask, pendingFinalisationService;
   const ownerAddress = '0x0000000000000000000000000000000000000000';
   const dataProductAddress = '0x1111111111111111111111111111111111111111';
   const buyerAddress = '0x2222222222222222222222222222222222222222';
@@ -31,10 +33,26 @@ describe('MarketplaceFinaliseButtonComponent', () => {
     repuxLibService = jasmine.createSpyObj('RepuxLibService', [ 'getClass', 'getInstance' ]);
     taskManagerService = jasmine.createSpyObj('TaskManagerService', [ 'addTask' ]);
     dataProductService = jasmine.createSpyObj('DataProductService', [ 'finaliseDataProductPurchase' ]);
+    pendingFinalisationService = jasmine.createSpyObj('PendingFinalisationService', [ 'getEntries' ]);
+    fileReencryptionTask = jasmine.createSpy().and.callFake(() => {
+      return {
+        onFinish() {
+          return {
+            subscribe(callback) {
+              setTimeout(() => callback(true), 100);
+
+              return {
+                unsubscribe: jasmine.createSpy()
+              };
+            }
+          };
+        }
+      };
+    });
 
     repuxLibService.getClass.and.returnValue({
       deserializePublicKey(key) {
-        return 'DESIERIALIZED_' + key;
+        return 'DESERIALIZED_' + key;
       }
     });
     repuxLibService.getInstance.and.returnValue({
@@ -57,13 +75,16 @@ describe('MarketplaceFinaliseButtonComponent', () => {
         { provide: DataProductNotificationsService, useValue: dataProductNotificationsService },
         { provide: RepuxLibService, useValue: repuxLibService },
         { provide: TaskManagerService, useValue: taskManagerService },
-        { provide: DataProductService, useValue: dataProductService }
+        { provide: DataProductService, useValue: dataProductService },
+        { provide: FileReencryptionTask, useValue: fileReencryptionTask },
+        { provide: PendingFinalisationService, useValue: pendingFinalisationService }
       ]
     })
       .compileComponents();
 
     fixture = TestBed.createComponent(MarketplaceFinaliseButtonComponent);
     component = fixture.componentInstance;
+    component.FileReencryptionTaskClass = fileReencryptionTask;
 
     component.transaction = <any> {
       buyerAddress,
@@ -122,16 +143,16 @@ describe('MarketplaceFinaliseButtonComponent', () => {
 
       await component.finalise();
       expect(component.transaction.finalised).toBeTruthy();
-      const fileReencryptionTask = taskManagerService.addTask.calls.allArgs()[ 0 ][ 0 ];
-      expect(fileReencryptionTask[ '_dataProductAddress' ]).toBe(dataProductAddress);
-      expect(fileReencryptionTask[ '_buyerAddress' ]).toBe(buyerAddress);
-      expect(fileReencryptionTask[ '_metaFileHash' ]).toBe(sellerMetaHash);
-      expect(fileReencryptionTask[ '_sellerPrivateKey' ]).toBe(privateKey);
-      expect(fileReencryptionTask[ '_buyerPublicKey' ]).toBe('DESIERIALIZED_' + buyerPublicKey);
-      expect(fileReencryptionTask[ '_repuxLibService' ]).toEqual(repuxLibService);
-      expect(fileReencryptionTask[ '_dataProductService' ]).toEqual(dataProductService);
-      expect(fileReencryptionTask[ '_keyStoreService' ]).toEqual(keyStoreService);
-      expect(fileReencryptionTask[ '_dialog' ]).toEqual(matDialog);
+      expect(fileReencryptionTask.calls.allArgs()[ 0 ][ 0 ]).toBe(dataProductAddress);
+      expect(fileReencryptionTask.calls.allArgs()[ 0 ][ 1 ]).toBe(buyerAddress);
+      expect(fileReencryptionTask.calls.allArgs()[ 0 ][ 2 ]).toBe(sellerMetaHash);
+      expect(fileReencryptionTask.calls.allArgs()[ 0 ][ 3 ]).toBe(privateKey);
+      expect(fileReencryptionTask.calls.allArgs()[ 0 ][ 4 ]).toBe('DESERIALIZED_' + buyerPublicKey);
+      expect(fileReencryptionTask.calls.allArgs()[ 0 ][ 5 ]).toEqual(repuxLibService);
+      expect(fileReencryptionTask.calls.allArgs()[ 0 ][ 6 ]).toEqual(dataProductService);
+      expect(fileReencryptionTask.calls.allArgs()[ 0 ][ 7 ]).toEqual(keyStoreService);
+      expect(fileReencryptionTask.calls.allArgs()[ 0 ][ 8 ]).toEqual(pendingFinalisationService);
+      expect(fileReencryptionTask.calls.allArgs()[ 0 ][ 9 ]).toEqual(matDialog);
     });
   });
 

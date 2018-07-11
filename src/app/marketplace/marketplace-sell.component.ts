@@ -1,6 +1,5 @@
 import { Component, OnDestroy } from '@angular/core';
 import { MatDialog } from '@angular/material';
-import { DataProductNotificationsService } from '../services/data-product-notifications.service';
 import { UnpublishedProductsService } from '../services/unpublished-products.service';
 import { Observable } from 'rxjs/internal/Observable';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
@@ -9,6 +8,14 @@ import { Subscription } from 'rxjs/internal/Subscription';
 import {
   MarketplaceProductCreatorDialogComponent
 } from './marketplace-product-creator-dialog/marketplace-product-creator-dialog.component';
+import { PendingFinalisationService } from '../services/data-product-notifications/pending-finalisation.service';
+import { DataProductNotificationsService } from '../services/data-product-notifications.service';
+
+export enum MarketplaceSellLink {
+  MY_ACTIVE_LISTINGS = 'my-active-listings',
+  UNPUBLISHED = 'unpublished',
+  PENDING_FINALISATION = 'pending-finalisation'
+}
 
 @Component({
   selector: 'app-marketplace-sell',
@@ -23,35 +30,47 @@ export class MarketplaceSellComponent implements OnDestroy {
   navLinks = [
     {
       label: 'My active listings',
-      path: 'my-active-listings',
+      path: MarketplaceSellLink.MY_ACTIVE_LISTINGS,
       items: []
     },
     {
       label: 'Unpublished',
-      path: 'marketplace-sell-unpublished',
+      path: MarketplaceSellLink.UNPUBLISHED,
       items: []
     },
     {
       label: 'Pending finalisation',
-      path: 'pending-finalisation',
+      path: MarketplaceSellLink.PENDING_FINALISATION,
       items: []
     }
   ];
 
-  private _finalisationRequestsSubscription: Subscription;
+  private _myActiveListingsSubscription: Subscription;
+  private _unpublishedProductsSubscription: Subscription;
+  private _pendingFinalisationSubscription: Subscription;
+  private _myActiveListingsLink;
+  private _unpublishedLink;
+  private _pendingFinalisationLink;
 
   constructor(
     private _dialog: MatDialog,
     private _breakpointObserver: BreakpointObserver,
     private _dataProductNotificationsService: DataProductNotificationsService,
-    private _unpublishedProductsService: UnpublishedProductsService
+    private _unpublishedProductsService: UnpublishedProductsService,
+    private _pendingFinalisationService: PendingFinalisationService,
   ) {
-    this._finalisationRequestsSubscription = this._dataProductNotificationsService.getFinalisationRequests()
-      .subscribe(finalisationRequests => {
-        this.navLinks.find(link => link.path === 'pending-finalisation').items = finalisationRequests;
-      });
+    this._myActiveListingsLink = this.navLinks.find(link => link.path === MarketplaceSellLink.MY_ACTIVE_LISTINGS);
+    this._unpublishedLink = this.navLinks.find(link => link.path === MarketplaceSellLink.UNPUBLISHED);
+    this._pendingFinalisationLink = this.navLinks.find(link => link.path === MarketplaceSellLink.PENDING_FINALISATION);
 
-    this.navLinks.find(link => link.path === 'marketplace-sell-unpublished').items = _unpublishedProductsService.products;
+    this._myActiveListingsSubscription = this._dataProductNotificationsService.getCreatedProductsAddresses()
+      .subscribe(createdProducts => this._myActiveListingsLink.items = createdProducts);
+
+    this._unpublishedProductsSubscription = this._unpublishedProductsService.getProducts()
+      .subscribe(products => this._unpublishedLink.items = products);
+
+    this._pendingFinalisationSubscription = this._pendingFinalisationService.getEntries()
+      .subscribe(pendingFinalisation => this._pendingFinalisationLink.items = pendingFinalisation);
   }
 
   openProductCreatorDialog() {
@@ -61,8 +80,12 @@ export class MarketplaceSellComponent implements OnDestroy {
   }
 
   ngOnDestroy() {
-    if (this._finalisationRequestsSubscription) {
-      this._finalisationRequestsSubscription.unsubscribe();
+    if (this._pendingFinalisationSubscription) {
+      this._pendingFinalisationSubscription.unsubscribe();
+    }
+
+    if (this._unpublishedProductsSubscription) {
+      this._unpublishedProductsSubscription.unsubscribe();
     }
   }
 }

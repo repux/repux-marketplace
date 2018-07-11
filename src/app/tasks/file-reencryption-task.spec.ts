@@ -1,9 +1,9 @@
 import { FileReencryptionTask, STATUS } from './file-reencryption-task';
 
 describe('FileReencryptionTask', () => {
-  let fileReencryptorReencrypt, reencryptorEventHandlers, fileReencryptorOn, fileReencryptorTerminate, fileReencryptor,
-    repuxLibService,
-    dataProductService, taskManagerService, fileReencryptionTask, matDialog, keyStoreService;
+  let fileReencryptorReencrypt, reencryptorEventHandlers, fileReencryptorOn, fileReencryptorTerminate, fileReencryptor, repuxLibService,
+    dataProductService, taskManagerService, fileReencryptionTask, matDialog, keyStoreService, pendingFinalisationService, callTransaction,
+    transactionResult;
   const productAddress = '0x1111111111111111111111111111111111111111';
   const buyerAddress = '0x0000000000000000000000000000000000000000';
   const fileHash = 'SELLER_META_HASH';
@@ -35,7 +35,22 @@ describe('FileReencryptionTask', () => {
     dataProductService = jasmine.createSpyObj('DataProductService', [ 'finaliseDataProductPurchase' ]);
     taskManagerService = jasmine.createSpyObj('TaskManagerService', [ 'onTaskEvent' ]);
     keyStoreService = jasmine.createSpyObj('KeyStoreService', [ 'hasKeys' ]);
+    callTransaction = jasmine.createSpy();
     matDialog = jasmine.createSpyObj('MatDialog', [ 'open' ]);
+    transactionResult = true;
+    matDialog.open.and.returnValue({
+      componentInstance: {
+        callTransaction
+      },
+      afterClosed() {
+        return {
+          subscribe(callback) {
+            callback(transactionResult);
+          }
+        };
+      }
+    });
+    pendingFinalisationService = jasmine.createSpyObj('PendingFinalisationService', [ 'remove' ]);
 
     fileReencryptionTask = new FileReencryptionTask(
       productAddress,
@@ -46,6 +61,7 @@ describe('FileReencryptionTask', () => {
       repuxLibService,
       dataProductService,
       keyStoreService,
+      pendingFinalisationService,
       matDialog
     );
   });
@@ -62,19 +78,21 @@ describe('FileReencryptionTask', () => {
       expect(fileReencryptionTask[ '_keyStoreService' ]).toBe(keyStoreService);
       expect(fileReencryptionTask[ '_dialog' ]).toBe(matDialog);
       expect(fileReencryptionTask[ '_reencryptor' ]).toBe(fileReencryptor);
-      expect(fileReencryptionTask[ '_name' ]).toBe('Selling ' + productAddress);
+      expect(fileReencryptionTask.name).toBe('Selling ' + productAddress);
     });
   });
 
   describe('#run()', () => {
     it('should change status and assign taskManagerService', () => {
       fileReencryptionTask.run(<any> taskManagerService);
+
       expect(<any> fileReencryptionTask[ '_taskManagerService' ]).toBe(taskManagerService);
       expect(fileReencryptionTask.status).toBe(STATUS.REENCRYPTION);
     });
 
     it('should call reencrypt function on _reencryptor property', () => {
       fileReencryptionTask.run(<any> taskManagerService);
+
       expect(fileReencryptorReencrypt.calls.count()).toBe(1);
       expect(fileReencryptorReencrypt.calls.allArgs()[ 0 ][ 0 ]).toBe(sellerPrivateKey);
       expect(fileReencryptorReencrypt.calls.allArgs()[ 0 ][ 1 ]).toBe(buyerPublicKey);
@@ -83,33 +101,37 @@ describe('FileReencryptionTask', () => {
 
     it('should update _progress when progress event is received', () => {
       fileReencryptionTask.run(<any> taskManagerService);
+
       reencryptorEventHandlers[ 'progress' ]('progress', 0.15);
-      expect(fileReencryptionTask[ '_progress' ]).toBe(15);
+      expect(fileReencryptionTask.progress).toBe(15);
     });
 
     it('should update _finished, _errors, and _status when error event is received', () => {
       const errorMessage = 'ERROR_MESSAGE';
+
       fileReencryptionTask.run(<any> taskManagerService);
+
       reencryptorEventHandlers[ 'error' ]('error', errorMessage);
-      expect(fileReencryptionTask[ '_errors' ]).toEqual([ errorMessage ]);
-      expect(fileReencryptionTask[ '_finished' ]).toBeTruthy();
-      expect(fileReencryptionTask[ '_status' ]).toBe(STATUS.CANCELED);
+      expect(fileReencryptionTask.errors).toEqual([ errorMessage ]);
+      expect(fileReencryptionTask.finished).toBeTruthy();
+      expect(fileReencryptionTask.status).toBe(STATUS.CANCELED);
     });
 
     it('should update _progress, _result, _needsUserAction, _userActionName and _status when ' +
       'finish event is received', () => {
       const result = 'RESULT';
+
       fileReencryptionTask.run(<any> taskManagerService);
+
       reencryptorEventHandlers[ 'finish' ]('finish', result);
-      expect(fileReencryptionTask[ '_progress' ]).toEqual(100);
       expect(fileReencryptionTask[ '_result' ]).toEqual(result);
-      expect(fileReencryptionTask[ '_needsUserAction' ]).toBeTruthy();
-      expect(fileReencryptionTask[ '_userActionName' ]).toBe('Finalise');
-      expect(fileReencryptionTask[ '_status' ]).toBe(STATUS.WAITING_FOR_FINALISATION);
+      expect(fileReencryptionTask.progress).toEqual(100);
+      expect(fileReencryptionTask.needsUserAction).toBeFalsy();
     });
 
     it('should call taskManagerService.onTaskEvent() when any event is received', () => {
       fileReencryptionTask.run(<any> taskManagerService);
+
       reencryptorEventHandlers[ 'progress, error, finish' ]('progress', 0);
       reencryptorEventHandlers[ 'progress, error, finish' ]('error', '');
       reencryptorEventHandlers[ 'progress, error, finish' ]('finish', '');
@@ -120,32 +142,40 @@ describe('FileReencryptionTask', () => {
   describe('#cancel()', () => {
     it('should terminate task and set status as canceled', () => {
       fileReencryptionTask[ '_taskManagerService' ] = taskManagerService;
+
       fileReencryptionTask.cancel();
+
       expect(fileReencryptor.terminate.calls.count()).toBe(1);
-      expect(fileReencryptionTask[ '_finished' ]).toBeTruthy();
-      expect(fileReencryptionTask[ '_errors' ]).toEqual([ STATUS.CANCELED ]);
-      expect(fileReencryptionTask[ '_status' ]).toBe(STATUS.CANCELED);
+      expect(fileReencryptionTask.finished).toBeTruthy();
+      expect(fileReencryptionTask.errors).toEqual([ STATUS.CANCELED ]);
+      expect(fileReencryptionTask.status).toBe(STATUS.CANCELED);
     });
 
     it('should call taskManagerService.onTaskEvent()', () => {
       fileReencryptionTask[ '_taskManagerService' ] = taskManagerService;
+
       fileReencryptionTask.cancel();
+
       expect(taskManagerService.onTaskEvent.calls.count()).toBe(1);
     });
   });
 
-  describe('#callUserAction()', () => {
+  describe('#_finalise()', () => {
     it('should call dataProductService.finaliseDataProductPurchase', async () => {
       dataProductService.finaliseDataProductPurchase.and.returnValue(Promise.resolve());
-      fileReencryptionTask[ '_status' ] = STATUS.WAITING_FOR_FINALISATION;
       fileReencryptionTask[ '_taskManagerService' ] = taskManagerService;
-      fileReencryptionTask[ '_needsUserAction' ] = true;
       fileReencryptionTask[ '_result' ] = 'RESULT';
 
-      await fileReencryptionTask.callUserAction();
-      expect(fileReencryptionTask[ '_needsUserAction' ]).toBeFalsy();
-      expect(fileReencryptionTask[ '_status' ]).toBe(STATUS.FINISHED);
-      expect(fileReencryptionTask[ '_finished' ]).toBeTruthy();
+      transactionResult = true;
+      callTransaction.and.callFake(function () {
+        this.transaction();
+      });
+
+      await fileReencryptionTask[ '_finalise' ]();
+
+      expect(fileReencryptionTask.needsUserAction).toBeFalsy();
+      expect(fileReencryptionTask.status).toBe(STATUS.FINISHED);
+      expect(fileReencryptionTask.finished).toBeTruthy();
       expect(dataProductService.finaliseDataProductPurchase.calls.allArgs()[ 0 ][ 0 ]).toBe(fileReencryptionTask[ '_dataProductAddress' ]);
       expect(dataProductService.finaliseDataProductPurchase.calls.allArgs()[ 0 ][ 1 ]).toBe(fileReencryptionTask[ '_buyerAddress' ]);
       expect(dataProductService.finaliseDataProductPurchase.calls.allArgs()[ 0 ][ 2 ]).toBe(fileReencryptionTask[ '_result' ]);
@@ -155,15 +185,19 @@ describe('FileReencryptionTask', () => {
     it('should handle rejection of dataProductService.finaliseDataProductPurchase', async () => {
       const error = 'ERROR';
       dataProductService.finaliseDataProductPurchase.and.returnValue(Promise.reject(error));
-      fileReencryptionTask[ '_status' ] = STATUS.WAITING_FOR_FINALISATION;
       fileReencryptionTask[ '_taskManagerService' ] = taskManagerService;
-      fileReencryptionTask[ '_needsUserAction' ] = true;
       fileReencryptionTask[ '_result' ] = 'RESULT';
 
-      await fileReencryptionTask.callUserAction();
-      expect(fileReencryptionTask[ '_needsUserAction' ]).toBeTruthy();
-      expect(fileReencryptionTask[ '_status' ]).toBe(STATUS.REJECTED);
-      expect(fileReencryptionTask[ '_finished' ]).toBeFalsy();
+      transactionResult = false;
+      callTransaction.and.callFake(function () {
+        this.transaction();
+      });
+
+      await fileReencryptionTask[ '_finalise' ]();
+
+      expect(fileReencryptionTask.needsUserAction).toBeFalsy();
+      expect(fileReencryptionTask.status).toBe(STATUS.REJECTED);
+      expect(fileReencryptionTask.finished).toBeTruthy();
       expect(taskManagerService.onTaskEvent.calls.count()).toBe(2);
     });
   });

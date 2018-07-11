@@ -1,4 +1,4 @@
-import { Component, Input, OnChanges } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, Output } from '@angular/core';
 import { DataProductTransaction } from '../../shared/models/data-product-transaction';
 import { MatTableDataSource } from '@angular/material';
 import { environment } from '../../../environments/environment';
@@ -14,6 +14,8 @@ const DAY_IN_MILLISECONDS = 24 * 60 * 60 * 1000;
 export class MarketplaceDataProductTransactionsListComponent implements OnChanges {
   @Input() dataProduct: DataProduct;
   @Input() transactions: DataProductTransaction[];
+  @Output() finaliseSuccess = new EventEmitter<{ transaction: DataProductTransaction, dataProduct: DataProduct }>();
+
   public dataSource: MatTableDataSource<DataProductTransaction>;
   public currencyName = ` ${environment.repux.currency.defaultName} `;
   public currencyFormat: string = environment.repux.currency.format;
@@ -32,5 +34,12 @@ export class MarketplaceDataProductTransactionsListComponent implements OnChange
 
   getTransactionDate(transaction: DataProductTransaction) {
     return new Date((transaction.deliveryDeadline.getTime() - this.dataProduct.daysForDeliver * DAY_IN_MILLISECONDS));
+  }
+
+  onFinaliseSuccess(transaction: DataProductTransaction) {
+    this.finaliseSuccess.emit({
+      dataProduct: this.dataProduct,
+      transaction
+    });
   }
 }
