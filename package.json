@@ -26,7 +26,7 @@
     "core-js": "^2.5.4",
     "file-saver": "^1.3.8",
     "git": "^0.1.0",
-    "repux-lib": "git+ssh://git@github.com:repux/repux-lib.git#bugfix/exposed-types",
+    "repux-lib": "git+ssh://git@github.com:repux/repux-lib.git#4784cb1e906ab2ac16f03bf983a025743fd0df39",
     "repux-web3-api": "git+ssh://git@github.com:repux/repux-web3-api.git#ea43367985a61bcfddd82adfc58bd5e20941a925",
     "rxjs": "^6.0.0",
     "socket.io-client": "^2.1.1",
