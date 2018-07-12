@@ -1,5 +1,6 @@
 import { FileUploadTask, STATUS } from './file-upload-task';
 import BigNumber from 'bignumber.js';
+import { EventType } from 'repux-lib';
 
 describe('FileUploadTask()', () => {
   let fileUploadTask: FileUploadTask, dataProductService, repuxLibService, fileUploader, fileUploaderUpload,
@@ -137,7 +138,7 @@ describe('FileUploadTask()', () => {
     it('should update _progress when progress event is received', () => {
       fileUploadTask.run(<any> taskManagerService);
 
-      uploaderEventHandlers[ 'progress' ]('progress', 0.15);
+      uploaderEventHandlers[ EventType.PROGRESS ](EventType.PROGRESS, 0.15);
       expect(fileUploadTask.progress).toBe(15);
     });
 
@@ -146,7 +147,7 @@ describe('FileUploadTask()', () => {
 
       fileUploadTask.run(<any> taskManagerService);
 
-      uploaderEventHandlers[ 'error' ]('error', errorMessage);
+      uploaderEventHandlers[ EventType.ERROR ](EventType.ERROR, errorMessage);
       expect(fileUploadTask.errors).toEqual([ errorMessage ]);
       expect(fileUploadTask.finished).toBeTruthy();
       expect(fileUploadTask.status).toBe(STATUS.CANCELED);
@@ -158,7 +159,7 @@ describe('FileUploadTask()', () => {
 
       fileUploadTask.run(<any> taskManagerService);
 
-      uploaderEventHandlers[ 'finish' ]('finish', result);
+      uploaderEventHandlers[ EventType.FINISH ](EventType.FINISH, result);
       expect(fileUploadTask[ '_result' ]).toEqual(result);
       expect(fileUploadTask.progress).toEqual(100);
       expect(fileUploadTask.needsUserAction).toBeTruthy();
@@ -168,10 +169,11 @@ describe('FileUploadTask()', () => {
 
     it('should call taskManagerService.onTaskEvent() when any event is received', () => {
       fileUploadTask.run(<any> taskManagerService);
+      const events = `${EventType.PROGRESS},${EventType.ERROR},${EventType.FINISH}`;
 
-      uploaderEventHandlers[ 'progress, error, finish' ]('progress', 0);
-      uploaderEventHandlers[ 'progress, error, finish' ]('error', '');
-      uploaderEventHandlers[ 'progress, error, finish' ]('finish', '');
+      uploaderEventHandlers[ events ](EventType.PROGRESS, 0);
+      uploaderEventHandlers[ events ](EventType.ERROR, '');
+      uploaderEventHandlers[ events ](EventType.FINISH, '');
       expect(taskManagerService.onTaskEvent.calls.count()).toBe(3);
     });
   });

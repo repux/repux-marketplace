@@ -24,7 +24,7 @@ describe('MarketplaceProductCreatorDialogComponent', () => {
 
   beforeEach(async(() => {
     keyStoreService = jasmine.createSpyObj('KeyStoreService', [ 'hasKeys' ]);
-    repuxLibService = jasmine.createSpyObj('RepuxLibService', [ 'getClass', 'getInstance' ]);
+    repuxLibService = jasmine.createSpyObj('RepuxLibService', [ 'getInstance' ]);
     repuxLibService.getInstance.and.returnValue({
       createFileUploader: jasmine.createSpy()
     });
@@ -87,7 +87,7 @@ describe('MarketplaceProductCreatorDialogComponent', () => {
       };
 
       await component.upload();
-      expect(repuxLibService.getClass.calls.count()).toBe(0);
+      expect(repuxLibService.getInstance.calls.count()).toBe(0);
     });
 
     it('should add new FileUploadTask to taskManagerService', async () => {

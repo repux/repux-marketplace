@@ -5,7 +5,15 @@
     "module": "commonjs",
     "types": [
       "jasmine",
-      "node"
+      "node",
+      "filesystem",
+      "repux-lib/typings"
+    ],
+    "lib": [
+      "es2015",
+      "es2016",
+      "es2017",
+      "dom"
     ]
   },
   "files": [

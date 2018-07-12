@@ -30,7 +30,7 @@ describe('MarketplaceFinaliseButtonComponent', () => {
     keyStoreService = jasmine.createSpyObj('KeyStoreService', [ 'hasKeys' ]);
     matDialog = jasmine.createSpyObj('MatDialog', [ 'open' ]);
     dataProductNotificationsService = jasmine.createSpyObj('DataProductNotificationsService', [ 'removeFinalisationRequest' ]);
-    repuxLibService = jasmine.createSpyObj('RepuxLibService', [ 'getClass', 'getInstance' ]);
+    repuxLibService = jasmine.createSpyObj('RepuxLibService', [ 'getInstance' ]);
     taskManagerService = jasmine.createSpyObj('TaskManagerService', [ 'addTask' ]);
     dataProductService = jasmine.createSpyObj('DataProductService', [ 'finaliseDataProductPurchase' ]);
     pendingFinalisationService = jasmine.createSpyObj('PendingFinalisationService', [ 'getEntries' ]);
@@ -50,12 +50,10 @@ describe('MarketplaceFinaliseButtonComponent', () => {
       };
     });
 
-    repuxLibService.getClass.and.returnValue({
+    repuxLibService.getInstance.and.returnValue({
       deserializePublicKey(key) {
         return 'DESERIALIZED_' + key;
-      }
-    });
-    repuxLibService.getInstance.and.returnValue({
+      },
       createFileReencryptor() {
       }
     });

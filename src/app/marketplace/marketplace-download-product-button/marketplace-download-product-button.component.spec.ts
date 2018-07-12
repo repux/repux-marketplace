@@ -15,7 +15,7 @@ describe('MarketplaceDownloadProductButtonComponent', () => {
   const productAddress = '0x1111111111111111111111111111111111111111';
 
   beforeEach(fakeAsync(() => {
-    repuxLibServiceSpy = jasmine.createSpyObj('RepuxLibService', [ 'getInstance', 'getClass' ]);
+    repuxLibServiceSpy = jasmine.createSpyObj('RepuxLibService', [ 'getInstance' ]);
     repuxLibServiceSpy.getInstance.and.returnValue({
       createFileDownloader: jasmine.createSpy()
     });

@@ -10,6 +10,7 @@ import { DataProductNotificationsService } from '../services/data-product-notifi
 import { TransactionDialogComponent } from '../shared/components/transaction-dialog/transaction-dialog.component';
 import { Subscription } from 'rxjs/index';
 import { MatDialog } from '@angular/material';
+import { FileUploader, EventType, FileMetaData } from 'repux-lib';
 
 export const STATUS = {
   UPLOADING: 'Uploading',
@@ -23,7 +24,7 @@ export const STATUS = {
 export class FileUploadTask implements Task {
   public readonly walletSpecific = false;
   public readonly taskType = TaskType.UPLOAD;
-  private _uploader;
+  private _uploader: FileUploader;
   private _result: string;
   private _taskManagerService: TaskManagerService;
   private _dataProduct: DataProduct;
@@ -103,16 +104,16 @@ export class FileUploadTask implements Task {
     this._taskManagerService = taskManagerService;
 
     this._uploader.upload(this._publicKey, this._file, this._createMetadata())
-      .on('progress', (eventType, progress) => {
+      .on(EventType.PROGRESS, (eventType, progress) => {
         this._progress = progress * 100;
       })
-      .on('error', (eventType, error) => {
+      .on(EventType.ERROR, (eventType, error) => {
         this._finished = true;
         this._errors.push(error);
         this._status = STATUS.CANCELED;
         this.destroy();
       })
-      .on('finish', (eventType, result) => {
+      .on(EventType.FINISH, (eventType, result) => {
         this._progress = 100;
         this._result = result;
         this._needsUserAction = true;
@@ -120,7 +121,7 @@ export class FileUploadTask implements Task {
         this._status = STATUS.WAITING_FOR_PUBLICATION;
         this._saveProduct();
       })
-      .on('progress, error, finish', () => {
+      .on([ EventType.PROGRESS, EventType.ERROR, EventType.FINISH ], () => {
         this._taskManagerService.onTaskEvent();
       });
   }
@@ -174,7 +175,7 @@ export class FileUploadTask implements Task {
     return transactionDialog.callTransaction();
   }
 
-  _createMetadata() {
+  _createMetadata(): FileMetaData {
     return {
       title: this._title,
       shortDescription: this._shortDescription,

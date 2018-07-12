@@ -34,8 +34,8 @@ export class Encoder {
   }> {
     const textBuffer = new TextEncoder(Encoder.ENCODING).encode(plainText);
     const passwordBuffer = BufferUtil.stringToBuffer(password);
-    const iv = crypto.getRandomValues(new Uint8Array(Encoder.IV_LENGTH));
-    const salt = crypto.getRandomValues(new Uint8Array(Encoder.SALT_LENGTH));
+    const iv: Uint8Array = <Uint8Array> crypto.getRandomValues(new Uint8Array(Encoder.IV_LENGTH));
+    const salt: Uint8Array = <Uint8Array> crypto.getRandomValues(new Uint8Array(Encoder.SALT_LENGTH));
     const encryptionKey = await Encoder.generateEncryptionKey(passwordBuffer, salt, Encoder.ITERATION_COUNT);
     const alg = {
       name: Encoder.ALGORITHM.name,
@@ -100,12 +100,12 @@ export class Encoder {
     const cryptoKey = await crypto.subtle.importKey(
       'raw',
       passwordBuffer,
-      { name: 'PBKDF2' },
+      <any> { name: 'PBKDF2' },
       false,
       [ 'deriveBits', 'deriveKey' ]
     );
 
-    return crypto.subtle.deriveKey(
+    return await crypto.subtle.deriveKey(
       { name: 'PBKDF2', salt: salt, iterations: iterationCount, hash: Encoder.HASHING_FN },
       cryptoKey,
       Encoder.ALGORITHM,

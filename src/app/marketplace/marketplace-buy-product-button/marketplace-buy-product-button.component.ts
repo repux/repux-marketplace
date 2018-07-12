@@ -49,7 +49,7 @@ export class MarketplaceBuyProductButtonComponent implements OnInit, OnDestroy {
 
   async buyDataProduct(): Promise<void> {
     const { publicKey } = await this._getKeys();
-    const serializedKey = await this._repuxLibService.getClass().serializePublicKey(publicKey);
+    const serializedKey = await this._repuxLibService.getInstance().serializePublicKey(publicKey);
 
     const transactionDialogRef = this._dialog.open(TransactionDialogComponent, {
       disableClose: true

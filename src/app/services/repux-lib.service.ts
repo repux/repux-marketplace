@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import RepuxLib from 'repux-lib';
+import { RepuxLib } from 'repux-lib';
 import { IpfsService } from './ipfs.service';
 
 @Injectable({
@@ -14,9 +14,5 @@ export class RepuxLibService {
 
   getInstance(): RepuxLib {
     return this.library;
-  }
-
-  getClass(): typeof RepuxLib {
-    return RepuxLib;
   }
 }
