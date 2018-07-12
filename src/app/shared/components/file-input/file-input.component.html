@@ -1,8 +1,34 @@
 <mat-form-field (click)="openFileBrowser()">
-  <input #fileInput type="file" (change)="onChange($event)">
-  <input matInput [placeholder]="placeholder" [required]="required" readonly [value]="fileNames" [formControl]="formControl">
-  <button matSuffix mat-raised-button color="primary" type="button">{{ multiple ? 'Choose files' : 'Choose file' }}</button>
+  <input #fileInput
+         type="file"
+         [multiple]="multiple"
+         (change)="onChange($event)">
+
+  <input matInput
+         [placeholder]="placeholder"
+         [required]="required"
+         [formControl]="formControl"
+         [appMaxFileSize]="maxFileSize"
+         readonly [value]="fileNames">
+
+  <button matSuffix
+          mat-raised-button
+          color="primary"
+          type="button">
+    {{ multiple ? 'Choose files' : 'Choose file' }}
+  </button>
+
   <mat-error *ngIf="formControl.hasError('required')">
     {{ placeholder }} is <strong>required</strong>
   </mat-error>
+
+  <mat-error *ngIf="formControl.hasError('maxFileSizeExceeded')">
+    Max file size exceeded ({{ maxFileSize | fileSize }})
+  </mat-error>
+
+  <mat-hint>
+    <div *ngIf="hint">{{ hint }}</div>
+
+    <div *ngIf="maxFileSize">Max file size is {{ maxFileSize | fileSize }}</div>
+  </mat-hint>
 </mat-form-field>

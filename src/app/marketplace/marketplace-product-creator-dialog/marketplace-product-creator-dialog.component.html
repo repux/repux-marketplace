@@ -21,7 +21,7 @@
         <textarea matInput
                   placeholder="Short description"
                   required
-                  [formControl]="shortDescriptionFormControl"></textarea>
+                  [formControl]="formGroup.controls['shortDescription']"></textarea>
       <mat-error *ngIf="formGroup.controls['shortDescription'].hasError('required')">
         Title is <strong>required</strong>
       </mat-error>
@@ -36,15 +36,15 @@
     <mat-form-field class="field-row">
         <textarea matInput
                   placeholder="Full description"
-                  [formControl]="fullDescriptionFormControl"></textarea>
+                  [formControl]="formGroup.controls['fullDescription']"></textarea>
     </mat-form-field>
 
     <div class="field-row">
       <app-marketplace-product-category-selector #categoryInput
-                                     matInput
-                                     required
-                                     [formControl]="categoryFormControl"
-                                     ngDefaultControl></app-marketplace-product-category-selector>
+                                                 matInput
+                                                 required
+                                                 [formControl]="formGroup.controls['category']"
+                                                 ngDefaultControl></app-marketplace-product-category-selector>
     </div>
 
     <mat-form-field class="field-row">
@@ -52,7 +52,7 @@
              type="text"
              placeholder="Price"
              required
-             [formControl]="priceFormControl">
+             [formControl]="formGroup.controls['price']">
       <span matSuffix="">{{ currencyName }}</span>
       <mat-error *ngIf="formGroup.controls['price'].hasError('required')">
         Price is <strong>required</strong>
@@ -68,18 +68,28 @@
     <div class="field-row">
       <app-file-input #fileInput
                       placeholder="File"
-                      required
-                      [formControl]="fileFormControl"
+                      [required]="true"
+                      [formControl]="formGroup.controls['file']"
                       ngDefaultControl></app-file-input>
     </div>
 
     <mat-form-field class="field-row">
-      <mat-select placeholder="Days for deliver" required="true" [formControl]="daysForDeliverFormControl">
+      <mat-select placeholder="Days for deliver" required="true" [formControl]="formGroup.controls['daysForDeliver']">
         <mat-option *ngFor="let day of daysForDeliverOptions" [value]="day">
           {{ day }}
         </mat-option>
       </mat-select>
     </mat-form-field>
+
+    <div class="field-row">
+      <app-file-input #sampleFileInput
+                      placeholder="Sample files"
+                      [formControl]="formGroup.controls['sampleFile']"
+                      ngDefaultControl
+                      hint="These files will be visible to everyone"
+                      [multiple]="true"
+                      [maxFileSize]="maxFileSize"></app-file-input>
+    </div>
   </mat-dialog-content>
   <mat-dialog-actions>
     <button mat-button type="button" (click)="closeDialog()">Cancel</button>

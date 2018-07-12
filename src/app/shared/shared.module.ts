@@ -12,6 +12,7 @@ import { MetamaskDetectorComponent } from './components/metamask-detector/metama
 import { TaskManagerComponent } from './components/task-manager/task-manager.component';
 import { MaterialModule } from '../material.module';
 import { NotificationsNumberComponent } from './components/notifications-number/notifications-number.component';
+import { MaxFileSizeDirective } from './components/file-input/max-file-size.directive';
 
 @NgModule({
   imports: [
@@ -25,6 +26,7 @@ import { NotificationsNumberComponent } from './components/notifications-number/
   ],
   declarations: [
     FileInputComponent,
+    MaxFileSizeDirective,
     MetamaskDetectorComponent,
     ConfirmationDialogComponent,
     TransactionDialogComponent,

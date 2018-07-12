@@ -5925,9 +5925,9 @@ repeating@^2.0.0:
   dependencies:
     is-finite "^1.0.0"
 
-"repux-lib@git+ssh://git@github.com:repux/repux-lib.git#v0.5.0":
+"repux-lib@git+ssh://git@github.com:repux/repux-lib.git#bugfix/exposed-types":
   version "0.5.0"
-  resolved "git+ssh://git@github.com:repux/repux-lib.git#244e2f5676ee5e2932fed4799bc58143b7fe8c1d"
+  resolved "git+ssh://git@github.com:repux/repux-lib.git#312d9ab43ef5347bbfc84760923d56eec6f2e552"
   dependencies:
     "@types/chai" "^4.1.4"
     "@types/filesystem" "^0.0.28"

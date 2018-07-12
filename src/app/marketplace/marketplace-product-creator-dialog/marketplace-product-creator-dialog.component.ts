@@ -1,6 +1,6 @@
 import { Component, OnDestroy, ViewChild } from '@angular/core';
 import { environment } from '../../../environments/environment';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BigNumber } from 'bignumber.js';
 import { FileUploadTask } from '../../tasks/file-upload-task';
 import { RepuxLibService } from '../../services/repux-lib.service';
@@ -17,6 +17,7 @@ import {
   MarketplaceProductCategorySelectorComponent
 } from '../marketplace-product-category-selector/marketplace-product-category-selector.component';
 import { EventAction, EventCategory, TagManagerService } from '../../shared/services/tag-manager.service';
+import { IpfsService } from '../../services/ipfs.service';
 
 @Component({
   selector: 'app-marketplace-product-creator-dialog',
@@ -28,53 +29,52 @@ export class MarketplaceProductCreatorDialogComponent implements OnDestroy {
   public formGroup: FormGroup;
   public titleMinLength = 3;
   public titleMaxLength = 100;
+  public maxFileSize: number = environment.ipfs.maxFileSize;
   public repuxPrecision: number = environment.repux.currency.precision;
   @ViewChild('fileInput') fileInput: FileInputComponent;
+  @ViewChild('sampleFileInput') sampleFileInput: FileInputComponent;
   @ViewChild('categoryInput') categoryInput: MarketplaceProductCategorySelectorComponent;
-  public titleFormControl = new FormControl('', [
-    Validators.required,
-    Validators.minLength(this.titleMinLength),
-    Validators.maxLength(this.titleMaxLength)
-  ]);
-  public fullDescriptionFormControl = new FormControl('', []);
-  public shortDescriptionFormControl = new FormControl('', [
-    Validators.required,
-    Validators.minLength(3),
-    Validators.maxLength(1023)
-  ]);
-  public categoryFormControl = new FormControl([], [
-    Validators.required
-  ]);
-  public priceFormControl = new FormControl('', [
-    Validators.required,
-    Validators.min(0),
-    Validators.pattern(environment.repux.currency.pattern)
-  ]);
-  public fileFormControl = new FormControl('', [
-    Validators.required
-  ]);
-  public daysForDeliverFormControl = new FormControl(1, [
-    Validators.required
-  ]);
   private subscription: Subscription;
 
   constructor(
     private tagManager: TagManagerService,
+    private formBuilder: FormBuilder,
     private keyStoreService: KeyStoreService,
     private repuxLibService: RepuxLibService,
     private dataProductService: DataProductService,
     private taskManagerService: TaskManagerService,
     private _unpublishedProductsService: UnpublishedProductsService,
+    private _ipfsService: IpfsService,
     private dialog: MatDialog,
     public dialogRef: MatDialogRef<MarketplaceProductCreatorDialogComponent>) {
-    this.formGroup = new FormGroup({
-      title: this.titleFormControl,
-      shortDescription: this.shortDescriptionFormControl,
-      fullDescription: this.fullDescriptionFormControl,
-      category: this.categoryFormControl,
-      price: this.priceFormControl,
-      file: this.fileFormControl,
-      daysForDeliver: this.daysForDeliverFormControl
+
+    this.formGroup = this.formBuilder.group({
+      title: [ '', [
+        Validators.required,
+        Validators.minLength(this.titleMinLength),
+        Validators.maxLength(this.titleMaxLength)
+      ] ],
+      shortDescription: [ '', [
+        Validators.required,
+        Validators.minLength(3),
+        Validators.maxLength(1023)
+      ] ],
+      fullDescription: [ '', [] ],
+      category: [ [], [
+        Validators.required
+      ] ],
+      price: [ '', [
+        Validators.required,
+        Validators.min(0),
+        Validators.pattern(environment.repux.currency.pattern)
+      ] ],
+      file: [ [], [
+        Validators.required
+      ] ],
+      sampleFile: [ '', [] ],
+      daysForDeliver: [ 1, [
+        Validators.required
+      ] ]
     });
   }
 
@@ -108,6 +108,7 @@ export class MarketplaceProductCreatorDialogComponent implements OnDestroy {
       this.repuxLibService,
       this.dataProductService,
       this._unpublishedProductsService,
+      this._ipfsService,
       this.formGroup.value.title,
       this.formGroup.value.shortDescription,
       this.formGroup.value.fullDescription,
@@ -115,6 +116,7 @@ export class MarketplaceProductCreatorDialogComponent implements OnDestroy {
       new BigNumber(this.formGroup.value.price),
       this.fileInput.value[ 0 ],
       this.formGroup.value.daysForDeliver,
+      this.sampleFileInput.value,
       this.dialog,
       this.tagManager
     );

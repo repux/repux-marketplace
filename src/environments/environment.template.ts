@@ -44,7 +44,8 @@ export const environment = {
   ipfs: {
     host: '${MARKETPLACE_IPFS_HOST}' || 'localhost',
     port: '${MARKETPLACE_IPFS_PORT}' || '5002',
-    protocol: '${MARKETPLACE_IPFS_PROTOCOL}' || 'https'
+    protocol: '${MARKETPLACE_IPFS_PROTOCOL}' || 'https',
+    maxFileSize: '${MARKETPLACE_IPFS_MAX_FILE_SIZE}' || 10 * 1024 * 1024
   },
   webPushServer: {
     host: '${WEBPUSH_SERVER_HOST}' || 'http://localhost:3000',

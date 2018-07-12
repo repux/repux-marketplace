@@ -14,6 +14,8 @@ export class FileInputComponent {
   @Input() @Output() value: File[];
   @Input() fileNames = '';
   @Input() formControl: FormControl = new FormControl();
+  @Input() hint?: string;
+  @Input() maxFileSize?: number;
   @ViewChild('fileInput') fileInput: ElementRef;
 
   openFileBrowser() {
@@ -22,6 +24,7 @@ export class FileInputComponent {
 
   onChange(event) {
     this.value = event.target.files;
+    this.formControl.setValue(this.value);
 
     const names: string[] = [];
     for (let i = 0; i < event.target.files.length; i++) {
