@@ -21,6 +21,7 @@ export class MarketplaceBuyAwaitingFinalisationComponent implements OnDestroy {
     'transactionDate',
     'daysForDeliver',
     'deliveryDeadline',
+    'eula',
     'actions'
   ];
   public staticQuery = {};

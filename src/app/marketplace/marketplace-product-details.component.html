@@ -29,6 +29,18 @@
       <mat-hint mat-line>File size</mat-hint>
     </mat-list-item>
     <mat-divider></mat-divider>
+    <mat-list-item>
+      <h4 mat-line>
+        <a
+          (click)="downloadEula($event, product.eula)"
+          matTooltip="Download EULA content"
+          matTooltipPosition="right">
+          <app-marketplace-eula [eulaType]="product.eula.type"></app-marketplace-eula>
+        </a>
+      </h4>
+      <mat-hint mat-line>End User License Agreement</mat-hint>
+    </mat-list-item>
+    <mat-divider></mat-divider>
   </mat-list>
 
   <br/><br/>
@@ -43,6 +55,30 @@
     <app-marketplace-action-buttons
       [dataProduct]="product"
       [availableActions]="[ 'buy' ]"></app-marketplace-action-buttons>
+  </div>
+
+  <div *ngIf="product.sampleFile?.length > 0">
+    <h3 class="section-header">Sample files</h3>
+
+    <mat-list>
+      <mat-divider></mat-divider>
+
+      <mat-list-item *ngFor="let file of product.sampleFile;">
+        <div mat-line>
+          <div class="sample-file-line">
+            {{ file.fileName }}
+            <button
+              mat-button
+              color="accent"
+              (click)="downloadSampleFile($event, file)">
+              <mat-icon>save_alt</mat-icon>
+              Download sample
+            </button>
+          </div>
+        </div>
+        <mat-divider></mat-divider>
+      </mat-list-item>
+    </mat-list>
   </div>
 
   <br/><br/>

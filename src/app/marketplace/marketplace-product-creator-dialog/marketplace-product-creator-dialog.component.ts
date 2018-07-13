@@ -1,4 +1,4 @@
-import { Component, OnDestroy, ViewChild } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { environment } from '../../../environments/environment';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BigNumber } from 'bignumber.js';
@@ -18,13 +18,15 @@ import {
 } from '../marketplace-product-category-selector/marketplace-product-category-selector.component';
 import { EventAction, EventCategory, TagManagerService } from '../../shared/services/tag-manager.service';
 import { IpfsService } from '../../services/ipfs.service';
+import { createEulaSelection } from '../marketplace-eula-selector/marketplace-eula-selector.component';
+import { PurchaseType } from 'repux-lib';
 
 @Component({
   selector: 'app-marketplace-product-creator-dialog',
   templateUrl: './marketplace-product-creator-dialog.component.html',
   styleUrls: [ './marketplace-product-creator-dialog.component.scss' ]
 })
-export class MarketplaceProductCreatorDialogComponent implements OnDestroy {
+export class MarketplaceProductCreatorDialogComponent implements OnInit, OnDestroy {
   public currencyName: string = environment.repux.currency.defaultName;
   public formGroup: FormGroup;
   public titleMinLength = 3;
@@ -43,8 +45,8 @@ export class MarketplaceProductCreatorDialogComponent implements OnDestroy {
     private repuxLibService: RepuxLibService,
     private dataProductService: DataProductService,
     private taskManagerService: TaskManagerService,
-    private _unpublishedProductsService: UnpublishedProductsService,
-    private _ipfsService: IpfsService,
+    private unpublishedProductsService: UnpublishedProductsService,
+    private ipfsService: IpfsService,
     private dialog: MatDialog,
     public dialogRef: MatDialogRef<MarketplaceProductCreatorDialogComponent>) {
 
@@ -74,12 +76,19 @@ export class MarketplaceProductCreatorDialogComponent implements OnDestroy {
       sampleFile: [ '', [] ],
       daysForDeliver: [ 1, [
         Validators.required
+      ] ],
+      eula: [ null, [
+        Validators.required
       ] ]
     });
   }
 
   get daysForDeliverOptions() {
     return Array.from(Array(environment.repux.maxDaysForDeliver + 1).keys());
+  }
+
+  async ngOnInit() {
+    this.formGroup.controls[ 'eula' ].setValue(await createEulaSelection());
   }
 
   async upload() {
@@ -105,10 +114,6 @@ export class MarketplaceProductCreatorDialogComponent implements OnDestroy {
 
     const fileUploadTask = new FileUploadTask(
       publicKey,
-      this.repuxLibService,
-      this.dataProductService,
-      this._unpublishedProductsService,
-      this._ipfsService,
       this.formGroup.value.title,
       this.formGroup.value.shortDescription,
       this.formGroup.value.fullDescription,
@@ -117,7 +122,14 @@ export class MarketplaceProductCreatorDialogComponent implements OnDestroy {
       this.fileInput.value[ 0 ],
       this.formGroup.value.daysForDeliver,
       this.sampleFileInput.value,
+      this.formGroup.value.eula,
+      -1,
+      PurchaseType.ONE_TIME_PURCHASE,
       this.dialog,
+      this.repuxLibService,
+      this.dataProductService,
+      this.unpublishedProductsService,
+      this.ipfsService,
       this.tagManager
     );
 

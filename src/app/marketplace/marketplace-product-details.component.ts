@@ -4,6 +4,8 @@ import { DataProductListService } from '../services/data-product-list.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Observable } from 'rxjs/internal/Observable';
 import { map, pluck } from 'rxjs/operators';
+import { Eula, Attachment } from 'repux-lib';
+import { IpfsService } from '../services/ipfs.service';
 
 @Component({
   selector: 'app-product-details',
@@ -17,16 +19,29 @@ export class MarketplaceProductDetailsComponent implements OnInit {
     private router: Router,
     private location: Location,
     private activeRoute: ActivatedRoute,
-    private dataProductListService: DataProductListService) {
+    private dataProductListService: DataProductListService,
+    private ipfsService: IpfsService) {
   }
 
-  ngOnInit() {
+  downloadEula(event: MouseEvent, eula: Eula): Promise<void> {
+    event.stopPropagation();
+
+    return this.ipfsService.downloadAndSave(eula.fileHash, eula.fileName);
+  }
+
+  downloadSampleFile(event: MouseEvent, file: Attachment): Promise<void> {
+    event.stopPropagation();
+
+    return this.ipfsService.downloadAndSave(file.fileHash, file.fileName);
+  }
+
+  ngOnInit(): void {
     this.activeRoute.params.subscribe(routeParams => {
       this.loadProduct(routeParams.address);
     });
   }
 
-  loadProduct(address: string) {
+  loadProduct(address: string): void {
     this.product$ = this.dataProductListService.getDataProduct(address).pipe(
       pluck('hits'),
       map(obj => obj[ 0 ]),
@@ -34,7 +49,7 @@ export class MarketplaceProductDetailsComponent implements OnInit {
     );
   }
 
-  goBack() {
+  goBack(): void {
     if (<any>document.referrer !== '') {
       this.location.back();
     } else {

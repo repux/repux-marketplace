@@ -8,6 +8,9 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { HttpClientModule } from '@angular/common/http';
 import { Component, Input } from '@angular/core';
 import { DataProduct } from '../shared/models/data-product';
+import { EulaType } from 'repux-lib';
+import { MarketplaceEulaComponent } from './marketplace-eula/marketplace-eula.component';
+import { IpfsService } from '../services/ipfs.service';
 
 @Component({ selector: 'app-marketplace-action-buttons', template: '' })
 class MarketplaceActionButtonsStubComponent {
@@ -18,19 +21,26 @@ class MarketplaceActionButtonsStubComponent {
 describe('MarketplaceProductDetailsComponent', () => {
   let component: MarketplaceProductDetailsComponent;
   let fixture: ComponentFixture<MarketplaceProductDetailsComponent>;
+  let ipfsServiceSpy;
 
   beforeEach(async(() => {
+    ipfsServiceSpy = jasmine.createSpyObj('IpfsService', [ 'downloadAndSave' ]);
+
     TestBed.configureTestingModule({
       declarations: [
         MarketplaceActionButtonsStubComponent,
         FileSizePipe,
         CurrencyRepuxPipe,
-        MarketplaceProductDetailsComponent
+        MarketplaceProductDetailsComponent,
+        MarketplaceEulaComponent
       ],
       imports: [
         RouterTestingModule,
         HttpClientModule,
         MaterialModule
+      ],
+      providers: [
+        { provide: IpfsService, useValue: ipfsServiceSpy }
       ]
     })
       .compileComponents();
@@ -44,5 +54,39 @@ describe('MarketplaceProductDetailsComponent', () => {
 
   it('should create', () => {
     expect(component).toBeTruthy();
+  });
+
+  describe('#downloadEula()', () => {
+    it('should call ipfsService.downloadAndSave() method', async () => {
+      const event = jasmine.createSpyObj('MouseEvent', [ 'stopPropagation' ]);
+      const eula = {
+        type: EulaType.OWNER,
+        fileHash: 'FILE_HASH',
+        fileName: 'FILE_NAME'
+      };
+
+      await component.downloadEula(event, eula);
+
+      expect(event.stopPropagation.calls.count()).toBe(1);
+      expect(ipfsServiceSpy.downloadAndSave.calls.allArgs()[ 0 ][ 0 ]).toBe(eula.fileHash);
+      expect(ipfsServiceSpy.downloadAndSave.calls.allArgs()[ 0 ][ 1 ]).toBe(eula.fileName);
+    });
+  });
+
+  describe('#downloadSampleFile()', () => {
+    it('should call ipfsService.downloadAndSave() method', async () => {
+      const event = jasmine.createSpyObj('MouseEvent', [ 'stopPropagation' ]);
+      const file = {
+        fileHash: 'FILE_HASH',
+        fileName: 'FILE_NAME',
+        title: 'TITLE'
+      };
+
+      await component.downloadSampleFile(event, file);
+
+      expect(event.stopPropagation.calls.count()).toBe(1);
+      expect(ipfsServiceSpy.downloadAndSave.calls.allArgs()[ 0 ][ 0 ]).toBe(file.fileHash);
+      expect(ipfsServiceSpy.downloadAndSave.calls.allArgs()[ 0 ][ 1 ]).toBe(file.fileName);
+    });
   });
 });

@@ -12,7 +12,7 @@ import {
   MatMenuModule,
   MatPaginatorModule,
   MatProgressBarModule,
-  MatProgressSpinnerModule,
+  MatProgressSpinnerModule, MatRadioModule,
   MatSelectModule,
   MatSidenavModule,
   MatSortModule,
@@ -43,7 +43,8 @@ import {
     MatTooltipModule,
     MatChipsModule,
     MatSidenavModule,
-    MatListModule
+    MatListModule,
+    MatRadioModule
   ],
   exports: [
     MatTableModule,
@@ -64,7 +65,8 @@ import {
     MatTooltipModule,
     MatChipsModule,
     MatSidenavModule,
-    MatListModule
+    MatListModule,
+    MatRadioModule
   ]
 })
 export class MaterialModule {

@@ -14,6 +14,9 @@ import { SharedModule } from '../../shared/shared.module';
 import { MaterialModule } from '../../material.module';
 import { RouterTestingModule } from '@angular/router/testing';
 import { PendingFinalisationService } from '../services/pending-finalisation.service';
+import { IpfsService } from '../../services/ipfs.service';
+import { EulaType } from 'repux-lib';
+import { MarketplaceEulaComponent } from '../marketplace-eula/marketplace-eula.component';
 
 @Component({ selector: 'app-file-size', template: '{{bytes}}' })
 class MarketplaceFileSizeStubComponent {
@@ -36,7 +39,7 @@ class DataProductTransactionsListContainerStubComponent {
 describe('MarketplaceDataProductListComponent', () => {
   let component: MarketplaceDataProductListComponent;
   let fixture: ComponentFixture<MarketplaceDataProductListComponent>;
-  let dataProductListServiceSpy, pendingFinalisationServiceSpy;
+  let dataProductListServiceSpy, pendingFinalisationServiceSpy, ipfsServiceSpy;
 
   beforeEach(async(() => {
     pendingFinalisationServiceSpy = jasmine.createSpyObj('PendingFinalisationService', [ 'findTransaction' ]);
@@ -46,6 +49,7 @@ describe('MarketplaceDataProductListComponent', () => {
       response.hits = [];
       return fromPromise(Promise.resolve(response));
     });
+    ipfsServiceSpy = jasmine.createSpyObj('IpfsService', [ 'downloadAndSave' ]);
 
     TestBed.configureTestingModule({
       declarations: [
@@ -53,7 +57,8 @@ describe('MarketplaceDataProductListComponent', () => {
         MarketplaceFileSizeStubComponent,
         MarketplaceActionButtonsStubComponent,
         MarketplaceDataProductListDetailDirective,
-        DataProductTransactionsListContainerStubComponent
+        DataProductTransactionsListContainerStubComponent,
+        MarketplaceEulaComponent
       ],
       imports: [
         SharedModule,
@@ -63,7 +68,8 @@ describe('MarketplaceDataProductListComponent', () => {
       ],
       providers: [
         { provide: DataProductListService, useValue: dataProductListServiceSpy },
-        { provide: PendingFinalisationService, useValue: pendingFinalisationServiceSpy }
+        { provide: PendingFinalisationService, useValue: pendingFinalisationServiceSpy },
+        { provide: IpfsService, useValue: ipfsServiceSpy }
       ]
     })
       .compileComponents();
@@ -166,6 +172,23 @@ describe('MarketplaceDataProductListComponent', () => {
       });
   });
 
+  describe('#downloadEula()', () => {
+    it('should call ipfsService.downloadAndSave() method', async () => {
+      const event = jasmine.createSpyObj('MouseEvent', [ 'stopPropagation' ]);
+      const eula = {
+        type: EulaType.OWNER,
+        fileHash: 'FILE_HASH',
+        fileName: 'FILE_NAME'
+      };
+
+      await component.downloadEula(event, eula);
+
+      expect(event.stopPropagation.calls.count()).toBe(1);
+      expect(ipfsServiceSpy.downloadAndSave.calls.allArgs()[ 0 ][ 0 ]).toBe(eula.fileHash);
+      expect(ipfsServiceSpy.downloadAndSave.calls.allArgs()[ 0 ][ 1 ]).toBe(eula.fileName);
+    });
+  });
+
   describe('#DOM', () => {
     beforeEach(() => {
       component.esDataProducts = {
@@ -195,6 +218,11 @@ describe('MarketplaceDataProductListComponent', () => {
             price: '1000000000000000000',
             daysForDeliver: '1',
             fundsToWithdraw: '0',
+            eula: {
+              type: EulaType.OWNER,
+              fileName: 'EULA',
+              fileHash: 'EULA_HASH'
+            },
             transactions
           }
         }) ]
@@ -212,6 +240,7 @@ describe('MarketplaceDataProductListComponent', () => {
         'totalEarnings',
         'fundsToWithdraw',
         'pendingFinalisationRequests',
+        'eula',
         'actions'
       ];
       component.availableActions = [
@@ -248,8 +277,10 @@ describe('MarketplaceDataProductListComponent', () => {
       expect(table.querySelector('mat-header-cell:nth-child(9)').getAttribute('mat-sort-header')).toBeNull();
       expect(table.querySelector('mat-header-cell:nth-child(10)').textContent.trim()).toBe('Pending finalisation requests');
       expect(table.querySelector('mat-header-cell:nth-child(10)').getAttribute('mat-sort-header')).toBeNull();
-      expect(table.querySelector('mat-header-cell:nth-child(11)').textContent.trim()).toBe('');
+      expect(table.querySelector('mat-header-cell:nth-child(11)').textContent.trim()).toBe('EULA  help');
       expect(table.querySelector('mat-header-cell:nth-child(11)').getAttribute('mat-sort-header')).toBeNull();
+      expect(table.querySelector('mat-header-cell:nth-child(12)').textContent.trim()).toBe('');
+      expect(table.querySelector('mat-header-cell:nth-child(12)').getAttribute('mat-sort-header')).toBeNull();
       expect(table.querySelectorAll('[mat-row]').length).toBe(1);
 
       const firstRow = table.querySelector('[mat-row]');
@@ -263,7 +294,8 @@ describe('MarketplaceDataProductListComponent', () => {
       expect(firstRow.querySelector('mat-cell:nth-child(8)').textContent.trim()).toBe('REPUX 0');
       expect(firstRow.querySelector('mat-cell:nth-child(9)').textContent.trim()).toBe('REPUX 0');
       expect(firstRow.querySelector('mat-cell:nth-child(10)').textContent.trim()).toBe('1');
-      expect(firstRow.querySelector('mat-cell:nth-child(11) app-marketplace-action-buttons')).not.toBeNull();
+      expect(firstRow.querySelector('mat-cell:nth-child(11) button').textContent.trim()).toBe('Owner');
+      expect(firstRow.querySelector('mat-cell:nth-child(12) app-marketplace-action-buttons')).not.toBeNull();
 
       expect(table.querySelectorAll('app-marketplace-data-product-transactions-list-container').length).toBe(1);
     });

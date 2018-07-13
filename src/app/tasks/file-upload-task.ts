@@ -9,9 +9,10 @@ import { DataProduct } from '../shared/models/data-product';
 import { TransactionDialogComponent } from '../shared/components/transaction-dialog/transaction-dialog.component';
 import { Subscription } from 'rxjs/index';
 import { MatDialog } from '@angular/material';
-import { FileUploader, EventType, FileMetaData, Attachment } from 'repux-lib';
+import { FileUploader, EventType, FileMetaData, Attachment, Eula, PurchaseType } from 'repux-lib';
 import { EventAction, EventCategory, TagManagerService } from '../shared/services/tag-manager.service';
 import { IpfsService } from '../services/ipfs.service';
+import { EulaSelection } from '../marketplace/marketplace-eula-selector/marketplace-eula-selector.component';
 
 export const STATUS = {
   UPLOADING: 'Uploading',
@@ -31,13 +32,10 @@ export class FileUploadTask implements Task {
   private _dataProduct: DataProduct;
   private _transactionDialogSubscription: Subscription;
   private _sampleFile?: Attachment[];
+  private _eula?: Eula;
 
   constructor(
     private _publicKey: JsonWebKey,
-    private _repuxLibService: RepuxLibService,
-    private _dataProductService: DataProductService,
-    private _unpublishedProductsService: UnpublishedProductsService,
-    private _ipfsService: IpfsService,
     private _title: string,
     private _shortDescription: string,
     private _fullDescription: string,
@@ -45,9 +43,16 @@ export class FileUploadTask implements Task {
     private _price: BigNumber,
     private _file: File,
     private _daysForDeliver: number,
-    private _sampleFiles: File[],
+    private _sampleFiles: FileList,
+    private _eulaSelection: EulaSelection,
+    private _maxNumberOfDownloads: number,
+    private _purchaseType: PurchaseType,
     private _dialog: MatDialog,
-    private _tagManager:  TagManagerService
+    private _repuxLibService: RepuxLibService,
+    private _dataProductService: DataProductService,
+    private _unpublishedProductsService: UnpublishedProductsService,
+    private _ipfsService: IpfsService,
+    private _tagManager: TagManagerService
   ) {
     this._name = `Creating ${this._file.name}`;
     this._uploader = this._repuxLibService.getInstance().createFileUploader();
@@ -107,6 +112,7 @@ export class FileUploadTask implements Task {
     this._status = STATUS.UPLOADING;
     this._taskManagerService = taskManagerService;
 
+    this._eula = await this.uploadEula(this._eulaSelection);
     this._sampleFile = await this.uploadSampleFiles(this._sampleFiles);
 
     this._uploader.upload(this._publicKey, this._file, this.createMetadata())
@@ -194,22 +200,33 @@ export class FileUploadTask implements Task {
     return transactionDialog.callTransaction();
   }
 
-  async uploadSampleFiles(sampleFiles?: File[]): Promise<Attachment[]> {
+  async uploadSampleFiles(sampleFiles?: FileList): Promise<Attachment[]> {
     const result: Attachment[] = [];
 
     if (!sampleFiles) {
       return;
     }
 
-    for (const file of sampleFiles) {
+    for (const file of Array.from(sampleFiles)) {
       const { hash } = await this._ipfsService.uploadFile(file);
       result.push({
+        fileName: file.name,
         title: file.name,
         fileHash: hash
       });
     }
 
     return result;
+  }
+
+  async uploadEula(eulaSelection: EulaSelection): Promise<Eula> {
+    const { hash } = await this._ipfsService.uploadFile(eulaSelection.file);
+
+    return {
+      fileName: eulaSelection.file.name,
+      type: eulaSelection.type,
+      fileHash: hash
+    };
   }
 
   createMetadata(): FileMetaData {
@@ -219,7 +236,10 @@ export class FileUploadTask implements Task {
       fullDescription: this._fullDescription,
       category: this._category,
       price: this._price,
-      sampleFile: this._sampleFile
+      sampleFile: this._sampleFile,
+      eula: this._eula,
+      maxNumberOfDownloads: this._maxNumberOfDownloads,
+      type: this._purchaseType
     };
   }
 

@@ -3,7 +3,7 @@ import { Directive, Input } from '@angular/core';
 
 export function maxFileSizeValidator(maxFileSize: number): ValidatorFn {
   return (control: AbstractControl): { [ key: string ]: any } | null => {
-    if (!(control.value instanceof FileList)) {
+    if (!(control.value instanceof FileList) && !Array.isArray(control.value)) {
       return null;
     }
 

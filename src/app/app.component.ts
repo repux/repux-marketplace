@@ -6,6 +6,7 @@ import { Observable } from 'rxjs/index';
 import { environment } from '../environments/environment';
 import { WalletService } from './services/wallet.service';
 import { Router } from '@angular/router';
+import { OverlayContainer } from '@angular/cdk/overlay';
 import { TagManagerService } from './shared/services/tag-manager.service';
 
 @Component({
@@ -43,6 +44,7 @@ export class AppComponent implements OnInit {
     private breakpointObserver: BreakpointObserver,
     private webpushNotificationService: WebpushNotificationService,
     private walletService: WalletService,
+    private overlayContainer: OverlayContainer,
     private tagManager: TagManagerService
   ) {
   }

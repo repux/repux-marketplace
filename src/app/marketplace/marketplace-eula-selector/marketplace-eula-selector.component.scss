@@ -1,0 +1,37 @@
+@import '../../../variables.scss';
+
+$gutter: 10px;
+
+:host {
+  font-size: inherit;
+  font-weight: 400;
+  line-height: 1.125;
+
+  label {
+    display: block;
+    margin-bottom: 2 * $gutter;
+  }
+
+  a {
+    margin-left: $gutter;
+    font-size: 0.8rem;
+    display: inline-block;
+  }
+
+  .row:not(:last-child) {
+    margin-bottom: $gutter;
+  }
+
+  app-file-input {
+    display: block;
+    margin-top: $gutter;
+  }
+
+  .field-name {
+    color: map-get($mat-light-theme-foreground, secondary-text);
+  }
+
+  .invalid > .field-name {
+    color: mat-color($app-warn);
+  }
+}

@@ -11,6 +11,8 @@ import { DataProduct } from '../../shared/models/data-product';
 import { deepCopy } from '../../shared/utils/deep-copy';
 import { Subscription } from 'rxjs/internal/Subscription';
 import { PendingFinalisationService } from '../services/pending-finalisation.service';
+import { EulaType, Eula } from 'repux-lib';
+import { IpfsService } from '../../services/ipfs.service';
 
 const DAY_IN_MILLISECONDS = 24 * 60 * 60 * 1000;
 
@@ -29,6 +31,7 @@ export class MarketplaceDataProductListComponent implements OnChanges, OnDestroy
     'daysForDeliver',
     'size',
     'price',
+    'eula',
     'actions'
   ];
   @Input() availableActions = [
@@ -43,6 +46,7 @@ export class MarketplaceDataProductListComponent implements OnChanges, OnDestroy
   @Input() buyerAddress: string;
   @Input() dataProducts: DataProduct[];
 
+  public eulaType = EulaType;
   public esDataProducts: EsResponse<Deserializable<EsDataProduct>>;
   public dataSource: MatTableDataSource<DataProduct>;
   public pageSizeOptions = environment.repux.pageSizeOptions;
@@ -65,7 +69,8 @@ export class MarketplaceDataProductListComponent implements OnChanges, OnDestroy
 
   constructor(
     public dataProductListService: DataProductListService,
-    private _pendingFinalisationService: PendingFinalisationService) {
+    private _pendingFinalisationService: PendingFinalisationService,
+    private ipfsService: IpfsService) {
     this.size = this.pageSizeOptions[ 0 ];
   }
 
@@ -205,6 +210,12 @@ export class MarketplaceDataProductListComponent implements OnChanges, OnDestroy
     }
 
     this.isLoadingResults = false;
+  }
+
+  downloadEula(event: MouseEvent, eula: Eula): Promise<void> {
+    event.stopPropagation();
+
+    return this.ipfsService.downloadAndSave(eula.fileHash, eula.fileName);
   }
 
   private _findTransactionByCurrentBuyerAddress(dataProduct: DataProduct) {

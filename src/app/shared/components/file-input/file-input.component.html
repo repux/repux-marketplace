@@ -2,6 +2,7 @@
   <input #fileInput
          type="file"
          [multiple]="multiple"
+         [disabled]="formControl.disabled"
          (change)="onChange($event)">
 
   <input matInput
@@ -14,6 +15,7 @@
   <button matSuffix
           mat-raised-button
           color="primary"
+          [disabled]="formControl.disabled"
           type="button">
     {{ multiple ? 'Choose files' : 'Choose file' }}
   </button>

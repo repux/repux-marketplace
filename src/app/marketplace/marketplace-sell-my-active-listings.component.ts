@@ -20,6 +20,7 @@ export class MarketplaceSellMyActiveListingsComponent implements OnDestroy {
     'totalEarnings',
     'fundsToWithdraw',
     'pendingFinalisationRequests',
+    'eula',
     'actions'
   ];
   public availableActions = [

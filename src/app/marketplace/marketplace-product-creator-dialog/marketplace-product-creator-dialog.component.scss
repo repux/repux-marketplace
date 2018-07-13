@@ -1,5 +1,31 @@
+@import '../../../variables.scss';
+
 .field-row {
   display: block;
   width: 450px;
   max-width: 100%;
+}
+
+app-marketplace-eula-selector {
+  display: block;
+  padding: 20px;
+  margin: 20px 0;
+  background: mat-color($mat-light-theme-background, hover);
+}
+
+.row {
+  display: flex;
+  flex-direction: row;
+  margin: 0;
+  padding: 0;
+
+  @media screen and (max-width: 1260px) {
+    display: block;
+  }
+}
+
+.col {
+  display: flex;
+  flex-direction: column;
+  margin: 0 20px
 }
