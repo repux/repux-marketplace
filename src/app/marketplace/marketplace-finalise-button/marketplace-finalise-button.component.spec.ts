@@ -14,12 +14,13 @@ import { DataProductService } from '../../services/data-product.service';
 import { MaterialModule } from '../../material.module';
 import { FileReencryptionTask } from '../../tasks/file-reencryption-task';
 import { PendingFinalisationService } from '../../services/data-product-notifications/pending-finalisation.service';
+import { TagManagerService } from '../../shared/services/tag-manager.service';
 
 describe('MarketplaceFinaliseButtonComponent', () => {
   let component: MarketplaceFinaliseButtonComponent;
   let fixture: ComponentFixture<MarketplaceFinaliseButtonComponent>;
   let keyStoreService, matDialog, dataProductNotificationsService, repuxLibService, taskManagerService,
-    dataProductService, fileReencryptionTask, pendingFinalisationService;
+    dataProductService, fileReencryptionTask, pendingFinalisationService, tagManager;
   const ownerAddress = '0x0000000000000000000000000000000000000000';
   const dataProductAddress = '0x1111111111111111111111111111111111111111';
   const buyerAddress = '0x2222222222222222222222222222222222222222';
@@ -27,6 +28,7 @@ describe('MarketplaceFinaliseButtonComponent', () => {
   const sellerMetaHash = 'META_HASH';
 
   beforeEach(fakeAsync(() => {
+    tagManager = jasmine.createSpyObj('TagManagerService', [ 'sendEvent' ]);
     keyStoreService = jasmine.createSpyObj('KeyStoreService', [ 'hasKeys' ]);
     matDialog = jasmine.createSpyObj('MatDialog', [ 'open' ]);
     dataProductNotificationsService = jasmine.createSpyObj('DataProductNotificationsService', [ 'removeFinalisationRequest' ]);
@@ -67,6 +69,7 @@ describe('MarketplaceFinaliseButtonComponent', () => {
         NoopAnimationsModule
       ],
       providers: [
+        { provide: TagManagerService, useValue: tagManager},
         { provide: TransactionDialogComponent, useValue: {} },
         { provide: KeyStoreService, useValue: keyStoreService },
         { provide: MatDialog, useValue: matDialog },

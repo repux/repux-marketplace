@@ -12,6 +12,8 @@ import { Subscription } from 'rxjs/internal/Subscription';
 import { MatDialog } from '@angular/material';
 import { Task } from '../../tasks/task';
 import { TaskType } from '../../tasks/task-type';
+import { EventAction, EventCategory, TagManagerService } from '../../shared/services/tag-manager.service';
+import { DataProduct } from '../../shared/models/data-product';
 
 @Component({
   selector: 'app-marketplace-download-product-button',
@@ -19,7 +21,7 @@ import { TaskType } from '../../tasks/task-type';
   styleUrls: [ './marketplace-download-product-button.component.scss' ]
 })
 export class MarketplaceDownloadProductButtonComponent implements OnDestroy, OnInit {
-  @Input() productAddress: string;
+  @Input() dataProduct: DataProduct;
   private _walletSubscription: Subscription;
   private _tasksSubscription: Subscription;
   private _keyStoreSubscription: Subscription;
@@ -32,7 +34,8 @@ export class MarketplaceDownloadProductButtonComponent implements OnDestroy, OnI
     private _repuxLibService: RepuxLibService,
     private _taskManagerService: TaskManagerService,
     private _keyStoreService: KeyStoreService,
-    private _dialog: MatDialog
+    private _dialog: MatDialog,
+    private _tagManager: TagManagerService
   ) {
   }
 
@@ -62,19 +65,34 @@ export class MarketplaceDownloadProductButtonComponent implements OnDestroy, OnI
   }
 
   async downloadProduct(): Promise<void> {
+    this._tagManager.sendEvent(
+      EventCategory.Sell,
+      EventAction.Download,
+      this.dataProduct.title,
+      this.dataProduct.price ? this.dataProduct.price.toString() : ''
+    );
+
     const { privateKey } = await this._getKeys();
-    const product = await this._dataProductService.getDataProductData(this.productAddress);
+
+    this._tagManager.sendEvent(
+      EventCategory.Sell,
+      EventAction.DownloadConfirmed,
+      this.dataProduct.title,
+      this.dataProduct.price ? this.dataProduct.price.toString() : ''
+    );
+
+    const product = await this._dataProductService.getDataProductData(this.dataProduct.address);
     let metaHash;
 
     if (product.owner === this._wallet.address) {
       metaHash = product.sellerMetaHash;
     } else {
-      const transaction = await this._dataProductService.getTransactionData(this.productAddress, this._wallet.address);
+      const transaction = await this._dataProductService.getTransactionData(this.dataProduct.address, this._wallet.address);
       metaHash = transaction.buyerMetaHash;
     }
 
     const fileDownloadTask = new FileDownloadTask(
-      this.productAddress,
+      this.dataProduct.address,
       this._wallet.address,
       metaHash,
       privateKey,
@@ -109,7 +127,7 @@ export class MarketplaceDownloadProductButtonComponent implements OnDestroy, OnI
   private _onTasksChange(tasks: ReadonlyArray<Task>) {
     this._foundTask = tasks.find(task =>
       task.taskType === TaskType.DOWNLOAD &&
-      task.productAddress === this.productAddress &&
+      task.productAddress === this.dataProduct.address &&
       !task.finished
     );
   }

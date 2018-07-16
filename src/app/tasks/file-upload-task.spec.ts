@@ -5,7 +5,7 @@ import { EventType } from 'repux-lib';
 describe('FileUploadTask()', () => {
   let fileUploadTask: FileUploadTask, dataProductService, repuxLibService, fileUploader, fileUploaderUpload,
     fileUploaderOn, taskManagerService, uploaderEventHandlers, fileUploaderTerminate, unpublishedProductsService,
-    dataProductNotificationsService, matDialog, callTransaction, transactionResult;
+    dataProductNotificationsService, matDialog, callTransaction, transactionResult, tagManager;
   const fileName = 'FILE_NAME';
   const publicKey = 'PUBLIC_KEY';
   const title = 'TITLE';
@@ -56,6 +56,8 @@ describe('FileUploadTask()', () => {
         };
       }
     });
+    tagManager = jasmine.createSpyObj('TagManagerService', [ 'sendEvent' ]);
+
 
     fileUploadTask = new FileUploadTask(
       <any> publicKey,
@@ -70,7 +72,8 @@ describe('FileUploadTask()', () => {
       price,
       <any> file,
       1,
-      matDialog
+      matDialog,
+      tagManager
     );
   });
 
@@ -95,7 +98,8 @@ describe('FileUploadTask()', () => {
         price,
         <any> file,
         1,
-        matDialog
+        matDialog,
+        tagManager
       );
 
       expect(<any> fileUploadTask[ '_publicKey' ]).toBe(publicKey);

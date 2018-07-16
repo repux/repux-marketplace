@@ -10,6 +10,7 @@ import { DataProductTransaction } from '../../shared/models/data-product-transac
 import { TransactionDialogComponent } from '../../shared/components/transaction-dialog/transaction-dialog.component';
 import { DataProductNotificationsService } from '../../services/data-product-notifications.service';
 import { AwaitingFinalisationService } from '../../services/data-product-notifications/awaiting-finalisation.service';
+import { EventAction, EventCategory, TagManagerService } from '../../shared/services/tag-manager.service';
 
 @Component({
   selector: 'app-marketplace-cancel-purchase-button',
@@ -35,7 +36,8 @@ export class MarketplaceCancelPurchaseButtonComponent implements OnInit, OnDestr
     private _dialog: MatDialog,
     private _clockService: ClockService,
     private _dataProductNotificationsService: DataProductNotificationsService,
-    private _awaitingFinalisationService: AwaitingFinalisationService
+    private _awaitingFinalisationService: AwaitingFinalisationService,
+    private _tagManager: TagManagerService
   ) {
   }
 
@@ -52,6 +54,13 @@ export class MarketplaceCancelPurchaseButtonComponent implements OnInit, OnDestr
   }
 
   cancelPurchase() {
+    this._tagManager.sendEvent(
+      EventCategory.Sell,
+      EventAction.CancelPendingTransaction,
+      this.dataProduct.title,
+      this.dataProduct.price ? this.dataProduct.price.toString() : ''
+    );
+
     const transactionDialogRef = this._dialog.open(TransactionDialogComponent, {
       disableClose: true
     });
@@ -65,6 +74,13 @@ export class MarketplaceCancelPurchaseButtonComponent implements OnInit, OnDestr
         this._dataProductNotificationsService.removeBoughtProductAddress(this.dataProductAddress);
         this.dataProduct.transactions = this.dataProduct.transactions.filter(transaction => transaction !== this._transaction);
         this._transaction = null;
+
+        this._tagManager.sendEvent(
+          EventCategory.Sell,
+          EventAction.CancelPendingTransactionConfirmed,
+          this.dataProduct.title,
+          this.dataProduct.price ? this.dataProduct.price.toString() : ''
+        );
       }
     });
     const transactionDialog: TransactionDialogComponent = transactionDialogRef.componentInstance;

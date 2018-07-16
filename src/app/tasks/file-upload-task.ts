@@ -11,6 +11,7 @@ import { TransactionDialogComponent } from '../shared/components/transaction-dia
 import { Subscription } from 'rxjs/index';
 import { MatDialog } from '@angular/material';
 import { FileUploader, EventType, FileMetaData } from 'repux-lib';
+import { EventAction, EventCategory, TagManagerService } from '../shared/services/tag-manager.service';
 
 export const STATUS = {
   UPLOADING: 'Uploading',
@@ -43,7 +44,8 @@ export class FileUploadTask implements Task {
     private _price: BigNumber,
     private _file: File,
     private _daysForDeliver: number,
-    private _dialog: MatDialog
+    private _dialog: MatDialog,
+    private _tagManager:  TagManagerService
   ) {
     this._name = `Creating ${this._file.name}`;
     this._uploader = this._repuxLibService.getInstance().createFileUploader();
@@ -144,6 +146,13 @@ export class FileUploadTask implements Task {
       return;
     }
 
+    this._tagManager.sendEvent(
+      EventCategory.Sell,
+      EventAction.PublishButton,
+      this._title,
+      this._price ? this._price.toString() : ''
+    );
+
     this._needsUserAction = false;
     this._status = STATUS.PUBLICATION;
     this._taskManagerService.onTaskEvent();
@@ -160,6 +169,13 @@ export class FileUploadTask implements Task {
         this._dataProductNotificationsService.addCreatedProductAddress(result.address);
         this._unpublishedProductsService.removeProduct(this._dataProduct);
         this._status = STATUS.FINISHED;
+
+        this._tagManager.sendEvent(
+          EventCategory.Sell,
+          EventAction.PublishButtonConfirmed,
+          this._title,
+          this._price ? this._price.toString() : ''
+        );
       } else {
         this._errors.push(STATUS.PUBLICATION_REJECTED);
         this._status = STATUS.PUBLICATION_REJECTED;

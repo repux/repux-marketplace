@@ -17,6 +17,7 @@ import {
   MarketplaceProductCategorySelectorComponent
 } from '../marketplace-product-category-selector/marketplace-product-category-selector.component';
 import { DataProductNotificationsService } from '../../services/data-product-notifications.service';
+import { EventAction, EventCategory, TagManagerService } from '../../shared/services/tag-manager.service';
 
 @Component({
   selector: 'app-marketplace-product-creator-dialog',
@@ -59,6 +60,7 @@ export class MarketplaceProductCreatorDialogComponent implements OnDestroy {
   private subscription: Subscription;
 
   constructor(
+    private tagManager: TagManagerService,
     private keyStoreService: KeyStoreService,
     private repuxLibService: RepuxLibService,
     private dataProductService: DataProductService,
@@ -87,7 +89,21 @@ export class MarketplaceProductCreatorDialogComponent implements OnDestroy {
       return;
     }
 
+    this.tagManager.sendEvent(
+      EventCategory.Sell,
+      EventAction.CreateDataProduct,
+      this.formGroup.value.title,
+      this.formGroup.value.price
+    );
+
     const { publicKey } = await this.getKeys();
+
+    this.tagManager.sendEvent(
+      EventCategory.Sell,
+      EventAction.CreateConfirmedDataProduct,
+      this.formGroup.value.title,
+      this.formGroup.value.price
+    );
 
     const fileUploadTask = new FileUploadTask(
       publicKey,
@@ -102,11 +118,23 @@ export class MarketplaceProductCreatorDialogComponent implements OnDestroy {
       new BigNumber(this.formGroup.value.price),
       this.fileInput.value[ 0 ],
       this.formGroup.value.daysForDeliver,
-      this.dialog
+      this.dialog,
+      this.tagManager
     );
 
     this.taskManagerService.addTask(fileUploadTask);
     this.dialogRef.close(true);
+  }
+
+  closeDialog() {
+    this.tagManager.sendEvent(
+      EventCategory.Sell,
+      EventAction.CreateDataProductCancel,
+      this.formGroup.value.title,
+      this.formGroup.value.price
+    );
+
+    this.dialogRef.close();
   }
 
   ngOnDestroy() {

@@ -13,6 +13,7 @@ import { TaskManagerService } from '../../services/task-manager.service';
 import Wallet from '../../shared/models/wallet';
 import { WalletService } from '../../services/wallet.service';
 import { PendingFinalisationService } from '../../services/data-product-notifications/pending-finalisation.service';
+import { EventAction, EventCategory, TagManagerService } from '../../shared/services/tag-manager.service';
 
 @Component({
   selector: 'app-marketplace-finalise-button',
@@ -39,7 +40,8 @@ export class MarketplaceFinaliseButtonComponent implements OnDestroy, OnInit {
     private _taskManagerService: TaskManagerService,
     private _pendingFinalisationService: PendingFinalisationService,
     private _walletService: WalletService,
-    private _dialog: MatDialog
+    private _dialog: MatDialog,
+    private _tagManager: TagManagerService
   ) {
   }
 
@@ -52,6 +54,13 @@ export class MarketplaceFinaliseButtonComponent implements OnDestroy, OnInit {
   }
 
   async finalise() {
+    this._tagManager.sendEvent(
+      EventCategory.Sell,
+      EventAction.FinalizeTransaction,
+      this.dataProduct.title,
+      this.dataProduct.price ? this.dataProduct.price.toString() : ''
+    );
+
     const { privateKey } = await this._getKeys();
     const publicKey = this._repuxLibService.getInstance().deserializePublicKey(this.transaction.publicKey);
 
@@ -73,6 +82,13 @@ export class MarketplaceFinaliseButtonComponent implements OnDestroy, OnInit {
         if (result) {
           this.transaction.finalised = true;
           this.success.emit(this.transaction);
+
+          this._tagManager.sendEvent(
+            EventCategory.Sell,
+            EventAction.FinalizeTransactionConfirmed,
+            this.dataProduct.title,
+            this.dataProduct.price ? this.dataProduct.price.toString() : ''
+          );
         }
 
         this._reencryptionSubscription.unsubscribe();

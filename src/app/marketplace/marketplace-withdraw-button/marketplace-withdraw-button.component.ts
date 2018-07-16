@@ -7,6 +7,7 @@ import { DataProductService } from '../../services/data-product.service';
 import { TransactionDialogComponent } from '../../shared/components/transaction-dialog/transaction-dialog.component';
 import { MatDialog } from '@angular/material';
 import { Subscription } from 'rxjs/internal/Subscription';
+import { EventAction, EventCategory, TagManagerService } from '../../shared/services/tag-manager.service';
 
 @Component({
   selector: 'app-marketplace-withdraw-button',
@@ -25,7 +26,8 @@ export class MarketplaceWithdrawButtonComponent implements OnInit, OnDestroy {
   constructor(
     private _walletService: WalletService,
     private _dataProductService: DataProductService,
-    private _dialog: MatDialog
+    private _dialog: MatDialog,
+    private _tagManager: TagManagerService
   ) {
   }
 
@@ -39,12 +41,25 @@ export class MarketplaceWithdrawButtonComponent implements OnInit, OnDestroy {
   }
 
   withdraw() {
+    this._tagManager.sendEvent(
+      EventCategory.Sell,
+      EventAction.Withdraw,
+      this.dataProduct.title,
+      this.dataProduct.fundsToWithdraw ? this.dataProduct.fundsToWithdraw.toString() : ''
+    );
+
     const transactionDialogRef = this._dialog.open(TransactionDialogComponent, {
       disableClose: true
     });
     transactionDialogRef.afterClosed().subscribe(result => {
       if (result) {
         this.dataProduct.fundsToWithdraw = new BigNumber(0);
+        this._tagManager.sendEvent(
+          EventCategory.Sell,
+          EventAction.WithdrawConfirmed,
+          this.dataProduct.title,
+          this.dataProduct.fundsToWithdraw ? this.dataProduct.fundsToWithdraw.toString() : ''
+        );
       }
     });
     const transactionDialog: TransactionDialogComponent = transactionDialogRef.componentInstance;

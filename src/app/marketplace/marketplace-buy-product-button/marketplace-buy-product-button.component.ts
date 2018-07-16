@@ -14,6 +14,7 @@ import {
   MarketplacePurchaseConfirmationDialogComponent
 } from '../marketplace-purchase-confirmation-dialog/marketplace-purchase-confirmation-dialog.component';
 import { DataProductNotificationsService } from '../../services/data-product-notifications.service';
+import { EventAction, EventCategory, TagManagerService } from '../../shared/services/tag-manager.service';
 
 @Component({
   selector: 'app-marketplace-buy-product-button',
@@ -33,6 +34,7 @@ export class MarketplaceBuyProductButtonComponent implements OnInit, OnDestroy {
   private _transactionDialogSubscription: Subscription;
 
   constructor(
+    private _tagManager: TagManagerService,
     private _dataProductService: DataProductService,
     private _repuxLibService: RepuxLibService,
     private _walletService: WalletService,
@@ -48,6 +50,13 @@ export class MarketplaceBuyProductButtonComponent implements OnInit, OnDestroy {
   }
 
   async buyDataProduct(): Promise<void> {
+    this._tagManager.sendEvent(
+      EventCategory.Buy,
+      EventAction.Buy,
+      this.dataProduct.title,
+      this.dataProduct.price ? this.dataProduct.price.toString() : ''
+    );
+
     const { publicKey } = await this._getKeys();
     const serializedKey = await this._repuxLibService.getInstance().serializePublicKey(publicKey);
 
@@ -60,6 +69,13 @@ export class MarketplaceBuyProductButtonComponent implements OnInit, OnDestroy {
         this.bought = true;
         this._dataProductNotificationsService.addBoughtProductAddress(this.dataProductAddress);
         this._dialog.open(MarketplacePurchaseConfirmationDialogComponent);
+
+        this._tagManager.sendEvent(
+          EventCategory.Buy,
+          EventAction.BuyConfirmed,
+          this.dataProduct.title,
+          this.dataProduct.price ? this.dataProduct.price.toString() : ''
+        );
       }
     });
     const transactionDialog: TransactionDialogComponent = transactionDialogRef.componentInstance;

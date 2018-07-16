@@ -60,6 +60,12 @@ mat-header-cell {
   }
 }
 
-mat-row.disabled {
-  opacity: 0.5;
+mat-row {
+  &:not(.disabled) {
+    cursor: pointer;
+  }
+
+  &.disabled {
+    opacity: 0.5;
+  }
 }

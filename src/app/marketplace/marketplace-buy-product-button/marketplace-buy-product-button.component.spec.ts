@@ -9,20 +9,23 @@ import { TransactionDialogComponent } from '../../shared/components/transaction-
 import { KeyStoreService } from '../../key-store/key-store.service';
 import { MaterialModule } from '../../material.module';
 import { DataProductNotificationsService } from '../../services/data-product-notifications.service';
+import { TagManagerService } from '../../shared/services/tag-manager.service';
+import { DataProduct } from '../../shared/models/data-product';
 
 @Component({ selector: 'app-marketplace-download-product-button', template: '' })
 class DownloadProductButtonStubComponent {
-  @Input() productAddress: string;
+  @Input() dataProduct: DataProduct;
 }
 
 describe('MarketplaceBuyProductButtonComponent', () => {
   let component: MarketplaceBuyProductButtonComponent;
   let fixture: ComponentFixture<MarketplaceBuyProductButtonComponent>;
-  let repuxLibServiceSpy, keyStoreServiceSpy, dataProductNotificationsService;
+  let repuxLibServiceSpy, keyStoreServiceSpy, dataProductNotificationsService, tagManager;
   const dataProductAddress = '0x1111111111111111111111111111111111111111';
   const buyerAddress = '0x0000000000000000000000000000000000000000';
 
   beforeEach(fakeAsync(() => {
+    tagManager = jasmine.createSpyObj('TagManagerService', [ 'sendEvent' ]);
     repuxLibServiceSpy = jasmine.createSpyObj('RepuxLibService', [ 'getInstance' ]);
     keyStoreServiceSpy = jasmine.createSpyObj('KeyStoreService', [ 'hasKeys' ]);
     dataProductNotificationsService = jasmine.createSpyObj('DataProductNotificationsService', [ 'addBoughtProductAddress' ]);
@@ -36,6 +39,7 @@ describe('MarketplaceBuyProductButtonComponent', () => {
         NoopAnimationsModule
       ],
       providers: [
+        { provide: TagManagerService, useValue: tagManager },
         { provide: RepuxLibService, useValue: repuxLibServiceSpy },
         { provide: KeyStoreService, useValue: keyStoreServiceSpy },
         { provide: TransactionDialogComponent, useValue: {} },

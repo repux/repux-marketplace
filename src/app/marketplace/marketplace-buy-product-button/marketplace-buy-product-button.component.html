@@ -6,7 +6,7 @@
   </button>
 
   <div *ngIf="finalised || userIsOwner">
-    <app-marketplace-download-product-button [productAddress]="dataProductAddress"></app-marketplace-download-product-button>
+    <app-marketplace-download-product-button [dataProduct]="dataProduct"></app-marketplace-download-product-button>
   </div>
 
   <span class="buy-button-replacement" *ngIf="bought && !finalised"

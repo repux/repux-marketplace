@@ -7,6 +7,7 @@ import Wallet from '../../shared/models/wallet';
 import { TransactionDialogComponent } from '../../shared/components/transaction-dialog/transaction-dialog.component';
 import { Subscription } from 'rxjs/internal/Subscription';
 import { DataProductNotificationsService } from '../../services/data-product-notifications.service';
+import { EventAction, EventCategory, TagManagerService } from '../../shared/services/tag-manager.service';
 
 @Component({
   selector: 'app-marketplace-unpublish-button',
@@ -25,7 +26,8 @@ export class MarketplaceUnpublishButtonComponent implements OnInit, OnDestroy {
     private _walletService: WalletService,
     private _dataProductService: DataProductService,
     private _dataProductNotificationsService: DataProductNotificationsService,
-    private _dialog: MatDialog
+    private _dialog: MatDialog,
+    private _tagManager: TagManagerService
   ) {
   }
 
@@ -39,6 +41,13 @@ export class MarketplaceUnpublishButtonComponent implements OnInit, OnDestroy {
   }
 
   unpublish() {
+    this._tagManager.sendEvent(
+      EventCategory.Sell,
+      EventAction.UnpublishButton,
+      this.dataProduct.title,
+      this.dataProduct.price ? this.dataProduct.price.toString() : ''
+    );
+
     const transactionDialogRef = this._dialog.open(TransactionDialogComponent, {
       disableClose: true
     });
@@ -46,6 +55,12 @@ export class MarketplaceUnpublishButtonComponent implements OnInit, OnDestroy {
       if (result) {
         this._dataProductNotificationsService.removeCreatedProductAddress(this.dataProductAddress);
         this.dataProduct.disabled = true;
+        this._tagManager.sendEvent(
+          EventCategory.Sell,
+          EventAction.UnpublishConfirmed,
+          this.dataProduct.title,
+          this.dataProduct.price ? this.dataProduct.price.toString() : ''
+        );
       }
     });
     const transactionDialog: TransactionDialogComponent = transactionDialogRef.componentInstance;
