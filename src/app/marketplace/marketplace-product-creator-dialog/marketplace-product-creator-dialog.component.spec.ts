@@ -15,14 +15,16 @@ import {
   MarketplaceProductCategorySelectorComponent
 } from '../marketplace-product-category-selector/marketplace-product-category-selector.component';
 import { DataProductNotificationsService } from '../../services/data-product-notifications.service';
+import { TagManagerService } from '../../shared/services/tag-manager.service';
 
 describe('MarketplaceProductCreatorDialogComponent', () => {
-  let keyStoreService, repuxLibService, dataProductService, dataProductNotificationsService, taskManagerService, matDialog, matDialogRef,
+  let tagManagerService, keyStoreService, repuxLibService, dataProductService, dataProductNotificationsService, taskManagerService, matDialog, matDialogRef,
     getKeys, unpublishedProductsService;
   let component: MarketplaceProductCreatorDialogComponent;
   let fixture: ComponentFixture<MarketplaceProductCreatorDialogComponent>;
 
   beforeEach(async(() => {
+    tagManagerService = jasmine.createSpyObj('TagManagerService', [ 'sendUserId', 'sendEvent' ]);
     keyStoreService = jasmine.createSpyObj('KeyStoreService', [ 'hasKeys' ]);
     repuxLibService = jasmine.createSpyObj('RepuxLibService', [ 'getInstance' ]);
     repuxLibService.getInstance.and.returnValue({
@@ -51,6 +53,7 @@ describe('MarketplaceProductCreatorDialogComponent', () => {
         MaterialModule
       ],
       providers: [
+        { provide: TagManagerService, useValue: tagManagerService },
         { provide: KeyStoreService, useValue: keyStoreService },
         { provide: MatDialogRef, useValue: matDialogRef },
         { provide: RepuxLibService, useValue: repuxLibService },
@@ -69,7 +72,7 @@ describe('MarketplaceProductCreatorDialogComponent', () => {
 
   describe('#constructor()', () => {
     it('should initialize formGroup property', () => {
-      component = new MarketplaceProductCreatorDialogComponent(keyStoreService, repuxLibService,
+      component = new MarketplaceProductCreatorDialogComponent(tagManagerService, keyStoreService, repuxLibService,
         dataProductService, dataProductNotificationsService, taskManagerService, unpublishedProductsService, matDialog, matDialogRef);
       expect(component.formGroup.controls[ 'title' ]).toBe(component.titleFormControl);
       expect(component.formGroup.controls[ 'shortDescription' ]).toBe(component.shortDescriptionFormControl);

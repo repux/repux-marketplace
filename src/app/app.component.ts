@@ -7,6 +7,7 @@ import { environment } from '../environments/environment';
 import { WalletService } from './services/wallet.service';
 import { Router } from '@angular/router';
 import { DataProductNotificationsService } from './services/data-product-notifications.service';
+import { TagManagerService } from './shared/services/tag-manager.service';
 
 @Component({
   selector: 'app-root',
@@ -43,7 +44,8 @@ export class AppComponent implements OnInit {
     private breakpointObserver: BreakpointObserver,
     private webpushNotificationService: WebpushNotificationService,
     private dataProductNotificationsService: DataProductNotificationsService,
-    private walletService: WalletService
+    private walletService: WalletService,
+    private tagManager: TagManagerService
   ) {
   }
 
@@ -60,9 +62,7 @@ export class AppComponent implements OnInit {
           user_id: wallet.address
         });
 
-        (<any>window).dataLayer.push({
-          userId: wallet.address
-        });
+        this.tagManager.sendUserId(wallet.address);
       }
     });
   }

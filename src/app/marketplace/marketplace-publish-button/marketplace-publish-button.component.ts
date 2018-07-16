@@ -7,6 +7,7 @@ import { TransactionDialogComponent } from '../../shared/components/transaction-
 import { UnpublishedProductsService } from '../../services/unpublished-products.service';
 import { ConfirmationDialogComponent } from '../../shared/components/confirmation-dialog/confirmation-dialog.component';
 import { Subscription } from 'rxjs/internal/Subscription';
+import { EventAction, EventCategory, TagManagerService } from '../../shared/services/tag-manager.service';
 
 @Component({
   selector: 'app-marketplace-publish-button',
@@ -23,6 +24,7 @@ export class MarketplacePublishButtonComponent implements OnDestroy {
   private _products: DataProduct[];
 
   constructor(
+    private _tagManager: TagManagerService,
     private _unpublishedProductsService: UnpublishedProductsService,
     private _dataProductService: DataProductService,
     private _dialog: MatDialog
@@ -35,6 +37,13 @@ export class MarketplacePublishButtonComponent implements OnDestroy {
   }
 
   async publish() {
+    this._tagManager.sendEvent(
+      EventCategory.Sell,
+      EventAction.PublishButton,
+      this.dataProduct.title,
+      this.dataProduct.price ? this.dataProduct.price.toString() : ''
+    );
+
     const transactionDialogRef = this._dialog.open(TransactionDialogComponent, {
       disableClose: true
     });
@@ -42,6 +51,12 @@ export class MarketplacePublishButtonComponent implements OnDestroy {
     this._transactionDialogSubscription = transactionDialogRef.afterClosed().subscribe(result => {
       if (result) {
         this._unpublishedProductsService.removeProduct(this.dataProduct);
+        this._tagManager.sendEvent(
+          EventCategory.Sell,
+          EventAction.PublishButtonConfirmed,
+          this.dataProduct.title,
+          this.dataProduct.price ? this.dataProduct.price.toString() : ''
+        );
       }
     });
     const transactionDialog: TransactionDialogComponent = transactionDialogRef.componentInstance;
@@ -55,6 +70,13 @@ export class MarketplacePublishButtonComponent implements OnDestroy {
   }
 
   remove() {
+    this._tagManager.sendEvent(
+      EventCategory.Sell,
+      EventAction.RemoveUnpublished,
+      this.dataProduct.title,
+      this.dataProduct.price ? this.dataProduct.price.toString() : ''
+    );
+
     const confirmationDialogRef = this._dialog.open(ConfirmationDialogComponent, {
       disableClose: true
     });
@@ -64,6 +86,13 @@ export class MarketplacePublishButtonComponent implements OnDestroy {
     this._transactionDialogSubscription = confirmationDialogRef.afterClosed().subscribe(result => {
       if (result) {
         this._unpublishedProductsService.removeProduct(this.dataProduct);
+
+        this._tagManager.sendEvent(
+          EventCategory.Sell,
+          EventAction.RemoveUnpublishedConfirmed,
+          this.dataProduct.title,
+          this.dataProduct.price ? this.dataProduct.price.toString() : ''
+        );
       }
     });
   }

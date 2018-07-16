@@ -7,11 +7,12 @@ import Wallet from '../../shared/models/wallet';
 import { from } from 'rxjs';
 import { KeyStoreService } from '../../key-store/key-store.service';
 import { MaterialModule } from '../../material.module';
+import { TagManagerService } from '../../shared/services/tag-manager.service';
 
 describe('MarketplaceDownloadProductButtonComponent', () => {
   let component: MarketplaceDownloadProductButtonComponent;
   let fixture: ComponentFixture<MarketplaceDownloadProductButtonComponent>;
-  let repuxLibServiceSpy, keyStoreServiceSpy;
+  let repuxLibServiceSpy, keyStoreServiceSpy, tagManagerSpy;
   const productAddress = '0x1111111111111111111111111111111111111111';
 
   beforeEach(fakeAsync(() => {
@@ -20,6 +21,7 @@ describe('MarketplaceDownloadProductButtonComponent', () => {
       createFileDownloader: jasmine.createSpy()
     });
     keyStoreServiceSpy = jasmine.createSpyObj('KeyStoreService', [ 'hasKeys' ]);
+    tagManagerSpy = jasmine.createSpyObj('TagManagerService', [ 'sendEvent' ]);
     TestBed.configureTestingModule({
       declarations: [
         MarketplaceDownloadProductButtonComponent,
@@ -29,6 +31,7 @@ describe('MarketplaceDownloadProductButtonComponent', () => {
         NoopAnimationsModule
       ],
       providers: [
+        { provide: TagManagerService, useValue: tagManagerSpy },
         { provide: RepuxLibService, useValue: repuxLibServiceSpy },
         { provide: KeyStoreService, useValue: keyStoreServiceSpy },
         { provide: TransactionDialogComponent, useValue: {} }
@@ -39,7 +42,10 @@ describe('MarketplaceDownloadProductButtonComponent', () => {
     fixture = TestBed.createComponent(MarketplaceDownloadProductButtonComponent);
     component = fixture.componentInstance;
 
-    component.productAddress = productAddress;
+    component.dataProduct = <any> {
+      address: productAddress,
+      transactions: []
+    };
     fixture.detectChanges();
   }));
 

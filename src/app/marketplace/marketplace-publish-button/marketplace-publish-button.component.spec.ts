@@ -8,16 +8,18 @@ import { DataProductService } from '../../services/data-product.service';
 import { MaterialModule } from '../../material.module';
 import { BehaviorSubject } from 'rxjs/internal/BehaviorSubject';
 import { DataProduct } from '../../shared/models/data-product';
+import { TagManagerService } from '../../shared/services/tag-manager.service';
 
 describe('MarketplacePublishButtonComponent', () => {
   let component: MarketplacePublishButtonComponent;
   let fixture: ComponentFixture<MarketplacePublishButtonComponent>;
-  let unpublishedProductsServiceSpy, dataProductServiceSpy;
+  let tagManagerService, unpublishedProductsServiceSpy, dataProductServiceSpy;
   const ownerAddress = '0x0000000000000000000000000000000000000000';
   const dataProductAddress = '0x1111111111111111111111111111111111111111';
   const sellerMetaHash = 'SELLER_META_HASH';
 
   beforeEach(fakeAsync(() => {
+    tagManagerService = jasmine.createSpyObj('TagManagerService', [ 'sendUserId', 'sendEvent' ]);
     unpublishedProductsServiceSpy = jasmine.createSpyObj('UnpublishedProductsService', [ 'removeProduct', 'getProducts' ]);
     unpublishedProductsServiceSpy.getProducts.and.returnValue(new BehaviorSubject<DataProduct[]>([ new DataProduct() ]));
     dataProductServiceSpy = jasmine.createSpyObj('DataProductService', [ 'publishDataProduct' ]);
@@ -30,6 +32,7 @@ describe('MarketplacePublishButtonComponent', () => {
         NoopAnimationsModule
       ],
       providers: [
+        { provide: TagManagerService, useValue: tagManagerService },
         { provide: TransactionDialogComponent, useValue: {} },
         { provide: DataProductService, useValue: dataProductServiceSpy },
         { provide: UnpublishedProductsService, useValue: unpublishedProductsServiceSpy }
