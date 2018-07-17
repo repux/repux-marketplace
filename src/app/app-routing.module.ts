@@ -16,15 +16,18 @@ const routes: Routes = [
   { path: '', redirectTo: '/dashboard', pathMatch: 'full' },
   { path: 'dashboard', component: DashboardComponent },
   { path: 'marketplace', component: MarketplaceBrowseComponent },
-  { path: 'marketplace/:address', component: MarketplaceProductDetailsComponent },
+  { path: 'marketplace/details/:address', component: MarketplaceProductDetailsComponent },
   {
     path: 'sell', component: MarketplaceSellComponent, children: [
-      { path: '', redirectTo: 'my-active-listings', pathMatch: 'full' },
-      { path: MarketplaceSellLink.MY_ACTIVE_LISTINGS, component: MarketplaceSellMyActiveListingsComponent },
+      { path: '', redirectTo: MarketplaceSellLink.MY_ACTIVE_LISTINGS, pathMatch: 'full' },
+      { path: MarketplaceSellLink.MY_ACTIVE_LISTINGS, component: MarketplaceSellMyActiveListingsComponent, outlet: 'primary' },
       { path: MarketplaceSellLink.UNPUBLISHED, component: MarketplaceSellUnpublishedComponent },
       { path: MarketplaceSellLink.PENDING_FINALISATION, component: MarketplaceSellPendingFinalisationComponent }
     ]
   },
+  { path: `sell/${MarketplaceSellLink.MY_ACTIVE_LISTINGS}/details/:address`, component: MarketplaceProductDetailsComponent },
+  { path: `sell/${MarketplaceSellLink.UNPUBLISHED}/details/:address`, component: MarketplaceProductDetailsComponent },
+  { path: `sell/${MarketplaceSellLink.PENDING_FINALISATION}/details/:address`, component: MarketplaceProductDetailsComponent },
   {
     path: 'buy', component: MarketplaceBuyComponent, children: [
       { path: '', redirectTo: 'ready-to-download', pathMatch: 'full' },
@@ -32,6 +35,8 @@ const routes: Routes = [
       { path: MarketplaceBuyingLink.AWAITING_FINALISATION, component: MarketplaceBuyAwaitingFinalisationComponent }
     ]
   },
+  { path: `buy/${MarketplaceBuyingLink.READY_TO_DOWNLOAD}/details/:address`, component: MarketplaceProductDetailsComponent },
+  { path: `buy/${MarketplaceBuyingLink.AWAITING_FINALISATION}/details/:address`, component: MarketplaceProductDetailsComponent },
   { path: 'settings', component: SettingsIndexComponent }
 ];
 
