@@ -5,6 +5,7 @@ import { MarketplaceSellPendingFinalisationComponent } from './marketplace-sell-
 import Wallet from '../shared/models/wallet';
 import { Component, Input } from '@angular/core';
 import { MaterialModule } from '../material.module';
+import { getPendingFinalisationDataProductsQuery } from './services/pending-finalisation.service';
 
 @Component({ selector: 'app-data-product-list', template: '' })
 class DataProductListStubComponent {
@@ -47,7 +48,7 @@ describe('MarketplaceSellPendingFinalisationComponent', () => {
 
   describe('#_onWalletChange()', () => {
     it('should set wallet and staticQuery', () => {
-      expect((<any> component.staticQuery).bool.must[ 0 ].match.ownerAddress).toBe('');
+      expect(component.staticQuery).toEqual(getPendingFinalisationDataProductsQuery(''));
       const wallet = new Wallet(ownerAddress, 0);
       component[ '_onWalletChange' ](wallet);
       expect(component[ '_wallet' ]).toBe(wallet);
@@ -58,7 +59,7 @@ describe('MarketplaceSellPendingFinalisationComponent', () => {
       const wallet2 = new Wallet(ownerAddress, 0);
       component[ '_onWalletChange' ](wallet2);
       expect(component[ '_wallet' ]).toBe(wallet2);
-      expect((<any> component.staticQuery).bool.must[ 0 ].match.ownerAddress).toBe(ownerAddress);
+      expect(component.staticQuery).toEqual(getPendingFinalisationDataProductsQuery(ownerAddress));
     });
   });
 

@@ -12,7 +12,7 @@ describe('DataProductListService', () => {
     service = new DataProductListService(<any> elasticSearchServiceSpy);
   });
 
-  describe('#getFiles()', () => {
+  describe('#getDataProducts()', () => {
     it('should call search method on ElasticSearchService', () => {
       const expectedEsDataProducts = [ new EsDataProduct().deserialize({
         _index: 'repux',
@@ -40,7 +40,7 @@ describe('DataProductListService', () => {
 
       elasticSearchServiceSpy.search.and.returnValue(defer(() => Promise.resolve(expectedResult)));
 
-      service.getFiles()
+      service.getDataProducts()
         .subscribe(result => {
             expect(result).toEqual(expectedResult, 'expected result');
           },

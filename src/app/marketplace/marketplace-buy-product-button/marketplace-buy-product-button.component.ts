@@ -13,7 +13,8 @@ import { DataProduct } from '../../shared/models/data-product';
 import {
   MarketplacePurchaseConfirmationDialogComponent
 } from '../marketplace-purchase-confirmation-dialog/marketplace-purchase-confirmation-dialog.component';
-import { DataProductNotificationsService } from '../../services/data-product-notifications.service';
+import { AwaitingFinalisationService } from '../services/awaiting-finalisation.service';
+import { DataProductTransaction as BlockchainDataProductTransaction } from 'repux-web3-api';
 import { EventAction, EventCategory, TagManagerService } from '../../shared/services/tag-manager.service';
 
 @Component({
@@ -23,9 +24,9 @@ import { EventAction, EventCategory, TagManagerService } from '../../shared/serv
 })
 export class MarketplaceBuyProductButtonComponent implements OnInit, OnDestroy {
   @Input() dataProduct: DataProduct;
+  @Input() blockchainBuyTransaction: BlockchainDataProductTransaction;
+
   public wallet: Wallet;
-  public finalised: boolean;
-  public bought: boolean;
   public userIsOwner: boolean;
   public dataProductAddress: string;
   public productOwnerAddress: string;
@@ -39,8 +40,16 @@ export class MarketplaceBuyProductButtonComponent implements OnInit, OnDestroy {
     private _repuxLibService: RepuxLibService,
     private _walletService: WalletService,
     private _keyStoreService: KeyStoreService,
-    private _dataProductNotificationsService: DataProductNotificationsService,
+    private _awaitingFinalisationService: AwaitingFinalisationService,
     private _dialog: MatDialog) {
+  }
+
+  get finalised() {
+    return this.blockchainBuyTransaction && this.blockchainBuyTransaction.finalised;
+  }
+
+  get bought() {
+    return this.blockchainBuyTransaction && this.blockchainBuyTransaction.purchased;
   }
 
   ngOnInit(): void {
@@ -66,8 +75,10 @@ export class MarketplaceBuyProductButtonComponent implements OnInit, OnDestroy {
     this._unsubscribeTransactionDialog();
     this._transactionDialogSubscription = transactionDialogRef.afterClosed().subscribe(result => {
       if (result) {
-        this.bought = true;
-        this._dataProductNotificationsService.addBoughtProductAddress(this.dataProductAddress);
+        this.blockchainBuyTransaction = {
+          purchased: true
+        };
+        this._awaitingFinalisationService.addProduct(this.dataProduct);
         this._dialog.open(MarketplacePurchaseConfirmationDialogComponent);
 
         this._tagManager.sendEvent(
@@ -81,16 +92,6 @@ export class MarketplaceBuyProductButtonComponent implements OnInit, OnDestroy {
     const transactionDialog: TransactionDialogComponent = transactionDialogRef.componentInstance;
     transactionDialog.transaction = () => this._dataProductService.purchaseDataProduct(this.dataProductAddress, serializedKey);
     transactionDialog.callTransaction();
-  }
-
-  getFinalised() {
-    return this.dataProduct.transactions
-      .filter(transaction => transaction.buyerAddress === this.wallet.address && transaction.finalised).length > 0;
-  }
-
-  getBought() {
-    return this.dataProduct.transactions
-      .filter(transaction => transaction.buyerAddress === this.wallet.address).length > 0;
   }
 
   getUserIsOwner() {
@@ -116,8 +117,6 @@ export class MarketplaceBuyProductButtonComponent implements OnInit, OnDestroy {
 
     this.wallet = wallet;
     this.userIsOwner = this.getUserIsOwner();
-    this.finalised = this.getFinalised();
-    this.bought = this.getBought();
   }
 
   private _getKeys(): Promise<{ privateKey: JsonWebKey, publicKey: JsonWebKey }> {

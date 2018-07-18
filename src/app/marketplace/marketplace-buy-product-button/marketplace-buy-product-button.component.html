@@ -1,7 +1,7 @@
-<div *ngIf="!dataProduct.disabled && wallet">
+<div *ngIf="wallet">
   <button mat-raised-button
           color="accent"
-          *ngIf="!userIsOwner && !bought"
+          *ngIf="!dataProduct.disabled && !userIsOwner && !bought"
           (click)="buyDataProduct()">Buy
   </button>
 
@@ -9,7 +9,7 @@
     <app-marketplace-download-product-button [dataProduct]="dataProduct"></app-marketplace-download-product-button>
   </div>
 
-  <span class="buy-button-replacement" *ngIf="bought && !finalised"
+  <span class="buy-button-replacement" *ngIf="!dataProduct.disabled && bought && !finalised"
         matTooltip="You will be able to download this file after owner finalises the sale">
     Pending finalisation
   </span>

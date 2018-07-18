@@ -6,10 +6,14 @@ import { CurrencyRepuxPipe } from '../shared/pipes/currency-repux';
 import { FileSizePipe } from '../shared/pipes/file-size.pipe';
 import { RouterTestingModule } from '@angular/router/testing';
 import { HttpClientModule } from '@angular/common/http';
-import { MarketplaceBuyProductButtonComponent } from './marketplace-buy-product-button/marketplace-buy-product-button.component';
-import {
-  MarketplaceDownloadProductButtonComponent
-} from './marketplace-download-product-button/marketplace-download-product-button.component';
+import { Component, Input } from '@angular/core';
+import { DataProduct } from '../shared/models/data-product';
+
+@Component({ selector: 'app-marketplace-action-buttons', template: '' })
+class MarketplaceActionButtonsStubComponent {
+  @Input() dataProduct: DataProduct;
+  @Input() availableActions: string[];
+}
 
 describe('MarketplaceProductDetailsComponent', () => {
   let component: MarketplaceProductDetailsComponent;
@@ -18,8 +22,7 @@ describe('MarketplaceProductDetailsComponent', () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       declarations: [
-        MarketplaceBuyProductButtonComponent,
-        MarketplaceDownloadProductButtonComponent,
+        MarketplaceActionButtonsStubComponent,
         FileSizePipe,
         CurrencyRepuxPipe,
         MarketplaceProductDetailsComponent

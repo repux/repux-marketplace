@@ -8,7 +8,8 @@ import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { TransactionDialogComponent } from '../../shared/components/transaction-dialog/transaction-dialog.component';
 import { KeyStoreService } from '../../key-store/key-store.service';
 import { MaterialModule } from '../../material.module';
-import { DataProductNotificationsService } from '../../services/data-product-notifications.service';
+import { AwaitingFinalisationService } from '../services/awaiting-finalisation.service';
+import { DataProductService } from '../../services/data-product.service';
 import { TagManagerService } from '../../shared/services/tag-manager.service';
 import { DataProduct } from '../../shared/models/data-product';
 
@@ -20,7 +21,7 @@ class DownloadProductButtonStubComponent {
 describe('MarketplaceBuyProductButtonComponent', () => {
   let component: MarketplaceBuyProductButtonComponent;
   let fixture: ComponentFixture<MarketplaceBuyProductButtonComponent>;
-  let repuxLibServiceSpy, keyStoreServiceSpy, dataProductNotificationsService, tagManager;
+  let repuxLibServiceSpy, keyStoreServiceSpy, awaitingFinalisationServiceSpy, dataProductServiceSpy, tagManager;
   const dataProductAddress = '0x1111111111111111111111111111111111111111';
   const buyerAddress = '0x0000000000000000000000000000000000000000';
 
@@ -28,7 +29,8 @@ describe('MarketplaceBuyProductButtonComponent', () => {
     tagManager = jasmine.createSpyObj('TagManagerService', [ 'sendEvent' ]);
     repuxLibServiceSpy = jasmine.createSpyObj('RepuxLibService', [ 'getInstance' ]);
     keyStoreServiceSpy = jasmine.createSpyObj('KeyStoreService', [ 'hasKeys' ]);
-    dataProductNotificationsService = jasmine.createSpyObj('DataProductNotificationsService', [ 'addBoughtProductAddress' ]);
+    awaitingFinalisationServiceSpy = jasmine.createSpyObj('AwaitingFinalisationService', [ 'addProduct' ]);
+    dataProductServiceSpy = jasmine.createSpyObj('DataProductService', [ 'purchaseDataProduct' ]);
     TestBed.configureTestingModule({
       declarations: [
         MarketplaceBuyProductButtonComponent,
@@ -40,10 +42,11 @@ describe('MarketplaceBuyProductButtonComponent', () => {
       ],
       providers: [
         { provide: TagManagerService, useValue: tagManager },
+        { provide: DataProductService, useValue: dataProductServiceSpy },
         { provide: RepuxLibService, useValue: repuxLibServiceSpy },
         { provide: KeyStoreService, useValue: keyStoreServiceSpy },
-        { provide: TransactionDialogComponent, useValue: {} },
-        { provide: DataProductNotificationsService, useValue: dataProductNotificationsService }
+        { provide: AwaitingFinalisationService, useValue: awaitingFinalisationServiceSpy },
+        { provide: TransactionDialogComponent, useValue: {} }
       ]
     })
       .compileComponents();
@@ -80,20 +83,14 @@ describe('MarketplaceBuyProductButtonComponent', () => {
   });
 
   describe('#_onWalletChange()', () => {
-    it('should call getBoughtProducts and getFinalisedProducts', () => {
-      const getFinalised = jasmine.createSpy();
-      const getBought = jasmine.createSpy();
+    it('should call getUserIsOwner', () => {
       const getUserIsOwner = jasmine.createSpy();
-      component.getFinalised = getFinalised;
-      component.getBought = getBought;
       component.getUserIsOwner = getUserIsOwner;
       const wallet = new Wallet('0x00', 0);
       component[ '_onWalletChange' ](wallet);
       component[ '_onWalletChange' ](wallet);
       component[ '_onWalletChange' ](null);
       component[ '_onWalletChange' ](new Wallet('0x01', 0));
-      expect(getFinalised.calls.count()).toBe(2);
-      expect(getBought.calls.count()).toBe(2);
       expect(getUserIsOwner.calls.count()).toBe(2);
     });
   });
@@ -137,61 +134,35 @@ describe('MarketplaceBuyProductButtonComponent', () => {
     });
   });
 
-  describe('#getFinalised()', () => {
+  describe('#get finalised()', () => {
     it('should return true if user bought product and transaction is finalised', () => {
       component.wallet = new Wallet(buyerAddress, 0);
-      component.dataProduct = <any> {
-        address: dataProductAddress,
-        transactions: [ {
-          buyerAddress,
-          finalised: true
-        } ]
+      component.blockchainBuyTransaction = <any> {
+        finalised: true,
+        purchased: true
       };
-      expect(component.getFinalised()).toBeTruthy();
-      component.dataProduct = <any> {
-        address: dataProductAddress,
-        transactions: [ {
-          buyerAddress: '0x00',
-          finalised: true
-        } ]
+      expect(component.finalised).toBeTruthy();
+      component.blockchainBuyTransaction = <any> {
+        finalised: false,
+        purchased: true
       };
-      expect(component.getFinalised()).toBeFalsy();
+      expect(component.finalised).toBeFalsy();
 
-      component.dataProduct = <any> {
-        address: dataProductAddress,
-        transactions: []
-      };
-      expect(component.getFinalised()).toBeFalsy();
-
-      component.dataProduct = <any> {
-        address: dataProductAddress,
-        transactions: [ {
-          buyerAddress,
-          finalised: false
-        } ]
-      };
-      expect(component.getFinalised()).toBeFalsy();
+      component.blockchainBuyTransaction = <any> null;
+      expect(component.finalised).toBeFalsy();
     });
   });
 
-  describe('#getBought()', () => {
+  describe('#get bought()', () => {
     it('should return true if bought product', () => {
       component.wallet = new Wallet(buyerAddress, 0);
-      component.dataProduct = <any> {
-        address: dataProductAddress,
-        transactions: [ {
-          buyerAddress
-        } ]
+      component.blockchainBuyTransaction = <any> {
+        purchased: true
       };
-      expect(component.getBought()).toBeTruthy();
+      expect(component.bought).toBeTruthy();
 
-      component.dataProduct = <any> {
-        address: dataProductAddress,
-        transactions: [ {
-          buyerAddress: '0x00'
-        } ]
-      };
-      expect(component.getBought()).toBeFalsy();
+      component.blockchainBuyTransaction = <any> null;
+      expect(component.bought).toBeFalsy();
     });
   });
 

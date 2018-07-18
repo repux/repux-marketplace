@@ -51,7 +51,7 @@ describe('FileReencryptionTask', () => {
         };
       }
     });
-    pendingFinalisationService = jasmine.createSpyObj('PendingFinalisationService', [ 'remove' ]);
+    pendingFinalisationService = jasmine.createSpyObj('PendingFinalisationService', [ 'removeTransaction' ]);
 
     fileReencryptionTask = new FileReencryptionTask(
       productAddress,

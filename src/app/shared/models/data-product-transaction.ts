@@ -2,6 +2,7 @@ import BigNumber from 'bignumber.js';
 import { environment } from '../../../environments/environment';
 
 export class DataProductTransaction {
+  dataProductAddress: string;
   finalised: boolean;
   buyerAddress: string;
   buyerMetaHash?: string;

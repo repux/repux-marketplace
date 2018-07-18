@@ -6,10 +6,9 @@ import { WalletService } from '../../services/wallet.service';
 import Wallet from '../../shared/models/wallet';
 import { ClockService } from '../../services/clock.service';
 import { Subscription } from 'rxjs/internal/Subscription';
-import { DataProductTransaction } from '../../shared/models/data-product-transaction';
+import { DataProductTransaction as BlockchainDataProductTransaction } from 'repux-web3-api';
 import { TransactionDialogComponent } from '../../shared/components/transaction-dialog/transaction-dialog.component';
-import { DataProductNotificationsService } from '../../services/data-product-notifications.service';
-import { AwaitingFinalisationService } from '../../services/data-product-notifications/awaiting-finalisation.service';
+import { AwaitingFinalisationService } from '../services/awaiting-finalisation.service';
 import { EventAction, EventCategory, TagManagerService } from '../../shared/services/tag-manager.service';
 
 @Component({
@@ -18,9 +17,10 @@ import { EventAction, EventCategory, TagManagerService } from '../../shared/serv
 })
 export class MarketplaceCancelPurchaseButtonComponent implements OnInit, OnDestroy {
   @Input() dataProduct: DataProduct;
+  @Input() blockchainBuyTransaction: BlockchainDataProductTransaction;
+
   public dataProductAddress: string;
   public wallet: Wallet;
-  public userIsBuyer: boolean;
   public isAfterDeliveryDeadline: boolean;
   public isAwaiting: boolean;
 
@@ -28,29 +28,29 @@ export class MarketplaceCancelPurchaseButtonComponent implements OnInit, OnDestr
   private _walletSubscription: Subscription;
   private _awaitingFinalisationSubscription: Subscription;
   private _transactionDialogSubscription: Subscription;
-  private _transaction: DataProductTransaction;
 
   constructor(
     private _walletService: WalletService,
     private _dataProductService: DataProductService,
     private _dialog: MatDialog,
     private _clockService: ClockService,
-    private _dataProductNotificationsService: DataProductNotificationsService,
     private _awaitingFinalisationService: AwaitingFinalisationService,
     private _tagManager: TagManagerService
   ) {
   }
 
+  get userIsBuyer(): boolean {
+    return Boolean(this.blockchainBuyTransaction);
+  }
+
   ngOnInit() {
     this.dataProductAddress = this.dataProduct.address;
     this._walletSubscription = this._walletService.getWallet().subscribe(wallet => this._onWalletChange(wallet));
-    this._clockSubscription = this._clockService.onEachSecond().subscribe(date => this._checkIfAfterDeliveryDeadline(date));
-    this._awaitingFinalisationSubscription = this._awaitingFinalisationService.getEntries()
-      .subscribe(() => this._checkIfIsPending());
-  }
-
-  getUserIsBuyer(): boolean {
-    return Boolean(this._transaction);
+    this._clockSubscription = this._clockService.onEachSecond().subscribe(date => {
+      this.isAfterDeliveryDeadline = this.checkIfAfterDeliveryDeadline(date);
+    });
+    this._awaitingFinalisationSubscription = this._awaitingFinalisationService.getProducts()
+      .subscribe(() => this._checkIfIsAwaiting());
   }
 
   cancelPurchase() {
@@ -67,13 +67,11 @@ export class MarketplaceCancelPurchaseButtonComponent implements OnInit, OnDestr
     this._unsubscribeTransactionDialog();
     this._transactionDialogSubscription = transactionDialogRef.afterClosed().subscribe(result => {
       if (result) {
-        this._awaitingFinalisationService.remove({
-          dataProductAddress: this.dataProductAddress,
-          buyerAddress: this.wallet.address
-        });
-        this._dataProductNotificationsService.removeBoughtProductAddress(this.dataProductAddress);
-        this.dataProduct.transactions = this.dataProduct.transactions.filter(transaction => transaction !== this._transaction);
-        this._transaction = null;
+        this._awaitingFinalisationService.removeProduct(this.dataProduct);
+        this.dataProduct.transactions = this.dataProduct.transactions.filter(transaction =>
+          transaction.buyerAddress !== this.blockchainBuyTransaction.buyerAddress
+        );
+        delete this.blockchainBuyTransaction;
 
         this._tagManager.sendEvent(
           EventCategory.Sell,
@@ -104,31 +102,20 @@ export class MarketplaceCancelPurchaseButtonComponent implements OnInit, OnDestr
     this._unsubscribeTransactionDialog();
   }
 
+  checkIfAfterDeliveryDeadline(date: Date) {
+    if (!this.blockchainBuyTransaction) {
+      return false;
+    }
+
+    return date > this.blockchainBuyTransaction.deliveryDeadline;
+  }
+
   private _onWalletChange(wallet: Wallet) {
     if (!wallet || wallet === this.wallet) {
       return;
     }
 
     this.wallet = wallet;
-    this._transaction = this._findTransactionByCurrentBuyerAddress();
-    this.userIsBuyer = this.getUserIsBuyer();
-  }
-
-  private _findTransactionByCurrentBuyerAddress(): DataProductTransaction {
-    if (!this.wallet.address) {
-      return;
-    }
-
-    return this.dataProduct.transactions.find(transaction => transaction.buyerAddress === this.wallet.address);
-  }
-
-  private _checkIfAfterDeliveryDeadline(date: Date) {
-    if (!this._transaction) {
-      this.isAfterDeliveryDeadline = false;
-      return;
-    }
-
-    this.isAfterDeliveryDeadline = date > this._transaction.deliveryDeadline;
   }
 
   private _unsubscribeTransactionDialog() {
@@ -138,10 +125,7 @@ export class MarketplaceCancelPurchaseButtonComponent implements OnInit, OnDestr
     }
   }
 
-  private _checkIfIsPending() {
-    this.isAwaiting = Boolean(this._awaitingFinalisationService.find({
-      dataProductAddress: this.dataProductAddress,
-      buyerAddress: this.wallet.address
-    }));
+  private _checkIfIsAwaiting() {
+    this.isAwaiting = Boolean(this._awaitingFinalisationService.findProduct(this.dataProductAddress));
   }
 }

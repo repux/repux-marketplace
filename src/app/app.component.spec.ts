@@ -3,7 +3,6 @@ import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { APP_BASE_HREF } from '@angular/common';
-import { DataProductNotificationsService } from './services/data-product-notifications.service';
 import { WalletService } from './services/wallet.service';
 import { HttpClient } from '@angular/common/http';
 import { SettingsModule } from './settings/settings.module';
@@ -30,7 +29,6 @@ describe('AppComponent', () => {
       providers: [
         { provide: APP_BASE_HREF, useValue: '/' },
         { provide: WalletService, useValue: jasmine.createSpy() },
-        { provide: DataProductNotificationsService, useValue: jasmine.createSpy() },
         { provide: HttpClient, useValue: jasmine.createSpy() }
       ]
     }).compileComponents();

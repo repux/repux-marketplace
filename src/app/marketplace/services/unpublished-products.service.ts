@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
-import { StorageService } from './storage.service';
-import { DataProduct } from '../shared/models/data-product';
-import { TaskManagerService } from './task-manager.service';
-import { FileUploadTask } from '../tasks/file-upload-task';
+import { StorageService } from '../../services/storage.service';
+import { DataProduct } from '../../shared/models/data-product';
+import { TaskManagerService } from '../../services/task-manager.service';
+import { FileUploadTask } from '../../tasks/file-upload-task';
 import { BehaviorSubject } from 'rxjs/internal/BehaviorSubject';
 import { Observable } from 'rxjs/internal/Observable';
 

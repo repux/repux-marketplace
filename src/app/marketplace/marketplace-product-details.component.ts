@@ -27,7 +27,7 @@ export class MarketplaceProductDetailsComponent implements OnInit {
   }
 
   loadProduct(address: string) {
-    this.product$ = this.dataProductListService.getFile(address).pipe(
+    this.product$ = this.dataProductListService.getDataProduct(address).pipe(
       pluck('hits'),
       map(obj => obj[ 0 ]),
       pluck('source')

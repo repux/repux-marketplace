@@ -1,7 +1,7 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { MarketplaceDataProductListComponent } from './marketplace-data-product-list.component';
 import { MatTableDataSource } from '@angular/material';
-import { Component, Input } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { DataProductListService } from '../../services/data-product-list.service';
 import { from as fromPromise } from 'rxjs/index';
 import { EsResponse } from '../../shared/models/es-response';
@@ -10,76 +10,50 @@ import { EsDataProduct } from '../../shared/models/es-data-product';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { DataProduct } from '../../shared/models/data-product';
 import { MarketplaceDataProductListDetailDirective } from './marketplace-data-product-list-detail.directive';
-import { DataProductTransaction } from '../../shared/models/data-product-transaction';
-import { DataProductNotificationsService } from '../../services/data-product-notifications.service';
 import { SharedModule } from '../../shared/shared.module';
 import { MaterialModule } from '../../material.module';
 import { RouterTestingModule } from '@angular/router/testing';
+import { PendingFinalisationService } from '../services/pending-finalisation.service';
 
 @Component({ selector: 'app-file-size', template: '{{bytes}}' })
-class FileSizeStubComponent {
+class MarketplaceFileSizeStubComponent {
   @Input() bytes: number;
 }
 
-@Component({ selector: 'app-marketplace-buy-product-button', template: '' })
-class BuyProductButtonStubComponent {
+@Component({ selector: 'app-marketplace-action-buttons', template: '' })
+class MarketplaceActionButtonsStubComponent {
   @Input() dataProduct: DataProduct;
+  @Input() availableActions: string[];
 }
 
-@Component({ selector: 'app-marketplace-withdraw-button', template: '' })
-class WithdrawButtonStubComponent {
-  @Input() dataProduct: string;
-}
-
-@Component({ selector: 'app-marketplace-publish-button', template: '' })
-class PublishButtonStubComponent {
-  @Input() dataProduct: string;
-}
-
-@Component({ selector: 'app-marketplace-unpublish-button', template: '' })
-class UnpublishButtonStubComponent {
-  @Input() dataProduct: string;
-}
-
-@Component({ selector: 'app-marketplace-cancel-purchase-button', template: '' })
-class CancelPurchaseButtonStubComponent {
-  @Input() dataProduct: string;
-}
-
-
-@Component({ selector: 'app-marketplace-data-product-transactions-list', template: '' })
-class DataProductTransactionsListStubComponent {
+@Component({ selector: 'app-marketplace-data-product-transactions-list-container', template: '' })
+class DataProductTransactionsListContainerStubComponent {
   @Input() dataProduct: DataProduct;
-  @Input() transactions: DataProductTransaction[];
+  @Input() displayPendingTransactions: boolean;
+  @Output() finaliseSuccess = new EventEmitter<any>();
 }
 
 describe('MarketplaceDataProductListComponent', () => {
   let component: MarketplaceDataProductListComponent;
   let fixture: ComponentFixture<MarketplaceDataProductListComponent>;
-  let dataProductNotificationsService, dataProductListService;
+  let dataProductListServiceSpy, pendingFinalisationServiceSpy;
 
   beforeEach(async(() => {
-    dataProductNotificationsService = jasmine.createSpyObj('DataProductNotificationsService', [ 'findFinalisationRequest' ]);
-    dataProductListService = jasmine.createSpyObj('DataProductListService', [ 'getFiles' ]);
-    dataProductListService.getFiles.and.returnValue({
-      subscribe(callback) {
-        const response = new EsResponse();
-        response.hits = [];
-        callback(response);
-      }
+    pendingFinalisationServiceSpy = jasmine.createSpyObj('PendingFinalisationService', [ 'findTransaction' ]);
+    dataProductListServiceSpy = jasmine.createSpyObj('DataProductListService', [ 'getDataProducts' ]);
+    dataProductListServiceSpy.getDataProducts.and.callFake(() => {
+      const response = new EsResponse();
+      response.hits = [];
+      return fromPromise(Promise.resolve(response));
     });
 
     TestBed.configureTestingModule({
       declarations: [
         MarketplaceDataProductListComponent,
-        FileSizeStubComponent,
-        BuyProductButtonStubComponent,
-        WithdrawButtonStubComponent,
-        PublishButtonStubComponent,
-        UnpublishButtonStubComponent,
+        MarketplaceFileSizeStubComponent,
+        MarketplaceActionButtonsStubComponent,
         MarketplaceDataProductListDetailDirective,
-        DataProductTransactionsListStubComponent,
-        CancelPurchaseButtonStubComponent
+        DataProductTransactionsListContainerStubComponent
       ],
       imports: [
         SharedModule,
@@ -88,8 +62,8 @@ describe('MarketplaceDataProductListComponent', () => {
         NoopAnimationsModule
       ],
       providers: [
-        { provide: DataProductListService, useValue: dataProductListService },
-        { provide: DataProductNotificationsService, useValue: dataProductNotificationsService }
+        { provide: DataProductListService, useValue: dataProductListServiceSpy },
+        { provide: PendingFinalisationService, useValue: pendingFinalisationServiceSpy }
       ]
     })
       .compileComponents();
@@ -160,7 +134,8 @@ describe('MarketplaceDataProductListComponent', () => {
   });
 
   describe('#refreshData()', () => {
-    it('should call getFiles method on DataProductListService instance and assign result to esDataProducts and dataSource properties',
+    it('should call getDataProducts method on DataProductListService instance and assign result to esDataProducts and' +
+      ' dataSource properties',
       async () => {
         const expectedResponse: EsResponse<Deserializable<EsDataProduct>> = {
           total: 1,
@@ -178,7 +153,7 @@ describe('MarketplaceDataProductListComponent', () => {
         component.sort = 'SORT';
         component.size = 10;
         component.from = 1;
-        dataProductListService.getFiles.and.callFake((query, sort, size, from) => {
+        dataProductListServiceSpy.getDataProducts.and.callFake((query, sort, size, from) => {
           expect(query).toEqual({ bool: { must: [ { bool: { should: [ 'QUERY' ] } } ] } });
           expect(sort).toBe('SORT');
           expect(size).toBe(10);
@@ -186,7 +161,7 @@ describe('MarketplaceDataProductListComponent', () => {
           return fromPromise(Promise.resolve(expectedResponse));
         });
         await component.refreshData();
-        expect(dataProductListService.getFiles.calls.count()).toBe(1);
+        expect(dataProductListServiceSpy.getDataProducts.calls.count()).toBe(1);
         expect(component.esDataProducts).toBe(expectedResponse);
       });
   });
@@ -288,13 +263,9 @@ describe('MarketplaceDataProductListComponent', () => {
       expect(firstRow.querySelector('mat-cell:nth-child(8)').textContent.trim()).toBe('REPUX 0');
       expect(firstRow.querySelector('mat-cell:nth-child(9)').textContent.trim()).toBe('REPUX 0');
       expect(firstRow.querySelector('mat-cell:nth-child(10)').textContent.trim()).toBe('1');
-      expect(firstRow.querySelector('mat-cell:nth-child(11) app-marketplace-buy-product-button')).not.toBeNull();
-      expect(firstRow.querySelector('mat-cell:nth-child(11) app-marketplace-withdraw-button')).not.toBeNull();
-      expect(firstRow.querySelector('mat-cell:nth-child(11) app-marketplace-unpublish-button')).not.toBeNull();
+      expect(firstRow.querySelector('mat-cell:nth-child(11) app-marketplace-action-buttons')).not.toBeNull();
 
-      expect(table.querySelectorAll('.details').length).toBe(1);
-      expect(table.querySelector('.details .detail-header').textContent.trim()).toBe('Transactions:');
-      expect(table.querySelectorAll('.details app-marketplace-data-product-transactions-list').length).toBe(1);
+      expect(table.querySelectorAll('app-marketplace-data-product-transactions-list-container').length).toBe(1);
     });
 
     it('should call sortChanged method when user clicks on sorting column', () => {

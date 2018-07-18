@@ -4,9 +4,8 @@ import { RepuxLibService } from '../services/repux-lib.service';
 import { TaskManagerService } from '../services/task-manager.service';
 import { DataProductService } from '../services/data-product.service';
 import { TaskType } from './task-type';
-import { UnpublishedProductsService } from '../services/unpublished-products.service';
+import { UnpublishedProductsService } from '../marketplace/services/unpublished-products.service';
 import { DataProduct } from '../shared/models/data-product';
-import { DataProductNotificationsService } from '../services/data-product-notifications.service';
 import { TransactionDialogComponent } from '../shared/components/transaction-dialog/transaction-dialog.component';
 import { Subscription } from 'rxjs/index';
 import { MatDialog } from '@angular/material';
@@ -36,7 +35,6 @@ export class FileUploadTask implements Task {
     private _repuxLibService: RepuxLibService,
     private _dataProductService: DataProductService,
     private _unpublishedProductsService: UnpublishedProductsService,
-    private _dataProductNotificationsService: DataProductNotificationsService,
     private _title: string,
     private _shortDescription: string,
     private _fullDescription: string,
@@ -166,7 +164,6 @@ export class FileUploadTask implements Task {
       this._finished = true;
 
       if (result) {
-        this._dataProductNotificationsService.addCreatedProductAddress(result.address);
         this._unpublishedProductsService.removeProduct(this._dataProduct);
         this._status = STATUS.FINISHED;
 

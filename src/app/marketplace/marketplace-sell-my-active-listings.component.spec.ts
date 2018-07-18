@@ -5,6 +5,7 @@ import { MarketplaceSellMyActiveListingsComponent } from './marketplace-sell-my-
 import Wallet from '../shared/models/wallet';
 import { Component, Input } from '@angular/core';
 import { MaterialModule } from '../material.module';
+import { getCreatedDataProductsQuery } from './services/my-active-listings.service';
 
 @Component({ selector: 'app-data-product-list', template: '' })
 class DataProductListStubComponent {
@@ -45,7 +46,7 @@ describe('MarketplaceSellMyActiveListingsComponent', () => {
 
   describe('#_onWalletChange()', () => {
     it('should set wallet and staticQuery', () => {
-      expect((<any> component.staticQuery).bool.must[ 0 ].match.ownerAddress).toBe('');
+      expect(component.staticQuery).toEqual(getCreatedDataProductsQuery(''));
       const wallet = new Wallet(ownerAddress, 0);
       component[ '_onWalletChange' ](wallet);
       expect(component[ '_wallet' ]).toBe(wallet);
@@ -56,7 +57,7 @@ describe('MarketplaceSellMyActiveListingsComponent', () => {
       const wallet2 = new Wallet(ownerAddress, 0);
       component[ '_onWalletChange' ](wallet2);
       expect(component[ '_wallet' ]).toBe(wallet2);
-      expect((<any> component.staticQuery).bool.must[ 0 ].match.ownerAddress).toBe(ownerAddress);
+      expect(component.staticQuery).toEqual(getCreatedDataProductsQuery(ownerAddress));
     });
   });
 

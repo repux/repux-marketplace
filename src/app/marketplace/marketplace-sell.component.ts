@@ -1,6 +1,6 @@
 import { Component, OnDestroy } from '@angular/core';
 import { MatDialog } from '@angular/material';
-import { UnpublishedProductsService } from '../services/unpublished-products.service';
+import { UnpublishedProductsService } from './services/unpublished-products.service';
 import { Observable } from 'rxjs/internal/Observable';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { map } from 'rxjs/operators';
@@ -8,8 +8,9 @@ import { Subscription } from 'rxjs/internal/Subscription';
 import {
   MarketplaceProductCreatorDialogComponent
 } from './marketplace-product-creator-dialog/marketplace-product-creator-dialog.component';
-import { PendingFinalisationService } from '../services/data-product-notifications/pending-finalisation.service';
-import { DataProductNotificationsService } from '../services/data-product-notifications.service';
+import { MyActiveListingsService } from './services/my-active-listings.service';
+import { PendingFinalisationService } from './services/pending-finalisation.service';
+import { environment } from '../../environments/environment';
 
 export enum MarketplaceSellLink {
   MY_ACTIVE_LISTINGS = 'my-active-listings',
@@ -45,6 +46,8 @@ export class MarketplaceSellComponent implements OnDestroy {
     }
   ];
 
+  maxItemsNumber = environment.maxNotificationsProductsNumber;
+
   private _myActiveListingsSubscription: Subscription;
   private _unpublishedProductsSubscription: Subscription;
   private _pendingFinalisationSubscription: Subscription;
@@ -55,7 +58,7 @@ export class MarketplaceSellComponent implements OnDestroy {
   constructor(
     private _dialog: MatDialog,
     private _breakpointObserver: BreakpointObserver,
-    private _dataProductNotificationsService: DataProductNotificationsService,
+    private _myActiveListingsService: MyActiveListingsService,
     private _unpublishedProductsService: UnpublishedProductsService,
     private _pendingFinalisationService: PendingFinalisationService,
   ) {
@@ -63,13 +66,13 @@ export class MarketplaceSellComponent implements OnDestroy {
     this._unpublishedLink = this.navLinks.find(link => link.path === MarketplaceSellLink.UNPUBLISHED);
     this._pendingFinalisationLink = this.navLinks.find(link => link.path === MarketplaceSellLink.PENDING_FINALISATION);
 
-    this._myActiveListingsSubscription = this._dataProductNotificationsService.getCreatedProductsAddresses()
+    this._myActiveListingsSubscription = this._myActiveListingsService.getProducts()
       .subscribe(createdProducts => this._myActiveListingsLink.items = createdProducts);
 
     this._unpublishedProductsSubscription = this._unpublishedProductsService.getProducts()
       .subscribe(products => this._unpublishedLink.items = products);
 
-    this._pendingFinalisationSubscription = this._pendingFinalisationService.getEntries()
+    this._pendingFinalisationSubscription = this._pendingFinalisationService.getTransactions()
       .subscribe(pendingFinalisation => this._pendingFinalisationLink.items = pendingFinalisation);
   }
 

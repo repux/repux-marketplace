@@ -6,7 +6,7 @@ import Wallet from '../shared/models/wallet';
 
 describe('DataProductService', () => {
   let service: DataProductService;
-  let repuxWeb3ServiceSpy, walletServiceSpy, storageServiceSpy;
+  let repuxWeb3ServiceSpy, walletServiceSpy, storageServiceSpy, websocketServiceSpy;
   const fileHash = 'FILE_HASH';
   const price = new BigNumber(100);
   const daysForDeliver = 1;
@@ -31,8 +31,14 @@ describe('DataProductService', () => {
         callback(wallet);
       }
     });
+    websocketServiceSpy = jasmine.createSpyObj('WebsocketService', [ 'onEvent' ]);
 
-    service = new DataProductService(<any> repuxWeb3ServiceSpy, <any> walletServiceSpy, <any> storageServiceSpy);
+    service = new DataProductService(
+      <any> repuxWeb3ServiceSpy,
+      <any> walletServiceSpy,
+      <any> storageServiceSpy,
+      <any> websocketServiceSpy
+    );
   });
 
   describe('#get _api()', () => {
@@ -45,51 +51,6 @@ describe('DataProductService', () => {
         expect(repuxWeb3ServiceSpy.getRepuxApiInstance.calls.count()).toBe(1);
         done();
       });
-    });
-  });
-
-  describe('#_readFromStore()', () => {
-    it('should return config from storage', () => {
-      const expectedResult = { lastBlock: 12 };
-      storageServiceSpy.getItem.and.returnValue(expectedResult);
-      const result = service[ '_readFromStore' ]();
-      expect(<any> result).toEqual(expectedResult);
-    });
-
-    it('should return new config when there is none in storage', () => {
-      storageServiceSpy.getItem.and.returnValue(null);
-      const result = service[ '_readFromStore' ]();
-      expect(<any> result).toEqual({ lastBlock: 0 });
-    });
-  });
-
-  describe('#_saveToStore()', () => {
-    it('should call set item on storage', () => {
-      service[ '_saveToStore' ]({ lastBlock: 12 });
-      expect(storageServiceSpy.setItem.calls.count()).toBe(1);
-      expect(storageServiceSpy.setItem.calls.allArgs()[ 0 ][ 1 ]).toEqual({ lastBlock: 12 });
-    });
-  });
-
-  describe('#_getLastReadBlock()', () => {
-    it('should return lastBlock from config', () => {
-      const readFromStore = jasmine.createSpy();
-      readFromStore.and.returnValue({ lastBlock: 12 });
-      service[ '_readFromStore' ] = readFromStore;
-      expect(service[ '_getLastReadBlock' ]()).toBe(12);
-    });
-  });
-
-  describe('#_setLastReadBlock()', () => {
-    it('should call set config', () => {
-      const readFromStore = jasmine.createSpy();
-      const saveToStore = jasmine.createSpy();
-      readFromStore.and.returnValue({ lastBlock: 12 });
-      service[ '_readFromStore' ] = readFromStore;
-      service[ '_saveToStore' ] = saveToStore;
-      service[ '_setLastReadBlock' ](13);
-      expect(saveToStore.calls.count()).toBe(1);
-      expect(saveToStore.calls.allArgs()[ 0 ][ 0 ]).toEqual({ lastBlock: 13 });
     });
   });
 
@@ -164,22 +125,27 @@ describe('DataProductService', () => {
 
   describe('#watchForDataProductUpdate()', () => {
     it('should return existing observable when it is defined', () => {
-      service[ '_dataProductUpdateObservable' ] = new Observable(() => {
+      service[ 'websocketMessage$' ] = new Observable(() => {
       });
       const observable = service.watchForDataProductUpdate(productAddress, DataProductUpdateAction.CREATE);
       expect(observable.subscribe).toBeDefined();
     });
 
     it('should return new observable when it is not defined', () => {
+      websocketServiceSpy.onEvent.and.returnValue(new Observable());
       const observable = service.watchForDataProductUpdate(productAddress, DataProductUpdateAction.CREATE);
       expect(observable.subscribe).toBeDefined();
     });
 
     it('should emit event when observer push next result', () => {
-      service[ '_dataProductUpdateObservable' ] = new Observable(observer => {
+      service[ 'websocketMessage$' ] = new Observable(observer => {
         observer.next({
-          dataProductAddress: productAddress,
-          action: DataProductUpdateAction.CREATE
+          args: {
+            dataProduct: productAddress,
+            action: DataProductUpdateAction.CREATE,
+            sender: walletAddress
+          },
+          blockNumber: 1
         });
       });
 

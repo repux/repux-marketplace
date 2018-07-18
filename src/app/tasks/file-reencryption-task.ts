@@ -8,7 +8,7 @@ import { KeyStoreService } from '../key-store/key-store.service';
 import { MatDialog } from '@angular/material';
 import { Subscription } from 'rxjs';
 import { TaskType } from './task-type';
-import { PendingFinalisationService } from '../services/data-product-notifications/pending-finalisation.service';
+import { PendingFinalisationService } from '../marketplace/services/pending-finalisation.service';
 import { TransactionDialogComponent } from '../shared/components/transaction-dialog/transaction-dialog.component';
 import { AsyncSubject } from 'rxjs/internal/AsyncSubject';
 import { FileReencryptor, EventType } from 'repux-lib';
@@ -164,10 +164,7 @@ export class FileReencryptionTask implements Task {
 
       if (result) {
         this._status = STATUS.FINISHED;
-        this._pendingFinalisationService.remove({
-          dataProductAddress: this._dataProductAddress,
-          buyerAddress: this._buyerAddress
-        });
+        this._pendingFinalisationService.removeTransaction(this._dataProductAddress, this._buyerAddress);
       } else {
         this._errors.push(STATUS.REJECTED);
         this._status = STATUS.REJECTED;

@@ -10,7 +10,7 @@ import { BigNumber } from 'bignumber.js';
 import { DataProduct } from '../../shared/models/data-product';
 import { deepCopy } from '../../shared/utils/deep-copy';
 import { Subscription } from 'rxjs/internal/Subscription';
-import { PendingFinalisationService } from '../../services/data-product-notifications/pending-finalisation.service';
+import { PendingFinalisationService } from '../services/pending-finalisation.service';
 
 const DAY_IN_MILLISECONDS = 24 * 60 * 60 * 1000;
 
@@ -126,7 +126,7 @@ export class MarketplaceDataProductListComponent implements OnChanges, OnDestroy
     return new Promise(resolve => {
       this.isLoadingResults = true;
       this._unsubscribeDataProducts();
-      this._dataProductsSubscription = this.dataProductListService.getFiles(query, this.sort, this.size, this.from)
+      this._dataProductsSubscription = this.dataProductListService.getDataProducts(query, this.sort, this.size, this.from)
         .subscribe(esDataProducts => {
           this.esDataProducts = esDataProducts;
           this.reloadRecords();
@@ -146,11 +146,7 @@ export class MarketplaceDataProductListComponent implements OnChanges, OnDestroy
 
   getTransactionsToFinalisation(dataProduct: DataProduct): DataProductTransaction[] {
     return dataProduct.transactions.filter(transaction => {
-      return !transaction.finalised &&
-        this._pendingFinalisationService.find({
-          dataProductAddress: dataProduct.address,
-          buyerAddress: transaction.buyerAddress
-        });
+      return !transaction.finalised && this._pendingFinalisationService.findTransaction(dataProduct.address, transaction.buyerAddress);
     });
   }
 

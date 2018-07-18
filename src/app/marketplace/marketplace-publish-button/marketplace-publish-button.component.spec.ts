@@ -3,7 +3,7 @@ import { TransactionDialogComponent } from '../../shared/components/transaction-
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import BigNumber from 'bignumber.js';
 import { MarketplacePublishButtonComponent } from './marketplace-publish-button.component';
-import { UnpublishedProductsService } from '../../services/unpublished-products.service';
+import { UnpublishedProductsService } from '../services/unpublished-products.service';
 import { DataProductService } from '../../services/data-product.service';
 import { MaterialModule } from '../../material.module';
 import { BehaviorSubject } from 'rxjs/internal/BehaviorSubject';
