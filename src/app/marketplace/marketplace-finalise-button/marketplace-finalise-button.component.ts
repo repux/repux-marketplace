@@ -14,6 +14,7 @@ import Wallet from '../../shared/models/wallet';
 import { WalletService } from '../../services/wallet.service';
 import { PendingFinalisationService } from '../services/pending-finalisation.service';
 import { EventAction, EventCategory, TagManagerService } from '../../shared/services/tag-manager.service';
+import { CommonDialogService } from '../../shared/services/common-dialog.service';
 
 @Component({
   selector: 'app-marketplace-finalise-button',
@@ -41,7 +42,8 @@ export class MarketplaceFinaliseButtonComponent implements OnDestroy, OnInit {
     private _pendingFinalisationService: PendingFinalisationService,
     private _walletService: WalletService,
     private _dialog: MatDialog,
-    private _tagManager: TagManagerService
+    private _tagManager: TagManagerService,
+    private commonDialogService: CommonDialogService
   ) {
   }
 
@@ -74,7 +76,8 @@ export class MarketplaceFinaliseButtonComponent implements OnDestroy, OnInit {
       this._dataProductService,
       this._keyStoreService,
       this._pendingFinalisationService,
-      this._dialog
+      this._dialog,
+      this.commonDialogService
     );
 
     return new Promise(resolve => {

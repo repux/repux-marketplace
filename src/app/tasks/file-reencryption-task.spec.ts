@@ -4,7 +4,7 @@ import { EventType } from 'repux-lib';
 describe('FileReencryptionTask', () => {
   let fileReencryptorReencrypt, reencryptorEventHandlers, fileReencryptorOn, fileReencryptorTerminate, fileReencryptor, repuxLibService,
     dataProductService, taskManagerService, fileReencryptionTask, matDialog, keyStoreService, pendingFinalisationService, callTransaction,
-    transactionResult;
+    transactionResult, commonDialogServiceSpy;
   const productAddress = '0x1111111111111111111111111111111111111111';
   const buyerAddress = '0x0000000000000000000000000000000000000000';
   const fileHash = 'SELLER_META_HASH';
@@ -38,6 +38,9 @@ describe('FileReencryptionTask', () => {
     keyStoreService = jasmine.createSpyObj('KeyStoreService', [ 'hasKeys' ]);
     callTransaction = jasmine.createSpy();
     matDialog = jasmine.createSpyObj('MatDialog', [ 'open' ]);
+
+    commonDialogServiceSpy = jasmine.createSpyObj('CommonDialogService', [ 'alert' ]);
+
     transactionResult = true;
     matDialog.open.and.returnValue({
       componentInstance: {
@@ -63,7 +66,8 @@ describe('FileReencryptionTask', () => {
       dataProductService,
       keyStoreService,
       pendingFinalisationService,
-      matDialog
+      matDialog,
+      commonDialogServiceSpy
     );
   });
 
@@ -79,6 +83,7 @@ describe('FileReencryptionTask', () => {
       expect(fileReencryptionTask[ '_keyStoreService' ]).toBe(keyStoreService);
       expect(fileReencryptionTask[ '_dialog' ]).toBe(matDialog);
       expect(fileReencryptionTask[ '_reencryptor' ]).toBe(fileReencryptor);
+      expect(fileReencryptionTask[ 'commonDialogService' ]).toBe(commonDialogServiceSpy);
       expect(fileReencryptionTask.name).toBe('Selling ' + productAddress);
     });
   });
@@ -274,6 +279,16 @@ describe('FileReencryptionTask', () => {
       const address = 'ADDRESS';
       fileReencryptionTask[ '_dataProductAddress' ] = address;
       expect(fileReencryptionTask.productAddress).toBe(address);
+    });
+  });
+
+  describe('#displayReencryptionErrorMessage()', () => {
+    it('should call commonDialogService.alert with proper arguments', () => {
+      fileReencryptionTask.displayReencryptionErrorMessage();
+      expect(commonDialogServiceSpy.alert.calls.allArgs()[ 0 ][ 0 ]).toBe(
+        'You can not re-encrypt the file. Please upload the key pair that was used during upload transaction.'
+      );
+      expect(commonDialogServiceSpy.alert.calls.allArgs()[ 0 ][ 1 ]).toBe('Re-encryption error');
     });
   });
 });
