@@ -8,34 +8,30 @@ import {
   DataProductUpdateAction,
   TransactionResult
 } from 'repux-web3-api';
-import { filter } from 'rxjs/internal/operators';
+import { filter, map } from 'rxjs/internal/operators';
 import { WalletService } from './wallet.service';
 import Wallet from '../shared/models/wallet';
 import { StorageService } from './storage.service';
 import { Subscription } from 'rxjs/internal/Subscription';
 import RepuxWeb3Api from 'repux-web3-api/repux-web3-api';
 import BigNumber from 'bignumber.js';
-import { ReplaySubject } from 'rxjs/internal/ReplaySubject';
+import { WebsocketService, WebsocketEvent } from './websocket.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class DataProductService implements OnDestroy {
-  private static readonly STORAGE_PREFIX = 'DataProductService_';
-  private readonly _defaultData = {
-    lastBlock: 0
-  };
-  private _promises = {};
-  private _dataProductUpdateObservable: Observable<DataProductEvent>;
+  private websocketMessage$: Observable<DataProductEvent>;
   private _wallet: Wallet;
   private _productUpdateEvent: ContractEvent;
   private _walletSubscription: Subscription;
-  private _dataProductUpdateSubject: ReplaySubject<DataProductEvent>;
 
   constructor(
     private _repuxWeb3Service: RepuxWeb3Service,
     private _walletService: WalletService,
-    private _storageService: StorageService) {
+    private _storageService: StorageService,
+    private _websocketService: WebsocketService
+  ) {
     this._walletSubscription = this._walletService.getWallet().subscribe(wallet => this._onWalletChange(wallet));
   }
 
@@ -94,19 +90,44 @@ export class DataProductService implements OnDestroy {
     return (await this._api).cancelDataProductPurchase(dataProductAddress);
   }
 
+  async getAllDataProductTransactions(dataProductAddress: string): Promise<DataProductTransaction[]> {
+    const buyerAddresses = await (await this._api).getDataProductBuyersAddresses(dataProductAddress);
+
+    return Promise.all(
+      buyerAddresses.map(async buyerAddress => {
+        const transaction = await this.getTransactionData(dataProductAddress, buyerAddress);
+        transaction.buyerAddress = buyerAddress;
+
+        return transaction;
+      })
+    );
+  }
+
   watchForDataProductUpdate(_dataProductAddress?: string, _dataProductUpdateAction?: DataProductUpdateAction)
     : Observable<DataProductEvent> {
     if (!this._wallet) {
       return;
     }
 
-    if (!this._dataProductUpdateObservable) {
-      this._dataProductUpdateObservable = this._createDataProductUpdateObserver();
+    if (!this.websocketMessage$) {
+      this.websocketMessage$ = this._websocketService.onEvent(WebsocketEvent.DataProductUpdate);
     }
 
-    return this._dataProductUpdateObservable.pipe(
-      filter(event => !_dataProductAddress || _dataProductAddress === event.dataProductAddress),
-      filter(event => !_dataProductUpdateAction || _dataProductUpdateAction === event.action)
+    return this.websocketMessage$.pipe(
+      map(data => {
+        return {
+          dataProductAddress: data.args.dataProduct,
+          blockNumber: data.blockNumber,
+          action: data.args.action,
+          userAddress: data.args.sender
+        } as DataProductEvent;
+      }),
+      filter(event => {
+        return !_dataProductAddress || _dataProductAddress === event.dataProductAddress;
+      }),
+      filter(event => {
+        return !_dataProductUpdateAction || _dataProductUpdateAction === event.action;
+      })
     );
   }
 
@@ -114,25 +135,6 @@ export class DataProductService implements OnDestroy {
     if (this._walletSubscription) {
       this._walletSubscription.unsubscribe();
     }
-  }
-
-  private _getStorageKey(): string {
-    return DataProductService.STORAGE_PREFIX + this._wallet.address;
-  }
-
-  private _readFromStore(): any {
-    const saved = this._storageService.getItem(this._getStorageKey());
-
-    if (saved) {
-      return saved;
-    }
-
-    this._saveToStore(this._defaultData);
-    return this._defaultData;
-  }
-
-  private _saveToStore(data: any): void {
-    this._storageService.setItem(this._getStorageKey(), data);
   }
 
   private _onWalletChange(wallet: Wallet) {
@@ -144,37 +146,6 @@ export class DataProductService implements OnDestroy {
     if (this._productUpdateEvent) {
       this._productUpdateEvent.stopWatching();
       this._productUpdateEvent = null;
-      this._dataProductUpdateSubject.complete();
-      this._dataProductUpdateObservable = null;
     }
-  }
-
-  private _getLastReadBlock(): number {
-    const config = this._readFromStore();
-    return config.lastBlock;
-  }
-
-  private _setLastReadBlock(lastBlock): void {
-    const config = this._readFromStore();
-    config.lastBlock = lastBlock;
-    this._saveToStore(config);
-  }
-
-  private _createDataProductUpdateObserver(): Observable<DataProductEvent> {
-    this._dataProductUpdateSubject = new ReplaySubject<DataProductEvent>();
-
-    const config = {
-      fromBlock: this._getLastReadBlock() + 1,
-      toBlock: 'latest'
-    };
-
-    this._api.then(api => {
-      api.watchForDataProductUpdate(config, (result: DataProductEvent) => {
-        this._setLastReadBlock(result.blockNumber);
-        this._dataProductUpdateSubject.next(result);
-      }).then(event => this._productUpdateEvent = event);
-    });
-
-    return this._dataProductUpdateSubject.asObservable();
   }
 }

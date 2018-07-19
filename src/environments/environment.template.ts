@@ -21,12 +21,13 @@ export const environment = {
   networkName: 'Main Ethereum Network',
   intercomAppId: 'od9ohq7y',
   gtmId: 'GTM-PG3BBGT',
+  maxNotificationsProductsNumber: 100,
+  websocketServer: 'https://localhost:3002',
   repux: {
     metaindexer: {
       protocol: '${MARKETPLACE_METAINDEXER_PROTOCOL}' || 'https',
       host: '${MARKETPLACE_METAINDEXER_HOST}' || 'localhost',
-      port: '${MARKETPLACE_METAINDEXER_PORT}' || 9201,
-      searchUrl: 'repux/_search'
+      port: '${MARKETPLACE_METAINDEXER_PORT}' || 9201
     },
     pageSizeOptions: [ 10, 25, 50, 100 ],
     currency: {

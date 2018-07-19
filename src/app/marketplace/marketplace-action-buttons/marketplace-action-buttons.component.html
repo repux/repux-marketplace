@@ -1,0 +1,25 @@
+<div *ngIf="!loading">
+  <app-marketplace-buy-product-button
+    *ngIf="availableActions.includes('buy')"
+    [dataProduct]="dataProduct"
+    [blockchainBuyTransaction]="blockchainBuyTransaction"></app-marketplace-buy-product-button>
+
+  <app-marketplace-cancel-purchase-button
+    *ngIf="availableActions.includes('cancelPurchase')"
+    [dataProduct]="dataProduct"
+    [blockchainBuyTransaction]="blockchainBuyTransaction"></app-marketplace-cancel-purchase-button>
+
+  <app-marketplace-publish-button
+    *ngIf="availableActions.includes('publish')"
+    [dataProduct]="dataProduct"></app-marketplace-publish-button>
+
+  <app-marketplace-unpublish-button
+    *ngIf="availableActions.includes('unpublish')"
+    [dataProduct]="dataProduct"
+    [blockchainDataProduct]="blockchainDataProduct"></app-marketplace-unpublish-button>
+
+  <app-marketplace-withdraw-button
+    *ngIf="availableActions.includes('withdraw')"
+    [dataProduct]="dataProduct"
+    [blockchainDataProduct]="blockchainDataProduct"></app-marketplace-withdraw-button>
+</div>

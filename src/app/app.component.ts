@@ -6,7 +6,6 @@ import { Observable } from 'rxjs/index';
 import { environment } from '../environments/environment';
 import { WalletService } from './services/wallet.service';
 import { Router } from '@angular/router';
-import { DataProductNotificationsService } from './services/data-product-notifications.service';
 import { TagManagerService } from './shared/services/tag-manager.service';
 
 @Component({
@@ -43,7 +42,6 @@ export class AppComponent implements OnInit {
     private router: Router,
     private breakpointObserver: BreakpointObserver,
     private webpushNotificationService: WebpushNotificationService,
-    private dataProductNotificationsService: DataProductNotificationsService,
     private walletService: WalletService,
     private tagManager: TagManagerService
   ) {

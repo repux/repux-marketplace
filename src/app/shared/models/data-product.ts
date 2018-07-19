@@ -35,6 +35,7 @@ export class DataProduct implements Deserializable<DataProduct> {
     if (input.transactions) {
       input.transactions.forEach(transactionInput => {
         const transaction = new DataProductTransaction();
+        transaction.dataProductAddress = this.address;
         transaction.deserialize(transactionInput);
         this.transactions.push(transaction);
       });

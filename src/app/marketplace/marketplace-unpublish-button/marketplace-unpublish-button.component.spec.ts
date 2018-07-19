@@ -6,17 +6,17 @@ import { from } from 'rxjs';
 import BigNumber from 'bignumber.js';
 import { MarketplaceUnpublishButtonComponent } from './marketplace-unpublish-button.component';
 import { MaterialModule } from '../../material.module';
-import { DataProductNotificationsService } from '../../services/data-product-notifications.service';
+import { DataProductService } from '../../services/data-product.service';
 
 describe('MarketplaceUnpublishButtonComponent', () => {
   let component: MarketplaceUnpublishButtonComponent;
   let fixture: ComponentFixture<MarketplaceUnpublishButtonComponent>;
-  let dataProductNotificationsService;
+  let dataProductServiceSpy;
   const ownerAddress = '0x0000000000000000000000000000000000000000';
   const dataProductAddress = '0x1111111111111111111111111111111111111111';
 
   beforeEach(fakeAsync(() => {
-    dataProductNotificationsService = jasmine.createSpyObj('DataProductNotificationsService', [ 'removeCreatedProductAddress' ]);
+    dataProductServiceSpy = jasmine.createSpyObj('DataProductService', [ 'disableDataProduct' ]);
     TestBed.configureTestingModule({
       declarations: [
         MarketplaceUnpublishButtonComponent
@@ -27,13 +27,17 @@ describe('MarketplaceUnpublishButtonComponent', () => {
       ],
       providers: [
         { provide: TransactionDialogComponent, useValue: {} },
-        { provide: DataProductNotificationsService, useValue: dataProductNotificationsService }
+        { provide: DataProductService, useValue: dataProductServiceSpy }
       ]
     })
       .compileComponents();
 
     fixture = TestBed.createComponent(MarketplaceUnpublishButtonComponent);
     component = fixture.componentInstance;
+
+    component.blockchainDataProduct = {
+      disabled: false
+    };
 
     component.dataProductAddress = dataProductAddress;
     component.dataProduct = <any> {

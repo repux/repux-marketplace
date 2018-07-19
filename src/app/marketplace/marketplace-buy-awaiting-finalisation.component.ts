@@ -2,6 +2,7 @@ import { Component, OnDestroy } from '@angular/core';
 import Wallet from '../shared/models/wallet';
 import { WalletService } from '../services/wallet.service';
 import { Subscription } from 'rxjs/internal/Subscription';
+import { getAwaitingFinalisationDataProductsQuery } from './services/awaiting-finalisation.service';
 
 @Component({
   selector: 'app-marketplace-buy-awaiting-finalisation',
@@ -30,7 +31,7 @@ export class MarketplaceBuyAwaitingFinalisationComponent implements OnDestroy {
   constructor(
     private _walletService: WalletService
   ) {
-    this.staticQuery = this._getStaticQuery('');
+    this.staticQuery = getAwaitingFinalisationDataProductsQuery('');
     this._walletSubscription = this._walletService.getWallet().subscribe(wallet => this._onWalletChange(wallet));
   }
 
@@ -54,28 +55,6 @@ export class MarketplaceBuyAwaitingFinalisationComponent implements OnDestroy {
     }
 
     this._wallet = wallet;
-    this.staticQuery = this._getStaticQuery(this._wallet.address);
-  }
-
-  private _getStaticQuery(walletAddress: string) {
-    return {
-      bool: {
-        must: [
-          {
-            nested: {
-              path: 'transactions',
-              query: {
-                bool: {
-                  must: [
-                    { match: { 'transactions.buyerAddress': walletAddress } },
-                    { match: { 'transactions.finalised': false } }
-                  ]
-                }
-              }
-            }
-          }
-        ]
-      }
-    };
+    this.staticQuery = getAwaitingFinalisationDataProductsQuery(this._wallet.address);
   }
 }

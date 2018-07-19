@@ -2,7 +2,7 @@ import { ComponentFixture, fakeAsync, TestBed } from '@angular/core/testing';
 import { MarketplaceSellUnpublishedComponent } from './marketplace-sell-unpublished.component';
 import { Component, Input } from '@angular/core';
 import { DataProduct } from '../shared/models/data-product';
-import { UnpublishedProductsService } from '../services/unpublished-products.service';
+import { UnpublishedProductsService } from './services/unpublished-products.service';
 import { BehaviorSubject } from 'rxjs/internal/BehaviorSubject';
 
 @Component({ selector: 'app-data-product-list', template: '' })

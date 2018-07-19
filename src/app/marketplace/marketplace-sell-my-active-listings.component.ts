@@ -2,19 +2,7 @@ import { Component, OnDestroy } from '@angular/core';
 import Wallet from '../shared/models/wallet';
 import { WalletService } from '../services/wallet.service';
 import { Subscription } from 'rxjs/internal/Subscription';
-
-const NOT_DISABLED_OR_WITH_FUNDS_TO_WITHDRAW_QUERY = {
-  bool: {
-    should: [
-      { match: { disabled: false } },
-      {
-        bool: {
-          must_not: [ { match: { fundsToWithdraw: '0' } } ]
-        }
-      }
-    ]
-  }
-};
+import { getCreatedDataProductsQuery } from './services/my-active-listings.service';
 
 @Component({
   selector: 'app-marketplace-sell-my-active-listings',
@@ -46,14 +34,7 @@ export class MarketplaceSellMyActiveListingsComponent implements OnDestroy {
   constructor(
     private _walletService: WalletService
   ) {
-    this.staticQuery = {
-      bool: {
-        must: [
-          { match: { ownerAddress: '' } },
-          NOT_DISABLED_OR_WITH_FUNDS_TO_WITHDRAW_QUERY
-        ]
-      }
-    };
+    this.staticQuery = getCreatedDataProductsQuery('');
     this._walletSubscription = this._walletService.getWallet().subscribe(wallet => this._onWalletChange(wallet));
   }
 
@@ -69,13 +50,6 @@ export class MarketplaceSellMyActiveListingsComponent implements OnDestroy {
     }
 
     this._wallet = wallet;
-    this.staticQuery = {
-      bool: {
-        must: [
-          { match: { ownerAddress: this._wallet.address } },
-          NOT_DISABLED_OR_WITH_FUNDS_TO_WITHDRAW_QUERY
-        ]
-      }
-    };
+    this.staticQuery = getCreatedDataProductsQuery(this._wallet.address);
   }
 }

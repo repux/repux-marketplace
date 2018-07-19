@@ -6,14 +6,18 @@ import { from } from 'rxjs';
 import { MarketplaceWithdrawButtonComponent } from './marketplace-withdraw-button.component';
 import BigNumber from 'bignumber.js';
 import { MaterialModule } from '../../material.module';
+import { DataProductService } from '../../services/data-product.service';
 
 describe('MarketplaceWithdrawButtonComponent', () => {
   let component: MarketplaceWithdrawButtonComponent;
   let fixture: ComponentFixture<MarketplaceWithdrawButtonComponent>;
+  let dataProductServiceSpy;
   const ownerAddress = '0x0000000000000000000000000000000000000000';
   const dataProductAddress = '0x1111111111111111111111111111111111111111';
 
   beforeEach(fakeAsync(() => {
+    dataProductServiceSpy = jasmine.createSpyObj('DataProductService', [ 'withdrawFundsFromDataProduct' ]);
+
     TestBed.configureTestingModule({
       declarations: [
         MarketplaceWithdrawButtonComponent
@@ -23,7 +27,8 @@ describe('MarketplaceWithdrawButtonComponent', () => {
         NoopAnimationsModule
       ],
       providers: [
-        { provide: TransactionDialogComponent, useValue: {} }
+        { provide: TransactionDialogComponent, useValue: {} },
+        { provide: DataProductService, useValue: dataProductServiceSpy }
       ]
     })
       .compileComponents();
@@ -95,7 +100,7 @@ describe('MarketplaceWithdrawButtonComponent', () => {
       await component.withdraw();
       expect(dialog.open.calls.count()).toBe(1);
       expect(callTransaction.calls.count()).toBe(1);
-      expect(component.dataProduct.fundsToWithdraw).toEqual(new BigNumber(0));
+      expect(component.fundsToWithdraw).toEqual(new BigNumber(0));
     });
   });
 });

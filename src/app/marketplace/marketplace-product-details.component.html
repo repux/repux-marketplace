@@ -40,7 +40,9 @@
   <br/><br/>
 
   <div class="row">
-    <app-marketplace-buy-product-button [dataProduct]="product"></app-marketplace-buy-product-button>
+    <app-marketplace-action-buttons
+      [dataProduct]="product"
+      [availableActions]="[ 'buy' ]"></app-marketplace-action-buttons>
   </div>
 
   <br/><br/>

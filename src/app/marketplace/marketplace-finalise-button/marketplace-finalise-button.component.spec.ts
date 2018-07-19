@@ -7,19 +7,18 @@ import { from } from 'rxjs';
 import { MarketplaceFinaliseButtonComponent } from './marketplace-finalise-button.component';
 import BigNumber from 'bignumber.js';
 import { KeyStoreService } from '../../key-store/key-store.service';
-import { DataProductNotificationsService } from '../../services/data-product-notifications.service';
 import { RepuxLibService } from '../../services/repux-lib.service';
 import { TaskManagerService } from '../../services/task-manager.service';
 import { DataProductService } from '../../services/data-product.service';
 import { MaterialModule } from '../../material.module';
 import { FileReencryptionTask } from '../../tasks/file-reencryption-task';
-import { PendingFinalisationService } from '../../services/data-product-notifications/pending-finalisation.service';
+import { PendingFinalisationService } from '../services/pending-finalisation.service';
 import { TagManagerService } from '../../shared/services/tag-manager.service';
 
 describe('MarketplaceFinaliseButtonComponent', () => {
   let component: MarketplaceFinaliseButtonComponent;
   let fixture: ComponentFixture<MarketplaceFinaliseButtonComponent>;
-  let keyStoreService, matDialog, dataProductNotificationsService, repuxLibService, taskManagerService,
+  let keyStoreService, matDialog, repuxLibService, taskManagerService,
     dataProductService, fileReencryptionTask, pendingFinalisationService, tagManager;
   const ownerAddress = '0x0000000000000000000000000000000000000000';
   const dataProductAddress = '0x1111111111111111111111111111111111111111';
@@ -31,7 +30,6 @@ describe('MarketplaceFinaliseButtonComponent', () => {
     tagManager = jasmine.createSpyObj('TagManagerService', [ 'sendEvent' ]);
     keyStoreService = jasmine.createSpyObj('KeyStoreService', [ 'hasKeys' ]);
     matDialog = jasmine.createSpyObj('MatDialog', [ 'open' ]);
-    dataProductNotificationsService = jasmine.createSpyObj('DataProductNotificationsService', [ 'removeFinalisationRequest' ]);
     repuxLibService = jasmine.createSpyObj('RepuxLibService', [ 'getInstance' ]);
     taskManagerService = jasmine.createSpyObj('TaskManagerService', [ 'addTask' ]);
     dataProductService = jasmine.createSpyObj('DataProductService', [ 'finaliseDataProductPurchase' ]);
@@ -73,7 +71,6 @@ describe('MarketplaceFinaliseButtonComponent', () => {
         { provide: TransactionDialogComponent, useValue: {} },
         { provide: KeyStoreService, useValue: keyStoreService },
         { provide: MatDialog, useValue: matDialog },
-        { provide: DataProductNotificationsService, useValue: dataProductNotificationsService },
         { provide: RepuxLibService, useValue: repuxLibService },
         { provide: TaskManagerService, useValue: taskManagerService },
         { provide: DataProductService, useValue: dataProductService },

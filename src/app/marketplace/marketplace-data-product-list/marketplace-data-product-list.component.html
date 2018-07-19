@@ -125,22 +125,9 @@
       <ng-container matColumnDef="actions">
         <mat-header-cell *matHeaderCellDef></mat-header-cell>
         <mat-cell *matCellDef="let element" (click)="$event.stopPropagation()">
-          <div class="row">
-            <app-marketplace-buy-product-button *ngIf="availableActions.includes('buy')"
-                                                [dataProduct]="element"></app-marketplace-buy-product-button>
-
-            <app-marketplace-cancel-purchase-button *ngIf="availableActions.includes('cancelPurchase')"
-                                                    [dataProduct]="element"></app-marketplace-cancel-purchase-button>
-
-            <app-marketplace-publish-button *ngIf="availableActions.includes('publish')"
-                                            [dataProduct]="element"></app-marketplace-publish-button>
-
-            <app-marketplace-unpublish-button *ngIf="availableActions.includes('unpublish')"
-                                              [dataProduct]="element"></app-marketplace-unpublish-button>
-
-            <app-marketplace-withdraw-button *ngIf="availableActions.includes('withdraw')"
-                                             [dataProduct]="element"></app-marketplace-withdraw-button>
-          </div>
+          <app-marketplace-action-buttons
+            [availableActions]="availableActions"
+            [dataProduct]="element"></app-marketplace-action-buttons>
         </mat-cell>
       </ng-container>
 
@@ -158,11 +145,8 @@
 </div>
 
 <ng-template #tpl let-element>
-  <div *ngIf="displayPendingTransactions && getTransactionsToFinalisation(element).length" class="details">
-    <strong class="detail-header">Transactions:</strong>
-    <app-marketplace-data-product-transactions-list
-      [dataProduct]="element"
-      [transactions]="getTransactionsToFinalisation(element)"
-      (finaliseSuccess)="onFinaliseSuccess($event)"></app-marketplace-data-product-transactions-list>
-  </div>
+  <app-marketplace-data-product-transactions-list-container
+    [dataProduct]="element"
+    [displayPendingTransactions]="displayPendingTransactions"
+    (finaliseSuccess)="onFinaliseSuccess($event)"></app-marketplace-data-product-transactions-list-container>
 </ng-template>

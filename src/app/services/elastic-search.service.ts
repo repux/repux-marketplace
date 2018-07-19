@@ -16,8 +16,8 @@ export class ElasticSearchService<T> {
 
   search(type: string, query: Object = { bool: {} }, sort: string = '', size: number = 10,
          from: number = 0, resultEntityType: any): Observable<EsResponse<T>> {
-    return this.http.post(`${this.config.protocol}://${this.config.host}:${this.config.port}/${this.config.searchUrl}` +
-      `?type=${type}&size=${size}&from=${from}&sort=${sort}&`, { query }).pipe(
+    return this.http.post(`${this.config.protocol}://${this.config.host}:${this.config.port}/${type}/_search` +
+      `?size=${size}&from=${from}&sort=${sort}&`, { query }).pipe(
       map((data: { hits: EsResponse<T> }) => {
         data.hits.hits = data.hits.hits.map(hit => new resultEntityType().deserialize(hit));
         return data.hits;

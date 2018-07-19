@@ -6,7 +6,7 @@ import { WalletService } from '../../services/wallet.service';
 import Wallet from '../../shared/models/wallet';
 import { TransactionDialogComponent } from '../../shared/components/transaction-dialog/transaction-dialog.component';
 import { Subscription } from 'rxjs/internal/Subscription';
-import { DataProductNotificationsService } from '../../services/data-product-notifications.service';
+import { DataProduct as BlockchainDataProduct } from 'repux-web3-api';
 import { EventAction, EventCategory, TagManagerService } from '../../shared/services/tag-manager.service';
 
 @Component({
@@ -16,6 +16,8 @@ import { EventAction, EventCategory, TagManagerService } from '../../shared/serv
 })
 export class MarketplaceUnpublishButtonComponent implements OnInit, OnDestroy {
   @Input() dataProduct: DataProduct;
+  @Input() blockchainDataProduct: BlockchainDataProduct;
+
   public dataProductAddress: string;
   public wallet: Wallet;
   public userIsOwner: boolean;
@@ -25,7 +27,6 @@ export class MarketplaceUnpublishButtonComponent implements OnInit, OnDestroy {
   constructor(
     private _walletService: WalletService,
     private _dataProductService: DataProductService,
-    private _dataProductNotificationsService: DataProductNotificationsService,
     private _dialog: MatDialog,
     private _tagManager: TagManagerService
   ) {
@@ -53,8 +54,7 @@ export class MarketplaceUnpublishButtonComponent implements OnInit, OnDestroy {
     });
     transactionDialogRef.afterClosed().subscribe(result => {
       if (result) {
-        this._dataProductNotificationsService.removeCreatedProductAddress(this.dataProductAddress);
-        this.dataProduct.disabled = true;
+        this.blockchainDataProduct.disabled = true;
         this._tagManager.sendEvent(
           EventCategory.Sell,
           EventAction.UnpublishConfirmed,

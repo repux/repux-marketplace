@@ -5,7 +5,7 @@ import { EventType } from 'repux-lib';
 describe('FileUploadTask()', () => {
   let fileUploadTask: FileUploadTask, dataProductService, repuxLibService, fileUploader, fileUploaderUpload,
     fileUploaderOn, taskManagerService, uploaderEventHandlers, fileUploaderTerminate, unpublishedProductsService,
-    dataProductNotificationsService, matDialog, callTransaction, transactionResult, tagManager;
+    matDialog, callTransaction, transactionResult, tagManager;
   const fileName = 'FILE_NAME';
   const publicKey = 'PUBLIC_KEY';
   const title = 'TITLE';
@@ -40,7 +40,6 @@ describe('FileUploadTask()', () => {
     dataProductService = jasmine.createSpyObj('DataProductService', [ 'publishDataProduct' ]);
     taskManagerService = jasmine.createSpyObj('TaskManagerService', [ 'onTaskEvent' ]);
     unpublishedProductsService = jasmine.createSpyObj('UnpublishedProductsService', [ 'addProduct', 'removeProduct' ]);
-    dataProductNotificationsService = jasmine.createSpyObj('DataProductNotificationsService', [ 'addCreatedProductAddress' ]);
     callTransaction = jasmine.createSpy();
     matDialog = jasmine.createSpyObj('MatDialog', [ 'open' ]);
     transactionResult = true;
@@ -64,7 +63,6 @@ describe('FileUploadTask()', () => {
       repuxLibService,
       dataProductService,
       unpublishedProductsService,
-      dataProductNotificationsService,
       title,
       shortDescription,
       fullDescription,
@@ -90,7 +88,6 @@ describe('FileUploadTask()', () => {
         repuxLibService,
         dataProductService,
         unpublishedProductsService,
-        dataProductNotificationsService,
         title,
         shortDescription,
         fullDescription,

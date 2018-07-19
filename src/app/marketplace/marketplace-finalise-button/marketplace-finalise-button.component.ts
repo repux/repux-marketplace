@@ -12,7 +12,7 @@ import { DataProductService } from '../../services/data-product.service';
 import { TaskManagerService } from '../../services/task-manager.service';
 import Wallet from '../../shared/models/wallet';
 import { WalletService } from '../../services/wallet.service';
-import { PendingFinalisationService } from '../../services/data-product-notifications/pending-finalisation.service';
+import { PendingFinalisationService } from '../services/pending-finalisation.service';
 import { EventAction, EventCategory, TagManagerService } from '../../shared/services/tag-manager.service';
 
 @Component({

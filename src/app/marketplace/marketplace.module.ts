@@ -39,6 +39,10 @@ import {
   MarketplaceDataProductTransactionsListComponent
 } from './marketplace-data-product-transactions-list/marketplace-data-product-transactions-list.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { MarketplaceActionButtonsComponent } from './marketplace-action-buttons/marketplace-action-buttons.component';
+import {
+  MarketplaceDataProductTransactionsListContainerComponent
+} from './marketplace-data-product-transactions-list-container/marketplace-data-product-transactions-list-container.component';
 
 @NgModule({
   imports: [
@@ -73,7 +77,9 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
     MarketplacePublishButtonComponent,
     MarketplacePurchaseConfirmationDialogComponent,
     MarketplaceUnpublishButtonComponent,
-    MarketplaceWithdrawButtonComponent
+    MarketplaceWithdrawButtonComponent,
+    MarketplaceActionButtonsComponent,
+    MarketplaceDataProductTransactionsListContainerComponent
   ],
   exports: [
     MarketplaceBrowseComponent,

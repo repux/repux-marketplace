@@ -12,11 +12,10 @@ import { KeyStoreService } from '../../key-store/key-store.service';
 import { KeysPasswordDialogComponent } from '../../key-store/keys-password-dialog/keys-password-dialog.component';
 import { KeysGeneratorDialogComponent } from '../../key-store/keys-generator-dialog/keys-generator-dialog.component';
 import { Subscription } from 'rxjs/internal/Subscription';
-import { UnpublishedProductsService } from '../../services/unpublished-products.service';
+import { UnpublishedProductsService } from '../services/unpublished-products.service';
 import {
   MarketplaceProductCategorySelectorComponent
 } from '../marketplace-product-category-selector/marketplace-product-category-selector.component';
-import { DataProductNotificationsService } from '../../services/data-product-notifications.service';
 import { EventAction, EventCategory, TagManagerService } from '../../shared/services/tag-manager.service';
 
 @Component({
@@ -66,7 +65,6 @@ export class MarketplaceProductCreatorDialogComponent implements OnDestroy {
     private dataProductService: DataProductService,
     private taskManagerService: TaskManagerService,
     private _unpublishedProductsService: UnpublishedProductsService,
-    private _dataProductNotificationsService: DataProductNotificationsService,
     private dialog: MatDialog,
     public dialogRef: MatDialogRef<MarketplaceProductCreatorDialogComponent>) {
     this.formGroup = new FormGroup({
@@ -110,7 +108,6 @@ export class MarketplaceProductCreatorDialogComponent implements OnDestroy {
       this.repuxLibService,
       this.dataProductService,
       this._unpublishedProductsService,
-      this._dataProductNotificationsService,
       this.formGroup.value.title,
       this.formGroup.value.shortDescription,
       this.formGroup.value.fullDescription,

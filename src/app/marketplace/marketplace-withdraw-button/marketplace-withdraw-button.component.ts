@@ -1,4 +1,4 @@
-import { Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { Component, Input, OnChanges, OnDestroy, OnInit } from '@angular/core';
 import { DataProduct } from '../../shared/models/data-product';
 import { WalletService } from '../../services/wallet.service';
 import Wallet from '../../shared/models/wallet';
@@ -8,18 +8,21 @@ import { TransactionDialogComponent } from '../../shared/components/transaction-
 import { MatDialog } from '@angular/material';
 import { Subscription } from 'rxjs/internal/Subscription';
 import { EventAction, EventCategory, TagManagerService } from '../../shared/services/tag-manager.service';
+import { DataProduct as BlockchainDataProduct } from 'repux-web3-api';
 
 @Component({
   selector: 'app-marketplace-withdraw-button',
   templateUrl: './marketplace-withdraw-button.component.html',
   styleUrls: [ './marketplace-withdraw-button.component.scss' ]
 })
-export class MarketplaceWithdrawButtonComponent implements OnInit, OnDestroy {
+export class MarketplaceWithdrawButtonComponent implements OnInit, OnDestroy, OnChanges {
   @Input() dataProduct: DataProduct;
+  @Input() blockchainDataProduct: BlockchainDataProduct;
+
   public dataProductAddress: string;
   public wallet: Wallet;
   public userIsOwner: boolean;
-  public fundsToWithdraw: BigNumber;
+  public fundsToWithdraw = new BigNumber(0);
 
   private _walletSubscription: Subscription;
 
@@ -34,6 +37,12 @@ export class MarketplaceWithdrawButtonComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.dataProductAddress = this.dataProduct.address;
     this._walletSubscription = this._walletService.getWallet().subscribe(wallet => this._onWalletChange(wallet));
+  }
+
+  ngOnChanges() {
+    if (this.blockchainDataProduct) {
+      this.fundsToWithdraw = this.blockchainDataProduct.fundsAccumulated.minus(this.blockchainDataProduct.buyersDeposit);
+    }
   }
 
   getUserIsOwner(): boolean {
@@ -53,7 +62,7 @@ export class MarketplaceWithdrawButtonComponent implements OnInit, OnDestroy {
     });
     transactionDialogRef.afterClosed().subscribe(result => {
       if (result) {
-        this.dataProduct.fundsToWithdraw = new BigNumber(0);
+        this.fundsToWithdraw = new BigNumber(0);
         this._tagManager.sendEvent(
           EventCategory.Sell,
           EventAction.WithdrawConfirmed,

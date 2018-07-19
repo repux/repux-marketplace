@@ -1,0 +1,9 @@
+<div *ngIf="displayPendingTransactions">
+  <div *ngIf="transactionsToFinalisation.length" class="details">
+    <strong class="detail-header">Transactions:</strong>
+    <app-marketplace-data-product-transactions-list
+      [dataProduct]="dataProduct"
+      [transactions]="transactionsToFinalisation"
+      (finaliseSuccess)="onFinaliseSuccess($event)"></app-marketplace-data-product-transactions-list>
+  </div>
+</div>

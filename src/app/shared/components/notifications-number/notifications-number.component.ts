@@ -7,4 +7,14 @@ import { Component, Input } from '@angular/core';
 })
 export class NotificationsNumberComponent {
   @Input() number: number;
+
+  @Input() maxNumber: number;
+
+  get displayedText() {
+    if (this.number >= this.maxNumber) {
+      return `${this.maxNumber - 1}+`;
+    }
+
+    return this.number;
+  }
 }

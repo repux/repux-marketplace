@@ -4,7 +4,7 @@ import { MatDialog } from '@angular/material';
 import { DataProductService } from '../../services/data-product.service';
 import Wallet from '../../shared/models/wallet';
 import { TransactionDialogComponent } from '../../shared/components/transaction-dialog/transaction-dialog.component';
-import { UnpublishedProductsService } from '../../services/unpublished-products.service';
+import { UnpublishedProductsService } from '../services/unpublished-products.service';
 import { ConfirmationDialogComponent } from '../../shared/components/confirmation-dialog/confirmation-dialog.component';
 import { Subscription } from 'rxjs/internal/Subscription';
 import { EventAction, EventCategory, TagManagerService } from '../../shared/services/tag-manager.service';
