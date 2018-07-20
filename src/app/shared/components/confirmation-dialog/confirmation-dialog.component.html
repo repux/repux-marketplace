@@ -7,6 +7,6 @@
 </mat-dialog-content>
 
 <mat-dialog-actions>
-  <button mat-button [mat-dialog-close]="false" class="cancel-button">{{cancelButton}}</button>
-  <button mat-button [mat-dialog-close]="true" class="confirm-button">{{confirmButton}}</button>
+  <button mat-button [mat-dialog-close]="false" class="cancel-button" *ngIf="cancelButton">{{cancelButton}}</button>
+  <button mat-button [mat-dialog-close]="true" class="confirm-button" *ngIf="confirmButton">{{confirmButton}}</button>
 </mat-dialog-actions>

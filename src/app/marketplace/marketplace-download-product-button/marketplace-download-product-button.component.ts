@@ -14,6 +14,7 @@ import { Task } from '../../tasks/task';
 import { TaskType } from '../../tasks/task-type';
 import { EventAction, EventCategory, TagManagerService } from '../../shared/services/tag-manager.service';
 import { DataProduct } from '../../shared/models/data-product';
+import { CommonDialogService } from '../../shared/services/common-dialog.service';
 
 @Component({
   selector: 'app-marketplace-download-product-button',
@@ -35,7 +36,8 @@ export class MarketplaceDownloadProductButtonComponent implements OnDestroy, OnI
     private _taskManagerService: TaskManagerService,
     private _keyStoreService: KeyStoreService,
     private _dialog: MatDialog,
-    private _tagManager: TagManagerService
+    private _tagManager: TagManagerService,
+    private commonDialogService: CommonDialogService
   ) {
   }
 
@@ -96,7 +98,8 @@ export class MarketplaceDownloadProductButtonComponent implements OnDestroy, OnI
       this._wallet.address,
       metaHash,
       privateKey,
-      this._repuxLibService
+      this._repuxLibService,
+      this.commonDialogService
     );
 
     this._taskManagerService.addTask(fileDownloadTask);

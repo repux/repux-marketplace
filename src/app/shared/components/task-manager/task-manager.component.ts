@@ -2,6 +2,7 @@ import { Component, OnDestroy } from '@angular/core';
 import { TaskManagerService } from '../../../services/task-manager.service';
 import { Task } from '../../../tasks/task';
 import { Subscription } from 'rxjs/internal/Subscription';
+import { TaskError } from '../../../tasks/task-error';
 
 @Component({
   selector: 'app-task-manager',
@@ -10,6 +11,8 @@ import { Subscription } from 'rxjs/internal/Subscription';
 })
 export class TaskManagerComponent implements OnDestroy {
   tasks: ReadonlyArray<Task> = [];
+
+  taskError = TaskError;
 
   private _tasksSubscription: Subscription;
   private _taskManagerService: TaskManagerService;

@@ -12,6 +12,8 @@ import { PendingFinalisationService } from '../marketplace/services/pending-fina
 import { TransactionDialogComponent } from '../shared/components/transaction-dialog/transaction-dialog.component';
 import { AsyncSubject } from 'rxjs/internal/AsyncSubject';
 import { FileReencryptor, EventType } from 'repux-lib';
+import { TaskError } from './task-error';
+import { CommonDialogService } from '../shared/services/common-dialog.service';
 
 export const STATUS = {
   REENCRYPTION: 'Reencryption',
@@ -41,7 +43,8 @@ export class FileReencryptionTask implements Task {
     private _dataProductService: DataProductService,
     private _keyStoreService: KeyStoreService,
     private _pendingFinalisationService: PendingFinalisationService,
-    private _dialog: MatDialog
+    private _dialog: MatDialog,
+    private commonDialogService: CommonDialogService
   ) {
     this._name = `Selling ${this._dataProductAddress}`;
     this._reencryptor = this._repuxLibService.getInstance().createFileReencryptor();
@@ -106,6 +109,10 @@ export class FileReencryptionTask implements Task {
         this._errors.push(error);
         this._status = STATUS.CANCELED;
         this._emitFinish(false);
+
+        if (error === TaskError.ReencryptionError) {
+          this.displayReencryptionErrorMessage();
+        }
         this.destroy();
       })
       .on(EventType.FINISH, (eventType, result) => {
@@ -211,5 +218,12 @@ export class FileReencryptionTask implements Task {
         }
       });
     });
+  }
+
+  displayReencryptionErrorMessage() {
+    this.commonDialogService.alert(
+      'You can not re-encrypt the file. Please upload the key pair that was used during upload transaction.',
+      'Re-encryption error'
+    );
   }
 }

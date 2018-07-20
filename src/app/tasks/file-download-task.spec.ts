@@ -3,7 +3,7 @@ import { EventType } from 'repux-lib';
 
 describe('FileDownloadTask', () => {
   let fileDownloaderDownload, downloaderEventHandler, fileDownloaderOn, fileDownloaderTerminate, fileDownloader, repuxLibService,
-    taskManagerService, fileDownloadTask;
+    taskManagerService, fileDownloadTask, commonDialogServiceSpy;
   const productAddress = '0x1111111111111111111111111111111111111111';
   const buyerAddress = '0x0000000000000000000000000000000000000000';
   const fileHash = 'BUYER_META_HASH';
@@ -31,12 +31,15 @@ describe('FileDownloadTask', () => {
     repuxLibService.getInstance.and.returnValue({ createFileDownloader });
     taskManagerService = jasmine.createSpyObj('TaskManagerService', [ 'onTaskEvent' ]);
 
+    commonDialogServiceSpy = jasmine.createSpyObj('CommonDialogService', [ 'alert' ]);
+
     fileDownloadTask = new FileDownloadTask(
       productAddress,
       buyerAddress,
       fileHash,
       <any> privateKey,
-      repuxLibService
+      repuxLibService,
+      commonDialogServiceSpy
     );
   });
 
@@ -48,6 +51,7 @@ describe('FileDownloadTask', () => {
       expect(fileDownloadTask[ '_buyerPrivateKey' ]).toBe(privateKey);
       expect(fileDownloadTask[ '_repuxLibService' ]).toBe(repuxLibService);
       expect(fileDownloadTask[ '_downloader' ]).toBe(fileDownloader);
+      expect(fileDownloadTask[ 'commonDialogService' ]).toBe(commonDialogServiceSpy);
       expect(fileDownloadTask.name).toBe('Downloading ' + productAddress);
     });
   });
@@ -203,6 +207,16 @@ describe('FileDownloadTask', () => {
       const address = 'ADDRESS';
       fileDownloadTask[ '_dataProductAddress' ] = address;
       expect(fileDownloadTask.productAddress).toBe(address);
+    });
+  });
+
+  describe('#displayDecryptionErrorMessage()', () => {
+    it('should call commonDialogService.alert with proper arguments', () => {
+      fileDownloadTask.displayDecryptionErrorMessage();
+      expect(commonDialogServiceSpy.alert.calls.allArgs()[ 0 ][ 0 ]).toBe(
+        'You can not decrypt the file. Please upload the key pair that was used during buy transaction.'
+      );
+      expect(commonDialogServiceSpy.alert.calls.allArgs()[ 0 ][ 1 ]).toBe('Decryption error');
     });
   });
 });

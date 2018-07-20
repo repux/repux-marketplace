@@ -4,6 +4,8 @@ import { TaskManagerService } from '../services/task-manager.service';
 import { BlobDownloader } from '../shared/utils/blob-downloader';
 import { TaskType } from './task-type';
 import { EventType, FileDownloader } from 'repux-lib';
+import { TaskError } from './task-error';
+import { CommonDialogService } from '../shared/services/common-dialog.service';
 
 export const STATUS = {
   DOWNLOADING: 'Downloading',
@@ -23,7 +25,8 @@ export class FileDownloadTask implements Task {
     private _buyerAddress: string,
     private _metaFileHash: string,
     private _buyerPrivateKey: JsonWebKey,
-    private _repuxLibService: RepuxLibService
+    private _repuxLibService: RepuxLibService,
+    private commonDialogService: CommonDialogService
   ) {
     this._name = `Downloading ${this._dataProductAddress}`;
     this._downloader = this._repuxLibService.getInstance().createFileDownloader();
@@ -87,6 +90,10 @@ export class FileDownloadTask implements Task {
         this._finished = true;
         this._errors.push(error);
         this._status = STATUS.CANCELED;
+
+        if (error === TaskError.DecryptionError) {
+          this.displayDecryptionErrorMessage();
+        }
       })
       .on(EventType.FINISH, (eventType, result) => {
         this._progress = 100;
@@ -110,5 +117,12 @@ export class FileDownloadTask implements Task {
 
   async callUserAction(): Promise<any> {
     return;
+  }
+
+  displayDecryptionErrorMessage() {
+    this.commonDialogService.alert(
+      'You can not decrypt the file. Please upload the key pair that was used during buy transaction.',
+      'Decryption error'
+    );
   }
 }
