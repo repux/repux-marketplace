@@ -2,6 +2,7 @@ import { BigNumber } from 'bignumber.js';
 import { Deserializable } from './deserializable';
 import { environment } from '../../../environments/environment';
 import { DataProductTransaction } from './data-product-transaction';
+import { DataProduct as BlockchainDataProduct } from 'repux-web3-api';
 
 export class DataProduct implements Deserializable<DataProduct> {
   address?: string;
@@ -24,6 +25,7 @@ export class DataProduct implements Deserializable<DataProduct> {
   lastUpdate: Date;
   daysForDeliver: number;
   fundsToWithdraw: BigNumber;
+  blockchainState?: BlockchainDataProduct;
 
   deserialize(input: any): DataProduct {
     Object.assign(this, input);

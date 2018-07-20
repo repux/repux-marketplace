@@ -136,7 +136,7 @@
                [routerLink]="row.address ? ['details', row.address] : null"
                [appMarketplaceDataProductListDetailRow]="row"
                [appMarketplaceDataProductListDetailTpl]="tpl"
-               [class.disabled]="row.disabled"></mat-row>
+               [class.disabled]="row.blockchainState?.disabled"></mat-row>
     </mat-table>
   </div>
 
@@ -147,6 +147,6 @@
 <ng-template #tpl let-element>
   <app-marketplace-data-product-transactions-list-container
     [dataProduct]="element"
-    [displayPendingTransactions]="displayPendingTransactions"
+    [displayPendingTransactions]="displayPendingTransactions && !element.blockchainState?.disabled"
     (finaliseSuccess)="onFinaliseSuccess($event)"></app-marketplace-data-product-transactions-list-container>
 </ng-template>

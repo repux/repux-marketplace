@@ -67,7 +67,7 @@ describe('MarketplaceFinaliseButtonComponent', () => {
         NoopAnimationsModule
       ],
       providers: [
-        { provide: TagManagerService, useValue: tagManager},
+        { provide: TagManagerService, useValue: tagManager },
         { provide: TransactionDialogComponent, useValue: {} },
         { provide: KeyStoreService, useValue: keyStoreService },
         { provide: MatDialog, useValue: matDialog },

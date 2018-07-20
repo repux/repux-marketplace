@@ -15,6 +15,7 @@ import { DataProductTransaction } from '../../shared/models/data-product-transac
 export function getPendingFinalisationDataProductsQuery(walletAddress: string) {
   return {
     bool: {
+      must_not: [ { match: { disabled: true } } ],
       must: [
         { match: { ownerAddress: walletAddress } },
         {
@@ -197,7 +198,9 @@ export class PendingFinalisationService implements OnDestroy {
 
   private _pluckTransactionsFromDataProducts() {
     let transactions = [];
-    this._productsSubject.getValue().forEach(product => transactions = [ ...transactions, ...product.transactions ]);
+    this._productsSubject.getValue().forEach(product =>
+      transactions = [ ...transactions, ...product.transactions.filter(transaction => !transaction.finalised) ]
+    );
     this._transactionsSubject.next(transactions);
   }
 

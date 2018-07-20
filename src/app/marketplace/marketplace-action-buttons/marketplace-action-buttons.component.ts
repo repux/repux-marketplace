@@ -54,8 +54,13 @@ export class MarketplaceActionButtonsComponent implements OnDestroy, OnChanges {
     if (this.dataProduct && this._wallet) {
       if (this.dataProduct.address) {
         this.loading = true;
-        this.blockchainDataProduct = await this._dataProductService.getDataProductData(this.dataProduct.address);
         this.blockchainBuyTransaction = await this._dataProductService.getTransactionData(this.dataProduct.address, this._wallet.address);
+
+        if (this.dataProduct.blockchainState) {
+          this.blockchainDataProduct = this.dataProduct.blockchainState;
+        } else {
+          this.blockchainDataProduct = await this._dataProductService.getDataProductData(this.dataProduct.address);
+        }
       }
 
       this.loading = false;

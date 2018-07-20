@@ -16,7 +16,7 @@
   <app-marketplace-unpublish-button
     *ngIf="availableActions.includes('unpublish')"
     [dataProduct]="dataProduct"
-    [blockchainDataProduct]="blockchainDataProduct"></app-marketplace-unpublish-button>
+    [blockchainDataProduct]="dataProduct.blockchainState"></app-marketplace-unpublish-button>
 
   <app-marketplace-withdraw-button
     *ngIf="availableActions.includes('withdraw')"
