@@ -68,7 +68,7 @@ export class MarketplaceDownloadProductButtonComponent implements OnDestroy, OnI
 
   async downloadProduct(): Promise<void> {
     this._tagManager.sendEvent(
-      EventCategory.Sell,
+      EventCategory.Buy,
       EventAction.Download,
       this.dataProduct.title,
       this.dataProduct.price ? this.dataProduct.price.toString() : ''
@@ -77,7 +77,7 @@ export class MarketplaceDownloadProductButtonComponent implements OnDestroy, OnI
     const { privateKey } = await this._getKeys();
 
     this._tagManager.sendEvent(
-      EventCategory.Sell,
+      EventCategory.Buy,
       EventAction.DownloadConfirmed,
       this.dataProduct.title,
       this.dataProduct.price ? this.dataProduct.price.toString() : ''

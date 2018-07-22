@@ -55,7 +55,7 @@ export class MarketplaceCancelPurchaseButtonComponent implements OnInit, OnDestr
 
   cancelPurchase() {
     this._tagManager.sendEvent(
-      EventCategory.Sell,
+      EventCategory.Buy,
       EventAction.CancelPendingTransaction,
       this.dataProduct.title,
       this.dataProduct.price ? this.dataProduct.price.toString() : ''
@@ -74,7 +74,7 @@ export class MarketplaceCancelPurchaseButtonComponent implements OnInit, OnDestr
         delete this.blockchainBuyTransaction;
 
         this._tagManager.sendEvent(
-          EventCategory.Sell,
+          EventCategory.Buy,
           EventAction.CancelPendingTransactionConfirmed,
           this.dataProduct.title,
           this.dataProduct.price ? this.dataProduct.price.toString() : ''
