@@ -43,6 +43,14 @@ export class MarketplaceCancelPurchaseButtonComponent implements OnInit, OnDestr
     return Boolean(this.blockchainBuyTransaction);
   }
 
+  get isDisabled(): boolean {
+    if (!this.dataProduct.blockchainState) {
+      return false;
+    }
+
+    return this.dataProduct.blockchainState.disabled;
+  }
+
   ngOnInit() {
     this.dataProductAddress = this.dataProduct.address;
     this._walletSubscription = this._walletService.getWallet().subscribe(wallet => this._onWalletChange(wallet));

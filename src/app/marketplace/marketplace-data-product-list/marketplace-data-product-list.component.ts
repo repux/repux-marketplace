@@ -126,7 +126,8 @@ export class MarketplaceDataProductListComponent implements OnChanges, OnDestroy
     return new Promise(resolve => {
       this.isLoadingResults = true;
       this._unsubscribeDataProducts();
-      this._dataProductsSubscription = this.dataProductListService.getDataProducts(query, this.sort, this.size, this.from)
+      this._dataProductsSubscription = this.dataProductListService
+        .getDataProductsWithBlockchainState(query, this.sort, this.size, this.from)
         .subscribe(esDataProducts => {
           this.esDataProducts = esDataProducts;
           this.reloadRecords();
@@ -171,6 +172,16 @@ export class MarketplaceDataProductListComponent implements OnChanges, OnDestroy
   }
 
   onFinaliseSuccess(event: { dataProduct: DataProduct, transaction: DataProductTransaction }) {
+    if (!this.displayPendingTransactions) {
+      return;
+    }
+
+    const pendingFinalisationTransactions = event.dataProduct.transactions.filter(transaction => !transaction.finalised);
+
+    if (pendingFinalisationTransactions) {
+      return;
+    }
+
     if (this.dataProducts) {
       this.dataProducts = this.dataProducts.filter(dataProduct => dataProduct.address !== event.dataProduct.address);
     } else {
