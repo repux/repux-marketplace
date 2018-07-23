@@ -9,16 +9,6 @@ import { Subscription } from 'rxjs/internal/Subscription';
   styleUrls: [ './marketplace-sell-unpublished.component.scss' ]
 })
 export class MarketplaceSellUnpublishedComponent implements OnDestroy {
-  public displayedColumns = [
-    'name',
-    'title',
-    'category',
-    'daysForDeliver',
-    'size',
-    'price',
-    'actions'
-  ];
-
   public availableActions = [
     'publish'
   ];

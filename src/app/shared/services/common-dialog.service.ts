@@ -1,6 +1,7 @@
 import { MatDialog, MatDialogRef } from '@angular/material';
 import { ConfirmationDialogComponent } from '../components/confirmation-dialog/confirmation-dialog.component';
 import { Injectable } from '@angular/core';
+import { TransactionDialogComponent } from '../components/transaction-dialog/transaction-dialog.component';
 
 @Injectable({
   providedIn: 'root'
@@ -22,5 +23,17 @@ export class CommonDialogService {
     confirmationDialogRef.componentInstance.cancelButton = null;
 
     return confirmationDialogRef;
+  }
+
+  transaction(methodToCall: () => Promise<any>): MatDialogRef<TransactionDialogComponent> {
+    const transactionDialogRef = this.dialog.open(TransactionDialogComponent, {
+      disableClose: true
+    });
+
+    const transactionDialog: TransactionDialogComponent = transactionDialogRef.componentInstance;
+    transactionDialog.transaction = methodToCall;
+    transactionDialog.callTransaction();
+
+    return transactionDialogRef;
   }
 }

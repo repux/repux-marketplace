@@ -55,13 +55,13 @@ describe('MarketplaceDataProductTransactionsListComponent', () => {
   });
 
   describe('#getTransactionDate()', () => {
-    it('should subtract daysForDeliver from deliveryDeadline date and return as a new date', () => {
+    it('should subtract daysToDeliver from deliveryDeadline date and return as a new date', () => {
       const transaction = <any> {
         deliveryDeadline: new Date(1529937455000)
       };
 
       component.dataProduct = <any> {
-        daysForDeliver: 2
+        daysToDeliver: 2
       };
 
       expect(component.getTransactionDate(transaction)).toEqual(new Date(1529764655000));
@@ -77,7 +77,7 @@ describe('MarketplaceDataProductTransactionsListComponent', () => {
         finalised: false
       } ];
       component.dataProduct = <any> {
-        daysForDeliver: 2
+        daysToDeliver: 2
       };
       component.dataSource = new MatTableDataSource(component.transactions);
       fixture.detectChanges();

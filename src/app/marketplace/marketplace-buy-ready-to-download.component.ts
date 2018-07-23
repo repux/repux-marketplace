@@ -11,7 +11,8 @@ import { getReadyToDownloadDataProductsQuery } from './services/ready-to-downloa
 })
 export class MarketplaceBuyReadyToDownloadComponent implements OnDestroy {
   public availableActions = [
-    'buy'
+    'buy',
+    'rate'
   ];
   public displayedColumns = [
     'name',

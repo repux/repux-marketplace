@@ -1,18 +1,37 @@
 import { CommonDialogService } from './common-dialog.service';
+import { MaterialModule } from '../../material.module';
+import { NoopAnimationsModule } from '@angular/platform-browser/animations';
+import { getTestBed, TestBed } from '@angular/core/testing';
+import { TransactionDialogComponent } from '../components/transaction-dialog/transaction-dialog.component';
+import { ConfirmationDialogComponent } from '../components/confirmation-dialog/confirmation-dialog.component';
+import { BrowserDynamicTestingModule } from '@angular/platform-browser-dynamic/testing';
 
 describe('CommonDialogService', () => {
   let service: CommonDialogService;
-  let matDialogSpy;
 
   beforeEach(() => {
-    matDialogSpy = jasmine.createSpyObj('MatDialog', [ 'open' ]);
-    matDialogSpy.open.and.callFake((type) => {
-      return {
-        componentInstance: new type()
-      };
+    TestBed.configureTestingModule({
+      declarations: [
+        ConfirmationDialogComponent,
+        TransactionDialogComponent
+      ],
+      imports: [
+        NoopAnimationsModule,
+        MaterialModule
+      ]
     });
 
-    service = new CommonDialogService(matDialogSpy);
+    TestBed.overrideModule(BrowserDynamicTestingModule, {
+      set: {
+        entryComponents: [
+          ConfirmationDialogComponent,
+          TransactionDialogComponent
+        ]
+      }
+    });
+
+    const testbed = getTestBed();
+    service = testbed.get(CommonDialogService);
   });
 
   describe('#alert()', () => {

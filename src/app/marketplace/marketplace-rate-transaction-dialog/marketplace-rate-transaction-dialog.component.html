@@ -1,0 +1,24 @@
+<h2 mat-dialog-title>Rate transaction</h2>
+
+<mat-dialog-content>
+  <div class="mat-body-1">
+    To rate the transaction, please click on the desired star. <br>
+    Please note that you have {{daysToRate}} days after transaction finalisation to rate it.
+
+    <div class="stars" #stars>
+      <button
+        class="star"
+        mat-icon-button
+        *ngFor="let rate of availableRates;"
+        [attr.data-value]="rate"
+        [class.active]="rating.gte(rate)"
+        (click)="setRating(rate)">
+        <mat-icon>star_rate</mat-icon>
+      </button>
+    </div>
+  </div>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <button mat-button mat-dialog-close>Not now</button>
+  <button mat-button [disabled]="rating.isZero()" (click)="closeWithSuccess()">Rate</button>
+</mat-dialog-actions>

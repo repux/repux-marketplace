@@ -19,7 +19,7 @@ export class MarketplaceBuyAwaitingFinalisationComponent implements OnDestroy {
     'category',
     'price',
     'transactionDate',
-    'daysForDeliver',
+    'daysToDeliver',
     'deliveryDeadline',
     'eula',
     'actions'

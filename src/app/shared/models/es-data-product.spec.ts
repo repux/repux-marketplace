@@ -1,9 +1,22 @@
 import { EsDataProduct } from './es-data-product';
 import { BigNumber } from 'bignumber.js';
+import { Attachment, Eula, EulaType } from 'repux-lib';
 
 describe('EsDataProduct', () => {
   describe('#deserialize()', () => {
     it('should assign all values from input to object with some modifications', () => {
+      const attachment = <Attachment> {
+        fileHash: 'FILE_HASH',
+        fileName: 'FILE_NAME',
+        title: 'TITLE'
+      };
+
+      const eula = <Eula> {
+        type: EulaType.OWNER,
+        fileHash: 'FILE_HASH',
+        fileName: 'FILE_NAME'
+      };
+
       const esDataProduct = new EsDataProduct();
       esDataProduct.deserialize({
         _index: 'repux',
@@ -23,8 +36,10 @@ describe('EsDataProduct', () => {
           size: 100,
           ownerAddress: '0x1111',
           lastUpdateTimestamp: 100,
-          daysForDeliver: 1,
+          daysToDeliver: 1,
           fundsToWithdraw: '0',
+          eula,
+          sampleFile: [ attachment ],
           transactions: [ {
             finalised: true,
             buyerAddress: '0x11',
@@ -54,8 +69,10 @@ describe('EsDataProduct', () => {
       expect(dataProduct.size).toBe(100);
       expect(dataProduct.ownerAddress).toBe('0x1111');
       expect(dataProduct.lastUpdate).toEqual(new Date(100));
-      expect(dataProduct.daysForDeliver).toBe(1);
+      expect(dataProduct.daysToDeliver).toBe(1);
       expect(dataProduct.fundsToWithdraw).toEqual(new BigNumber(0));
+      expect(dataProduct.eula).toEqual(eula);
+      expect(dataProduct.sampleFile).toEqual([ attachment ]);
       expect(dataProduct.transactions[ 0 ].finalised).toBeTruthy();
       expect(dataProduct.transactions[ 0 ].buyerAddress).toBe('0x11');
       expect(dataProduct.transactions[ 0 ].buyerMetaHash).toBe('BUYER_META_HASH');

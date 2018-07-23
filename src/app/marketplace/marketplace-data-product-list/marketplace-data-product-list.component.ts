@@ -28,14 +28,15 @@ export class MarketplaceDataProductListComponent implements OnChanges, OnDestroy
     'name',
     'title',
     'category',
-    'daysForDeliver',
+    'daysToDeliver',
     'size',
     'price',
     'eula',
     'actions'
   ];
   @Input() availableActions = [
-    'buy'
+    'buy',
+    'rate'
   ];
   @Input() disablePendingFinalisation = false;
   @Input() displayPendingTransactions = false;
@@ -163,7 +164,7 @@ export class MarketplaceDataProductListComponent implements OnChanges, OnDestroy
       return;
     }
 
-    return new Date((transaction.deliveryDeadline.getTime() - dataProduct.daysForDeliver * DAY_IN_MILLISECONDS));
+    return new Date((transaction.deliveryDeadline.getTime() - dataProduct.daysToDeliver * DAY_IN_MILLISECONDS));
   }
 
   getDeliveryDeadline(dataProduct: DataProduct) {

@@ -74,7 +74,7 @@ export class MarketplaceProductCreatorDialogComponent implements OnInit, OnDestr
         Validators.required
       ] ],
       sampleFile: [ '', [] ],
-      daysForDeliver: [ 1, [
+      daysToDeliver: [ 1, [
         Validators.required
       ] ],
       eula: [ null, [
@@ -83,8 +83,8 @@ export class MarketplaceProductCreatorDialogComponent implements OnInit, OnDestr
     });
   }
 
-  get daysForDeliverOptions() {
-    return Array.from(Array(environment.repux.maxDaysForDeliver + 1).keys());
+  get daysToDeliverOptions() {
+    return Array.from(Array(environment.repux.maxDaysToDeliver + 1).keys());
   }
 
   async ngOnInit() {
@@ -120,7 +120,7 @@ export class MarketplaceProductCreatorDialogComponent implements OnInit, OnDestr
       this.categoryInput.value,
       new BigNumber(this.formGroup.value.price),
       this.fileInput.value[ 0 ],
-      this.formGroup.value.daysForDeliver,
+      this.formGroup.value.daysToDeliver,
       this.sampleFileInput.value,
       this.formGroup.value.eula,
       -1,

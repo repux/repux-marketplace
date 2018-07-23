@@ -46,14 +46,14 @@
       </ng-container>
 
       <!-- Delivery time Column -->
-      <ng-container matColumnDef="daysForDeliver">
+      <ng-container matColumnDef="daysToDeliver">
         <mat-header-cell *matHeaderCellDef mat-sort-header [disabled]="enableSorting">
           Delivery time
           <mat-icon matTooltip="Max number of days for seller to finalise transaction">
             help
           </mat-icon>
         </mat-header-cell>
-        <mat-cell *matCellDef="let element"> {{ element.daysForDeliver }}</mat-cell>
+        <mat-cell *matCellDef="let element"> {{ element.daysToDeliver }}</mat-cell>
       </ng-container>
 
       <!-- Times purchased Column -->
