@@ -3,6 +3,8 @@ import { FileInputComponent } from './file-input.component';
 import { FormsModule, ReactiveFormsModule, FormControl, Validators } from '@angular/forms';
 import { MatInputModule } from '@angular/material';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
+import { MaxFileSizeDirective } from './max-file-size.directive';
+import { FileSizePipe } from '../../pipes/file-size.pipe';
 
 describe('FileInputComponent', () => {
   let component: FileInputComponent;
@@ -10,7 +12,11 @@ describe('FileInputComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ FileInputComponent ],
+      declarations: [
+        FileInputComponent,
+        MaxFileSizeDirective,
+        FileSizePipe
+      ],
       imports: [
         FormsModule,
         ReactiveFormsModule,
@@ -38,13 +44,27 @@ describe('FileInputComponent', () => {
   describe('#onChange', () => {
     it('should assign event my-active-listings to value property', () => {
       const files = <any> [ { name: 'FILE' } ];
-      component.onChange({ target: { files } });
+      const event = {
+        target: { files },
+        stopPropagation: jasmine.createSpy()
+      };
+
+      component.onChange(event);
+
+      expect(event.stopPropagation.calls.count()).toBe(1);
       expect(component.value).toBe(files);
     });
 
     it('should concat all file names and assign to fileNames property', () => {
       const files = <any> [ { name: 'FILE 1' }, { name: 'file2.jpg' }, { name: 'file-3' } ];
-      component.onChange({ target: { files } });
+      const event = {
+        target: { files },
+        stopPropagation: jasmine.createSpy()
+      };
+
+      component.onChange(event);
+
+      expect(event.stopPropagation.calls.count()).toBe(1);
       expect(component.fileNames).toBe('FILE 1, file2.jpg, file-3');
     });
   });

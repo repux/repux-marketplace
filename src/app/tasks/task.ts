@@ -13,7 +13,7 @@ export interface Task {
   walletSpecific: boolean;
   productAddress: string;
 
-  run(taskManagerService: TaskManagerService): void;
+  run(taskManagerService: TaskManagerService): Promise<void> | void;
 
   cancel(): void;
 

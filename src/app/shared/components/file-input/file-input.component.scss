@@ -10,6 +10,6 @@ button {
   margin-left: 10px;
 }
 
-.mat-form-field, input {
+.mat-form-field:not(.mat-form-field-disabled), input:not([disabled]) {
   cursor: pointer;
 }

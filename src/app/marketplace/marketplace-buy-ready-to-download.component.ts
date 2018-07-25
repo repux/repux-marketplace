@@ -20,6 +20,7 @@ export class MarketplaceBuyReadyToDownloadComponent implements OnDestroy {
     'size',
     'price',
     'transactionDate',
+    'eula',
     'actions'
   ];
   public staticQuery = {};

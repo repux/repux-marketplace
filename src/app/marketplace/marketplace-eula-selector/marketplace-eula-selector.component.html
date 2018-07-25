@@ -1,0 +1,31 @@
+<div [ngClass]="{
+    invalid: formControl.invalid && (formControl.dirty || formControl.touched),
+    'mat-typography': true
+  }">
+  <label class="field-name">End User License Agreement *</label>
+
+  <mat-radio-group
+    (change)="changeType($event)"
+    [value]="selectedType || formControl?.value?.type">
+
+    <div *ngFor="let eula of eulaUrls;" class="row">
+      <mat-radio-button
+        [value]="eula.type">
+        <app-marketplace-eula [eulaType]="eula.type"></app-marketplace-eula>
+      </mat-radio-button>
+
+      <a *ngIf="eula.url" [href]="eula.url" target="_blank">(see document)</a>
+
+      <div *ngIf="eula.type === selectedType && !eula.url">
+        <app-file-input
+          #fileInput
+          placeholder="End User License Agreement File"
+          [required]="true"
+          [formControl]="fileInputFormControl"
+          [maxFileSize]="maxFileSize"
+          (filesSelect)="onFileSelect($event)"
+          ngDefaultControl></app-file-input>
+      </div>
+    </div>
+  </mat-radio-group>
+</div>

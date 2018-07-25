@@ -7,11 +7,12 @@ import { BehaviorSubject } from 'rxjs/internal/BehaviorSubject';
 
 @Component({ selector: 'app-data-product-list', template: '' })
 class DataProductListStubComponent {
-  @Input() dataProducts: DataProduct[];
   @Input() availableActions: string[];
+  @Input() dataProducts: DataProduct[];
+  @Input() displayedColumns: string[];
+  @Input() showFilters: boolean;
   @Input() showPaginator: boolean;
   @Input() showSearch: boolean;
-  @Input() showFilters: boolean;
 }
 
 describe('MarketplaceSellUnpublishedComponent', () => {

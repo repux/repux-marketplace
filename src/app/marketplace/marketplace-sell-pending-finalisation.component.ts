@@ -15,6 +15,7 @@ export class MarketplaceSellPendingFinalisationComponent implements OnDestroy {
     'title',
     'category',
     'pendingFinalisationRequests',
+    'eula',
     'actions'
   ];
   public availableActions = [

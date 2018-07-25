@@ -90,10 +90,11 @@
       <ng-container matColumnDef="pendingFinalisationRequests">
         <mat-header-cell *matHeaderCellDef> Pending finalisation requests</mat-header-cell>
         <mat-cell *matCellDef="let element">
-          <button mat-icon-button
+          <button mat-button
                   routerLink="/sell/pending-finalisation"
                   *ngIf="!disablePendingFinalisation"
-                  color="primary">
+                  color="primary"
+                  (click)="$event.stopPropagation()">
             {{ getTransactionsToFinalisation(element).length }}
           </button>
           <span *ngIf="disablePendingFinalisation">
@@ -118,6 +119,25 @@
           </mat-icon>
         </mat-header-cell>
         <mat-cell *matCellDef="let element"> {{ getDeliveryDeadline(element) | date : 'short' }}
+        </mat-cell>
+      </ng-container>
+
+      <!-- EULA -->
+      <ng-container matColumnDef="eula">
+        <mat-header-cell *matHeaderCellDef> EULA
+          <mat-icon
+            matTooltip="End User License Agreement">
+            help
+          </mat-icon>
+        </mat-header-cell>
+        <mat-cell *matCellDef="let element">
+          <button
+            mat-button
+            color="primary"
+            (click)="downloadEula($event, element.eula)"
+            matTooltip="Download EULA content">
+            <app-marketplace-eula [eulaType]="element.eula.type"></app-marketplace-eula>
+          </button>
         </mat-cell>
       </ng-container>
 

@@ -1,4 +1,4 @@
-import { Component, ElementRef, Output, ViewChild } from '@angular/core';
+import { Component, ElementRef, EventEmitter, Output, ViewChild } from '@angular/core';
 import { Input } from '@angular/core';
 import { FormControl } from '@angular/forms';
 
@@ -11,17 +11,23 @@ export class FileInputComponent {
   @Input() required: boolean;
   @Input() multiple = false;
   @Input() placeholder: string;
-  @Input() @Output() value: File[];
+  @Input() value: FileList;
   @Input() fileNames = '';
   @Input() formControl: FormControl = new FormControl();
+  @Input() hint?: string;
+  @Input() maxFileSize?: number;
   @ViewChild('fileInput') fileInput: ElementRef;
+  @Output() filesSelect = new EventEmitter<FileList>();
 
   openFileBrowser() {
     this.fileInput.nativeElement.click();
   }
 
   onChange(event) {
+    event.stopPropagation();
+
     this.value = event.target.files;
+    this.formControl.setValue(this.value);
 
     const names: string[] = [];
     for (let i = 0; i < event.target.files.length; i++) {
@@ -29,5 +35,6 @@ export class FileInputComponent {
     }
 
     this.fileNames = names.join(', ');
+    this.filesSelect.emit(this.value);
   }
 }

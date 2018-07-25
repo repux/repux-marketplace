@@ -39,10 +39,12 @@ import {
   MarketplaceDataProductTransactionsListComponent
 } from './marketplace-data-product-transactions-list/marketplace-data-product-transactions-list.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { MarketplaceEulaSelectorComponent } from './marketplace-eula-selector/marketplace-eula-selector.component';
 import { MarketplaceActionButtonsComponent } from './marketplace-action-buttons/marketplace-action-buttons.component';
 import {
   MarketplaceDataProductTransactionsListContainerComponent
 } from './marketplace-data-product-transactions-list-container/marketplace-data-product-transactions-list-container.component';
+import { MarketplaceEulaComponent } from './marketplace-eula/marketplace-eula.component';
 
 @NgModule({
   imports: [
@@ -64,6 +66,8 @@ import {
     MarketplaceBuyAwaitingFinalisationComponent,
     MarketplaceBuyReadyToDownloadComponent,
     MarketplaceProductDetailsComponent,
+    MarketplaceEulaSelectorComponent,
+    MarketplaceEulaComponent,
 
     MarketplaceBuyProductButtonComponent,
     MarketplaceCancelPurchaseButtonComponent,
