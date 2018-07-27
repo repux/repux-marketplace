@@ -31,6 +31,9 @@ export class MarketplaceProductCreatorDialogComponent implements OnInit, OnDestr
   public formGroup: FormGroup;
   public titleMinLength = 3;
   public titleMaxLength = 100;
+  public shortDescriptionMinLength = 3;
+  public shortDescriptionMaxLength = 1023;
+  public longDescriptionMaxLength = 10000;
   public maxFileSize: number = environment.ipfs.maxFileSize;
   public repuxPrecision: number = environment.repux.currency.precision;
   @ViewChild('fileInput') fileInput: FileInputComponent;
@@ -58,10 +61,12 @@ export class MarketplaceProductCreatorDialogComponent implements OnInit, OnDestr
       ] ],
       shortDescription: [ '', [
         Validators.required,
-        Validators.minLength(3),
-        Validators.maxLength(1023)
+        Validators.minLength(this.shortDescriptionMinLength),
+        Validators.maxLength(this.shortDescriptionMaxLength)
       ] ],
-      fullDescription: [ '', [] ],
+      fullDescription: [ '', [
+        Validators.maxLength(this.longDescriptionMaxLength)
+      ] ],
       category: [ [], [
         Validators.required
       ] ],

@@ -12,13 +12,7 @@
          [appMaxFileSize]="maxFileSize"
          readonly [value]="fileNames">
 
-  <button matSuffix
-          mat-raised-button
-          color="primary"
-          [disabled]="formControl.disabled"
-          type="button">
-    {{ multiple ? 'Choose files' : 'Choose file' }}
-  </button>
+  <mat-icon>attachment</mat-icon>
 
   <mat-error *ngIf="formControl.hasError('required')">
     {{ placeholder }} is <strong>required</strong>
@@ -29,8 +23,7 @@
   </mat-error>
 
   <mat-hint>
-    <div *ngIf="hint">{{ hint }}</div>
-
-    <div *ngIf="maxFileSize">Max file size is {{ maxFileSize | fileSize }}</div>
+    <span *ngIf="hint">{{ hint }}. </span>
+    <span *ngIf="maxFileSize">Max file size is {{ maxFileSize | fileSize }}.</span>
   </mat-hint>
 </mat-form-field>

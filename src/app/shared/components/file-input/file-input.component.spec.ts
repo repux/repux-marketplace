@@ -1,7 +1,7 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { FileInputComponent } from './file-input.component';
 import { FormsModule, ReactiveFormsModule, FormControl, Validators } from '@angular/forms';
-import { MatInputModule } from '@angular/material';
+import { MatIconModule, MatInputModule } from '@angular/material';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { MaxFileSizeDirective } from './max-file-size.directive';
 import { FileSizePipe } from '../../pipes/file-size.pipe';
@@ -21,6 +21,7 @@ describe('FileInputComponent', () => {
         FormsModule,
         ReactiveFormsModule,
         MatInputModule,
+        MatIconModule,
         NoopAnimationsModule
       ]
     })
@@ -91,11 +92,9 @@ describe('FileInputComponent', () => {
       expect(input.getAttribute('placeholder')).toBe(placeholder);
       expect((<any> input).required).toBeTruthy();
 
-      const button = element.querySelector('button');
-      expect(button.textContent.trim()).toBe('Choose file');
+
       component.multiple = true;
       fixture.detectChanges();
-      expect(button.textContent.trim()).toBe('Choose files');
       input = element.querySelector('input:nth-child(2)');
 
       input.dispatchEvent(new CustomEvent('focus'));

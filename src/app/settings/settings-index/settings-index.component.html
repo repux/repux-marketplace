@@ -1,15 +1,60 @@
-<section class="mat-typography">
-  <h1>Private and public keys</h1>
+<div class="settings mat-typography">
+  <section id="wallet" *ngIf="wallet$ | async as wallet">
+    <h2 class="settings__card-header">My wallet</h2>
+    <mat-card>
+      <mat-card-content>
+        <mat-list>
+          <mat-list-item>
+            <h3 matLine>{{ wallet.address }}</h3>
+            <p matLine>Wallet address</p>
+          </mat-list-item>
+          <mat-divider></mat-divider>
+          <mat-list-item>
+            <h3 matLine>{{ wallet.balance | currencyRepux }}</h3>
+            <p matLine>Current balance</p>
+          </mat-list-item>
+        </mat-list>
+      </mat-card-content>
+    </mat-card>
+  </section>
 
-  <button mat-button color="primary" *ngIf="hasKeys" (click)="downloadKeys()">
-    Download keys
-  </button>
+  <section id="keys">
+    <h2 class="settings__card-header">Private & public keys</h2>
+    <mat-card>
+      <mat-card-content>
+        <mat-list>
+          <mat-list-item (click)="downloadKeys()" class="clickable">
+            <h3 matLine>Download keys</h3>
+            <p matLine>Saves private & public keys in JSON Web Key format to disk</p>
+            <mat-icon>navigate_next</mat-icon>
+          </mat-list-item>
+          <mat-divider></mat-divider>
+          <mat-list-item (click)="uploadKeys()" class="clickable">
+            <h3 matLine>Upload new keys</h3>
+            <mat-icon>navigate_next</mat-icon>
+          </mat-list-item>
+          <mat-divider></mat-divider>
+          <mat-list-item (click)="generateKeys()" class="clickable">
+            <h3 matLine>Generate new keys</h3>
+            <mat-icon>navigate_next</mat-icon>
+          </mat-list-item>
+        </mat-list>
+      </mat-card-content>
+    </mat-card>
+  </section>
 
-  <button mat-button color="primary" (click)="generateKeys()">
-    Generate new keys
-  </button>
-
-  <button mat-button color="primary" (click)="uploadKeys()">
-    Upload new keys
-  </button>
-</section>
+  <section id="help">
+    <h2 class="settings__card-header">Help</h2>
+    <mat-card>
+      <mat-card-content>
+        <mat-list>
+          <a mat-list-item href="https://help.repux.io" target="_blank" class="clickable">
+            <h3 matLine>Advices and answers from RepuX Team</h3>
+            <p matLine>Opens https://help.repux.io page in a new window</p>
+            <mat-icon>link</mat-icon>
+          </a>
+        </mat-list>
+      </mat-card-content>
+    </mat-card>
+  </section>
+</div>

@@ -1,0 +1,41 @@
+.settings {
+  max-width: 680px;
+  margin: 0 auto;
+
+  &__card-header {
+    font-size: 16px;
+    font-weight: 500;
+    color: #999;
+    margin: 30px 0 6px 0;
+  }
+
+  .mat-line {
+    font-size: 13px;
+    font-weight: 400;
+  }
+
+  .clickable {
+    cursor: pointer;
+  }
+
+  h3.mat-line {
+    color: #212121;
+    line-height: 1.4;
+  }
+
+  p.mat-line {
+    color: #757575;
+  }
+
+  a {
+    text-decoration: none;
+  }
+
+  .mat-icon {
+    color: #757575;
+  }
+}
+
+mat-card {
+  padding: 0;
+}

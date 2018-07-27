@@ -4,7 +4,6 @@ import { MarketplaceSellComponent, MarketplaceSellLink } from './marketplace/mar
 import { MarketplaceSellMyActiveListingsComponent } from './marketplace/marketplace-sell-my-active-listings.component';
 import { MarketplaceSellPendingFinalisationComponent } from './marketplace/marketplace-sell-pending-finalisation.component';
 import { MarketplaceBrowseComponent } from './marketplace/marketplace-browse.component';
-import { DashboardComponent } from './dashboard/dashboard.component';
 import { MarketplaceSellUnpublishedComponent } from './marketplace/marketplace-sell-unpublished.component';
 import { MarketplaceBuyComponent, MarketplaceBuyingLink } from './marketplace/marketplace-buy.component';
 import { MarketplaceBuyReadyToDownloadComponent } from './marketplace/marketplace-buy-ready-to-download.component';
@@ -13,8 +12,7 @@ import { SettingsIndexComponent } from './settings/settings-index/settings-index
 import { MarketplaceProductDetailsComponent } from './marketplace/marketplace-product-details.component';
 
 const routes: Routes = [
-  { path: '', redirectTo: '/dashboard', pathMatch: 'full' },
-  { path: 'dashboard', component: DashboardComponent },
+  { path: '', redirectTo: '/marketplace', pathMatch: 'full' },
   { path: 'marketplace', component: MarketplaceBrowseComponent },
   { path: 'marketplace/details/:address', component: MarketplaceProductDetailsComponent },
   {

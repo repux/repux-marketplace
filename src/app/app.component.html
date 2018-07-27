@@ -6,19 +6,191 @@
     [attr.role]="(isHandset$ | async) ? 'dialog' : 'navigation'"
     [mode]="(isHandset$ | async) ? 'over' : 'side'"
     [opened]="!(isHandset$ | async)">
-    <mat-toolbar color="primary">RepuX</mat-toolbar>
+    <mat-toolbar class="logotype">
+      <svg width="32px" height="32px" viewBox="0 0 32 32" version="1.1" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient x1="50.1219512%" y1="100.324675%" x2="50.1219512%" y2="0.487012987%" id="linearGradient-1">
+            <stop stop-color="#3DB28D" offset="0%"></stop>
+            <stop stop-color="#33747E" offset="100%"></stop>
+          </linearGradient>
+          <linearGradient x1="0%" y1="49.9194805%" x2="99.7569343%" y2="49.9194805%" id="linearGradient-2">
+            <stop stop-color="#B2D35A" offset="0%"></stop>
+            <stop stop-color="#81C26C" offset="100%"></stop>
+          </linearGradient>
+          <linearGradient x1="-0.09765625%" y1="49.9194805%" x2="100%" y2="49.9194805%" id="linearGradient-3">
+            <stop stop-color="#3BAEA9" offset="0%"></stop>
+            <stop stop-color="#B2D35A" offset="100%"></stop>
+          </linearGradient>
+          <linearGradient x1="-0.09765625%" y1="50.2445313%" x2="100%" y2="50.2445313%" id="linearGradient-4">
+            <stop stop-color="#3DB28D" offset="0%"></stop>
+            <stop stop-color="#3BAEA9" offset="100%"></stop>
+          </linearGradient>
+          <linearGradient x1="0.39893617%" y1="50.1050279%" x2="100.354255%" y2="50.1050279%" id="linearGradient-5">
+            <stop stop-color="#3DB28D" offset="0%"></stop>
+            <stop stop-color="#33747E" offset="100%"></stop>
+          </linearGradient>
+          <linearGradient x1="0.243506494%" y1="50.1050279%" x2="100.081169%" y2="50.1050279%" id="linearGradient-6">
+            <stop stop-color="#3DB28D" offset="0%"></stop>
+            <stop stop-color="#3BAEA9" offset="100%"></stop>
+          </linearGradient>
+          <linearGradient x1="0.162337662%" y1="50.1050279%" x2="100%" y2="50.1050279%" id="linearGradient-7">
+            <stop stop-color="#3BAEA9" offset="0%"></stop>
+            <stop stop-color="#B2D35A" offset="100%"></stop>
+          </linearGradient>
+          <linearGradient x1="0.162337662%" y1="50.1050279%" x2="100%" y2="50.1050279%" id="linearGradient-8">
+            <stop stop-color="#B2D35A" offset="0%"></stop>
+            <stop stop-color="#81C26C" offset="100%"></stop>
+          </linearGradient>
+          <linearGradient x1="-0.271304348%" y1="49.7544118%" x2="100%" y2="49.7544118%" id="linearGradient-9">
+            <stop stop-color="#81C26C" offset="0%"></stop>
+            <stop stop-color="#B2D35A" offset="100%"></stop>
+          </linearGradient>
+          <linearGradient x1="0.323275862%" y1="50.1377551%" x2="99.7310345%" y2="50.1377551%" id="linearGradient-10">
+            <stop stop-color="#B2D35A" offset="0%"></stop>
+            <stop stop-color="#3BAEA9" offset="100%"></stop>
+          </linearGradient>
+          <linearGradient x1="0.242718447%" y1="50.1377551%" x2="99.7572816%" y2="50.1377551%" id="linearGradient-11">
+            <stop stop-color="#3BAEA9" offset="0%"></stop>
+            <stop stop-color="#3DB28D" offset="100%"></stop>
+          </linearGradient>
+          <linearGradient x1="0.162337662%" y1="50.2455882%" x2="100%" y2="50.2455882%" id="linearGradient-12">
+            <stop stop-color="#3DB28D" offset="0%"></stop>
+            <stop stop-color="#33747E" offset="100%"></stop>
+          </linearGradient>
+          <linearGradient x1="0.162337662%" y1="50.0811688%" x2="100%" y2="50.0811688%" id="linearGradient-13">
+            <stop stop-color="#33747E" offset="0%"></stop>
+            <stop stop-color="#464969" offset="100%"></stop>
+          </linearGradient>
+          <linearGradient x1="0%" y1="49.8781022%" x2="99.8376623%" y2="49.8781022%" id="linearGradient-14">
+            <stop stop-color="#3F5874" offset="0%"></stop>
+            <stop stop-color="#464969" offset="100%"></stop>
+          </linearGradient>
+          <linearGradient x1="0%" y1="49.9515625%" x2="99.8376623%" y2="49.9515625%" id="linearGradient-15">
+            <stop stop-color="#33747E" offset="0%"></stop>
+            <stop stop-color="#464969" offset="100%"></stop>
+          </linearGradient>
+          <linearGradient x1="0.1953125%" y1="49.9515625%" x2="100.292969%" y2="49.9515625%" id="linearGradient-16">
+            <stop stop-color="#33747E" offset="0%"></stop>
+            <stop stop-color="#3F5874" offset="100%"></stop>
+          </linearGradient>
+          <linearGradient x1="0%" y1="49.9188312%" x2="100.490196%" y2="49.9188312%" id="linearGradient-17">
+            <stop stop-color="#33747E" offset="0%"></stop>
+            <stop stop-color="#464969" offset="100%"></stop>
+          </linearGradient>
+          <linearGradient x1="0%" y1="49.754902%" x2="99.7569343%" y2="49.754902%" id="linearGradient-18">
+            <stop stop-color="#3F5874" offset="0%"></stop>
+            <stop stop-color="#464969" offset="100%"></stop>
+          </linearGradient>
+          <linearGradient x1="0.12195122%" y1="50.4064935%" x2="100.121951%" y2="50.4064935%" id="linearGradient-19">
+            <stop stop-color="#3F5874" offset="0%"></stop>
+            <stop stop-color="#464969" offset="100%"></stop>
+          </linearGradient>
+          <linearGradient x1="0%" y1="49.754902%" x2="100.189071%" y2="49.754902%" id="linearGradient-20">
+            <stop stop-color="#33747E" offset="0%"></stop>
+            <stop stop-color="#464969" offset="100%"></stop>
+          </linearGradient>
+          <linearGradient x1="0%" y1="50.2009259%" x2="100.189071%" y2="50.2009259%" id="linearGradient-21">
+            <stop stop-color="#3F5874" offset="0%"></stop>
+            <stop stop-color="#464969" offset="100%"></stop>
+          </linearGradient>
+          <linearGradient x1="0.274157303%" y1="49.7723404%" x2="100%" y2="49.7723404%" id="linearGradient-22">
+            <stop stop-color="#33747E" offset="0%"></stop>
+            <stop stop-color="#464969" offset="100%"></stop>
+          </linearGradient>
+          <linearGradient x1="0%" y1="49.754902%" x2="100%" y2="49.754902%" id="linearGradient-23">
+            <stop stop-color="#3F5874" offset="0%"></stop>
+            <stop stop-color="#464969" offset="100%"></stop>
+          </linearGradient>
+          <linearGradient x1="0%" y1="50.0811688%" x2="100%" y2="50.0811688%" id="linearGradient-24">
+            <stop stop-color="#464969" offset="0%"></stop>
+            <stop stop-color="#33747E" offset="100%"></stop>
+          </linearGradient>
+          <linearGradient x1="0%" y1="49.7451327%" x2="100.490196%" y2="49.7451327%" id="linearGradient-25">
+            <stop stop-color="#464969" offset="0%"></stop>
+            <stop stop-color="#33747E" offset="100%"></stop>
+          </linearGradient>
+          <linearGradient x1="0.265217391%" y1="50.0487805%" x2="100.219565%" y2="50.0487805%" id="linearGradient-26">
+            <stop stop-color="#464969" offset="0%"></stop>
+            <stop stop-color="#33747E" offset="100%"></stop>
+          </linearGradient>
+          <linearGradient x1="0.505813953%" y1="49.9170732%" x2="100.283721%" y2="49.9170732%" id="linearGradient-27">
+            <stop stop-color="#464969" offset="0%"></stop>
+            <stop stop-color="#33747E" offset="100%"></stop>
+          </linearGradient>
+          <linearGradient x1="0.248979592%" y1="49.6768293%" x2="99.9489796%" y2="49.6768293%" id="linearGradient-28">
+            <stop stop-color="#33747E" offset="0%"></stop>
+            <stop stop-color="#464969" offset="100%"></stop>
+          </linearGradient>
+          <linearGradient x1="0.248979592%" y1="49.679798%" x2="99.9489796%" y2="49.679798%" id="linearGradient-29">
+            <stop stop-color="#464969" offset="0%"></stop>
+            <stop stop-color="#33747E" offset="100%"></stop>
+          </linearGradient>
+          <linearGradient x1="0.536111111%" y1="49.679798%" x2="99.3527778%" y2="49.679798%" id="linearGradient-30">
+            <stop stop-color="#464969" offset="0%"></stop>
+            <stop stop-color="#33747E" offset="100%"></stop>
+          </linearGradient>
+          <linearGradient x1="0.263157895%" y1="49.6727273%" x2="99.5094737%" y2="49.6727273%" id="linearGradient-31">
+            <stop stop-color="#33747E" offset="0%"></stop>
+            <stop stop-color="#464969" offset="100%"></stop>
+          </linearGradient>
+        </defs>
+        <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+          <g id="Desktop" transform="translate(-19.000000, -12.000000)" fill-rule="nonzero">
+            <g id="Header">
+              <g id="Logo" transform="translate(19.000000, 12.000000)">
+                <polyline id="XMLID_318_" fill="url(#linearGradient-1)" points="3.9804878 16 19.9804878 19.9804878 13.9707317 13.9707317 3.9804878 16"></polyline>
+                <polygon id="XMLID_317_" fill="#B2D35A" points="32 10.6926829 28.0195122 16 32 21.3073171 32 32 21.3073171 32 16 28.0195122 10.6926829 32 0 32 0 21.3073171 3.9804878 16 0 10.6926829 0 0 10.6926829 0 16 3.9804878 21.3073171 0 32 0"></polygon>
+                <polygon id="XMLID_314_" fill="#464969" points="32 32 21.3073171 32 16 28.0195122 10.6926829 32 0 32 0 21.3073171 3.9804878 16 0 10.6926829 0 0"></polygon>
+                <polygon id="XMLID_313_" fill="url(#linearGradient-2)" points="10.6926829 0 6.0097561 6.0097561 0 0"></polygon>
+                <polygon id="XMLID_312_" fill="url(#linearGradient-3)" points="6.0097561 6.0097561 16 3.9804878 10.6926829 0"></polygon>
+                <polygon id="XMLID_311_" fill="url(#linearGradient-4)" points="6.0097561 6.0097561 13.9707317 13.9707317 16 3.9804878"></polygon>
+                <polygon id="XMLID_310_" fill="url(#linearGradient-5)" points="13.9707317 13.9707317 21.3073171 0 16 3.9804878"></polygon>
+                <polygon id="XMLID_309_" fill="url(#linearGradient-6)" points="13.9707317 13.9707317 25.9902439 0 21.3073171 0"></polygon>
+                <polygon id="XMLID_308_" fill="url(#linearGradient-7)" points="13.9707317 13.9707317 32 0 25.9902439 0"></polygon>
+                <polygon id="XMLID_306_" fill="url(#linearGradient-8)" points="32 10.6926829 32 0 13.9707317 13.9707317"></polygon>
+                <polygon id="XMLID_275_" fill="url(#linearGradient-9)" points="28.0195122 16 23.0243902 12.3317073 32 10.6926829"></polygon>
+                <polygon id="XMLID_274_" fill="url(#linearGradient-10)" points="13.9707317 13.9707317 23.0243902 12.3317073 19.9804878 19.9804878"></polygon>
+                <polygon id="XMLID_273_" fill="url(#linearGradient-11)" points="19.9804878 19.9804878 28.0195122 16 23.0243902 12.3317073"></polygon>
+                <polygon id="XMLID_272_" fill="url(#linearGradient-12)" points="19.9804878 19.9804878 32 21.3073171 28.0195122 16"></polygon>
+                <polygon id="XMLID_271_" fill="url(#linearGradient-13)" points="19.9804878 19.9804878 32 32 32 21.3073171"></polygon>
+                <polygon id="XMLID_270_" fill="url(#linearGradient-14)" points="6.0097561 6.0097561 0 10.6926829 0 0"></polygon>
+                <polygon id="XMLID_269_" fill="url(#linearGradient-15)" points="6.0097561 6.0097561 3.9804878 16 0 10.6926829"></polygon>
+                <polygon id="XMLID_268_" fill="url(#linearGradient-16)" points="3.9804878 16 13.9707317 13.9707317 6.0097561 6.0097561"></polygon>
+                <polygon id="XMLID_267_" fill="url(#linearGradient-17)" points="3.9804878 16 0 28.0195122 0 21.3073171"></polygon>
+                <polygon id="XMLID_266_" fill="url(#linearGradient-18)" points="0 28.0195122 10.6926829 32 0 32"></polygon>
+                <polygon id="XMLID_264_" fill="url(#linearGradient-19)" points="13.9707317 13.9707317 3.9804878 16 19.9804878 19.9804878"></polygon>
+                <polygon id="XMLID_263_" fill="url(#linearGradient-20)" points="0 28.0195122 14.2829268 29.2682927 10.6926829 32"></polygon>
+                <polygon id="XMLID_262_" fill="url(#linearGradient-21)" points="14.2829268 29.2682927 2.34146341 20.8390244 0 28.0195122"></polygon>
+                <polygon id="XMLID_261_" fill="url(#linearGradient-22)" points="14.2829268 29.2682927 16 28.0195122 9.05365854 25.6"></polygon>
+                <polygon id="XMLID_260_" fill="url(#linearGradient-23)" points="16 28.0195122 32 32 21.3073171 32"></polygon>
+                <polygon id="XMLID_259_" fill="url(#linearGradient-24)" points="16 28.0195122 19.9804878 19.9804878 32 32"></polygon>
+                <polygon id="XMLID_229_" fill="url(#linearGradient-25)" points="16 28.0195122 16.702439 19.2 19.9804878 19.9804878"></polygon>
+                <polygon id="XMLID_227_" fill="url(#linearGradient-26)" points="9.05365854 25.6 16.2341463 24.8195122 16 28.0195122"></polygon>
+                <polygon id="XMLID_226_" fill="url(#linearGradient-27)" points="9.05365854 25.6 3.9804878 16 2.34146341 20.8390244"></polygon>
+                <polygon id="XMLID_225_" fill="url(#linearGradient-28)" points="9.05365854 25.6 16.702439 19.2 16.2341463 24.8195122"></polygon>
+                <polygon id="XMLID_224_" fill="url(#linearGradient-29)" points="9.05365854 25.6 11.395122 17.8731707 16.702439 19.2"></polygon>
+                <polygon id="XMLID_222_" fill="url(#linearGradient-30)" points="9.05365854 25.6 11.395122 17.8731707 5.77560976 19.4341463"></polygon>
+                <polygon id="XMLID_217_" fill="url(#linearGradient-31)" points="5.77560976 19.4341463 11.395122 17.8731707 3.9804878 16"></polygon>
+              </g>
+            </g>
+          </g>
+        </g>
+      </svg>
+      <span class="logotype__text">RepuX</span>
+    </mat-toolbar>
     <mat-nav-list>
       <a mat-list-item
          *ngFor="let link of navLinks"
          [routerLink]="link.path"
-         routerLinkActive #rla="routerLinkActive">
-        {{link.label}}
+         [routerLinkActive]="['active-route']"
+         #rla="routerLinkActive">
+        <span class="sidenav__menu-item">{{link.label}}</span>
       </a>
     </mat-nav-list>
   </mat-sidenav>
 
   <mat-sidenav-content>
-    <mat-toolbar color="primary">
+    <mat-toolbar>
       <button
         type="button"
         aria-label="Toggle sidenav"
@@ -28,20 +200,19 @@
         <mat-icon aria-label="Side nav toggle icon">menu</mat-icon>
       </button>
       <span class="toolbar-spacer"></span>
-      <button
-        type="button"
-        aria-label="Open settings"
-        mat-icon-button
-        routerLink="settings">
-        <mat-icon>settings</mat-icon>
+      <app-wallet-info *ngIf="!(isHandset$ | async)"></app-wallet-info>
+      <button mat-flat-button color="primary"  (click)="openProductCreatorDialog()">Sell data</button>
+      <button mat-icon-button>
+        <mat-icon>notifications</mat-icon>
       </button>
-      <a
-        type="button"
-        aria-label="Open help"
-        mat-icon-button
-        href="https://help.repux.io/" target="_blank">
-        <mat-icon>help_outline</mat-icon>
-      </a>
+      <button mat-icon-button [matMenuTriggerFor]="menu">
+        <mat-icon>more_vert</mat-icon>
+      </button>
+      <mat-menu #menu="matMenu">
+        <button mat-menu-item routerLink="settings" fragment="wallet">My wallet</button>
+        <button mat-menu-item routerLink="settings" fragment="keys">Private & Public keys</button>
+        <a href="https://help.repux.io/" target="_blank" mat-menu-item>Help</a>
+      </mat-menu>
     </mat-toolbar>
 
     <div class="app-view">

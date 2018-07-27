@@ -2,7 +2,12 @@
 
 @include angular-material-theme($theme);
 
-html, body {
+html {
+  height: 100%;
+  overflow: auto;
+}
+
+body {
   height: 100%;
 }
 

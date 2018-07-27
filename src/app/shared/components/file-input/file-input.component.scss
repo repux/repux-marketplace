@@ -6,8 +6,12 @@ input[type="file"] {
   width: 100%;
 }
 
-button {
-  margin-left: 10px;
+.mat-icon {
+  color: #999;
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
 }
 
 .mat-form-field:not(.mat-form-field-disabled), input:not([disabled]) {
