@@ -51,8 +51,8 @@ export class DataProductService implements OnDestroy {
     return (await this._api).getDataProductTransaction(dataProductAddress, buyerAddress);
   }
 
-  async publishDataProduct(metaFileHash: string, price: BigNumber, daysForDeliver: number): Promise<TransactionResult> {
-    return (await this._api).createDataProduct(metaFileHash, price, daysForDeliver);
+  async publishDataProduct(metaFileHash: string, price: BigNumber, daysToDeliver: number): Promise<TransactionResult> {
+    return (await this._api).createDataProduct(metaFileHash, price, daysToDeliver);
   }
 
   async purchaseDataProduct(dataProductAddress: string, buyerPublicKey: string): Promise<TransactionResult> {
@@ -61,6 +61,10 @@ export class DataProductService implements OnDestroy {
 
   async finaliseDataProductPurchase(dataProductAddress: string, buyerAddress: string, buyerMetaHash: string): Promise<TransactionResult> {
     return (await this._api).finaliseDataProductPurchase(dataProductAddress, buyerAddress, buyerMetaHash);
+  }
+
+  async rateDataProductPurchase(dataProductAddress: string, score: BigNumber): Promise<TransactionResult> {
+    return (await this._api).rateDataProductPurchase(dataProductAddress, score);
   }
 
   async getBoughtDataProducts(): Promise<string[]> {

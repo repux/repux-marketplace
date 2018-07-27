@@ -216,7 +216,7 @@ describe('MarketplaceDataProductListComponent', () => {
             category: [ 'test category 1', 'test category 2' ],
             size: 1024,
             price: '1000000000000000000',
-            daysForDeliver: '1',
+            daysToDeliver: '1',
             fundsToWithdraw: '0',
             eula: {
               type: EulaType.OWNER,
@@ -233,7 +233,7 @@ describe('MarketplaceDataProductListComponent', () => {
         'name',
         'title',
         'category',
-        'daysForDeliver',
+        'daysToDeliver',
         'size',
         'price',
         'timesPurchased',

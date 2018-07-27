@@ -33,7 +33,7 @@ export class MarketplaceDataProductTransactionsListComponent implements OnChange
   }
 
   getTransactionDate(transaction: DataProductTransaction) {
-    return new Date((transaction.deliveryDeadline.getTime() - this.dataProduct.daysForDeliver * DAY_IN_MILLISECONDS));
+    return new Date((transaction.deliveryDeadline.getTime() - this.dataProduct.daysToDeliver * DAY_IN_MILLISECONDS));
   }
 
   onFinaliseSuccess(transaction: DataProductTransaction) {

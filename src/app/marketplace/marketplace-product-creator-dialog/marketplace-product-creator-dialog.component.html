@@ -24,13 +24,13 @@
                   required
                   [formControl]="formGroup.controls['shortDescription']"></textarea>
         <mat-error *ngIf="formGroup.controls['shortDescription'].hasError('required')">
-          Title is <strong>required</strong>
+          Short description is <strong>required</strong>
         </mat-error>
         <mat-error *ngIf="formGroup.controls['shortDescription'].hasError('minlength')">
-          Title should contain <strong>at least {{ titleMinLength }} characters</strong>
+          Short description should contain <strong>at least {{ titleMinLength }} characters</strong>
         </mat-error>
         <mat-error *ngIf="formGroup.controls['shortDescription'].hasError('maxlength')">
-          Title should contain <strong>at most {{ titleMaxLength }} characters</strong>
+          Short description should contain <strong>at most {{ titleMaxLength }} characters</strong>
         </mat-error>
       </mat-form-field>
 
@@ -77,8 +77,8 @@
 
     <div class="col">
       <mat-form-field class="field-row">
-        <mat-select placeholder="Days for deliver" required="true" [formControl]="formGroup.controls['daysForDeliver']">
-          <mat-option *ngFor="let day of daysForDeliverOptions" [value]="day">
+        <mat-select placeholder="Days to deliver" required="true" [formControl]="formGroup.controls['daysToDeliver']">
+          <mat-option *ngFor="let day of daysToDeliverOptions" [value]="day">
             {{ day }}
           </mat-option>
         </mat-select>

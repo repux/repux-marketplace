@@ -9,7 +9,7 @@ describe('DataProductService', () => {
   let repuxWeb3ServiceSpy, walletServiceSpy, storageServiceSpy, websocketServiceSpy;
   const fileHash = 'FILE_HASH';
   const price = new BigNumber(100);
-  const daysForDeliver = 1;
+  const daysToDeliver = 1;
   const rejectError = 'ERROR';
   const resolveResult = 'RESULT';
   const walletAddress = '0x0000000000000000000000000000000000000000';
@@ -81,7 +81,7 @@ describe('DataProductService', () => {
         createDataProduct: () => Promise.reject(rejectError)
       });
       try {
-        await service.publishDataProduct(fileHash, price, daysForDeliver);
+        await service.publishDataProduct(fileHash, price, daysToDeliver);
       } catch (error) {
         expect(error).toBe(rejectError);
         expect(repuxWeb3ServiceSpy.getRepuxApiInstance.calls.count()).toBe(1);
@@ -92,7 +92,7 @@ describe('DataProductService', () => {
       repuxWeb3ServiceSpy.getRepuxApiInstance.and.returnValue({
         createDataProduct: () => Promise.resolve(resolveResult)
       });
-      const result = await service.publishDataProduct(fileHash, price, daysForDeliver);
+      const result = await service.publishDataProduct(fileHash, price, daysToDeliver);
       expect(result).toBe(<any> resolveResult);
       expect(repuxWeb3ServiceSpy.getRepuxApiInstance.calls.count()).toBe(1);
     });

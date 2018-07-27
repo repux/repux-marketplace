@@ -20,6 +20,9 @@ import { MarketplaceFinaliseButtonComponent } from './marketplace-finalise-butto
 import { MarketplacePublishButtonComponent } from './marketplace-publish-button/marketplace-publish-button.component';
 import { MarketplaceUnpublishButtonComponent } from './marketplace-unpublish-button/marketplace-unpublish-button.component';
 import { MarketplaceWithdrawButtonComponent } from './marketplace-withdraw-button/marketplace-withdraw-button.component';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { MarketplaceEulaSelectorComponent } from './marketplace-eula-selector/marketplace-eula-selector.component';
+import { MarketplaceActionButtonsComponent } from './marketplace-action-buttons/marketplace-action-buttons.component';
 import {
   MarketplaceProductCategorySelectorComponent
 } from './marketplace-product-category-selector/marketplace-product-category-selector.component';
@@ -38,13 +41,16 @@ import {
 import {
   MarketplaceDataProductTransactionsListComponent
 } from './marketplace-data-product-transactions-list/marketplace-data-product-transactions-list.component';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { MarketplaceEulaSelectorComponent } from './marketplace-eula-selector/marketplace-eula-selector.component';
-import { MarketplaceActionButtonsComponent } from './marketplace-action-buttons/marketplace-action-buttons.component';
 import {
   MarketplaceDataProductTransactionsListContainerComponent
 } from './marketplace-data-product-transactions-list-container/marketplace-data-product-transactions-list-container.component';
 import { MarketplaceEulaComponent } from './marketplace-eula/marketplace-eula.component';
+import {
+  MarketplaceRateTransactionDialogComponent
+} from './marketplace-rate-transaction-dialog/marketplace-rate-transaction-dialog.component';
+import {
+  MarketplaceRateTransactionButtonComponent
+} from './marketplace-rate-transaction-button/marketplace-rate-transaction-button.component';
 
 @NgModule({
   imports: [
@@ -66,9 +72,11 @@ import { MarketplaceEulaComponent } from './marketplace-eula/marketplace-eula.co
     MarketplaceBuyAwaitingFinalisationComponent,
     MarketplaceBuyReadyToDownloadComponent,
     MarketplaceProductDetailsComponent,
+
     MarketplaceEulaSelectorComponent,
     MarketplaceEulaComponent,
-
+    MarketplaceRateTransactionDialogComponent,
+    MarketplaceRateTransactionButtonComponent,
     MarketplaceBuyProductButtonComponent,
     MarketplaceCancelPurchaseButtonComponent,
     MarketplaceDataProductListComponent,
@@ -98,7 +106,8 @@ import { MarketplaceEulaComponent } from './marketplace-eula/marketplace-eula.co
   ],
   entryComponents: [
     MarketplaceProductCreatorDialogComponent,
-    MarketplacePurchaseConfirmationDialogComponent
+    MarketplacePurchaseConfirmationDialogComponent,
+    MarketplaceRateTransactionDialogComponent
   ]
 })
 export class MarketplaceModule {

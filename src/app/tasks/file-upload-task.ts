@@ -42,7 +42,7 @@ export class FileUploadTask implements Task {
     private _category: string[],
     private _price: BigNumber,
     private _file: File,
-    private _daysForDeliver: number,
+    private _daysToDeliver: number,
     private _sampleFiles: FileList,
     private _eulaSelection: EulaSelection,
     private _maxNumberOfDownloads: number,
@@ -195,7 +195,7 @@ export class FileUploadTask implements Task {
     });
 
     const transactionDialog: TransactionDialogComponent = transactionDialogRef.componentInstance;
-    transactionDialog.transaction = () => this._dataProductService.publishDataProduct(this._result, this._price, this._daysForDeliver);
+    transactionDialog.transaction = () => this._dataProductService.publishDataProduct(this._result, this._price, this._daysToDeliver);
 
     return transactionDialog.callTransaction();
   }
@@ -260,7 +260,9 @@ export class FileUploadTask implements Task {
     dataProduct.fullDescription = this._fullDescription;
     dataProduct.category = this._category;
     dataProduct.price = this._price;
-    dataProduct.daysForDeliver = this._daysForDeliver;
+    dataProduct.daysToDeliver = this._daysToDeliver;
+    dataProduct.eula = this._eula;
+    dataProduct.sampleFile = this._sampleFile;
     this._dataProduct = dataProduct;
 
     this._unpublishedProductsService.addProduct(this._dataProduct);

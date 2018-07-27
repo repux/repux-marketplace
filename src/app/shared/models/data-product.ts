@@ -3,6 +3,7 @@ import { Deserializable } from './deserializable';
 import { environment } from '../../../environments/environment';
 import { DataProductTransaction } from './data-product-transaction';
 import { DataProduct as BlockchainDataProduct } from 'repux-web3-api';
+import { Eula, Attachment } from 'repux-lib';
 
 export class DataProduct implements Deserializable<DataProduct> {
   address?: string;
@@ -23,9 +24,12 @@ export class DataProduct implements Deserializable<DataProduct> {
   disabled?: boolean;
   transactions: DataProductTransaction[] = [];
   lastUpdate: Date;
-  daysForDeliver: number;
+  daysToDeliver: number;
+  daysToRate: number;
   fundsToWithdraw: BigNumber;
   blockchainState?: BlockchainDataProduct;
+  eula: Eula;
+  sampleFile: Attachment[];
 
   deserialize(input: any): DataProduct {
     Object.assign(this, input);

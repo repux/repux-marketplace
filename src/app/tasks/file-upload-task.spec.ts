@@ -23,7 +23,7 @@ describe('FileUploadTask()', () => {
   const category = [ 'CATEGORY' ];
   const price = new BigNumber(1);
   const file = new File([ new Blob([]) ], fileName);
-  const daysForDeliver = 1;
+  const daysToDeliver = 1;
   const sampleFiles = [];
   const eulaSelection: EulaSelection = {
     type: EulaType.OWNER,
@@ -83,7 +83,7 @@ describe('FileUploadTask()', () => {
       category,
       price,
       <any> file,
-      daysForDeliver,
+      daysToDeliver,
       <any> sampleFiles,
       eulaSelection,
       maxNumberOfDownloads,
@@ -106,7 +106,7 @@ describe('FileUploadTask()', () => {
       expect(fileUploadTask[ '_category' ]).toBe(category);
       expect(fileUploadTask[ '_price' ]).toBe(price);
       expect(<any> fileUploadTask[ '_file' ]).toBe(file);
-      expect(<any> fileUploadTask[ '_daysForDeliver' ]).toBe(daysForDeliver);
+      expect(<any> fileUploadTask[ '_daysToDeliver' ]).toBe(daysToDeliver);
       expect(<any> fileUploadTask[ '_sampleFiles' ]).toBe(sampleFiles);
       expect(<any> fileUploadTask[ '_eulaSelection' ]).toBe(eulaSelection);
       expect(fileUploadTask[ '_maxNumberOfDownloads' ]).toBe(maxNumberOfDownloads);

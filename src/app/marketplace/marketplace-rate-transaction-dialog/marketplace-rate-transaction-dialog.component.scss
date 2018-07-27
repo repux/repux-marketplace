@@ -1,0 +1,14 @@
+.stars {
+  text-align: center;
+  margin: 30px;
+
+  .star {
+    cursor: pointer;
+    opacity: 0.3;
+    overflow: hidden;
+
+    &.active {
+      opacity: 1;
+    }
+  }
+}

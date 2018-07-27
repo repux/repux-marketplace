@@ -63,7 +63,7 @@ export class MarketplacePublishButtonComponent implements OnDestroy {
     transactionDialog.transaction = () => this._dataProductService.publishDataProduct(
       this.dataProduct.sellerMetaHash,
       this.dataProduct.price,
-      this.dataProduct.daysForDeliver
+      this.dataProduct.daysToDeliver
     );
 
     await transactionDialog.callTransaction();

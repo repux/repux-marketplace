@@ -9,6 +9,11 @@
     [dataProduct]="dataProduct"
     [blockchainBuyTransaction]="blockchainBuyTransaction"></app-marketplace-cancel-purchase-button>
 
+  <app-marketplace-rate-transaction-button
+    *ngIf="availableActions.includes('rate')"
+    [dataProduct]="dataProduct"
+    [blockchainBuyTransaction]="blockchainBuyTransaction"></app-marketplace-rate-transaction-button>
+
   <app-marketplace-publish-button
     *ngIf="availableActions.includes('publish')"
     [dataProduct]="dataProduct"></app-marketplace-publish-button>

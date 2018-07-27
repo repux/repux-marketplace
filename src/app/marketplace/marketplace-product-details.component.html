@@ -20,7 +20,7 @@
     </mat-list-item>
     <mat-divider></mat-divider>
     <mat-list-item>
-      <h4 mat-line>{{ product.daysForDeliver }} days</h4>
+      <h4 mat-line>{{ product.daysToDeliver }} days</h4>
       <mat-hint mat-line>Delivery time</mat-hint>
     </mat-list-item>
     <mat-divider></mat-divider>
@@ -54,7 +54,7 @@
   <div class="row">
     <app-marketplace-action-buttons
       [dataProduct]="product"
-      [availableActions]="[ 'buy' ]"></app-marketplace-action-buttons>
+      [availableActions]="[ 'buy', 'rate' ]"></app-marketplace-action-buttons>
   </div>
 
   <div *ngIf="product.sampleFile?.length > 0">
