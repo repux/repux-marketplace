@@ -6,6 +6,10 @@ import { MatDialog } from '@angular/material';
 import { Subscription } from 'rxjs/internal/Subscription';
 import { saveAs } from 'file-saver';
 import { KeysUpdateDialogComponent } from '../../key-store/keys-update-dialog/keys-update-dialog.component';
+import { NavigationEnd, Router } from '@angular/router';
+import { Observable } from 'rxjs/internal/Observable';
+import Wallet from '../../shared/models/wallet';
+import { WalletService } from '../../services/wallet.service';
 
 @Component({
   selector: 'app-settings-index',
@@ -13,15 +17,34 @@ import { KeysUpdateDialogComponent } from '../../key-store/keys-update-dialog/ke
   styleUrls: [ './settings-index.component.scss' ]
 })
 export class SettingsIndexComponent implements OnInit, OnDestroy {
+  wallet$: Observable<Wallet>;
   private subscription: Subscription;
-
   public hasKeys = false;
 
-  constructor(private keyStoreService: KeyStoreService, private dialog: MatDialog) {
+  constructor(
+    private keyStoreService: KeyStoreService,
+    private walletService: WalletService,
+    private dialog: MatDialog,
+    private router: Router
+  ) {
     this.hasKeys = this.keyStoreService.hasKeys();
+    router.events.subscribe(s => {
+      if (s instanceof NavigationEnd) {
+        const tree = router.parseUrl(router.url);
+        if (tree.fragment) {
+          const element = document.querySelector('#' + tree.fragment);
+          if (element) {
+            setTimeout(() => {
+              element.scrollIntoView(true);
+            });
+          }
+        }
+      }
+    });
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
+    this.wallet$ = this.walletService.getWallet();
   }
 
   downloadKeys() {

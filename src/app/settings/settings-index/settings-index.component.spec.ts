@@ -1,7 +1,9 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { SettingsIndexComponent } from './settings-index.component';
-import { MatButtonModule, MatDialogModule } from '@angular/material';
+import { MaterialModule } from '../../material.module';
+import { SharedModule } from '../../shared/shared.module';
+import { RouterTestingModule } from '@angular/router/testing';
 
 describe('SettingsIndexComponent', () => {
   let component: SettingsIndexComponent;
@@ -10,8 +12,9 @@ describe('SettingsIndexComponent', () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       imports: [
-        MatDialogModule,
-        MatButtonModule
+        MaterialModule,
+        SharedModule,
+        RouterTestingModule,
       ],
       declarations: [ SettingsIndexComponent ]
     })

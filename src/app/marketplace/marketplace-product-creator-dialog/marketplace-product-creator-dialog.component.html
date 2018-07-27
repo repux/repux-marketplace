@@ -4,9 +4,12 @@
     <div class="col">
       <mat-form-field class="field-row">
         <input matInput
+               #titleInput
+               [maxlength]="titleMaxLength"
                placeholder="Title"
                required
                formControlName="title">
+        <mat-hint align="end">{{titleInput.value.length}} / {{titleMaxLength}}</mat-hint>
         <mat-error *ngIf="formGroup.controls['title'].hasError('required')">
           Title is <strong>required</strong>
         </mat-error>
@@ -20,24 +23,35 @@
 
       <mat-form-field class="field-row">
         <textarea matInput
+                  #shortDescriptionInput
+                  [maxlength]="shortDescriptionMaxLength"
+                  mat-autosize="true"
                   placeholder="Short description"
                   required
                   [formControl]="formGroup.controls['shortDescription']"></textarea>
+        <mat-hint align="end">{{shortDescriptionInput.value.length}} / {{shortDescriptionMaxLength}}</mat-hint>
         <mat-error *ngIf="formGroup.controls['shortDescription'].hasError('required')">
           Short description is <strong>required</strong>
         </mat-error>
         <mat-error *ngIf="formGroup.controls['shortDescription'].hasError('minlength')">
-          Short description should contain <strong>at least {{ titleMinLength }} characters</strong>
+          Short description should contain <strong>at least {{ shortDescriptionMinLength }} characters</strong>
         </mat-error>
         <mat-error *ngIf="formGroup.controls['shortDescription'].hasError('maxlength')">
-          Short description should contain <strong>at most {{ titleMaxLength }} characters</strong>
+          Short description should contain <strong>at most {{ shortDescriptionMaxLength }} characters</strong>
         </mat-error>
       </mat-form-field>
 
       <mat-form-field class="field-row">
         <textarea matInput
+                  #longDescriptionInput
+                  [maxlength]="longDescriptionMaxLength"
+                  mat-autosize="true"
                   placeholder="Full description"
                   [formControl]="formGroup.controls['fullDescription']"></textarea>
+        <mat-hint align="end">{{longDescriptionInput.value.length}} / {{longDescriptionMaxLength}}</mat-hint>
+        <mat-error *ngIf="formGroup.controls['fullDescription'].hasError('maxlength')">
+          Long description should contain <strong>at most {{ longDescriptionMaxLength }} characters</strong>
+        </mat-error>
       </mat-form-field>
 
       <div class="field-row">
@@ -82,6 +96,7 @@
             {{ day }}
           </mat-option>
         </mat-select>
+        <mat-hint>Max. number of days for a seller to finalise transaction.</mat-hint>
       </mat-form-field>
 
       <app-marketplace-eula-selector
@@ -102,6 +117,6 @@
 
   <mat-dialog-actions>
     <button mat-button type="button" (click)="closeDialog()">Cancel</button>
-    <button mat-button>Create and upload</button>
+    <button mat-flat-button>Create and upload</button>
   </mat-dialog-actions>
 </form>

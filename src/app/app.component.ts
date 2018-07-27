@@ -8,6 +8,8 @@ import { WalletService } from './services/wallet.service';
 import { Router } from '@angular/router';
 import { OverlayContainer } from '@angular/cdk/overlay';
 import { TagManagerService } from './shared/services/tag-manager.service';
+import { MarketplaceProductCreatorDialogComponent } from './marketplace/marketplace-product-creator-dialog/marketplace-product-creator-dialog.component';
+import { MatDialog } from '@angular/material';
 
 @Component({
   selector: 'app-root',
@@ -21,10 +23,6 @@ export class AppComponent implements OnInit {
     );
 
   navLinks = [
-    {
-      label: 'Dashboard',
-      path: 'dashboard'
-    },
     {
       label: 'Marketplace',
       path: 'marketplace'
@@ -45,7 +43,8 @@ export class AppComponent implements OnInit {
     private webpushNotificationService: WebpushNotificationService,
     private walletService: WalletService,
     private overlayContainer: OverlayContainer,
-    private tagManager: TagManagerService
+    private tagManager: TagManagerService,
+    private dialog: MatDialog
   ) {
   }
 
@@ -64,6 +63,12 @@ export class AppComponent implements OnInit {
 
         this.tagManager.sendUserId(wallet.address);
       }
+    });
+  }
+
+  openProductCreatorDialog() {
+    this.dialog.open(MarketplaceProductCreatorDialogComponent, {
+      disableClose: true
     });
   }
 }

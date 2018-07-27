@@ -1,13 +1,7 @@
 import { Component, OnDestroy } from '@angular/core';
-import { MatDialog } from '@angular/material';
 import { UnpublishedProductsService } from './services/unpublished-products.service';
-import { Observable } from 'rxjs/internal/Observable';
-import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
-import { map } from 'rxjs/operators';
+import { BreakpointObserver } from '@angular/cdk/layout';
 import { Subscription } from 'rxjs/internal/Subscription';
-import {
-  MarketplaceProductCreatorDialogComponent
-} from './marketplace-product-creator-dialog/marketplace-product-creator-dialog.component';
 import { MyActiveListingsService } from './services/my-active-listings.service';
 import { PendingFinalisationService } from './services/pending-finalisation.service';
 import { environment } from '../../environments/environment';
@@ -24,10 +18,6 @@ export enum MarketplaceSellLink {
   styleUrls: [ './marketplace-sell.component.scss' ]
 })
 export class MarketplaceSellComponent implements OnDestroy {
-  isHandset$: Observable<boolean> = this._breakpointObserver.observe(Breakpoints.Handset)
-    .pipe(
-      map(result => result.matches)
-    );
   navLinks = [
     {
       label: 'My active listings',
@@ -56,7 +46,6 @@ export class MarketplaceSellComponent implements OnDestroy {
   private _pendingFinalisationLink;
 
   constructor(
-    private _dialog: MatDialog,
     private _breakpointObserver: BreakpointObserver,
     private _myActiveListingsService: MyActiveListingsService,
     private _unpublishedProductsService: UnpublishedProductsService,
@@ -74,12 +63,6 @@ export class MarketplaceSellComponent implements OnDestroy {
 
     this._pendingFinalisationSubscription = this._pendingFinalisationService.getTransactions()
       .subscribe(pendingFinalisation => this._pendingFinalisationLink.items = pendingFinalisation);
-  }
-
-  openProductCreatorDialog() {
-    this._dialog.open(MarketplaceProductCreatorDialogComponent, {
-      disableClose: true
-    });
   }
 
   ngOnDestroy() {

@@ -1,0 +1,11 @@
+<div *ngIf="wallet$ | async as wallet" class="wallet-info">
+  <div class="wallet-info__item">
+    <span class="wallet-info__label">Balance</span>
+    <span class="wallet-info__value">{{ wallet.balance | currencyRepux }}</span>
+  </div>
+  <div class="wallet-info__item">
+    <span class="wallet-info__label">Wallet address</span>
+  <span class="wallet-info__value"
+        matTooltip="{{ wallet.address }}">{{ wallet.address | slice:0:10 }}...</span>
+  </div>
+</div>

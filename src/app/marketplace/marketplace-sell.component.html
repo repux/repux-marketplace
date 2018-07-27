@@ -12,14 +12,3 @@
 </nav>
 
 <router-outlet></router-outlet>
-
-<button
-  class="add-product-button"
-  [class.navigation-opened]="!(isHandset$ | async)"
-  mat-fab
-  (click)="openProductCreatorDialog()"
-  matTooltip="Create new product"
-  matTooltipPosition="before">
-  <mat-icon aria-label="Add file">add</mat-icon>
-</button>
-

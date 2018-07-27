@@ -13,6 +13,7 @@ import { TaskManagerComponent } from './components/task-manager/task-manager.com
 import { MaterialModule } from '../material.module';
 import { NotificationsNumberComponent } from './components/notifications-number/notifications-number.component';
 import { MaxFileSizeDirective } from './components/file-input/max-file-size.directive';
+import { WalletInfoComponent } from './components/wallet-info/wallet-info.component';
 
 @NgModule({
   imports: [
@@ -34,7 +35,8 @@ import { MaxFileSizeDirective } from './components/file-input/max-file-size.dire
     NotificationsNumberComponent,
     ArrayJoinPipe,
     FileSizePipe,
-    CurrencyRepuxPipe
+    CurrencyRepuxPipe,
+    WalletInfoComponent
   ],
   exports: [
     FileInputComponent,
@@ -43,6 +45,7 @@ import { MaxFileSizeDirective } from './components/file-input/max-file-size.dire
     TransactionDialogComponent,
     TaskManagerComponent,
     NotificationsNumberComponent,
+    WalletInfoComponent,
     ArrayJoinPipe,
     FileSizePipe,
     CurrencyRepuxPipe

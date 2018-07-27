@@ -7,7 +7,7 @@ $app-warn: mat-palette($mat-red);
 @include mat-core();
 
 $theme: mat-light-theme(
-                $app-primary,
-                $app-accent,
-                $app-warn
+    $app-primary,
+    $app-accent,
+    $app-warn
 );
