@@ -1,47 +1,72 @@
 import { DataProductListService } from './data-product-list.service';
-import { defer, from } from 'rxjs/index';
-import { EsDataProduct } from '../shared/models/es-data-product';
+import { defer, from } from 'rxjs';
+import { DataProduct } from '../shared/models/data-product';
+import BigNumber from 'bignumber.js';
 
 describe('DataProductListService', () => {
-  let elasticSearchServiceSpy: { search: jasmine.Spy };
+  let httpSpy: { post: jasmine.Spy };
   let dataProductServiceSpy: { getDataProductData: jasmine.Spy };
   let service: DataProductListService;
   const type = 'data_product';
 
   beforeEach(() => {
-    elasticSearchServiceSpy = jasmine.createSpyObj('ElasticSearchService', [ 'search' ]);
+    httpSpy = jasmine.createSpyObj('HttpClient', [ 'post' ]);
     dataProductServiceSpy = jasmine.createSpyObj('DataProductService', [ 'getDataProductData' ]);
 
-    service = new DataProductListService(<any> elasticSearchServiceSpy, <any> dataProductServiceSpy);
+    service = new DataProductListService(<any> httpSpy, <any> dataProductServiceSpy);
   });
 
   describe('#getDataProducts()', () => {
     it('should call search method on ElasticSearchService', () => {
-      const expectedEsDataProducts = [ new EsDataProduct().deserialize({
-        _index: 'repux',
-        _type: type,
-        _id: '1',
-        _score: 2,
-        _source: {
-          price: 1
-        }
-      }), new EsDataProduct().deserialize({
-        _index: 'repux',
-        _type: type,
-        _id: '2',
-        _score: 1,
-        _source: {
-          price: 2
-        }
+      const lastUpdateTimestamp = 1532695485;
+      const fundsToWithdraw = '0';
+      const price = '0';
+
+      const expectedDataProducts = [ new DataProduct().deserialize({
+        price: new BigNumber(price),
+        lastUpdate: new Date(lastUpdateTimestamp),
+        lastUpdateTimestamp,
+        fundsToWithdraw: new BigNumber(fundsToWithdraw),
+      }), new DataProduct().deserialize({
+        price: new BigNumber(price),
+        lastUpdate: new Date(lastUpdateTimestamp),
+        lastUpdateTimestamp,
+        fundsToWithdraw: new BigNumber(fundsToWithdraw),
       }) ];
 
       const expectedResult = {
         total: 2,
         max_score: 2,
-        hits: expectedEsDataProducts
+        hits: expectedDataProducts
       };
 
-      elasticSearchServiceSpy.search.and.returnValue(defer(() => Promise.resolve(expectedResult)));
+      httpSpy.post.and.returnValue(defer(() => Promise.resolve({
+        hits: {
+          total: 2,
+          max_score: 2,
+          hits: [ {
+            _index: 'repux',
+            _type: type,
+            _id: '1',
+            _score: 2,
+            _source: {
+              price,
+              lastUpdateTimestamp,
+              fundsToWithdraw
+            }
+          }, {
+            _index: 'repux',
+            _type: type,
+            _id: '2',
+            _score: 1,
+            _source: {
+              price,
+              lastUpdateTimestamp,
+              fundsToWithdraw
+            }
+          } ]
+        }
+      })));
 
       service.getDataProducts()
         .subscribe(result => {
@@ -49,55 +74,80 @@ describe('DataProductListService', () => {
           },
           fail
         );
-      expect(elasticSearchServiceSpy.search.calls.count()).toBe(1, 'one call');
+      expect(httpSpy.post.calls.count()).toBe(1, 'one call');
     });
   });
 
   describe('#getDataProductsWithBlockchainState()', () => {
     it('should call search method on ElasticSearchService and get state from blockchain for all products', () => {
-      const expectedEsDataProducts = [ new EsDataProduct().deserialize({
-        _index: 'repux',
-        _type: type,
-        _id: '1',
-        _score: 2,
-        _source: {
-          address: '1',
-          price: 1
-        }
-      }), new EsDataProduct().deserialize({
-        _index: 'repux',
-        _type: type,
-        _id: '2',
-        _score: 1,
-        _source: {
-          address: '2',
-          price: 2
-        }
+      const lastUpdateTimestamp = 1532695485;
+      const fundsToWithdraw = '0';
+      const price = '0';
+
+      const expectedDataProducts = [ new DataProduct().deserialize({
+        address: '1',
+        price: new BigNumber(price),
+        lastUpdate: new Date(lastUpdateTimestamp),
+        lastUpdateTimestamp,
+        fundsToWithdraw: new BigNumber(fundsToWithdraw),
+      }), new DataProduct().deserialize({
+        address: '2',
+        price: new BigNumber(price),
+        lastUpdate: new Date(lastUpdateTimestamp),
+        lastUpdateTimestamp,
+        fundsToWithdraw: new BigNumber(fundsToWithdraw),
       }) ];
 
       const expectedResult = {
         total: 2,
         max_score: 2,
-        hits: expectedEsDataProducts
+        hits: expectedDataProducts
       };
 
-      elasticSearchServiceSpy.search.and.returnValue(from(Promise.resolve(expectedResult)));
+      httpSpy.post.and.returnValue(from(Promise.resolve({
+        hits: {
+          total: 2,
+          max_score: 2,
+          hits: [ {
+            _index: 'repux',
+            _type: type,
+            _id: '1',
+            _score: 2,
+            _source: {
+              address: '1',
+              price,
+              lastUpdateTimestamp,
+              fundsToWithdraw
+            }
+          }, {
+            _index: 'repux',
+            _type: type,
+            _id: '2',
+            _score: 1,
+            _source: {
+              address: '2',
+              price,
+              lastUpdateTimestamp,
+              fundsToWithdraw
+            }
+          } ]
+        }
+      })));
       dataProductServiceSpy.getDataProductData.and.callFake(productAddress =>
         Promise.resolve({ disabled: true, address: productAddress })
       );
 
       service.getDataProductsWithBlockchainState()
         .subscribe(result => {
-            expect(result).toEqual(expectedResult, 'expected result');
-            expect(expectedResult.hits[ 0 ].source.blockchainState.disabled).toBe(true);
-            expect(expectedResult.hits[ 0 ].source.blockchainState.address).toBe('1');
-            expect(expectedResult.hits[ 1 ].source.blockchainState.disabled).toBe(true);
-            expect(expectedResult.hits[ 1 ].source.blockchainState.address).toBe('2');
+            expect(result.hits[ 0 ].blockchainState.disabled).toBe(true);
+            expect(result.hits[ 0 ].blockchainState.address).toBe('1');
+            expect(result.hits[ 1 ].blockchainState.disabled).toBe(true);
+            expect(result.hits[ 1 ].blockchainState.address).toBe('2');
             expect(dataProductServiceSpy.getDataProductData.calls.count()).toBe(2);
           },
           fail
         );
-      expect(elasticSearchServiceSpy.search.calls.count()).toBe(1, 'one call');
+      expect(httpSpy.post.calls.count()).toBe(1, 'one call');
     });
   });
 });

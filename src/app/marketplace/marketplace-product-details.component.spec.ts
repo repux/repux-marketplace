@@ -11,6 +11,7 @@ import { DataProduct } from '../shared/models/data-product';
 import { EulaType } from 'repux-lib';
 import { MarketplaceEulaComponent } from './marketplace-eula/marketplace-eula.component';
 import { IpfsService } from '../services/ipfs.service';
+import { MarketplaceRatingComponent } from './marketplace-rating/marketplace-rating.component';
 
 @Component({ selector: 'app-marketplace-action-buttons', template: '' })
 class MarketplaceActionButtonsStubComponent {
@@ -32,7 +33,8 @@ describe('MarketplaceProductDetailsComponent', () => {
         FileSizePipe,
         CurrencyRepuxPipe,
         MarketplaceProductDetailsComponent,
-        MarketplaceEulaComponent
+        MarketplaceEulaComponent,
+        MarketplaceRatingComponent
       ],
       imports: [
         RouterTestingModule,

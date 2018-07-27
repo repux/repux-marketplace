@@ -1,10 +1,8 @@
 import { Component, Input, OnChanges, OnDestroy, ViewChild } from '@angular/core';
 import { DataProductListService } from '../../services/data-product-list.service';
 import { EsResponse } from '../../shared/models/es-response';
-import { EsDataProduct } from '../../shared/models/es-data-product';
 import { MatPaginator, MatTableDataSource, PageEvent, Sort } from '@angular/material';
 import { environment } from '../../../environments/environment';
-import { Deserializable } from '../../shared/models/deserializable';
 import { DataProductTransaction } from '../../shared/models/data-product-transaction';
 import { BigNumber } from 'bignumber.js';
 import { DataProduct } from '../../shared/models/data-product';
@@ -48,7 +46,7 @@ export class MarketplaceDataProductListComponent implements OnChanges, OnDestroy
   @Input() dataProducts: DataProduct[];
 
   public eulaType = EulaType;
-  public esDataProducts: EsResponse<Deserializable<EsDataProduct>>;
+  public esDataProducts: EsResponse<DataProduct>;
   public dataSource: MatTableDataSource<DataProduct>;
   public pageSizeOptions = environment.repux.pageSizeOptions;
   public isLoadingResults = true;
@@ -192,7 +190,7 @@ export class MarketplaceDataProductListComponent implements OnChanges, OnDestroy
       this.dataProducts = this.dataProducts.filter(dataProduct => dataProduct.address !== event.dataProduct.address);
     } else {
       this.esDataProducts.hits = this.esDataProducts.hits
-        .filter((esDataProduct: EsDataProduct) => esDataProduct.id !== event.dataProduct.address);
+        .filter((dataProduct: DataProduct) => dataProduct.address !== event.dataProduct.address);
     }
 
     this.reloadRecords();
@@ -206,8 +204,7 @@ export class MarketplaceDataProductListComponent implements OnChanges, OnDestroy
     if (this.dataProducts) {
       this.dataSource = new MatTableDataSource(this.dataProducts);
     } else if (this.esDataProducts) {
-      const dataProducts = this.esDataProducts.hits.map((esDataProduct: EsDataProduct) => esDataProduct.source);
-      this.dataSource = new MatTableDataSource(dataProducts);
+      this.dataSource = new MatTableDataSource(this.esDataProducts.hits);
     }
 
     this.isLoadingResults = false;

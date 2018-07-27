@@ -1,0 +1,24 @@
+$star-size: 24px;
+
+:host {
+  display: inline-flex;
+  align-items: center;
+}
+
+mat-icon {
+  position: absolute;
+
+  &.background-star {
+    opacity: 0.3;
+  }
+
+  &.foreground-star {
+    overflow: hidden;
+  }
+}
+
+.star {
+  position: relative;
+  height: $star-size;
+  width: $star-size;
+}

@@ -51,6 +51,7 @@ import {
 import {
   MarketplaceRateTransactionButtonComponent
 } from './marketplace-rate-transaction-button/marketplace-rate-transaction-button.component';
+import { MarketplaceRatingComponent } from './marketplace-rating/marketplace-rating.component';
 
 @NgModule({
   imports: [
@@ -91,7 +92,8 @@ import {
     MarketplaceUnpublishButtonComponent,
     MarketplaceWithdrawButtonComponent,
     MarketplaceActionButtonsComponent,
-    MarketplaceDataProductTransactionsListContainerComponent
+    MarketplaceDataProductTransactionsListContainerComponent,
+    MarketplaceRatingComponent
   ],
   exports: [
     MarketplaceBrowseComponent,

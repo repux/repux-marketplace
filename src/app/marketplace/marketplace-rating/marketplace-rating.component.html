@@ -1,0 +1,8 @@
+<div class="star" *ngIf="displayStar">
+  <mat-icon class="background-star" color="primary">star_rate</mat-icon>
+  <mat-icon class="foreground-star" color="primary" [style.width]="percentageRating + '%'">star_rate</mat-icon>
+</div>
+
+<div *ngIf="displayLabel">
+  {{ this.rating.toNumber() | number : '1.0-1' }}/{{this.maxRate | number : '1.0-1'}}
+</div>

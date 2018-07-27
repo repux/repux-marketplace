@@ -1,47 +1,47 @@
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs/index';
+import { Observable } from 'rxjs';
 import { EsResponse } from '../shared/models/es-response';
-import { EsDataProduct } from '../shared/models/es-data-product';
 import { ElasticSearchService } from './elastic-search.service';
-import { Deserializable } from '../shared/models/deserializable';
-import { flatMap } from 'rxjs/internal/operators';
+import { flatMap, map, pluck } from 'rxjs/internal/operators';
 import { DataProductService } from './data-product.service';
+import { DataProduct } from '../shared/models/data-product';
+import { HttpClient } from '@angular/common/http';
 
 @Injectable({
   providedIn: 'root'
 })
 export class DataProductListService {
   private static type = 'data_product';
+  private esService: ElasticSearchService<DataProduct>;
 
   constructor(
-    private esService: ElasticSearchService<EsDataProduct>,
+    private http: HttpClient,
     private dataProductService: DataProductService) {
+    this.esService = new ElasticSearchService(this.http, DataProduct);
   }
 
-  getDataProducts(query?: Object, sort?: string, size?: number, from?: number): Observable<EsResponse<Deserializable<EsDataProduct>>> {
-    return this.esService.search(DataProductListService.type, query, sort, size, from, EsDataProduct);
+  getDataProducts(query?: Object, sort?: string, size?: number, from?: number): Observable<EsResponse<DataProduct>> {
+    return this.esService.search(DataProductListService.type, query, sort, size, from);
   }
 
   getDataProductsWithBlockchainState(query?: Object, sort?: string, size?: number, from?: number)
-    : Observable<EsResponse<Deserializable<EsDataProduct>>> {
+    : Observable<EsResponse<DataProduct>> {
     return this.getDataProducts(query, sort, size, from)
       .pipe(
-        flatMap(async esDataProducts => {
-          const dataProducts = esDataProducts.hits.map((esDataProduct: EsDataProduct) => esDataProduct.source);
-
-          await Promise.all(dataProducts.map(dataProduct => {
+        flatMap(async esResponse => {
+          await Promise.all(esResponse.hits.map(dataProduct => {
             const promise = this.dataProductService.getDataProductData(dataProduct.address);
             promise.then(blockchainState => dataProduct.blockchainState = blockchainState);
 
             return promise;
           }));
 
-          return esDataProducts;
+          return esResponse;
         })
       );
   }
 
-  getDataProduct(address: string): Observable<EsResponse<Deserializable<EsDataProduct>>> {
+  getDataProduct(address: string): Observable<DataProduct> {
     const query = {
       'bool': {
         'must': [
@@ -49,6 +49,9 @@ export class DataProductListService {
         ]
       }
     };
-    return this.esService.search(DataProductListService.type, query, '', 1, 0, EsDataProduct);
+    return this.esService.search(DataProductListService.type, query, '', 1, 0).pipe(
+      pluck('hits'),
+      map(obj => obj[ 0 ])
+    );
   }
 }

@@ -2,7 +2,6 @@ import { PendingFinalisationService, getPendingFinalisationDataProductsQuery } f
 import Wallet from '../../shared/models/wallet';
 import { DataProduct } from '../../shared/models/data-product';
 import { from } from 'rxjs';
-import { EsDataProduct } from '../../shared/models/es-data-product';
 import { Observable } from 'rxjs/internal/Observable';
 import { DataProductTransaction } from '../../shared/models/data-product-transaction';
 
@@ -17,9 +16,6 @@ describe('PendingFinalisationService', () => {
 
   const dataProduct = new DataProduct();
   dataProduct.transactions = [ transaction ];
-
-  const esDataProduct = new EsDataProduct();
-  esDataProduct.source = dataProduct;
 
   beforeEach(() => {
     walletServiceSpy = jasmine.createSpyObj('WalletService', [ 'getWallet' ]);
@@ -95,7 +91,7 @@ describe('PendingFinalisationService', () => {
 
 
         dataProductListServiceSpy.getDataProducts.and.callFake(() => {
-          return from(Promise.resolve({ hits: [ esDataProduct ] }));
+          return from(Promise.resolve({ hits: [ dataProduct ] }));
         });
 
         service.refresh(wallet);
