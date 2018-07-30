@@ -1,27 +1,88 @@
 <form [formGroup]="formGroup" (ngSubmit)="upload()">
-  <h2 mat-dialog-title>Create data product</h2>
-  <mat-dialog-content class="row">
-    <div class="col">
-      <mat-form-field class="field-row">
-        <input matInput
-               #titleInput
-               [maxlength]="titleMaxLength"
-               placeholder="Title"
-               required
-               formControlName="title">
-        <mat-hint align="end">{{titleInput.value.length}} / {{titleMaxLength}}</mat-hint>
-        <mat-error *ngIf="formGroup.controls['title'].hasError('required')">
-          Title is <strong>required</strong>
-        </mat-error>
-        <mat-error *ngIf="formGroup.controls['title'].hasError('minlength')">
-          Title should contain <strong>at least {{ titleMinLength }} characters</strong>
-        </mat-error>
-        <mat-error *ngIf="formGroup.controls['title'].hasError('maxlength')">
-          Title should contain <strong>at most {{ titleMaxLength }} characters</strong>
-        </mat-error>
-      </mat-form-field>
+  <h2 mat-dialog-title>Add data file to Marketplace</h2>
+  <mat-dialog-content>
+    <div class="row">
+      <div class="col">
+        <h3 class="mat-subheading-2">Add your files</h3>
+        <div class="field-row">
+          <app-file-input #fileInput
+                          placeholder="File"
+                          [required]="true"
+                          [formControl]="formGroup.controls['file']"
+                          ngDefaultControl></app-file-input>
+        </div>
 
-      <mat-form-field class="field-row">
+        <div class="field-row">
+          <app-file-input #sampleFileInput
+                          placeholder="Sample files"
+                          [formControl]="formGroup.controls['sampleFile']"
+                          ngDefaultControl
+                          hint="These files will be visible to everyone"
+                          [multiple]="true"
+                          [maxFileSize]="maxFileSize"></app-file-input>
+        </div>
+      </div>
+
+      <div class="col">
+        <h3 class="mat-subheading-2">Set price & delivery time</h3>
+        <mat-form-field class="field-row">
+          <input matInput
+                 type="text"
+                 placeholder="Price"
+                 required
+                 [formControl]="formGroup.controls['price']">
+          <span matSuffix="">{{ currencyName }}</span>
+          <mat-error *ngIf="formGroup.controls['price'].hasError('required')">
+            Price is <strong>required</strong>
+          </mat-error>
+          <mat-error *ngIf="formGroup.controls['price'].hasError('min')">
+            Price should be <strong>positive number</strong>
+          </mat-error>
+          <mat-error *ngIf="formGroup.controls['price'].hasError('pattern')">
+            Price should be number containing at most {{ repuxPrecision }} decimal places.
+          </mat-error>
+        </mat-form-field>
+        <mat-form-field class="field-row">
+          <mat-select placeholder="Days to deliver" required="true" [formControl]="formGroup.controls['daysToDeliver']">
+            <mat-option *ngFor="let day of daysToDeliverOptions" [value]="day">
+              {{ day }}
+            </mat-option>
+          </mat-select>
+          <mat-hint>Max. number of days for a seller to finalise transaction.</mat-hint>
+        </mat-form-field>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col">
+        <h3 class="mat-subheading-2">Describe your data</h3>
+        <div class="field-row">
+          <app-marketplace-product-category-selector #categoryInput
+                                                     matInput
+                                                     required
+                                                     [formControl]="formGroup.controls['category']"
+                                                     ngDefaultControl></app-marketplace-product-category-selector>
+        </div>
+        <mat-form-field class="field-row">
+          <input matInput
+                 #titleInput
+                 [maxlength]="titleMaxLength"
+                 placeholder="Title"
+                 required
+                 formControlName="title">
+          <mat-hint align="end">{{titleInput.value.length}} / {{titleMaxLength}}</mat-hint>
+          <mat-error *ngIf="formGroup.controls['title'].hasError('required')">
+            Title is <strong>required</strong>
+          </mat-error>
+          <mat-error *ngIf="formGroup.controls['title'].hasError('minlength')">
+            Title should contain <strong>at least {{ titleMinLength }} characters</strong>
+          </mat-error>
+          <mat-error *ngIf="formGroup.controls['title'].hasError('maxlength')">
+            Title should contain <strong>at most {{ titleMaxLength }} characters</strong>
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field class="field-row">
         <textarea matInput
                   #shortDescriptionInput
                   [maxlength]="shortDescriptionMaxLength"
@@ -29,94 +90,47 @@
                   placeholder="Short description"
                   required
                   [formControl]="formGroup.controls['shortDescription']"></textarea>
-        <mat-hint align="end">{{shortDescriptionInput.value.length}} / {{shortDescriptionMaxLength}}</mat-hint>
-        <mat-error *ngIf="formGroup.controls['shortDescription'].hasError('required')">
-          Short description is <strong>required</strong>
-        </mat-error>
-        <mat-error *ngIf="formGroup.controls['shortDescription'].hasError('minlength')">
-          Short description should contain <strong>at least {{ shortDescriptionMinLength }} characters</strong>
-        </mat-error>
-        <mat-error *ngIf="formGroup.controls['shortDescription'].hasError('maxlength')">
-          Short description should contain <strong>at most {{ shortDescriptionMaxLength }} characters</strong>
-        </mat-error>
-      </mat-form-field>
+          <mat-hint align="end">{{shortDescriptionInput.value.length}} / {{shortDescriptionMaxLength}}</mat-hint>
+          <mat-error *ngIf="formGroup.controls['shortDescription'].hasError('required')">
+            Short description is <strong>required</strong>
+          </mat-error>
+          <mat-error *ngIf="formGroup.controls['shortDescription'].hasError('minlength')">
+            Short description should contain <strong>at least {{ shortDescriptionMinLength }} characters</strong>
+          </mat-error>
+          <mat-error *ngIf="formGroup.controls['shortDescription'].hasError('maxlength')">
+            Short description should contain <strong>at most {{ shortDescriptionMaxLength }} characters</strong>
+          </mat-error>
+        </mat-form-field>
 
-      <mat-form-field class="field-row">
+        <mat-form-field class="field-row">
         <textarea matInput
                   #longDescriptionInput
                   [maxlength]="longDescriptionMaxLength"
                   mat-autosize="true"
                   placeholder="Full description"
                   [formControl]="formGroup.controls['fullDescription']"></textarea>
-        <mat-hint align="end">{{longDescriptionInput.value.length}} / {{longDescriptionMaxLength}}</mat-hint>
-        <mat-error *ngIf="formGroup.controls['fullDescription'].hasError('maxlength')">
-          Long description should contain <strong>at most {{ longDescriptionMaxLength }} characters</strong>
-        </mat-error>
-      </mat-form-field>
-
-      <div class="field-row">
-        <app-marketplace-product-category-selector #categoryInput
-                                                   matInput
-                                                   required
-                                                   [formControl]="formGroup.controls['category']"
-                                                   ngDefaultControl></app-marketplace-product-category-selector>
+          <mat-hint align="end">{{longDescriptionInput.value.length}} / {{longDescriptionMaxLength}}</mat-hint>
+          <mat-error *ngIf="formGroup.controls['fullDescription'].hasError('maxlength')">
+            Long description should contain <strong>at most {{ longDescriptionMaxLength }} characters</strong>
+          </mat-error>
+        </mat-form-field>
       </div>
 
-      <mat-form-field class="field-row">
-        <input matInput
-               type="text"
-               placeholder="Price"
-               required
-               [formControl]="formGroup.controls['price']">
-        <span matSuffix="">{{ currencyName }}</span>
-        <mat-error *ngIf="formGroup.controls['price'].hasError('required')">
-          Price is <strong>required</strong>
-        </mat-error>
-        <mat-error *ngIf="formGroup.controls['price'].hasError('min')">
-          Price should be <strong>positive number</strong>
-        </mat-error>
-        <mat-error *ngIf="formGroup.controls['price'].hasError('pattern')">
-          Price should be number containing at most {{ repuxPrecision }} decimal places.
-        </mat-error>
-      </mat-form-field>
+      <div class="col">
+        <h3 class="mat-subheading-2">Choose End User License Agreement (EULA) for your file</h3>
+        <app-marketplace-eula-selector
+          [formControl]="formGroup.controls['eula']"
+          ngDefaultControl></app-marketplace-eula-selector>
 
-      <div class="field-row">
-        <app-file-input #fileInput
-                        placeholder="File"
-                        [required]="true"
-                        [formControl]="formGroup.controls['file']"
-                        ngDefaultControl></app-file-input>
-      </div>
-    </div>
-
-    <div class="col">
-      <mat-form-field class="field-row">
-        <mat-select placeholder="Days to deliver" required="true" [formControl]="formGroup.controls['daysToDeliver']">
-          <mat-option *ngFor="let day of daysToDeliverOptions" [value]="day">
-            {{ day }}
-          </mat-option>
-        </mat-select>
-        <mat-hint>Max. number of days for a seller to finalise transaction.</mat-hint>
-      </mat-form-field>
-
-      <app-marketplace-eula-selector
-        [formControl]="formGroup.controls['eula']"
-        ngDefaultControl></app-marketplace-eula-selector>
-
-      <div class="field-row">
-        <app-file-input #sampleFileInput
-                        placeholder="Sample files"
-                        [formControl]="formGroup.controls['sampleFile']"
-                        ngDefaultControl
-                        hint="These files will be visible to everyone"
-                        [multiple]="true"
-                        [maxFileSize]="maxFileSize"></app-file-input>
+        <p class="mat-body caption">
+          By clicking <strong>UPLOAD</strong> you'll send your data file to a decentralized storage. Next step is to wait for notification and then publish data to Ethereum Network.
+        </p>
       </div>
     </div>
   </mat-dialog-content>
 
   <mat-dialog-actions>
     <button mat-button type="button" (click)="closeDialog()">Cancel</button>
-    <button mat-flat-button>Create and upload</button>
+    <button mat-flat-button color="primary">Upload</button>
   </mat-dialog-actions>
 </form>

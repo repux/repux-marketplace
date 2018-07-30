@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
+  MatBadgeModule,
   MatButtonModule,
   MatCardModule,
   MatChipsModule,
@@ -44,7 +45,8 @@ import {
     MatChipsModule,
     MatSidenavModule,
     MatListModule,
-    MatRadioModule
+    MatRadioModule,
+    MatBadgeModule
   ],
   exports: [
     MatTableModule,
@@ -66,7 +68,8 @@ import {
     MatChipsModule,
     MatSidenavModule,
     MatListModule,
-    MatRadioModule
+    MatRadioModule,
+    MatBadgeModule
   ]
 })
 export class MaterialModule {

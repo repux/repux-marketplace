@@ -1,31 +1,46 @@
 @import '../../../variables.scss';
 
+form {
+  max-width: 940px;
+}
+
 .field-row {
   display: block;
-  width: 450px;
-  max-width: 100%;
 }
+
+.mat-subheading-2 {
+  margin: 32px 0 10px 0;
+}
+
+.caption {
+  padding: 24px 16px;
+  background-color: #eee;
+}
+
 
 app-marketplace-eula-selector {
   display: block;
-  padding: 20px;
-  margin: 20px 0;
-  background: mat-color($mat-light-theme-background, hover);
+  margin: 10px 0 20px 0;
 }
 
 .row {
   display: flex;
   flex-direction: row;
-  margin: 0;
+  margin: 0 -20px;
   padding: 0;
 
-  @media screen and (max-width: 1260px) {
+  @media screen and (max-width: 960px) {
     display: block;
+
+    .col {
+      width: auto;
+    }
   }
 }
 
 .col {
   display: flex;
   flex-direction: column;
-  margin: 0 20px
+  margin: 0 20px;
+  width: 50%;
 }

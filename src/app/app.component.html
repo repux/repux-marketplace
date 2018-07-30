@@ -203,7 +203,11 @@
       <app-wallet-info *ngIf="!(isHandset$ | async)"></app-wallet-info>
       <button mat-flat-button color="primary"  (click)="openProductCreatorDialog()">Sell data</button>
       <button mat-icon-button>
-        <mat-icon>notifications</mat-icon>
+        <mat-icon
+          matBadge="0"
+          matBadgePosition="above after"
+          matBadgeColor="warn"
+          matBadgeSize="medium">notifications</mat-icon>
       </button>
       <button mat-icon-button [matMenuTriggerFor]="menu">
         <mat-icon>more_vert</mat-icon>
