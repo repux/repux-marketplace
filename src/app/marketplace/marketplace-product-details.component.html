@@ -41,6 +41,14 @@
       <mat-hint mat-line>End User License Agreement</mat-hint>
     </mat-list-item>
     <mat-divider></mat-divider>
+    <mat-list-item *ngIf="(owner$ | async) as owner">
+      <h4 mat-line>
+        <app-marketplace-rating
+          [rating]="owner.sellerRating"></app-marketplace-rating>
+      </h4>
+      <mat-hint mat-line>User rating</mat-hint>
+      <mat-divider></mat-divider>
+    </mat-list-item>
   </mat-list>
 
   <br/><br/>

@@ -3,10 +3,8 @@ import { MarketplaceDataProductListComponent } from './marketplace-data-product-
 import { MatTableDataSource } from '@angular/material';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { DataProductListService } from '../../services/data-product-list.service';
-import { from as fromPromise } from 'rxjs/index';
+import { from as fromPromise } from 'rxjs';
 import { EsResponse } from '../../shared/models/es-response';
-import { Deserializable } from '../../shared/models/deserializable';
-import { EsDataProduct } from '../../shared/models/es-data-product';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { DataProduct } from '../../shared/models/data-product';
 import { MarketplaceDataProductListDetailDirective } from './marketplace-data-product-list-detail.directive';
@@ -143,10 +141,10 @@ describe('MarketplaceDataProductListComponent', () => {
     it('should call getDataProductsWithBlockchainState method on DataProductListService instance and assign result ' +
       'to esDataProducts and dataSource properties',
       async () => {
-        const expectedResponse: EsResponse<Deserializable<EsDataProduct>> = {
+        const expectedResponse: EsResponse<DataProduct> = {
           total: 1,
           max_score: 1,
-          hits: [ new EsDataProduct().deserialize({
+          hits: [ new DataProduct().deserialize({
             _index: '1',
             _source: {
               price: 1,
@@ -196,8 +194,7 @@ describe('MarketplaceDataProductListComponent', () => {
         max_score: 1,
         hits: []
       };
-      const dataProducts = component.esDataProducts.hits.map((esDataProduct: EsDataProduct) => esDataProduct.source);
-      component.dataSource = new MatTableDataSource(dataProducts);
+      component.dataSource = new MatTableDataSource(component.esDataProducts.hits);
       fixture.detectChanges();
     });
 
@@ -208,27 +205,23 @@ describe('MarketplaceDataProductListComponent', () => {
       component.esDataProducts = {
         total: 1,
         max_score: 1,
-        hits: [ new EsDataProduct().deserialize({
-          _index: '1',
-          _source: {
-            title: 'test title',
-            name: 'test name',
-            category: [ 'test category 1', 'test category 2' ],
-            size: 1024,
-            price: '1000000000000000000',
-            daysToDeliver: '1',
-            fundsToWithdraw: '0',
-            eula: {
-              type: EulaType.OWNER,
-              fileName: 'EULA',
-              fileHash: 'EULA_HASH'
-            },
-            transactions
-          }
+        hits: [ new DataProduct().deserialize({
+          title: 'test title',
+          name: 'test name',
+          category: [ 'test category 1', 'test category 2' ],
+          size: 1024,
+          price: '1000000000000000000',
+          daysToDeliver: '1',
+          fundsToWithdraw: '0',
+          eula: {
+            type: EulaType.OWNER,
+            fileName: 'EULA',
+            fileHash: 'EULA_HASH'
+          },
+          transactions
         }) ]
       };
-      const dataProducts = component.esDataProducts.hits.map((esDataProduct: EsDataProduct) => esDataProduct.source);
-      component.dataSource = new MatTableDataSource(dataProducts);
+      component.dataSource = new MatTableDataSource(component.esDataProducts.hits);
       component.displayedColumns = [
         'name',
         'title',

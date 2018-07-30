@@ -5,7 +5,6 @@ import { Subscription, Observable, BehaviorSubject } from 'rxjs';
 import { DataProductListService } from '../../services/data-product-list.service';
 import { DataProduct } from '../../shared/models/data-product';
 import { environment } from '../../../environments/environment';
-import { EsDataProduct } from '../../shared/models/es-data-product';
 import { pluck } from 'rxjs/operators';
 import { DataProductEvent, DataProductUpdateAction } from 'repux-web3-api';
 import { DataProductService } from '../../services/data-product.service';
@@ -78,9 +77,7 @@ export class AwaitingFinalisationService implements OnDestroy {
       .getDataProducts(getAwaitingFinalisationDataProductsQuery(wallet.address), '', environment.maxNotificationsProductsNumber).pipe(
         pluck('hits')
       )
-      .subscribe((result: EsDataProduct[]) => {
-        this._productsSubject.next(result.map(esDataProduct => esDataProduct.source));
-      });
+      .subscribe((result: DataProduct[]) => this._productsSubject.next(result));
   }
 
   addProduct(dataProduct: DataProduct): void {

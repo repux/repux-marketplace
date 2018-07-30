@@ -7,7 +7,7 @@ import { TaskType } from './task-type';
 import { UnpublishedProductsService } from '../marketplace/services/unpublished-products.service';
 import { DataProduct } from '../shared/models/data-product';
 import { TransactionDialogComponent } from '../shared/components/transaction-dialog/transaction-dialog.component';
-import { Subscription } from 'rxjs/index';
+import { Subscription } from 'rxjs';
 import { MatDialog } from '@angular/material';
 import { FileUploader, EventType, FileMetaData, Attachment, Eula, PurchaseType } from 'repux-lib';
 import { EventAction, EventCategory, TagManagerService } from '../shared/services/tag-manager.service';

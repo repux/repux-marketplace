@@ -1,25 +1,22 @@
-import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../environments/environment';
-import { Observable } from 'rxjs/index';
+import { Observable } from 'rxjs';
 import { EsResponse } from '../shared/models/es-response';
 import { map } from 'rxjs/internal/operators';
+import { Deserializable } from '../shared/models/deserializable';
 
-@Injectable({
-  providedIn: 'root'
-})
-export class ElasticSearchService<T> {
+export class ElasticSearchService<T extends Deserializable<T>> {
   private config = environment.repux.metaindexer;
 
-  constructor(private http: HttpClient) {
+  constructor(private http: HttpClient, private recordType: new () => T) {
   }
 
   search(type: string, query: Object = { bool: {} }, sort: string = '', size: number = 10,
-         from: number = 0, resultEntityType: any): Observable<EsResponse<T>> {
+         from: number = 0): Observable<EsResponse<T>> {
     return this.http.post(`${this.config.protocol}://${this.config.host}:${this.config.port}/${type}/_search` +
       `?size=${size}&from=${from}&sort=${sort}&`, { query }).pipe(
-      map((data: { hits: EsResponse<T> }) => {
-        data.hits.hits = data.hits.hits.map(hit => new resultEntityType().deserialize(hit));
+      map((data: { hits: EsResponse<any> }) => {
+        data.hits.hits = data.hits.hits.map(hit => new this.recordType().deserialize(hit._source));
         return data.hits;
       })
     );
