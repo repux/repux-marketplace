@@ -3,8 +3,6 @@
 $gutter: 10px;
 
 :host {
-  font-size: inherit;
-  font-weight: 400;
   line-height: 1.125;
 
   label {
@@ -14,8 +12,16 @@ $gutter: 10px;
 
   a {
     margin-left: $gutter;
-    font-size: 0.8rem;
     display: inline-block;
+    vertical-align: middle;
+  }
+
+  .mat-icon {
+    font-size: 16px;
+    width: 16px;
+    height: 16px;
+    color: #999;
+    padding: 4px 0 0 0;
   }
 
   .row:not(:last-child) {

@@ -2,8 +2,6 @@
     invalid: formControl.invalid && (formControl.dirty || formControl.touched),
     'mat-typography': true
   }">
-  <label class="field-name">End User License Agreement *</label>
-
   <mat-radio-group
     (change)="changeType($event)"
     [value]="selectedType || formControl?.value?.type">
@@ -14,7 +12,7 @@
         <app-marketplace-eula [eulaType]="eula.type"></app-marketplace-eula>
       </mat-radio-button>
 
-      <a *ngIf="eula.url" [href]="eula.url" target="_blank">(see document)</a>
+      <a *ngIf="eula.url" [href]="eula.url" target="_blank"><mat-icon>open_in_new</mat-icon></a>
 
       <div *ngIf="eula.type === selectedType && !eula.url">
         <app-file-input
