@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 
-
 export enum EventCategory {
   Sell = 'Sell',
   Buy = 'Buy'
@@ -28,6 +27,31 @@ export enum EventAction {
   CancelPendingTransactionConfirmed = 'Cancel-pending-transaction-confirmed'
 }
 
+export interface EcommerceProduct {
+  id: string;
+  name: string;
+  brand: string;
+  category: string;
+  price: string;
+  quantity: number;
+}
+
+export interface EcommerceActionField {
+  id: string;
+  revenue: string;
+}
+
+export interface EcommerceData {
+  actionField: EcommerceActionField;
+  products: EcommerceProduct[];
+}
+
+export interface EcommerceEvent {
+  currencyCode: string;
+  purchase?: EcommerceData;
+  originalCurrency?: string;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -45,14 +69,17 @@ export class TagManagerService {
     });
   }
 
-  sendEvent(category: EventCategory, action: EventAction, label: string, value: string): void {
+  sendEvent(category: EventCategory, action: EventAction, label: string, value: string, gasUsed?: number, ecommerceData?: EcommerceEvent)
+    : void {
     this.dataLayer.push({
       event: 'custom_ga_event',
+      ecommerce: ecommerceData,
       gaEventData: {
         category,
         action,
         label,
-        value
+        value,
+        gasUsed
       }
     });
   }

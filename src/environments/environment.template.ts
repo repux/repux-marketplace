@@ -17,6 +17,7 @@ BigNumber.config({
 const isProduction = [ 'true', '1', '' ].includes('${MARKETPLACE_IS_PRODUCTION}');
 
 export const environment = {
+  analyticsCurrencySubstitute: 'USD',
   production: isProduction,
   networkId: 1,
   networkName: 'Main Ethereum Network',
