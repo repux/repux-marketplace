@@ -25,7 +25,7 @@ export const environment = {
   gtmId: 'GTM-PG3BBGT',
   themeName: 'default-theme',
   maxNotificationsProductsNumber: 100,
-  websocketServer: 'https://localhost:3002',
+  websocketServer: '${MARKETPLACE_WEBSOCKET_URL}' || 'https://localhost:3002',
   repux: {
     metaindexer: {
       protocol: '${MARKETPLACE_METAINDEXER_PROTOCOL}' || 'https',

@@ -14,7 +14,9 @@ export class WebsocketService {
   private _socket;
 
   constructor() {
-    this._socket = socketIo(environment.websocketServer);
+    this._socket = socketIo(environment.websocketServer, {
+      transports: [ 'websocket' ]
+    });
   }
 
   public onEvent(eventName: string): Observable<{}> {
