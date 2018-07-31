@@ -12,6 +12,7 @@ import { AwaitingFinalisationService } from '../services/awaiting-finalisation.s
 import { DataProductService } from '../../services/data-product.service';
 import { TagManagerService } from '../../shared/services/tag-manager.service';
 import { DataProduct } from '../../shared/models/data-product';
+import BigNumber from 'bignumber.js';
 
 @Component({ selector: 'app-marketplace-download-product-button', template: '' })
 class DownloadProductButtonStubComponent {
@@ -57,6 +58,10 @@ describe('MarketplaceBuyProductButtonComponent', () => {
     component.dataProductAddress = dataProductAddress;
     component.dataProduct = <any> {
       address: dataProductAddress,
+      price: new BigNumber(1),
+      title: 'TITLE',
+      ownerAddress: '0x01',
+      category: [ 'CATEGORY' ],
       transactions: [ {
         buyerAddress,
         finalised: true

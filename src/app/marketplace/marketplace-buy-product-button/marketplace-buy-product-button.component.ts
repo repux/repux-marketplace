@@ -16,6 +16,8 @@ import {
 import { AwaitingFinalisationService } from '../services/awaiting-finalisation.service';
 import { DataProductTransaction as BlockchainDataProductTransaction } from 'repux-web3-api';
 import { EventAction, EventCategory, TagManagerService } from '../../shared/services/tag-manager.service';
+import { TransactionResult } from 'repux-web3-api/repux-web3-api';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-marketplace-buy-product-button',
@@ -73,20 +75,14 @@ export class MarketplaceBuyProductButtonComponent implements OnInit, OnDestroy {
       disableClose: true
     });
     this._unsubscribeTransactionDialog();
-    this._transactionDialogSubscription = transactionDialogRef.afterClosed().subscribe(result => {
+    this._transactionDialogSubscription = transactionDialogRef.afterClosed().subscribe((result: TransactionResult) => {
       if (result) {
         this.blockchainBuyTransaction = {
           purchased: true
         };
         this._awaitingFinalisationService.addProduct(this.dataProduct);
         this._dialog.open(MarketplacePurchaseConfirmationDialogComponent);
-
-        this._tagManager.sendEvent(
-          EventCategory.Buy,
-          EventAction.BuyConfirmed,
-          this.dataProduct.title,
-          this.dataProduct.price ? this.dataProduct.price.toString() : ''
-        );
+        this.emitBuyConfirmedEvent(result);
       }
     });
     const transactionDialog: TransactionDialogComponent = transactionDialogRef.componentInstance;
@@ -108,6 +104,34 @@ export class MarketplaceBuyProductButtonComponent implements OnInit, OnDestroy {
     }
 
     this._unsubscribeTransactionDialog();
+  }
+
+  private emitBuyConfirmedEvent(result: TransactionResult): void {
+    this._tagManager.sendEvent(
+      EventCategory.Buy,
+      EventAction.BuyConfirmed,
+      this.dataProduct.title,
+      this.dataProduct.price ? this.dataProduct.price.toString() : '',
+      result.gasUsed,
+      {
+        currencyCode: environment.analyticsCurrencySubstitute,
+        originalCurrency: environment.repux.currency.defaultName,
+        purchase: {
+          actionField: {
+            id: result.transactionHash,
+            revenue: this.dataProduct.price.toString(),
+          },
+          products: [ {
+            id: result.address,
+            name: this.dataProduct.title,
+            brand: this.dataProduct.ownerAddress,
+            category: this.dataProduct.category.join(', '),
+            price: this.dataProduct.price.toString(),
+            quantity: 1
+          } ]
+        }
+      }
+    );
   }
 
   private _onWalletChange(wallet: Wallet): void {
