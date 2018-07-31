@@ -12,53 +12,60 @@ import { Subscription } from 'rxjs/internal/Subscription';
   providedIn: 'root'
 })
 export class TaskManagerService implements OnDestroy {
-  private _dialogRef: MatDialogRef<TaskManagerComponent>;
-  private _wallet: Wallet;
-  private _tasksSubject = new BehaviorSubject<ReadonlyArray<Task>>([]);
-  private _walletSubscription: Subscription;
+  private dialogRef: MatDialogRef<TaskManagerComponent>;
+  private wallet: Wallet;
+  private tasksSubject = new BehaviorSubject<ReadonlyArray<Task>>([]);
+  private foregroundTasksSubject = new BehaviorSubject<ReadonlyArray<Task>>([]);
+  private walletSubscription: Subscription;
   private _tasks: Task[] = [];
 
   constructor(
-    private _dialog: MatDialog,
-    private _walletService: WalletService) {
-    this._addConfirmationPrompt();
-    this._walletSubscription = this._walletService.getWallet().subscribe(wallet => this._onWalletChange(wallet));
+    private dialog: MatDialog,
+    private walletService: WalletService) {
+    this.addConfirmationPrompt();
+    this.walletSubscription = this.walletService.getWallet().subscribe(wallet => this.onWalletChange(wallet));
   }
 
   get tasks(): ReadonlyArray<Task> {
     return Object.freeze(Object.assign([], this._tasks));
   }
 
+  get foregroundTasks(): ReadonlyArray<Task> {
+    return Object.freeze(Object.assign([], this._tasks.filter(task => task.walletAddress === this.wallet.address)));
+  }
+
   addTask(task: Task) {
     task.run(this);
     this._tasks.push(task);
-    this._tasksSubject.next(this.tasks);
+    this.tasksSubject.next(this.tasks);
+    this.foregroundTasksSubject.next(this.foregroundTasks);
     this.openDialog();
   }
 
   removeTask(task: Task) {
     this._tasks = this._tasks.filter(storedTask => storedTask !== task);
-    this._afterTaskRemove();
+    this.afterTaskRemove();
   }
 
-  _afterTaskRemove() {
+  afterTaskRemove() {
     this.onTaskEvent();
 
-    if (this._tasks.length === 0) {
+    if (this.foregroundTasks.length === 0) {
       this.closeDialog();
     }
   }
 
   onTaskEvent() {
-    this._tasksSubject.next(this.tasks);
+    this.tasksSubject.next(this.tasks);
+    this.foregroundTasksSubject.next(this.foregroundTasks);
   }
 
   openDialog() {
-    if (this._dialogRef) {
+    if (this.dialogRef) {
       return;
     }
 
-    this._dialogRef = this._dialog.open(TaskManagerComponent, {
+    this.dialogRef = this.dialog.open(TaskManagerComponent, {
       position: {
         right: '15px',
         bottom: '15px'
@@ -66,17 +73,18 @@ export class TaskManagerService implements OnDestroy {
       hasBackdrop: false
     });
 
-    this._dialogRef.componentInstance.setTaskManagerService(this);
-    this._tasksSubject.next(this.tasks);
+    this.dialogRef.componentInstance.setTaskManagerService(this);
+    this.tasksSubject.next(this.tasks);
+    this.foregroundTasksSubject.next(this.foregroundTasks);
   }
 
   closeDialog() {
-    if (!this._dialogRef) {
+    if (!this.dialogRef) {
       return;
     }
 
-    this._dialogRef.close();
-    this._dialogRef = null;
+    this.dialogRef.close();
+    this.dialogRef = null;
   }
 
   hasUnfinishedTasks(): boolean {
@@ -84,27 +92,30 @@ export class TaskManagerService implements OnDestroy {
   }
 
   getTasks(): Observable<ReadonlyArray<Task>> {
-    return this._tasksSubject.asObservable();
+    return this.tasksSubject.asObservable();
+  }
+
+  getForegroundTasks(): Observable<ReadonlyArray<Task>> {
+    return this.foregroundTasksSubject.asObservable();
   }
 
   ngOnDestroy() {
-    if (this._walletSubscription) {
-      this._walletSubscription.unsubscribe();
+    if (this.walletSubscription) {
+      this.walletSubscription.unsubscribe();
     }
   }
 
-  private _onWalletChange(wallet: Wallet) {
-    if (!wallet || wallet === this._wallet) {
+  private onWalletChange(wallet: Wallet) {
+    if (!wallet || wallet === this.wallet) {
       return;
     }
 
-    this._wallet = wallet;
-    this._tasks.filter(task => task.walletSpecific).forEach(task => task.cancel());
-    this._tasks = this._tasks.filter(task => !task.walletSpecific);
-    this._afterTaskRemove();
+    this.wallet = wallet;
+    this.foregroundTasksSubject.next(this.foregroundTasks);
+    this.afterTaskRemove();
   }
 
-  private _addConfirmationPrompt() {
+  private addConfirmationPrompt() {
     const self = this;
 
     window.addEventListener('beforeunload', function (event) {

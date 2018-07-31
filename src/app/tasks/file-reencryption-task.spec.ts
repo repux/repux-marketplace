@@ -7,6 +7,7 @@ describe('FileReencryptionTask', () => {
     transactionResult, commonDialogServiceSpy;
   const productAddress = '0x1111111111111111111111111111111111111111';
   const buyerAddress = '0x0000000000000000000000000000000000000000';
+  const sellerAddress = '0x22';
   const fileHash = 'SELLER_META_HASH';
   const buyerPublicKey = 'PUBLIC_KEY';
   const sellerPrivateKey = 'PRIVATE_KEY';
@@ -57,6 +58,7 @@ describe('FileReencryptionTask', () => {
     pendingFinalisationService = jasmine.createSpyObj('PendingFinalisationService', [ 'removeTransaction' ]);
 
     fileReencryptionTask = new FileReencryptionTask(
+      sellerAddress,
       productAddress,
       buyerAddress,
       fileHash,

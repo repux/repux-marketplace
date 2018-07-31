@@ -9,11 +9,12 @@ describe('TaskManagerService', () => {
   let matDialogSpy: { open: jasmine.Spy },
     walletServiceSpy: { getWallet: jasmine.Spy };
   let service: TaskManagerService;
-  const walletAddress = '0x0000000000000000000000000000000000000000';
+  const walletAddress = '0x00';
+  const wallet = new Wallet(walletAddress, 1);
 
   beforeEach(() => {
     walletServiceSpy = jasmine.createSpyObj('WalletService', [ 'getWallet' ]);
-    walletServiceSpy.getWallet.and.returnValue(from(Promise.resolve(new Wallet(walletAddress, 1))));
+    walletServiceSpy.getWallet.and.returnValue(from(Promise.resolve(wallet)));
     matDialogSpy = jasmine.createSpyObj('MatDialog', [ 'open' ]);
     service = new TaskManagerService(<any> matDialogSpy, <any> walletServiceSpy);
     window.addEventListener = () => {
@@ -31,15 +32,30 @@ describe('TaskManagerService', () => {
 
   describe('#get tasks()', () => {
     it('should return all tasks', () => {
-      expect(service.tasks).toEqual([]);
+      const tasks = [ { walletAddress: '0x00' }, { walletAddress: '0x01' } ];
+      service[ '_tasks' ] = <any> tasks;
+
+      expect(service.tasks).toEqual(<any> tasks);
+    });
+  });
+
+  describe('#get foregroundTasks()', () => {
+    it('should return all tasks', () => {
+      const tasks = [ { walletAddress: walletAddress }, { walletAddress: '0x01' } ];
+      service[ 'wallet' ] = wallet;
+      service[ '_tasks' ] = <any> tasks;
+
+      expect(service.foregroundTasks).toEqual(<any> [ tasks[ 0 ] ]);
     });
   });
 
   describe('#addTask()', () => {
     it('should add task to tasks list, run it and call openDialog method', () => {
+      service[ 'wallet' ] = wallet;
+
       spyOn(service, 'openDialog').and.callFake(function () {
         const ngDoCheck = jasmine.createSpy();
-        this._dialogRef = {
+        this.dialogRef = {
           componentInstance: {
             ngDoCheck
           },
@@ -60,14 +76,14 @@ describe('TaskManagerService', () => {
   });
 
   describe('#onTaskEvent()', () => {
-    it('should call next on _tasksSubject', () => {
+    it('should call next on tasksSubject', () => {
       const next = jasmine.createSpy();
-      service[ '_tasksSubject' ] = <any> {
+      service[ 'tasksSubject' ] = <any> {
         next
       };
 
       spyOn(service, 'openDialog').and.callFake(function () {
-        this._dialogRef = {
+        this.dialogRef = {
           close: jasmine.createSpy()
         };
       });
@@ -88,7 +104,7 @@ describe('TaskManagerService', () => {
         },
         close: jasmine.createSpy()
       });
-      service[ '_dialog' ].open = open;
+      service[ 'dialog' ].open = open;
       service[ 'closeDialog' ] = jasmine.createSpy();
 
       service.openDialog();
@@ -96,9 +112,9 @@ describe('TaskManagerService', () => {
       expect(open.calls.count()).toBe(1);
     });
 
-    it('should not call open method when _dialogRef is defined', () => {
+    it('should not call open method when dialogRef is defined', () => {
       const ngDoCheck = jasmine.createSpy();
-      service[ '_dialogRef' ] = <any> {
+      service[ 'dialogRef' ] = <any> {
         componentInstance: {
           ngDoCheck
         },
@@ -112,7 +128,7 @@ describe('TaskManagerService', () => {
         },
         close: jasmine.createSpy()
       });
-      service[ '_dialog' ].open = open;
+      service[ 'dialog' ].open = open;
       service[ 'closeDialog' ] = jasmine.createSpy();
 
       service.openDialog();
@@ -122,10 +138,10 @@ describe('TaskManagerService', () => {
   });
 
   describe('#closeDialog()', () => {
-    it('should call close method on _dialogRef object', () => {
+    it('should call close method on dialogRef object', () => {
       const ngDoCheck = jasmine.createSpy();
       const close = jasmine.createSpy();
-      service[ '_dialogRef' ] = <any> {
+      service[ 'dialogRef' ] = <any> {
         componentInstance: {
           ngDoCheck
         },

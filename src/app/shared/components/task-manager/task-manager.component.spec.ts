@@ -9,8 +9,8 @@ describe('TaskManagerComponent', () => {
   const tasks = [ 'TASK' ];
 
   beforeEach(async(() => {
-    taskManagerService = jasmine.createSpyObj('TaskManagerService', [ 'closeDialog', 'getTasks' ]);
-    taskManagerService.getTasks.and.returnValue({
+    taskManagerService = jasmine.createSpyObj('TaskManagerService', [ 'closeDialog', 'getForegroundTasks' ]);
+    taskManagerService.getForegroundTasks.and.returnValue({
       subscribe(callback) {
         callback(tasks);
       }
@@ -44,7 +44,7 @@ describe('TaskManagerComponent', () => {
   describe('#setTaskMangerService()', () => {
     it('should set taskManagerService', () => {
       const unsubscribeTasks = jasmine.createSpy();
-      component[ '_unsubscribeTasks' ] = unsubscribeTasks;
+      component[ 'unsubscribeTasks' ] = unsubscribeTasks;
       component.setTaskManagerService(taskManagerService);
       expect(component.taskManagerService).toBe(taskManagerService);
       expect(component.tasks).toEqual(<any> tasks);
@@ -55,10 +55,10 @@ describe('TaskManagerComponent', () => {
   describe('#unsubscribeTasks()', () => {
     it('should call unsubscribe when there is subscription', () => {
       const unsubscribe = jasmine.createSpy();
-      component[ '_tasksSubscription' ] = <any> {
+      component[ 'tasksSubscription' ] = <any> {
         unsubscribe
       };
-      component[ '_unsubscribeTasks' ]();
+      component[ 'unsubscribeTasks' ]();
       expect(unsubscribe.calls.count()).toBe(1);
     });
   });

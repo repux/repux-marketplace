@@ -14,7 +14,7 @@ export class TaskManagerComponent implements OnDestroy {
 
   taskError = TaskError;
 
-  private _tasksSubscription: Subscription;
+  private tasksSubscription: Subscription;
   private _taskManagerService: TaskManagerService;
 
   get taskManagerService(): TaskManagerService {
@@ -22,27 +22,27 @@ export class TaskManagerComponent implements OnDestroy {
   }
 
   closeDialog() {
-    if (this._taskManagerService) {
-      this._taskManagerService.closeDialog();
+    if (this.taskManagerService) {
+      this.taskManagerService.closeDialog();
     }
   }
 
   setTaskManagerService(taskManagerService: TaskManagerService) {
     this._taskManagerService = taskManagerService;
 
-    this._unsubscribeTasks();
-    this._tasksSubscription = this._taskManagerService.getTasks().subscribe(tasks => {
+    this.unsubscribeTasks();
+    this.tasksSubscription = this.taskManagerService.getForegroundTasks().subscribe(tasks => {
       this.tasks = tasks;
     });
   }
 
   ngOnDestroy() {
-    this._unsubscribeTasks();
+    this.unsubscribeTasks();
   }
 
-  private _unsubscribeTasks() {
-    if (this._tasksSubscription) {
-      this._tasksSubscription.unsubscribe();
+  private unsubscribeTasks() {
+    if (this.tasksSubscription) {
+      this.tasksSubscription.unsubscribe();
     }
   }
 }

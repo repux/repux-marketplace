@@ -10,8 +10,8 @@ export interface Task {
   errors: ReadonlyArray<string>;
   needsUserAction: boolean;
   userActionName: string;
-  walletSpecific: boolean;
   productAddress: string;
+  walletAddress: string;
 
   run(taskManagerService: TaskManagerService): Promise<void> | void;
 

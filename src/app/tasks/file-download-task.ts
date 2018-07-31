@@ -14,13 +14,13 @@ export const STATUS = {
 };
 
 export class FileDownloadTask implements Task {
-  public readonly walletSpecific = false;
   public readonly taskType = TaskType.DOWNLOAD;
   private _downloader: FileDownloader;
   private _result: string;
   private _taskManagerService: TaskManagerService;
 
   constructor(
+    public readonly walletAddress: string,
     private _dataProductAddress: string,
     private _buyerAddress: string,
     private _metaFileHash: string,

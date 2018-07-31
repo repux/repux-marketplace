@@ -31,6 +31,7 @@ describe('FileUploadTask()', () => {
   };
   const maxNumberOfDownloads = -1;
   const type = PurchaseType.ONE_TIME_PURCHASE;
+  const userAddress = '0x00';
 
   beforeEach(() => {
     fileUploaderUploadSpy = jasmine.createSpy().and.callFake(function () {
@@ -76,6 +77,7 @@ describe('FileUploadTask()', () => {
     ipfsServiceSpy = jasmine.createSpyObj('IpfsService', [ 'uploadFile' ]);
 
     fileUploadTask = new FileUploadTask(
+      userAddress,
       <any> publicKey,
       title,
       shortDescription,

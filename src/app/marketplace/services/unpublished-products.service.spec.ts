@@ -1,38 +1,70 @@
 import { UnpublishedProductsService } from './unpublished-products.service';
+import { from } from 'rxjs';
+import Wallet from '../../shared/models/wallet';
 
 describe('UnpublishedProductsService', () => {
   let service: UnpublishedProductsService;
-  let taskManagerServiceSpy, storageServiceSpy;
+  let taskManagerServiceSpy, storageServiceSpy, walletServiceSpy;
   const sellerMetaHash = 'SELLER_META_HASH';
+  const wallet = new Wallet('0x00', 1);
 
   beforeEach(() => {
     taskManagerServiceSpy = jasmine.createSpyObj('TaskManagerService', [ 'removeTask' ]);
     storageServiceSpy = jasmine.createSpyObj('StorageService', [ 'getItem', 'setItem' ]);
+    walletServiceSpy = jasmine.createSpyObj('WalletService', [ 'getWallet' ]);
     storageServiceSpy.getItem.and.returnValue(null);
+    walletServiceSpy.getWallet.and.returnValue(from(Promise.resolve(wallet)));
 
-    service = new UnpublishedProductsService(<any> taskManagerServiceSpy, <any> storageServiceSpy);
+    service = new UnpublishedProductsService(<any> taskManagerServiceSpy, <any> storageServiceSpy, <any> walletServiceSpy);
   });
 
-  describe('#constructor()', () => {
-    it('should assign result of _readFromStore() to _config', () => {
-      expect(service[ '_config' ]).toEqual({ dataProducts: [] });
+  describe('#onWalletChange()', () => {
+    it('should assign result of readFromStore() to config', () => {
+      service.onWalletChange(wallet);
+      expect(service[ 'config' ]).toEqual({ dataProducts: [] });
     });
   });
 
-  describe('#_getStorageKey()', () => {
+  describe('#getStorageKey()', () => {
     it('should always return "UnpublishedProductsService"', () => {
-      expect(service[ '_getStorageKey' ]()).toBe('UnpublishedProductsService');
+      service.onWalletChange(wallet);
+      expect(service[ 'getStorageKey' ]()).toBe('UnpublishedProductsService_' + wallet.address);
     });
   });
 
   describe('#addProduct()', () => {
-    it('should push product to _config and save it in the store', () => {
+    it('should push product to config and save it in the store', () => {
       const product = <any> {
         sellerMetaHash
       };
+      service.onWalletChange(wallet);
       service.addProduct(product);
-      expect(storageServiceSpy.setItem.calls.allArgs()[ 0 ][ 0 ]).toBe('UnpublishedProductsService');
-      expect(storageServiceSpy.setItem.calls.allArgs()[ 0 ][ 1 ]).toEqual({ dataProducts: [ product ] });
+      expect(storageServiceSpy.setItem.calls.allArgs()[ 1 ][ 0 ]).toBe('UnpublishedProductsService_' + wallet.address);
+      expect(storageServiceSpy.setItem.calls.allArgs()[ 1 ][ 1 ]).toEqual({ dataProducts: [ product ] });
+      expect(service[ 'productsSubject' ].getValue()).toEqual([ product ]);
+    });
+
+    it('shouldn\'t push product to productsSubject when wallet.address is different than address in argument', () => {
+      const address = '0x11';
+      const product = <any> {
+        sellerMetaHash
+      };
+      service.onWalletChange(wallet);
+      service.addProduct(product, address);
+      expect(storageServiceSpy.setItem.calls.allArgs()[ 2 ][ 0 ]).toBe('UnpublishedProductsService_' + address);
+      expect(storageServiceSpy.setItem.calls.allArgs()[ 2 ][ 1 ]).toEqual({ dataProducts: [ product ] });
+      expect(service[ 'productsSubject' ].getValue()).toEqual([]);
+    });
+
+    it('should push product to productsSubject when wallet.address is the same as address in argument', () => {
+      const product = <any> {
+        sellerMetaHash
+      };
+      service.onWalletChange(wallet);
+      service.addProduct(product, wallet.address);
+      expect(storageServiceSpy.setItem.calls.allArgs()[ 1 ][ 0 ]).toBe('UnpublishedProductsService_' + wallet.address);
+      expect(storageServiceSpy.setItem.calls.allArgs()[ 1 ][ 1 ]).toEqual({ dataProducts: [ product ] });
+      expect(service[ 'productsSubject' ].getValue()).toEqual([ product ]);
     });
   });
 
@@ -45,11 +77,12 @@ describe('UnpublishedProductsService', () => {
       const product = <any> {
         sellerMetaHash
       };
-      service[ '_config' ].dataProducts = [ product ];
+      service.onWalletChange(wallet);
+      service[ 'config' ].dataProducts = [ product ];
       service.removeProduct(product);
-      expect(service[ '_config' ].dataProducts).toEqual([]);
-      expect(storageServiceSpy.setItem.calls.allArgs()[ 0 ][ 0 ]).toBe('UnpublishedProductsService');
-      expect(storageServiceSpy.setItem.calls.allArgs()[ 0 ][ 1 ]).toEqual({ dataProducts: [] });
+      expect(service[ 'config' ].dataProducts).toEqual([]);
+      expect(storageServiceSpy.setItem.calls.allArgs()[ 1 ][ 0 ]).toBe('UnpublishedProductsService_' + wallet.address);
+      expect(storageServiceSpy.setItem.calls.allArgs()[ 1 ][ 1 ]).toEqual({ dataProducts: [] });
       expect(taskManagerServiceSpy.removeTask.calls.allArgs()[ 0 ][ 0 ]).toBe(task);
     });
   });
