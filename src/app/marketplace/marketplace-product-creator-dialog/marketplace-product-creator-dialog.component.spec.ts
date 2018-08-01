@@ -4,7 +4,7 @@ import { MatDialog, MatDialogRef } from '@angular/material';
 import { TaskManagerService } from '../../services/task-manager.service';
 import { RepuxLibService } from '../../services/repux-lib.service';
 import { DataProductService } from '../../services/data-product.service';
-import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { KeyStoreService } from '../../key-store/key-store.service';
@@ -17,16 +17,19 @@ import {
 import { TagManagerService } from '../../shared/services/tag-manager.service';
 import { IpfsService } from '../../services/ipfs.service';
 import { UnpublishedProductsService } from '../services/unpublished-products.service';
-import { environment } from '../../../environments/environment';
 import { MarketplaceEulaSelectorComponent } from '../marketplace-eula-selector/marketplace-eula-selector.component';
 import { MarketplaceEulaComponent } from '../marketplace-eula/marketplace-eula.component';
+import { from } from 'rxjs';
+import Wallet from '../../shared/models/wallet';
 
 describe('MarketplaceProductCreatorDialogComponent', () => {
   let tagManagerServiceSpy, keyStoreServiceSpy, repuxLibServiceSpy, dataProductServiceSpy, taskManagerServiceSpy, matDialogSpy,
-    matDialogRefSpy, unpublishedProductsServiceSpy, ipfsServiceSpy;
+    matDialogRefSpy, unpublishedProductsServiceSpy, ipfsServiceSpy, walletServiceSpy;
   let formBuilder: FormBuilder;
   let component: MarketplaceProductCreatorDialogComponent;
   let fixture: ComponentFixture<MarketplaceProductCreatorDialogComponent>;
+
+  const wallet = new Wallet('0x00', 1);
 
   beforeEach(async(() => {
     tagManagerServiceSpy = jasmine.createSpyObj('TagManagerService', [ 'sendUserId', 'sendEvent' ]);
@@ -41,6 +44,8 @@ describe('MarketplaceProductCreatorDialogComponent', () => {
     taskManagerServiceSpy = jasmine.createSpyObj('TaskManagerService', [ 'addTask' ]);
     unpublishedProductsServiceSpy = jasmine.createSpyObj('UnpublishedProductsService', [ 'addProduct', 'removeProduct' ]);
     ipfsServiceSpy = jasmine.createSpyObj('IpfsService', [ 'uploadFile' ]);
+    walletServiceSpy = jasmine.createSpyObj('WalletService', [ 'getWallet' ]);
+    walletServiceSpy.getWallet.and.returnValue(from(Promise.resolve(wallet)));
     matDialogRefSpy = jasmine.createSpyObj('MatDialogRef', [ 'close', 'afterClosed' ]);
     matDialogSpy = jasmine.createSpyObj('MatDialog', [ 'open' ]);
 
@@ -89,6 +94,7 @@ describe('MarketplaceProductCreatorDialogComponent', () => {
         taskManagerServiceSpy,
         unpublishedProductsServiceSpy,
         ipfsServiceSpy,
+        walletServiceSpy,
         matDialogSpy,
         matDialogRefSpy
       );
@@ -127,6 +133,7 @@ describe('MarketplaceProductCreatorDialogComponent', () => {
         publicKey
       }));
 
+      component.wallet = wallet;
       component.fileInput = <any> { value: [ file ] };
       component.formGroup = <any> {
         value: {

@@ -24,7 +24,6 @@ export const STATUS = {
 };
 
 export class FileUploadTask implements Task {
-  public readonly walletSpecific = false;
   public readonly taskType = TaskType.UPLOAD;
   private _uploader: FileUploader;
   private _result: string;
@@ -35,6 +34,7 @@ export class FileUploadTask implements Task {
   private _eula?: Eula;
 
   constructor(
+    public readonly walletAddress: string,
     private _publicKey: JsonWebKey,
     private _title: string,
     private _shortDescription: string,
@@ -265,6 +265,6 @@ export class FileUploadTask implements Task {
     dataProduct.sampleFile = this._sampleFile;
     this._dataProduct = dataProduct;
 
-    this._unpublishedProductsService.addProduct(this._dataProduct);
+    this._unpublishedProductsService.addProduct(this._dataProduct, this.walletAddress);
   }
 }

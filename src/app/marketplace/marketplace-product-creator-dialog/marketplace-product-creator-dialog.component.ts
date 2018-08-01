@@ -20,6 +20,8 @@ import { EventAction, EventCategory, TagManagerService } from '../../shared/serv
 import { IpfsService } from '../../services/ipfs.service';
 import { createEulaSelection } from '../marketplace-eula-selector/marketplace-eula-selector.component';
 import { PurchaseType } from 'repux-lib';
+import { WalletService } from '../../services/wallet.service';
+import Wallet from '../../shared/models/wallet';
 
 @Component({
   selector: 'app-marketplace-product-creator-dialog',
@@ -36,10 +38,12 @@ export class MarketplaceProductCreatorDialogComponent implements OnInit, OnDestr
   public longDescriptionMaxLength = 10000;
   public maxFileSize: number = environment.ipfs.maxFileSize;
   public repuxPrecision: number = environment.repux.currency.precision;
+  public wallet: Wallet;
   @ViewChild('fileInput') fileInput: FileInputComponent;
   @ViewChild('sampleFileInput') sampleFileInput: FileInputComponent;
   @ViewChild('categoryInput') categoryInput: MarketplaceProductCategorySelectorComponent;
   private subscription: Subscription;
+  private walletSubscription: Subscription;
 
   constructor(
     private tagManager: TagManagerService,
@@ -50,8 +54,10 @@ export class MarketplaceProductCreatorDialogComponent implements OnInit, OnDestr
     private taskManagerService: TaskManagerService,
     private unpublishedProductsService: UnpublishedProductsService,
     private ipfsService: IpfsService,
+    private walletService: WalletService,
     private dialog: MatDialog,
     public dialogRef: MatDialogRef<MarketplaceProductCreatorDialogComponent>) {
+    this.walletSubscription = this.walletService.getWallet().subscribe(wallet => this.wallet = wallet);
 
     this.formGroup = this.formBuilder.group({
       title: [ '', [
@@ -118,6 +124,7 @@ export class MarketplaceProductCreatorDialogComponent implements OnInit, OnDestr
     );
 
     const fileUploadTask = new FileUploadTask(
+      this.wallet.address,
       publicKey,
       this.formGroup.value.title,
       this.formGroup.value.shortDescription,
@@ -156,6 +163,10 @@ export class MarketplaceProductCreatorDialogComponent implements OnInit, OnDestr
   ngOnDestroy() {
     if (this.subscription) {
       this.subscription.unsubscribe();
+    }
+
+    if (this.walletSubscription) {
+      this.walletSubscription.unsubscribe();
     }
   }
 

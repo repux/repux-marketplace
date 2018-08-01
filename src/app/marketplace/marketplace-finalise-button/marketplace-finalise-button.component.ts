@@ -67,6 +67,7 @@ export class MarketplaceFinaliseButtonComponent implements OnDestroy, OnInit {
     const publicKey = this._repuxLibService.getInstance().deserializePublicKey(this.transaction.publicKey);
 
     const fileReencryptionTask = new this.FileReencryptionTaskClass(
+      this.wallet.address,
       this.dataProduct.address,
       this.transaction.buyerAddress,
       this.dataProduct.sellerMetaHash,

@@ -1,73 +1,99 @@
-import { Injectable } from '@angular/core';
+import { Injectable, OnDestroy } from '@angular/core';
 import { StorageService } from '../../services/storage.service';
 import { DataProduct } from '../../shared/models/data-product';
 import { TaskManagerService } from '../../services/task-manager.service';
 import { FileUploadTask } from '../../tasks/file-upload-task';
 import { BehaviorSubject } from 'rxjs/internal/BehaviorSubject';
 import { Observable } from 'rxjs/internal/Observable';
+import { WalletService } from '../../services/wallet.service';
+import Wallet from '../../shared/models/wallet';
+import { Subscription } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
-export class UnpublishedProductsService {
+export class UnpublishedProductsService implements OnDestroy {
   private static readonly STORAGE_KEY = 'UnpublishedProductsService';
-  private readonly _defaultData = {
-    dataProducts: []
-  };
-  private readonly _config;
-  private _productsSubject = new BehaviorSubject<DataProduct[]>([]);
+  private config;
+  private productsSubject = new BehaviorSubject<DataProduct[]>([]);
+  private wallet: Wallet;
+  private walletSubscription: Subscription;
 
   constructor(
-    private _taskManagerService: TaskManagerService,
-    private _storageService: StorageService) {
-    this._config = this._readFromStore();
-    this._productsSubject.next(this._config.dataProducts.slice());
+    private taskManagerService: TaskManagerService,
+    private storageService: StorageService,
+    private walletService: WalletService) {
+    this.walletSubscription = this.walletService.getWallet().subscribe(wallet => this.onWalletChange(wallet));
   }
 
   getProducts(): Observable<DataProduct[]> {
-    return this._productsSubject.asObservable();
+    return this.productsSubject.asObservable();
   }
 
-  addProduct(dataProduct: DataProduct): void {
-    this._config.dataProducts.push(dataProduct);
-    this._productsSubject.next(this._config.dataProducts.slice());
-    this._saveToStore(this._config);
+  addProduct(dataProduct: DataProduct, walletAddress?: string): void {
+    if (walletAddress && this.wallet.address !== walletAddress) {
+      const config = this.readFromStore(walletAddress);
+      config.dataProducts.push(dataProduct);
+      this.saveToStore(config, walletAddress);
+
+      return;
+    }
+
+    this.config.dataProducts.push(dataProduct);
+    this.productsSubject.next(this.config.dataProducts.slice());
+    this.saveToStore(this.config);
+  }
+
+  ngOnDestroy(): void {
+    this.walletSubscription.unsubscribe();
+  }
+
+  onWalletChange(wallet: Wallet): void {
+    if (!wallet && this.wallet === wallet) {
+      return;
+    }
+
+    this.wallet = wallet;
+    this.config = this.readFromStore();
+    this.productsSubject.next(this.config.dataProducts.slice());
   }
 
   removeProduct(dataProduct: DataProduct): void {
-    const index = this._config.dataProducts.indexOf(dataProduct);
+    const index = this.config.dataProducts.indexOf(dataProduct);
     if (index !== -1) {
-      this._config.dataProducts.splice(index, 1);
-      this._productsSubject.next(this._config.dataProducts.slice());
-      this._saveToStore(this._config);
+      this.config.dataProducts.splice(index, 1);
+      this.productsSubject.next(this.config.dataProducts.slice());
+      this.saveToStore(this.config);
     }
 
-    const foundTask = this._taskManagerService.tasks.find(task =>
+    const foundTask = this.taskManagerService.tasks.find(task =>
       (<FileUploadTask> task).sellerMetaHash &&
       (<FileUploadTask> task).sellerMetaHash === dataProduct.sellerMetaHash
     );
 
     if (foundTask) {
-      this._taskManagerService.removeTask(foundTask);
+      this.taskManagerService.removeTask(foundTask);
     }
   }
 
-  private _getStorageKey(): string {
-    return UnpublishedProductsService.STORAGE_KEY;
+  private getStorageKey(walletAddress?: string): string {
+    return UnpublishedProductsService.STORAGE_KEY + '_' + (walletAddress ? walletAddress : this.wallet.address);
   }
 
-  private _readFromStore(): any {
-    const saved = this._storageService.getItem(this._getStorageKey());
+  private readFromStore(walletAddress?: string): any {
+    const saved = this.storageService.getItem(this.getStorageKey(walletAddress));
 
     if (saved) {
       return saved;
     }
 
-    this._saveToStore(this._defaultData);
-    return this._defaultData;
+    const data = { dataProducts: [] };
+    this.saveToStore(data);
+
+    return data;
   }
 
-  private _saveToStore(data: any): void {
-    this._storageService.setItem(this._getStorageKey(), data);
+  private saveToStore(data: any, walletAddress?: string): void {
+    this.storageService.setItem(this.getStorageKey(walletAddress), data);
   }
 }

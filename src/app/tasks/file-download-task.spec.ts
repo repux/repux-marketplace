@@ -34,6 +34,7 @@ describe('FileDownloadTask', () => {
     commonDialogServiceSpy = jasmine.createSpyObj('CommonDialogService', [ 'alert' ]);
 
     fileDownloadTask = new FileDownloadTask(
+      buyerAddress,
       productAddress,
       buyerAddress,
       fileHash,

@@ -24,7 +24,6 @@ export const STATUS = {
 };
 
 export class FileReencryptionTask implements Task {
-  public readonly walletSpecific = true;
   public readonly taskType = TaskType.REENCRYPTION;
   private _subscription: Subscription;
   private _reencryptor: FileReencryptor;
@@ -34,6 +33,7 @@ export class FileReencryptionTask implements Task {
   private _transactionDialogSubscription: Subscription;
 
   constructor(
+    public readonly walletAddress: string,
     private _dataProductAddress: string,
     private _buyerAddress: string,
     private _metaFileHash: string,
@@ -152,6 +152,13 @@ export class FileReencryptionTask implements Task {
     return;
   }
 
+  displayReencryptionErrorMessage() {
+    this.commonDialogService.alert(
+      'You can not re-encrypt the file. Please upload the key pair that was used during upload transaction.',
+      'Re-encryption error'
+    );
+  }
+
   private _emitFinish(value): void {
     this._finishSubject.next(value);
     this._finishSubject.complete();
@@ -218,12 +225,5 @@ export class FileReencryptionTask implements Task {
         }
       });
     });
-  }
-
-  displayReencryptionErrorMessage() {
-    this.commonDialogService.alert(
-      'You can not re-encrypt the file. Please upload the key pair that was used during upload transaction.',
-      'Re-encryption error'
-    );
   }
 }
