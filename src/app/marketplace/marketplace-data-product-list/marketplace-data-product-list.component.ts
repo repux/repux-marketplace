@@ -41,7 +41,7 @@ export class MarketplaceDataProductListComponent implements OnChanges, OnDestroy
   @Input() showPaginator = true;
   @Input() showSearch = true;
   @Input() showFilters = true;
-  @Input() enableSorting = true;
+  @Input() disableSorting = false;
   @Input() buyerAddress: string;
   @Input() dataProducts: DataProduct[];
 
