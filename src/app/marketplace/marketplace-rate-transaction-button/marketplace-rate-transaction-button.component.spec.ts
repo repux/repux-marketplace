@@ -63,13 +63,32 @@ describe('MarketplaceRateTransactionButton', () => {
   describe('#get canRate()', () => {
     it('should return true when user can rate purchase transaction', () => {
       component[ 'date' ] = new Date(currentDate);
-      component.blockchainBuyTransaction = <any> { rating: new BigNumber(0), rateDeadline: new Date(currentDate + second) };
+      component.blockchainBuyTransaction = <any> {
+        rating: new BigNumber(0),
+        rateDeadline: new Date(currentDate + second),
+        finalised: true
+      };
       expect(component.canRate).toBe(true);
 
-      component.blockchainBuyTransaction = <any> { rating: new BigNumber(0), rateDeadline: new Date(currentDate - second) };
+      component.blockchainBuyTransaction = <any> {
+        rating: new BigNumber(0),
+        rateDeadline: new Date(currentDate - second),
+        finalised: true
+      };
       expect(component.canRate).toBe(false);
 
-      component.blockchainBuyTransaction = <any> { rating: new BigNumber(1), rateDeadline: new Date(currentDate + second) };
+      component.blockchainBuyTransaction = <any> {
+        rating: new BigNumber(1),
+        rateDeadline: new Date(currentDate + second),
+        finalised: true
+      };
+      expect(component.canRate).toBe(false);
+
+      component.blockchainBuyTransaction = <any> {
+        rating: new BigNumber(0),
+        rateDeadline: new Date(currentDate + second),
+        finalised: false
+      };
       expect(component.canRate).toBe(false);
 
       component.blockchainBuyTransaction = null;
@@ -112,7 +131,11 @@ describe('MarketplaceRateTransactionButton', () => {
   describe('#rateTransaction()', () => {
     it('should call unsubscribeDialogSubscription', () => {
       component[ 'date' ] = new Date(currentDate);
-      component.blockchainBuyTransaction = <any> { rating: new BigNumber(0), rateDeadline: new Date(currentDate + second) };
+      component.blockchainBuyTransaction = <any> {
+        rating: new BigNumber(0),
+        rateDeadline: new Date(currentDate + second),
+        finalised: true
+      };
 
       const unsubscribeDialogSubscription = jasmine.createSpy();
       component.unsubscribeDialogSubscription = unsubscribeDialogSubscription;
@@ -124,7 +147,11 @@ describe('MarketplaceRateTransactionButton', () => {
 
     it('should assign dialog afterClose subscription to dialogSubscription', () => {
       component[ 'date' ] = new Date(currentDate);
-      component.blockchainBuyTransaction = <any> { rating: new BigNumber(0), rateDeadline: new Date(currentDate + second) };
+      component.blockchainBuyTransaction = <any> {
+        rating: new BigNumber(0),
+        rateDeadline: new Date(currentDate + second),
+        finalised: true
+      };
 
       expect(component[ 'dialogSubscription' ]).toBeUndefined();
 
@@ -140,7 +167,11 @@ describe('MarketplaceRateTransactionButton', () => {
       const address = '0x00';
 
       component[ 'date' ] = new Date(currentDate);
-      component.blockchainBuyTransaction = <any> { rating: new BigNumber(0), rateDeadline: new Date(currentDate + second) };
+      component.blockchainBuyTransaction = <any> {
+        rating: new BigNumber(0),
+        rateDeadline: new Date(currentDate + second),
+        finalised: true
+      };
       component.dataProduct = <any> {
         address
       };

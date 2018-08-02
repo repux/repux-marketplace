@@ -43,7 +43,7 @@ export class MarketplaceRateTransactionButtonComponent implements OnDestroy {
       return false;
     }
 
-    return this.date <= this.blockchainBuyTransaction.rateDeadline;
+    return this.blockchainBuyTransaction.finalised && this.date <= this.blockchainBuyTransaction.rateDeadline;
   }
 
   ngOnDestroy(): void {

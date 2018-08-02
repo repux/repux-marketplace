@@ -5955,9 +5955,9 @@ repeating@^2.0.0:
     ipfs-api "^20.0.0"
     threads "^0.10.1"
 
-"repux-web3-api@git+ssh://git@github.com:repux/repux-web3-api.git#e179eee0b1a1c6aeeb6c8a9c70d279fb2abb35ee":
+"repux-web3-api@git+ssh://git@github.com:repux/repux-web3-api.git#26f890b2f9fe8ebcddfa80d056283b848fde68e2":
   version "1.4.1"
-  resolved "git+ssh://git@github.com:repux/repux-web3-api.git#e179eee0b1a1c6aeeb6c8a9c70d279fb2abb35ee"
+  resolved "git+ssh://git@github.com:repux/repux-web3-api.git#26f890b2f9fe8ebcddfa80d056283b848fde68e2"
   dependencies:
     bignumber.js "^7.2.0"
     web3 "^0.20.6"
