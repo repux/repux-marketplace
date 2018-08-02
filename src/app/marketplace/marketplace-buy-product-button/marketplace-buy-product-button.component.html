@@ -1,6 +1,6 @@
 <div *ngIf="wallet">
-  <button mat-raised-button
-          color="accent"
+  <button mat-stroked-button
+          color="primary"
           *ngIf="!dataProduct.disabled && !userIsOwner && !bought"
           (click)="buyDataProduct()">Buy
   </button>

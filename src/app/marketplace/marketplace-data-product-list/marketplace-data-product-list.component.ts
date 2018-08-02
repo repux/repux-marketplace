@@ -26,7 +26,6 @@ export class MarketplaceDataProductListComponent implements OnChanges, OnDestroy
     'name',
     'title',
     'category',
-    'daysToDeliver',
     'size',
     'price',
     'eula',

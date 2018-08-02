@@ -11,7 +11,7 @@ import { readFileAsArrayBuffer } from '../../shared/utils/read-file-as-array-buf
 import { MaxFileSizeDirective } from '../../shared/components/file-input/max-file-size.directive';
 import { FileInputComponent } from '../../shared/components/file-input/file-input.component';
 import { FileSizePipe } from '../../shared/pipes/file-size.pipe';
-import { MarketplaceEulaComponent } from '../marketplace-eula/marketplace-eula.component';
+import { EulaTypePipe } from '../../shared/pipes/eula-type.pipe';
 
 describe('MarketplaceEulaSelectorComponent', () => {
   let component: MarketplaceEulaSelectorComponent;
@@ -21,10 +21,10 @@ describe('MarketplaceEulaSelectorComponent', () => {
     await TestBed.configureTestingModule({
       declarations: [
         MarketplaceEulaSelectorComponent,
-        MarketplaceEulaComponent,
         FileInputComponent,
         MaxFileSizeDirective,
-        FileSizePipe
+        FileSizePipe,
+        EulaTypePipe
       ],
       imports: [
         FormsModule,

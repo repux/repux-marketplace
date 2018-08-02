@@ -36,7 +36,7 @@ export const environment = {
     currency: {
       defaultName: 'REPUX',
       precision: 18,
-      format: '1.0-18',
+      format: '1.2-18',
       pattern: /^\d*([,\.]\d{0,18})?$/
     },
     eulaUrls: [ {

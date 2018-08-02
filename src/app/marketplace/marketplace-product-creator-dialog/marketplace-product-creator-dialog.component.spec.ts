@@ -18,9 +18,9 @@ import { TagManagerService } from '../../shared/services/tag-manager.service';
 import { IpfsService } from '../../services/ipfs.service';
 import { UnpublishedProductsService } from '../services/unpublished-products.service';
 import { MarketplaceEulaSelectorComponent } from '../marketplace-eula-selector/marketplace-eula-selector.component';
-import { MarketplaceEulaComponent } from '../marketplace-eula/marketplace-eula.component';
 import { from } from 'rxjs';
 import Wallet from '../../shared/models/wallet';
+import { EulaTypePipe } from '../../shared/pipes/eula-type.pipe';
 
 describe('MarketplaceProductCreatorDialogComponent', () => {
   let tagManagerServiceSpy, keyStoreServiceSpy, repuxLibServiceSpy, dataProductServiceSpy, taskManagerServiceSpy, matDialogSpy,
@@ -53,8 +53,7 @@ describe('MarketplaceProductCreatorDialogComponent', () => {
       declarations: [
         MarketplaceProductCreatorDialogComponent,
         MarketplaceProductCategorySelectorComponent,
-        MarketplaceEulaSelectorComponent,
-        MarketplaceEulaComponent
+        MarketplaceEulaSelectorComponent
       ],
       imports: [
         SharedModule,

@@ -14,6 +14,7 @@ import { MaterialModule } from '../material.module';
 import { NotificationsNumberComponent } from './components/notifications-number/notifications-number.component';
 import { MaxFileSizeDirective } from './components/file-input/max-file-size.directive';
 import { WalletInfoComponent } from './components/wallet-info/wallet-info.component';
+import { EulaTypePipe } from './pipes/eula-type.pipe';
 
 @NgModule({
   imports: [
@@ -36,7 +37,8 @@ import { WalletInfoComponent } from './components/wallet-info/wallet-info.compon
     ArrayJoinPipe,
     FileSizePipe,
     CurrencyRepuxPipe,
-    WalletInfoComponent
+    WalletInfoComponent,
+    EulaTypePipe
   ],
   exports: [
     FileInputComponent,
@@ -48,7 +50,8 @@ import { WalletInfoComponent } from './components/wallet-info/wallet-info.compon
     WalletInfoComponent,
     ArrayJoinPipe,
     FileSizePipe,
-    CurrencyRepuxPipe
+    CurrencyRepuxPipe,
+    EulaTypePipe
   ],
   entryComponents: [
     ConfirmationDialogComponent,

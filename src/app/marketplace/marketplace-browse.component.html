@@ -1,2 +1,60 @@
-<app-data-product-list
-  [staticQuery]="staticQuery"></app-data-product-list>
+<div *ngIf="dataProducts; else showSpinner" class="mat-typography">
+  <div class="list-search mat-card">
+    <mat-icon class="list-search__icon">search</mat-icon>
+    <input class="list-search__input" (keyup)="onTypeAhead($event.target.value)" placeholder="Search for a data">
+  </div>
+
+  <section *ngIf="dataProducts.length; else showEmpty">
+    <h3 class="list-header">Marketplace</h3>
+
+    <div class="card-list">
+      <mat-card *ngFor="let product of dataProducts" class="card-item" [routerLink]="product.address ? ['details', product.address] : null">
+        <mat-card-title>{{ product.title }}</mat-card-title>
+
+        <p class="card-item__file-info mat-caption">
+          <mat-icon>attach_file</mat-icon>
+          {{ product.name }} | {{ product.size | fileSize }} | <a href=""
+                                                                  (click)="$event.stopPropagation(); $event.preventDefault(); downloadEula(product.eula)">{{
+          product.eula.type | eulaType }} EULA</a>
+        </p>
+
+        <mat-card-subtitle>{{ product.shortDescription }}</mat-card-subtitle>
+
+        <mat-card-content>
+          <mat-chip-list>
+            <mat-chip disabled *ngFor="let category of product.category">{{ category }}</mat-chip>
+          </mat-chip-list>
+        </mat-card-content>
+
+        <mat-card-actions>
+          <div class="price">
+            <span class="price__prefix">REPUX</span>
+            <span class="price__value">{{ product.price.toString() | currency : '' :
+          '' : currencyFormat }}</span>
+          </div>
+          <div class="card-item__spacer"></div>
+          <app-marketplace-action-buttons  (click)="$event.stopPropagation()"
+            [availableActions]="['buy', 'rate']"
+            [dataProduct]="product"></app-marketplace-action-buttons>
+        </mat-card-actions>
+      </mat-card>
+    </div>
+    <mat-paginator
+      (page)="pageChanged($event)"
+      [length]="dataProducts.length"
+      [(pageSize)]="size"
+      [pageSizeOptions]="pageSizeOptions"></mat-paginator>
+  </section>
+</div>
+<ng-template #showSpinner>
+  <div class="spinner-wrapper">
+    <mat-spinner></mat-spinner>
+  </div>
+</ng-template>
+
+<ng-template #showEmpty>
+  <figure class="empty-list">
+    <mat-icon class="empty-list__icon">file_copy</mat-icon>
+    <figcaption class="empty-list__text">Sorry, there is no data you trying to find...</figcaption>
+  </figure>
+</ng-template>

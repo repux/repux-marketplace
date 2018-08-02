@@ -44,7 +44,6 @@ import {
 import {
   MarketplaceDataProductTransactionsListContainerComponent
 } from './marketplace-data-product-transactions-list-container/marketplace-data-product-transactions-list-container.component';
-import { MarketplaceEulaComponent } from './marketplace-eula/marketplace-eula.component';
 import {
   MarketplaceRateTransactionDialogComponent
 } from './marketplace-rate-transaction-dialog/marketplace-rate-transaction-dialog.component';
@@ -75,7 +74,6 @@ import { MarketplaceRatingComponent } from './marketplace-rating/marketplace-rat
     MarketplaceProductDetailsComponent,
 
     MarketplaceEulaSelectorComponent,
-    MarketplaceEulaComponent,
     MarketplaceRateTransactionDialogComponent,
     MarketplaceRateTransactionButtonComponent,
     MarketplaceBuyProductButtonComponent,
