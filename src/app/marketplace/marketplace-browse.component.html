@@ -1,5 +1,5 @@
 <div *ngIf="dataProducts; else showSpinner" class="mat-typography">
-  <div class="list-search mat-card">
+  <div class="list-search">
     <mat-icon class="list-search__icon">search</mat-icon>
     <input class="list-search__input" (keyup)="onTypeAhead($event.target.value)" placeholder="Search for a data">
   </div>
