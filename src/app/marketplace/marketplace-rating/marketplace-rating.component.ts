@@ -11,7 +11,12 @@ export class MarketplaceRatingComponent {
   @Input() rating = new BigNumber(0);
   @Input() displayStar = true;
   @Input() displayLabel = true;
+  @Input() minRate = environment.repux.minProductRate;
   @Input() maxRate = environment.repux.maxProductRate;
+
+  get availableRates() {
+    return Array.from(Array(this.maxRate - this.minRate + 1).keys()).map(key => key + this.minRate);
+  }
 
   get percentageRating(): number {
     return this.rating

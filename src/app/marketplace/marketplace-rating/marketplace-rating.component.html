@@ -1,6 +1,10 @@
 <div class="star" *ngIf="displayStar">
-  <mat-icon class="background-star" color="primary">star_rate</mat-icon>
-  <mat-icon class="foreground-star" color="primary" [style.width]="percentageRating + '%'">star_rate</mat-icon>
+  <div class="background-star">
+    <mat-icon color="primary" *ngFor="let rate of availableRates;">star_rate</mat-icon>
+  </div>
+  <div class="foreground-star" [style.width]="percentageRating + '%'">
+    <mat-icon color="primary" *ngFor="let rate of availableRates;">star_rate</mat-icon>
+  </div>
 </div>
 
 <div *ngIf="displayLabel">

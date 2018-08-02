@@ -13,6 +13,7 @@ class DataProductListStubComponent {
   @Input() showFilters: boolean;
   @Input() showPaginator: boolean;
   @Input() showSearch: boolean;
+  @Input() disableSorting: boolean;
 }
 
 describe('MarketplaceSellUnpublishedComponent', () => {

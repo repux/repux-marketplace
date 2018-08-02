@@ -1,24 +1,19 @@
-$star-size: 24px;
-
 :host {
   display: inline-flex;
   align-items: center;
 }
 
-mat-icon {
+.background-star {
+  opacity: 0.3;
+}
+
+.foreground-star {
+  overflow: hidden;
   position: absolute;
-
-  &.background-star {
-    opacity: 0.3;
-  }
-
-  &.foreground-star {
-    overflow: hidden;
-  }
 }
 
 .star {
   position: relative;
-  height: $star-size;
-  width: $star-size;
+  height: 24px;
+  margin-right: 5px;
 }
