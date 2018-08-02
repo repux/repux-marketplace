@@ -9,9 +9,9 @@ import { HttpClientModule } from '@angular/common/http';
 import { Component, Input } from '@angular/core';
 import { DataProduct } from '../shared/models/data-product';
 import { EulaType } from 'repux-lib';
-import { MarketplaceEulaComponent } from './marketplace-eula/marketplace-eula.component';
 import { IpfsService } from '../services/ipfs.service';
 import { MarketplaceRatingComponent } from './marketplace-rating/marketplace-rating.component';
+import { EulaTypePipe } from '../shared/pipes/eula-type.pipe';
 
 @Component({ selector: 'app-marketplace-action-buttons', template: '' })
 class MarketplaceActionButtonsStubComponent {
@@ -32,8 +32,8 @@ describe('MarketplaceProductDetailsComponent', () => {
         MarketplaceActionButtonsStubComponent,
         FileSizePipe,
         CurrencyRepuxPipe,
+        EulaTypePipe,
         MarketplaceProductDetailsComponent,
-        MarketplaceEulaComponent,
         MarketplaceRatingComponent
       ],
       imports: [
