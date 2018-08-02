@@ -1,5 +1,5 @@
 <div *ngIf="userIsBuyer && (isAfterDeliveryDeadline || isDisabled) && isAwaiting">
-  <button mat-raised-button
+  <button mat-stroked-button
           color="warn"
           (click)="cancelPurchase()">Cancel transaction
   </button>

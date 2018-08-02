@@ -135,9 +135,7 @@
             mat-button
             color="primary"
             (click)="downloadEula($event, element.eula)"
-            matTooltip="Download EULA content">
-            <app-marketplace-eula [eulaType]="element.eula.type"></app-marketplace-eula>
-          </button>
+            matTooltip="Download EULA content">{{ element.eula.type | eulaType }}</button>
         </mat-cell>
       </ng-container>
 

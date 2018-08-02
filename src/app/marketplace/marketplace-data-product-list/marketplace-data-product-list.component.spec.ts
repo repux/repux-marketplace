@@ -14,7 +14,6 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { PendingFinalisationService } from '../services/pending-finalisation.service';
 import { IpfsService } from '../../services/ipfs.service';
 import { EulaType } from 'repux-lib';
-import { MarketplaceEulaComponent } from '../marketplace-eula/marketplace-eula.component';
 
 @Component({ selector: 'app-file-size', template: '{{bytes}}' })
 class MarketplaceFileSizeStubComponent {
@@ -55,8 +54,7 @@ describe('MarketplaceDataProductListComponent', () => {
         MarketplaceFileSizeStubComponent,
         MarketplaceActionButtonsStubComponent,
         MarketplaceDataProductListDetailDirective,
-        DataProductTransactionsListContainerStubComponent,
-        MarketplaceEulaComponent
+        DataProductTransactionsListContainerStubComponent
       ],
       imports: [
         SharedModule,
@@ -226,7 +224,6 @@ describe('MarketplaceDataProductListComponent', () => {
         'name',
         'title',
         'category',
-        'daysToDeliver',
         'size',
         'price',
         'timesPurchased',

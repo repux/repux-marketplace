@@ -8,8 +8,7 @@
 
     <div *ngFor="let eula of eulaUrls;" class="row">
       <mat-radio-button
-        [value]="eula.type">
-        <app-marketplace-eula [eulaType]="eula.type"></app-marketplace-eula>
+        [value]="eula.type">{{ eula.type | eulaType }}
       </mat-radio-button>
 
       <a *ngIf="eula.url" [href]="eula.url" target="_blank"><mat-icon>open_in_new</mat-icon></a>

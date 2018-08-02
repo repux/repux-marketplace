@@ -34,9 +34,7 @@
         <a
           (click)="downloadEula($event, product.eula)"
           matTooltip="Download EULA content"
-          matTooltipPosition="right">
-          <app-marketplace-eula [eulaType]="product.eula.type"></app-marketplace-eula>
-        </a>
+          matTooltipPosition="right">{{ product.eula.type | eulaType }}</a>
       </h4>
       <mat-hint mat-line>End User License Agreement</mat-hint>
     </mat-list-item>
