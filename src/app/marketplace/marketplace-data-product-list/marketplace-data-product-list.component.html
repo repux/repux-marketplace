@@ -15,13 +15,13 @@
 
       <!-- Name Column -->
       <ng-container matColumnDef="name">
-        <mat-header-cell *matHeaderCellDef mat-sort-header [disabled]="enableSorting"> File name</mat-header-cell>
+        <mat-header-cell *matHeaderCellDef mat-sort-header [disabled]="disableSorting"> File name</mat-header-cell>
         <mat-cell *matCellDef="let element"> {{element.name}}</mat-cell>
       </ng-container>
 
       <!-- Title Column -->
       <ng-container matColumnDef="title">
-        <mat-header-cell *matHeaderCellDef mat-sort-header [disabled]="enableSorting"> Title</mat-header-cell>
+        <mat-header-cell *matHeaderCellDef mat-sort-header [disabled]="disableSorting"> Title</mat-header-cell>
         <mat-cell *matCellDef="let element"> {{element.title}}</mat-cell>
       </ng-container>
 
@@ -32,13 +32,13 @@
       </ng-container>
       <!-- Size Column -->
       <ng-container matColumnDef="size">
-        <mat-header-cell *matHeaderCellDef mat-sort-header [disabled]="enableSorting"> Size</mat-header-cell>
+        <mat-header-cell *matHeaderCellDef mat-sort-header [disabled]="disableSorting"> Size</mat-header-cell>
         <mat-cell *matCellDef="let element"> {{ element.size | fileSize }}</mat-cell>
       </ng-container>
 
       <!-- Price Column -->
       <ng-container matColumnDef="price">
-        <mat-header-cell *matHeaderCellDef mat-sort-header [disabled]="enableSorting"> List price</mat-header-cell>
+        <mat-header-cell *matHeaderCellDef mat-sort-header [disabled]="disableSorting"> List price</mat-header-cell>
         <mat-cell *matCellDef="let element"> {{ element.price.toString() | currency : '' :
           currencyName :
           currencyFormat }}
@@ -47,7 +47,7 @@
 
       <!-- Delivery time Column -->
       <ng-container matColumnDef="daysToDeliver">
-        <mat-header-cell *matHeaderCellDef mat-sort-header [disabled]="enableSorting">
+        <mat-header-cell *matHeaderCellDef mat-sort-header [disabled]="disableSorting">
           Delivery time
           <mat-icon matTooltip="Max number of days for seller to finalise transaction">
             help
