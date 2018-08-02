@@ -48,8 +48,8 @@ export const environment = {
     }, {
       type: EulaType.OWNER
     } ],
-    demoTokenContractAddress: '${MARKETPLACE_SC_TOKEN_ADDRESS}' || '0xbd83c21e6f0a9547abe908c6faa02a55512d57b4',
-    registryContractAddress: '${MARKETPLACE_SC_REGISTRY_ADDRESS}' || '0xc2d327375dd73b132d1171aadf7a205d3a9b7d8f',
+    tokenContractAddress: '${MARKETPLACE_SC_TOKEN_ADDRESS}' || '0xbd83c21e6f0a9547abe908c6faa02a55512d57b4',
+    registryContractAddress: '${MARKETPLACE_SC_REGISTRY_ADDRESS}' || '0x0fe6a11f60c62e8f2a1b2d6b0c12133e4616fe7a',
     categoriesListPath: '${MARKETPLACE_CATEGORIES_PATH}' || './assets/data-product-categories.json',
     maxDaysToDeliver: 14,
     maxDaysToRate: 30,

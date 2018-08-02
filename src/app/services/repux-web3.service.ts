@@ -49,7 +49,7 @@ export async function RepuxWeb3ServiceFactory(): Promise<RepuxWeb3Api> {
   if (web3Provider) {
     repuxWeb3Api = new RepuxWeb3Api(web3Provider, {
       REGISTRY_CONTRACT_ADDRESS: environment.repux.registryContractAddress,
-      DEMOTOKEN_CONTRACT_ADDRESS: environment.repux.demoTokenContractAddress
+      TOKEN_CONTRACT_ADDRESS: environment.repux.tokenContractAddress
     });
 
     try {
