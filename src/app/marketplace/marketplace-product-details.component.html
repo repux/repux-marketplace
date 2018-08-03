@@ -1,93 +1,63 @@
-<div *ngIf="(product$ | async) as product" class="mat-typography">
-  <h1>{{ product.title }}</h1>
-  <mat-hint>{{ product.name }}</mat-hint>
-  <br/><br/>
+<mat-card *ngIf="(product$ | async) as product" class="product-details mat-typography">
+  <section class="product-details__title">
+    <h1>{{ product.title }}</h1>
 
-  <p *ngIf="product.fullDescription; else showShortDescription">
-    {{ product.fullDescription }}
-  </p>
-  <ng-template #showShortDescription>
-    <p>
-      {{ product.shortDescription }}
-    </p>
-  </ng-template>
+    <app-marketplace-rating
+      *ngIf="(owner$ | async) as owner"
+      [rating]="owner.sellerRating"></app-marketplace-rating>
+  </section>
 
-  <mat-list>
-    <mat-divider></mat-divider>
-    <mat-list-item>
-      <h4 mat-line>{{ product.price.toString() | currencyRepux }}</h4>
-      <mat-hint mat-line>Price</mat-hint>
-    </mat-list-item>
-    <mat-divider></mat-divider>
-    <mat-list-item>
-      <h4 mat-line>{{ product.daysToDeliver }} days</h4>
-      <mat-hint mat-line>Delivery time</mat-hint>
-    </mat-list-item>
-    <mat-divider></mat-divider>
-    <mat-list-item>
-      <h4 mat-line>{{ product.size | fileSize }}</h4>
-      <mat-hint mat-line>File size</mat-hint>
-    </mat-list-item>
-    <mat-divider></mat-divider>
-    <mat-list-item>
-      <h4 mat-line>
-        <a
-          (click)="downloadEula($event, product.eula)"
-          matTooltip="Download EULA content"
-          matTooltipPosition="right">{{ product.eula.type | eulaType }}</a>
-      </h4>
-      <mat-hint mat-line>End User License Agreement</mat-hint>
-    </mat-list-item>
-    <mat-divider></mat-divider>
-    <mat-list-item *ngIf="(owner$ | async) as owner">
-      <h4 mat-line>
-        <app-marketplace-rating
-          [rating]="owner.sellerRating"></app-marketplace-rating>
-      </h4>
-      <mat-hint mat-line>User rating</mat-hint>
-      <mat-divider></mat-divider>
-    </mat-list-item>
-  </mat-list>
-
-  <br/><br/>
-
-  <mat-chip-list>
-    <mat-chip *ngFor="let category of product.category" disabled>{{ category }}</mat-chip>
-  </mat-chip-list>
-
-  <br/><br/>
-
-  <div class="row">
+  <section class="product-details__price-buy">
+    <div class="price">
+      <span class="price__prefix">REPUX</span>
+      <span class="price__value">{{ product.price.toString() | currency : '' : '' : currencyFormat }}</span>
+    </div>
     <app-marketplace-action-buttons
       [dataProduct]="product"
       [availableActions]="[ 'buy', 'rate' ]"></app-marketplace-action-buttons>
+  </section>
+
+  <section class="product-details__description">
+    <p>{{ product.shortDescription }}</p>
+    <mat-chip-list>
+      <mat-chip *ngFor="let category of product.category" disabled>{{ category }}</mat-chip>
+    </mat-chip-list>
+  </section>
+
+  <section class="product-details__file-info">
+    <mat-icon>attach_file</mat-icon>
+    {{ product.name }} | {{ product.size | fileSize }} | <a href=""
+                                                            (click)="$event.stopPropagation(); $event.preventDefault(); downloadEula(product.eula)">{{
+    product.eula.type | eulaType }} EULA</a>
+  </section>
+
+  <div class="product-details__note">
+    <span>Max. number of days for seller to finalise transaction: <strong>{{ product.daysToDeliver }} days</strong></span>
   </div>
 
-  <div *ngIf="product.sampleFile?.length > 0">
-    <h3 class="section-header">Sample files</h3>
+  <section *ngIf="product.fullDescription">
+    <h2>Detailed description</h2>
+    <p>{{ product.fullDescription }}</p>
+  </section>
 
+  <section *ngIf="product.sampleFile?.length > 0" class="sample-files">
+    <h2>Sample files</h2>
     <mat-list>
-      <mat-divider></mat-divider>
-
       <mat-list-item *ngFor="let file of product.sampleFile;">
         <div mat-line>
-          <div class="sample-file-line">
+          <div class="sample-files__line">
             {{ file.fileName }}
-            <button
-              mat-button
-              color="accent"
-              (click)="downloadSampleFile($event, file)">
-              <mat-icon>save_alt</mat-icon>
-              Download sample
+            <button class="sample-files__button"
+                    mat-stroked-button
+                    (click)="downloadSampleFile($event, file)">
+              Download
             </button>
           </div>
         </div>
         <mat-divider></mat-divider>
       </mat-list-item>
     </mat-list>
-  </div>
-
-  <br/><br/>
+  </section>
 
   <a routerLink="../../">Back to list</a>
-</div>
+</mat-card>

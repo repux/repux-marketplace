@@ -1,17 +1,86 @@
-a {
-  text-decoration: underline;
-  cursor: pointer;
+.product-details {
+  max-width: 800px;
+  margin: 0 auto;
+
+  p {
+    font-size: 16px;
+    line-height: 1.5;
+    color: #5f6368;
+    margin: 0 0 16px 0;
+  }
+
+  &__title {
+    display: flex;
+    justify-content: space-between;
+    margin: 0 0 16px 0;
+
+    h1  {
+      margin: 0;
+    }
+  }
+
+  &__price-buy {
+    display: flex;
+    justify-content: space-between;
+    margin: 0 0 20px 0;
+  }
+
+  &__note {
+    font-size: 14px;
+    background-color: #efefef;
+    padding: 24px;
+    margin: 0 0 20px 0;
+  }
+
+  &__description {
+    margin: 0 0 20px 0;
+  }
+
+  &__file-info {
+    padding: 16px 0;
+    color: #7e7e7e;
+    margin: 0 0 20px 0;
+
+    .mat-icon {
+      vertical-align: bottom;
+      margin: 0 0 0 -4px;
+    }
+  }
+
+  &__actions {
+    margin: 20px 0 40px 0;
+  }
 }
 
-.sample-file-line {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: space-between;
-  min-height: 50px;
+.price {
+  font-weight: 700;
+  align-self: center;
+
+  &__prefix {
+    font-size: 12px;
+    color: #999;
+    margin: 0 4px 0 0;
+  }
+
+  &__value {
+    font-size: 24px;
+    color: #ff4081;
+  }
 }
 
-.section-header {
-  margin: 30px 0 0;
-  font-weight: bold;
+
+.sample-files {
+  margin: 0 0 40px 0;
+
+  &__button {
+    color: #999;
+  }
+
+  &__line {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    min-height: 50px;
+  }
 }

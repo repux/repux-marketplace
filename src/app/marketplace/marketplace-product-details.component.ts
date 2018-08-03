@@ -9,6 +9,7 @@ import { DataProduct } from '../shared/models/data-product';
 import { Subscription } from 'rxjs/internal/Subscription';
 import { UserService } from '../shared/services/user.service';
 import { User } from '../shared/models/user';
+import { environment } from '../../environments/environment';
 
 @Component({
   selector: 'app-product-details',
@@ -20,6 +21,7 @@ export class MarketplaceProductDetailsComponent implements OnInit, OnDestroy {
   owner$: Observable<User>;
 
   private productSubscription: Subscription;
+  public currencyFormat: string = environment.repux.currency.format;
 
   constructor(
     private router: Router,

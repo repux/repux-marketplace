@@ -2,7 +2,6 @@
 
   <mat-form-field *ngIf="showSearch">
     <mat-icon class="search-icon" matPrefix>search</mat-icon>
-
     <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Search">
   </mat-form-field>
 
