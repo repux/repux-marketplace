@@ -1,6 +1,6 @@
 import { Injectable, OnDestroy } from '@angular/core';
 import { Task } from '../tasks/task';
-import { TaskManagerComponent } from '../shared/components/task-manager/task-manager.component';
+import { MarketplaceTaskManagerComponent } from '../marketplace/marketplace-task-manager/marketplace-task-manager.component';
 import { MatDialog, MatDialogRef } from '@angular/material';
 import { WalletService } from './wallet.service';
 import Wallet from '../shared/models/wallet';
@@ -12,7 +12,7 @@ import { Subscription } from 'rxjs/internal/Subscription';
   providedIn: 'root'
 })
 export class TaskManagerService implements OnDestroy {
-  private dialogRef: MatDialogRef<TaskManagerComponent>;
+  private dialogRef: MatDialogRef<MarketplaceTaskManagerComponent>;
   private wallet: Wallet;
   private tasksSubject = new BehaviorSubject<ReadonlyArray<Task>>([]);
   private foregroundTasksSubject = new BehaviorSubject<ReadonlyArray<Task>>([]);
@@ -65,7 +65,7 @@ export class TaskManagerService implements OnDestroy {
       return;
     }
 
-    this.dialogRef = this.dialog.open(TaskManagerComponent, {
+    this.dialogRef = this.dialog.open(MarketplaceTaskManagerComponent, {
       position: {
         right: '15px',
         bottom: '15px'

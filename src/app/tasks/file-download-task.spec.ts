@@ -179,22 +179,6 @@ describe('FileDownloadTask', () => {
     });
   });
 
-  describe('#get needsUserAction()', () => {
-    it('should return _needsUserAction', () => {
-      const needsUserAction = true;
-      fileDownloadTask[ '_needsUserAction' ] = needsUserAction;
-      expect(fileDownloadTask.needsUserAction).toBe(needsUserAction);
-    });
-  });
-
-  describe('#get userActionName()', () => {
-    it('should return _userActionName', () => {
-      const userActionName = 'ACTION_NAME';
-      fileDownloadTask[ '_userActionName' ] = userActionName;
-      expect(fileDownloadTask.userActionName).toBe(userActionName);
-    });
-  });
-
   describe('#get status()', () => {
     it('should return _status', () => {
       const status = 'STATUS';

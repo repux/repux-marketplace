@@ -1,16 +1,20 @@
 <div *ngIf="wallet">
-  <button mat-stroked-button
-          color="primary"
-          *ngIf="!dataProduct.disabled && !userIsOwner && !bought"
-          (click)="buyDataProduct()">Buy
-  </button>
+  <span *ngIf="hasPendingTransaction">Buying...</span>
 
-  <div *ngIf="finalised || userIsOwner">
-    <app-marketplace-download-product-button [dataProduct]="dataProduct"></app-marketplace-download-product-button>
+  <div *ngIf="!hasPendingTransaction">
+    <button mat-stroked-button
+            color="primary"
+            *ngIf="!dataProduct.disabled && !userIsOwner && !bought"
+            (click)="buyDataProduct()">Buy
+    </button>
+
+    <div *ngIf="finalised || userIsOwner">
+      <app-marketplace-download-product-button [dataProduct]="dataProduct"></app-marketplace-download-product-button>
+    </div>
+
+    <span class="buy-button-replacement" *ngIf="!dataProduct.disabled && bought && !finalised"
+          matTooltip="You will be able to download this file after owner finalises the sale">
+      Pending finalisation
+    </span>
   </div>
-
-  <span class="buy-button-replacement" *ngIf="!dataProduct.disabled && bought && !finalised"
-        matTooltip="You will be able to download this file after owner finalises the sale">
-    Pending finalisation
-  </span>
 </div>

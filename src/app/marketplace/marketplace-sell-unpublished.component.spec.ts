@@ -4,10 +4,11 @@ import { Component, Input } from '@angular/core';
 import { DataProduct } from '../shared/models/data-product';
 import { UnpublishedProductsService } from './services/unpublished-products.service';
 import { BehaviorSubject } from 'rxjs/internal/BehaviorSubject';
+import { ActionButtonType } from '../shared/enums/action-button-type';
 
 @Component({ selector: 'app-data-product-list', template: '' })
 class DataProductListStubComponent {
-  @Input() availableActions: string[];
+  @Input() availableActions: ActionButtonType[];
   @Input() dataProducts: DataProduct[];
   @Input() displayedColumns: string[];
   @Input() showFilters: boolean;

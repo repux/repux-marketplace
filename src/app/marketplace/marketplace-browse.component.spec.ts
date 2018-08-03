@@ -13,13 +13,14 @@ import { PendingFinalisationService } from './services/pending-finalisation.serv
 import { DataProductListService } from '../services/data-product-list.service';
 import { EsResponse } from '../shared/models/es-response';
 import { fromPromise } from 'rxjs/internal-compatibility';
-import { Observable, of } from 'rxjs';
+import { of } from 'rxjs';
+import { ActionButtonType } from '../shared/enums/action-button-type';
 
 
 @Component({ selector: 'app-marketplace-action-buttons', template: '' })
 class MarketplaceActionButtonsStubComponent {
   @Input() dataProduct: DataProduct;
-  @Input() availableActions: string[];
+  @Input() availableActions: ActionButtonType[];
 }
 
 @Component({ selector: 'app-data-product-list', template: '' })
@@ -35,7 +36,7 @@ describe('MarketplaceBrowseComponent', () => {
 
   beforeEach(fakeAsync(() => {
     matDialog = jasmine.createSpyObj('MatDialog', [ 'open' ]);
-    pendingFinalisationServiceSpy = jasmine.createSpyObj('PendingFinalisationService', [ 'findTransaction' ]);
+    pendingFinalisationServiceSpy = jasmine.createSpyObj('PendingFinalisationService', [ 'findOrder' ]);
     dataProductListServiceSpy = jasmine.createSpyObj('DataProductListService', [ 'getDataProducts', 'getBlockchainStateForDataProducts' ]);
     dataProductListServiceSpy.getDataProducts.and.callFake(() => {
       const response = new EsResponse();

@@ -9,14 +9,14 @@ import { PendingFinalisationService } from './services/pending-finalisation.serv
 import { UnpublishedProductsService } from './services/unpublished-products.service';
 import { DataProduct } from '../shared/models/data-product';
 import { MyActiveListingsService } from './services/my-active-listings.service';
-import { DataProductTransaction } from '../shared/models/data-product-transaction';
+import { DataProductOrder } from '../shared/models/data-product-order';
 
 describe('MarketplaceSellComponent', () => {
   let component: MarketplaceSellComponent;
   let fixture: ComponentFixture<MarketplaceSellComponent>;
   let unpublishedProductsServiceSpy, pendingFinalisationServiceSpy, myActiveListingsServiceSpy;
   const dataProduct = new DataProduct();
-  const dataProductTransaction = new DataProductTransaction();
+  const dataProductOrder = new DataProductOrder();
 
   beforeEach(fakeAsync(() => {
 
@@ -26,9 +26,9 @@ describe('MarketplaceSellComponent', () => {
     unpublishedProductsServiceSpy = jasmine.createSpyObj('UnpublishedProductsService', [ 'getProducts' ]);
     unpublishedProductsServiceSpy.getProducts.and.returnValue(new BehaviorSubject<DataProduct[]>([ dataProduct ]));
 
-    pendingFinalisationServiceSpy = jasmine.createSpyObj('PendingFinalisationService', [ 'getTransactions' ]);
-    pendingFinalisationServiceSpy.getTransactions.and.returnValue(
-      new BehaviorSubject<DataProductTransaction[]>([ dataProductTransaction ])
+    pendingFinalisationServiceSpy = jasmine.createSpyObj('PendingFinalisationService', [ 'getOrders' ]);
+    pendingFinalisationServiceSpy.getOrders.and.returnValue(
+      new BehaviorSubject<DataProductOrder[]>([ dataProductOrder ])
     );
 
     TestBed.configureTestingModule({

@@ -94,18 +94,18 @@
                   *ngIf="!disablePendingFinalisation"
                   color="primary"
                   (click)="$event.stopPropagation()">
-            {{ getTransactionsToFinalisation(element).length }}
+            {{ getOrdersToFinalisation(element).length }}
           </button>
           <span *ngIf="disablePendingFinalisation">
-            {{ getTransactionsToFinalisation(element).length }}
+            {{ getOrdersToFinalisation(element).length }}
           </span>
         </mat-cell>
       </ng-container>
 
-      <!-- Transaction date -->
-      <ng-container matColumnDef="transactionDate">
+      <!-- Order date -->
+      <ng-container matColumnDef="orderDate">
         <mat-header-cell *matHeaderCellDef> Transaction date</mat-header-cell>
-        <mat-cell *matCellDef="let element"> {{ getTransactionDate(element) | date : 'short' }}
+        <mat-cell *matCellDef="let element"> {{ getOrderDate(element) | date : 'short' }}
         </mat-cell>
       </ng-container>
 
@@ -162,8 +162,8 @@
 </div>
 
 <ng-template #tpl let-element>
-  <app-marketplace-data-product-transactions-list-container
+  <app-marketplace-data-product-orders-list-container
     [dataProduct]="element"
-    [displayPendingTransactions]="displayPendingTransactions && !element.blockchainState?.disabled"
-    (finaliseSuccess)="onFinaliseSuccess($event)"></app-marketplace-data-product-transactions-list-container>
+    [displayPendingOrders]="displayPendingOrders && !element.blockchainState?.disabled"
+    (finaliseSuccess)="onFinaliseSuccess($event)"></app-marketplace-data-product-orders-list-container>
 </ng-template>

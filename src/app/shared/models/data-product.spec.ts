@@ -36,7 +36,7 @@ describe('DataProduct', () => {
         fundsToWithdraw: '0',
         eula,
         sampleFile: [ attachment ],
-        transactions: [ {
+        orders: [ {
           finalised: true,
           buyerAddress: '0x11',
           buyerMetaHash: 'BUYER_META_HASH',
@@ -64,14 +64,14 @@ describe('DataProduct', () => {
       expect(dataProduct.fundsToWithdraw).toEqual(new BigNumber(0));
       expect(dataProduct.eula).toEqual(eula);
       expect(dataProduct.sampleFile).toEqual([ attachment ]);
-      expect(dataProduct.transactions[ 0 ].finalised).toBeTruthy();
-      expect(dataProduct.transactions[ 0 ].buyerAddress).toBe('0x11');
-      expect(dataProduct.transactions[ 0 ].buyerMetaHash).toBe('BUYER_META_HASH');
-      expect(dataProduct.transactions[ 0 ].price).toEqual(new BigNumber('199.999999999999999999'));
-      expect(dataProduct.transactions[ 0 ].publicKey).toBe('PUBLIC_KEY');
-      expect(dataProduct.transactions[ 0 ].purchased).toBeTruthy();
-      expect(dataProduct.transactions[ 0 ].rated).toBeTruthy();
-      expect(dataProduct.transactions[ 0 ].rating).toEqual(new BigNumber('10'));
+      expect(dataProduct.orders[ 0 ].finalised).toBeTruthy();
+      expect(dataProduct.orders[ 0 ].buyerAddress).toBe('0x11');
+      expect(dataProduct.orders[ 0 ].buyerMetaHash).toBe('BUYER_META_HASH');
+      expect(dataProduct.orders[ 0 ].price).toEqual(new BigNumber('199.999999999999999999'));
+      expect(dataProduct.orders[ 0 ].publicKey).toBe('PUBLIC_KEY');
+      expect(dataProduct.orders[ 0 ].purchased).toBeTruthy();
+      expect(dataProduct.orders[ 0 ].rated).toBeTruthy();
+      expect(dataProduct.orders[ 0 ].rating).toEqual(new BigNumber('10'));
     });
   });
 });

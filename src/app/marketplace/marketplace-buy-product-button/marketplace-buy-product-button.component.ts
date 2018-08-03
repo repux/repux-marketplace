@@ -3,7 +3,6 @@ import { RepuxLibService } from '../../services/repux-lib.service';
 import { WalletService } from '../../services/wallet.service';
 import { DataProductService } from '../../services/data-product.service';
 import { MatDialog } from '@angular/material';
-import { TransactionDialogComponent } from '../../shared/components/transaction-dialog/transaction-dialog.component';
 import Wallet from '../../shared/models/wallet';
 import { KeysPasswordDialogComponent } from '../../key-store/keys-password-dialog/keys-password-dialog.component';
 import { KeysGeneratorDialogComponent } from '../../key-store/keys-generator-dialog/keys-generator-dialog.component';
@@ -14,10 +13,13 @@ import {
   MarketplacePurchaseConfirmationDialogComponent
 } from '../marketplace-purchase-confirmation-dialog/marketplace-purchase-confirmation-dialog.component';
 import { AwaitingFinalisationService } from '../services/awaiting-finalisation.service';
-import { DataProductTransaction as BlockchainDataProductTransaction } from 'repux-web3-api';
+import { DataProductOrder as BlockchainDataProducOrder, TransactionReceipt, TransactionStatus } from 'repux-web3-api';
 import { EventAction, EventCategory, TagManagerService } from '../../shared/services/tag-manager.service';
-import { TransactionResult } from 'repux-web3-api/repux-web3-api';
 import { environment } from '../../../environments/environment';
+import { Transaction, TransactionService } from '../../shared/services/transaction.service';
+import { BlockchainTransactionScope } from '../../shared/enums/blockchain-transaction-scope';
+import { ActionButtonType } from '../../shared/enums/action-button-type';
+import { CommonDialogService } from '../../shared/services/common-dialog.service';
 
 @Component({
   selector: 'app-marketplace-buy-product-button',
@@ -26,68 +28,110 @@ import { environment } from '../../../environments/environment';
 })
 export class MarketplaceBuyProductButtonComponent implements OnInit, OnDestroy {
   @Input() dataProduct: DataProduct;
-  @Input() blockchainBuyTransaction: BlockchainDataProductTransaction;
+  @Input() blockchainDataProductOrder: BlockchainDataProducOrder;
 
   public wallet: Wallet;
   public userIsOwner: boolean;
   public dataProductAddress: string;
   public productOwnerAddress: string;
-  private _keysSubscription: Subscription;
-  private _walletSubscription: Subscription;
-  private _transactionDialogSubscription: Subscription;
+  public pendingTransaction?: Transaction;
+  public pendingApproveTransaction?: Transaction;
+
+  private walletSubscription: Subscription;
+  private transactionsSubscription: Subscription;
+  private keysSubscription: Subscription;
 
   constructor(
-    private _tagManager: TagManagerService,
-    private _dataProductService: DataProductService,
-    private _repuxLibService: RepuxLibService,
-    private _walletService: WalletService,
-    private _keyStoreService: KeyStoreService,
-    private _awaitingFinalisationService: AwaitingFinalisationService,
-    private _dialog: MatDialog) {
+    private tagManager: TagManagerService,
+    private dataProductService: DataProductService,
+    private repuxLibService: RepuxLibService,
+    private walletService: WalletService,
+    private keyStoreService: KeyStoreService,
+    private awaitingFinalisationService: AwaitingFinalisationService,
+    private transactionService: TransactionService,
+    private commonDialogService: CommonDialogService,
+    private dialog: MatDialog) {
   }
 
-  get finalised() {
-    return this.blockchainBuyTransaction && this.blockchainBuyTransaction.finalised;
+  get finalised(): boolean {
+    return this.blockchainDataProductOrder && this.blockchainDataProductOrder.finalised;
   }
 
-  get bought() {
-    return this.blockchainBuyTransaction && this.blockchainBuyTransaction.purchased;
+  get bought(): boolean {
+    return this.blockchainDataProductOrder && this.blockchainDataProductOrder.purchased;
+  }
+
+  get hasPendingTransaction(): boolean {
+    return Boolean(this.pendingTransaction || this.pendingApproveTransaction);
   }
 
   ngOnInit(): void {
     this.dataProductAddress = this.dataProduct.address;
     this.productOwnerAddress = this.dataProduct.ownerAddress;
-    this._walletSubscription = this._walletService.getWallet().subscribe(wallet => this._onWalletChange(wallet));
+    this.walletSubscription = this.walletService.getWallet().subscribe(wallet => this.onWalletChange(wallet));
+    this.transactionsSubscription = this.transactionService.getTransactions()
+      .subscribe(transactions => this.onTransactionsListChange(transactions));
   }
 
-  async buyDataProduct(): Promise<void> {
-    this._tagManager.sendEvent(
+  onTransactionFinish(transactionReceipt: TransactionReceipt) {
+    if (transactionReceipt.status === TransactionStatus.SUCCESSFUL) {
+      this.blockchainDataProductOrder = <any> {
+        purchased: true
+      };
+      this.awaitingFinalisationService.addProduct(this.dataProduct);
+      this.dialog.open(MarketplacePurchaseConfirmationDialogComponent);
+      this.emitBuyConfirmedEvent(transactionReceipt);
+    }
+  }
+
+  async onTransactionsListChange(transactions: Transaction[]) {
+    const foundApproveTransaction = transactions.find(transaction =>
+      transaction.scope === BlockchainTransactionScope.DataProduct &&
+      transaction.identifier === this.dataProductAddress &&
+      transaction.blocksAction === ActionButtonType.ApproveBeforeBuy
+    );
+
+    if (this.pendingApproveTransaction && !foundApproveTransaction) {
+      this.onApproveTransactionFinish();
+    }
+
+    this.pendingApproveTransaction = foundApproveTransaction;
+
+    const foundTransaction = transactions.find(transaction =>
+      transaction.scope === BlockchainTransactionScope.DataProduct &&
+      transaction.identifier === this.dataProductAddress &&
+      transaction.blocksAction === ActionButtonType.Buy
+    );
+
+    if (this.pendingTransaction && !foundTransaction) {
+      this.onTransactionFinish(
+        await this.transactionService.getTransactionReceipt(this.pendingTransaction.transactionHash)
+      );
+    }
+
+    this.pendingTransaction = foundTransaction;
+  }
+
+  async onApproveTransactionFinish() {
+    const { publicKey } = await this.getKeys();
+    const serializedKey = await this.repuxLibService.getInstance().serializePublicKey(publicKey);
+
+    this.commonDialogService.transaction(
+      () => this.dataProductService.purchaseDataProduct(this.dataProductAddress, serializedKey)
+    );
+  }
+
+  buyDataProduct(): void {
+    this.tagManager.sendEvent(
       EventCategory.Buy,
       EventAction.Buy,
       this.dataProduct.title,
       this.dataProduct.price ? this.dataProduct.price.toString() : ''
     );
 
-    const { publicKey } = await this._getKeys();
-    const serializedKey = await this._repuxLibService.getInstance().serializePublicKey(publicKey);
-
-    const transactionDialogRef = this._dialog.open(TransactionDialogComponent, {
-      disableClose: true
-    });
-    this._unsubscribeTransactionDialog();
-    this._transactionDialogSubscription = transactionDialogRef.afterClosed().subscribe((result: TransactionResult) => {
-      if (result) {
-        this.blockchainBuyTransaction = {
-          purchased: true
-        };
-        this._awaitingFinalisationService.addProduct(this.dataProduct);
-        this._dialog.open(MarketplacePurchaseConfirmationDialogComponent);
-        this.emitBuyConfirmedEvent(result);
-      }
-    });
-    const transactionDialog: TransactionDialogComponent = transactionDialogRef.componentInstance;
-    transactionDialog.transaction = () => this._dataProductService.purchaseDataProduct(this.dataProductAddress, serializedKey);
-    transactionDialog.callTransaction();
+    this.commonDialogService.transaction(
+      () => this.dataProductService.approveTokensTransferForDataProductPurchase(this.dataProductAddress)
+    );
   }
 
   getUserIsOwner() {
@@ -95,34 +139,36 @@ export class MarketplaceBuyProductButtonComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    if (this._keysSubscription) {
-      this._keysSubscription.unsubscribe();
+    if (this.keysSubscription) {
+      this.keysSubscription.unsubscribe();
     }
 
-    if (this._walletSubscription) {
-      this._walletSubscription.unsubscribe();
+    if (this.walletSubscription) {
+      this.walletSubscription.unsubscribe();
     }
 
-    this._unsubscribeTransactionDialog();
+    if (this.transactionsSubscription) {
+      this.transactionsSubscription.unsubscribe();
+    }
   }
 
-  private emitBuyConfirmedEvent(result: TransactionResult): void {
-    this._tagManager.sendEvent(
+  private emitBuyConfirmedEvent(transactionReceipt: TransactionReceipt): void {
+    this.tagManager.sendEvent(
       EventCategory.Buy,
       EventAction.BuyConfirmed,
       this.dataProduct.title,
       this.dataProduct.price ? this.dataProduct.price.toString() : '',
-      result.gasUsed,
+      transactionReceipt.gasUsed,
       {
         currencyCode: environment.analyticsCurrencySubstitute,
         originalCurrency: environment.repux.currency.defaultName,
         purchase: {
           actionField: {
-            id: result.transactionHash,
+            id: transactionReceipt.transactionHash,
             revenue: this.dataProduct.price.toString(),
           },
           products: [ {
-            id: result.address,
+            id: this.dataProduct.address,
             name: this.dataProduct.title,
             brand: this.dataProduct.ownerAddress,
             category: this.dataProduct.category.join(', '),
@@ -134,7 +180,7 @@ export class MarketplaceBuyProductButtonComponent implements OnInit, OnDestroy {
     );
   }
 
-  private _onWalletChange(wallet: Wallet): void {
+  private onWalletChange(wallet: Wallet): void {
     if (!wallet || wallet === this.wallet) {
       return;
     }
@@ -143,17 +189,17 @@ export class MarketplaceBuyProductButtonComponent implements OnInit, OnDestroy {
     this.userIsOwner = this.getUserIsOwner();
   }
 
-  private _getKeys(): Promise<{ privateKey: JsonWebKey, publicKey: JsonWebKey }> {
+  private getKeys(): Promise<{ privateKey: JsonWebKey, publicKey: JsonWebKey }> {
     return new Promise(resolve => {
       let dialogRef;
 
-      if (this._keyStoreService.hasKeys()) {
-        dialogRef = this._dialog.open(KeysPasswordDialogComponent);
+      if (this.keyStoreService.hasKeys()) {
+        dialogRef = this.dialog.open(KeysPasswordDialogComponent);
       } else {
-        dialogRef = this._dialog.open(KeysGeneratorDialogComponent);
+        dialogRef = this.dialog.open(KeysGeneratorDialogComponent);
       }
 
-      this._keysSubscription = dialogRef.afterClosed().subscribe(result => {
+      this.keysSubscription = dialogRef.afterClosed().subscribe(result => {
         if (result) {
           resolve({
             privateKey: result.privateKey,
@@ -162,12 +208,5 @@ export class MarketplaceBuyProductButtonComponent implements OnInit, OnDestroy {
         }
       });
     });
-  }
-
-  private _unsubscribeTransactionDialog() {
-    if (this._transactionDialogSubscription) {
-      this._transactionDialogSubscription.unsubscribe();
-      this._transactionDialogSubscription = null;
-    }
   }
 }

@@ -6,10 +6,11 @@ import Wallet from '../shared/models/wallet';
 import { Component, Input } from '@angular/core';
 import { MaterialModule } from '../material.module';
 import { getAwaitingFinalisationDataProductsQuery } from './services/awaiting-finalisation.service';
+import { ActionButtonType } from '../shared/enums/action-button-type';
 
 @Component({ selector: 'app-data-product-list', template: '' })
 class DataProductListStubComponent {
-  @Input() availableActions: string[];
+  @Input() availableActions: ActionButtonType[];
   @Input() displayedColumns: string[];
   @Input() staticQuery;
   @Input() buyerAddress: string;

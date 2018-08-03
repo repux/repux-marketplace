@@ -3,6 +3,7 @@ import Wallet from '../shared/models/wallet';
 import { WalletService } from '../services/wallet.service';
 import { Subscription } from 'rxjs/internal/Subscription';
 import { getCreatedDataProductsQuery } from './services/my-active-listings.service';
+import { ActionButtonType } from '../shared/enums/action-button-type';
 
 @Component({
   selector: 'app-marketplace-sell-my-active-listings',
@@ -24,8 +25,8 @@ export class MarketplaceSellMyActiveListingsComponent implements OnDestroy {
     'actions'
   ];
   public availableActions = [
-    'withdraw',
-    'unpublish'
+    ActionButtonType.Withdraw,
+    ActionButtonType.Unpublish
   ];
   public staticQuery = {};
 

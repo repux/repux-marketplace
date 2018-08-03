@@ -1,123 +1,203 @@
 import { Injectable, OnDestroy } from '@angular/core';
 import { RepuxWeb3Service } from './repux-web3.service';
-import { Observable } from 'rxjs';
-import {
-  ContractEvent,
-  DataProductEvent,
-  DataProductTransaction,
-  DataProductUpdateAction,
-  TransactionResult
-} from 'repux-web3-api';
+import { BehaviorSubject, Observable } from 'rxjs';
+import { DataProduct, DataProductOrder, DataProductUpdateAction, RepuxWeb3Api } from 'repux-web3-api';
 import { filter, map } from 'rxjs/internal/operators';
 import { WalletService } from './wallet.service';
 import Wallet from '../shared/models/wallet';
 import { StorageService } from './storage.service';
 import { Subscription } from 'rxjs/internal/Subscription';
-import RepuxWeb3Api from 'repux-web3-api/repux-web3-api';
 import BigNumber from 'bignumber.js';
-import { WebsocketService, WebsocketEvent } from './websocket.service';
+import { WebsocketEvent, WebsocketService } from './websocket.service';
+import { DataProductEvent } from '../shared/models/data-product-event';
+import { BlockchainTransactionScope } from '../shared/enums/blockchain-transaction-scope';
+import { ActionButtonType } from '../shared/enums/action-button-type';
+import { TransactionService } from '../shared/services/transaction.service';
+import { TransactionEvent } from '../shared/models/transaction-event';
 
 @Injectable({
   providedIn: 'root'
 })
 export class DataProductService implements OnDestroy {
-  private websocketMessage$: Observable<DataProductEvent>;
-  private _wallet: Wallet;
-  private _productUpdateEvent: ContractEvent;
-  private _walletSubscription: Subscription;
+  private websocketMessage$: Observable<any>;
+  private wallet: Wallet;
+  private walletSubscription: Subscription;
 
   constructor(
-    private _repuxWeb3Service: RepuxWeb3Service,
-    private _walletService: WalletService,
-    private _storageService: StorageService,
-    private _websocketService: WebsocketService
+    private repuxWeb3Service: RepuxWeb3Service,
+    private walletService: WalletService,
+    private storageService: StorageService,
+    private websocketService: WebsocketService,
+    private transactionService: TransactionService
   ) {
-    this._walletSubscription = this._walletService.getWallet().subscribe(wallet => this._onWalletChange(wallet));
+    this.walletSubscription = this.walletService.getWallet().subscribe(wallet => this.onWalletChange(wallet));
   }
 
-  private get _api(): Promise<RepuxWeb3Api> {
+  private get api(): Promise<RepuxWeb3Api> {
     return new Promise<RepuxWeb3Api>(async (resolve) => {
-      const web3Service: RepuxWeb3Service = await this._repuxWeb3Service;
+      const web3Service: RepuxWeb3Service = await this.repuxWeb3Service;
       const repuxWeb3Api = await web3Service.getRepuxApiInstance();
       resolve(repuxWeb3Api);
     });
   }
 
-  async getDataProductData(dataProductAddress: string) {
-    return (await this._api).getDataProduct(dataProductAddress);
+  async getDataProductData(dataProductAddress: string): Promise<DataProduct> {
+    return (await this.api).getDataProduct(dataProductAddress);
   }
 
-  async getTransactionData(dataProductAddress: string, buyerAddress: string): Promise<DataProductTransaction> {
-    return (await this._api).getDataProductTransaction(dataProductAddress, buyerAddress);
-  }
-
-  async publishDataProduct(metaFileHash: string, price: BigNumber, daysToDeliver: number): Promise<TransactionResult> {
-    return (await this._api).createDataProduct(metaFileHash, price, daysToDeliver);
-  }
-
-  async purchaseDataProduct(dataProductAddress: string, buyerPublicKey: string): Promise<TransactionResult> {
-    return (await this._api).purchaseDataProduct(dataProductAddress, buyerPublicKey);
-  }
-
-  async finaliseDataProductPurchase(dataProductAddress: string, buyerAddress: string, buyerMetaHash: string): Promise<TransactionResult> {
-    return (await this._api).finaliseDataProductPurchase(dataProductAddress, buyerAddress, buyerMetaHash);
-  }
-
-  async rateDataProductPurchase(dataProductAddress: string, score: BigNumber): Promise<TransactionResult> {
-    return (await this._api).rateDataProductPurchase(dataProductAddress, score);
+  async getOrderData(dataProductAddress: string, buyerAddress: string): Promise<DataProductOrder> {
+    return (await this.api).getDataProductOrder(dataProductAddress, buyerAddress);
   }
 
   async getBoughtDataProducts(): Promise<string[]> {
-    const api: RepuxWeb3Api = await this._api;
-    return api.getBoughtDataProducts();
+    return (await this.api).getBoughtDataProducts();
   }
 
   async getBoughtAndFinalisedDataProducts(): Promise<string[]> {
-    const api: RepuxWeb3Api = await this._api;
-    return api.getBoughtAndFinalisedDataProducts();
+    return (await this.api).getBoughtAndFinalisedDataProducts();
   }
 
   async getCreatedDataProducts(): Promise<string[]> {
-    const api: RepuxWeb3Api = await this._api;
-    return api.getCreatedDataProducts();
+    return (await this.api).getCreatedDataProducts();
   }
 
-  async withdrawFundsFromDataProduct(dataProductAddress: string): Promise<TransactionResult> {
-    return (await this._api).withdrawFundsFromDataProduct(dataProductAddress);
-  }
-
-  async disableDataProduct(dataProductAddress: string): Promise<TransactionResult> {
-    return (await this._api).disableDataProduct(dataProductAddress);
-  }
-
-  async cancelDataProductPurchase(dataProductAddress: string): Promise<TransactionResult> {
-    return (await this._api).cancelDataProductPurchase(dataProductAddress);
-  }
-
-  async getAllDataProductTransactions(dataProductAddress: string): Promise<DataProductTransaction[]> {
-    const buyerAddresses = await (await this._api).getDataProductBuyersAddresses(dataProductAddress);
+  async getAllDataProductOrders(dataProductAddress: string): Promise<DataProductOrder[]> {
+    const buyerAddresses = await (await this.api).getDataProductBuyersAddresses(dataProductAddress);
 
     return Promise.all(
-      buyerAddresses.map(buyerAddress => this.getTransactionData(dataProductAddress, buyerAddress))
+      buyerAddresses.map(buyerAddress => this.getOrderData(dataProductAddress, buyerAddress))
     );
+  }
+
+  publishDataProduct(metaFileHash: string, price: BigNumber, daysToDeliver: number): Observable<TransactionEvent> {
+    const subject = new BehaviorSubject<TransactionEvent>(undefined);
+
+    this.transactionService.handleTransaction(
+      subject,
+      BlockchainTransactionScope.DataProduct,
+      metaFileHash,
+      ActionButtonType.Publish,
+      async () => (await this.api).createDataProduct(metaFileHash, price, daysToDeliver)
+    );
+
+    return subject.asObservable();
+  }
+
+  approveTokensTransferForDataProductPurchase(dataProductAddress: string): Observable<TransactionEvent> {
+    const subject = new BehaviorSubject<TransactionEvent>(undefined);
+
+    this.transactionService.handleTransaction(
+      subject,
+      BlockchainTransactionScope.DataProduct,
+      dataProductAddress,
+      ActionButtonType.ApproveBeforeBuy,
+      async () => (await this.api).approveTokensTransferForDataProductPurchase(dataProductAddress)
+    );
+
+    return subject.asObservable();
+  }
+
+  purchaseDataProduct(dataProductAddress: string, buyerPublicKey: string): Observable<TransactionEvent> {
+    const subject = new BehaviorSubject<TransactionEvent>(undefined);
+
+    this.transactionService.handleTransaction(
+      subject,
+      BlockchainTransactionScope.DataProduct,
+      dataProductAddress,
+      ActionButtonType.Buy,
+      async () => (await this.api).purchaseDataProduct(dataProductAddress, buyerPublicKey)
+    );
+
+    return subject.asObservable();
+  }
+
+  finaliseDataProductPurchase(orderAddress: string, dataProductAddress: string, buyerAddress: string, buyerMetaHash: string)
+    : Observable<TransactionEvent> {
+    const subject = new BehaviorSubject<TransactionEvent>(undefined);
+
+    this.transactionService.handleTransaction(
+      subject,
+      BlockchainTransactionScope.DataProductOrder,
+      orderAddress,
+      ActionButtonType.Finalise,
+      async () => (await this.api).finaliseDataProductPurchase(dataProductAddress, buyerAddress, buyerMetaHash)
+    );
+
+    return subject.asObservable();
+  }
+
+  rateDataProductPurchase(dataProductAddress: string, score: BigNumber): Observable<TransactionEvent> {
+    const subject = new BehaviorSubject<TransactionEvent>(undefined);
+
+    this.transactionService.handleTransaction(
+      subject,
+      BlockchainTransactionScope.DataProduct,
+      dataProductAddress,
+      ActionButtonType.Rate,
+      async () => (await this.api).rateDataProductPurchase(dataProductAddress, score)
+    );
+
+    return subject.asObservable();
+  }
+
+  withdrawFundsFromDataProduct(dataProductAddress: string): Observable<TransactionEvent> {
+    const subject = new BehaviorSubject<TransactionEvent>(undefined);
+
+    this.transactionService.handleTransaction(
+      subject,
+      BlockchainTransactionScope.DataProduct,
+      dataProductAddress,
+      ActionButtonType.Withdraw,
+      async () => (await this.api).withdrawFundsFromDataProduct(dataProductAddress)
+    );
+
+    return subject.asObservable();
+  }
+
+  disableDataProduct(dataProductAddress: string): Observable<TransactionEvent> {
+    const subject = new BehaviorSubject<TransactionEvent>(undefined);
+
+    this.transactionService.handleTransaction(
+      subject,
+      BlockchainTransactionScope.DataProduct,
+      dataProductAddress,
+      ActionButtonType.Unpublish,
+      async () => (await this.api).disableDataProduct(dataProductAddress)
+    );
+
+    return subject.asObservable();
+  }
+
+  cancelDataProductPurchase(dataProductAddress: string): Observable<TransactionEvent> {
+    const subject = new BehaviorSubject<TransactionEvent>(undefined);
+
+    this.transactionService.handleTransaction(
+      subject,
+      BlockchainTransactionScope.DataProduct,
+      dataProductAddress,
+      ActionButtonType.CancelPurchase,
+      async () => (await this.api).cancelDataProductPurchase(dataProductAddress)
+    );
+
+    return subject.asObservable();
   }
 
   watchForDataProductUpdate(_dataProductAddress?: string, _dataProductUpdateAction?: DataProductUpdateAction)
     : Observable<DataProductEvent> {
-    if (!this._wallet) {
+    if (!this.wallet) {
       return;
     }
 
     if (!this.websocketMessage$) {
-      this.websocketMessage$ = this._websocketService.onEvent(WebsocketEvent.DataProductUpdate);
+      this.websocketMessage$ = this.websocketService.onEvent(WebsocketEvent.DataProductUpdate);
     }
 
     return this.websocketMessage$.pipe(
-      map(data => {
+      map((data: any) => {
         return {
           dataProductAddress: data.args.dataProduct,
           blockNumber: data.blockNumber,
-          action: data.args.action,
+          action: parseInt(data.args.action, 10),
           userAddress: data.args.sender
         } as DataProductEvent;
       }),
@@ -131,20 +211,16 @@ export class DataProductService implements OnDestroy {
   }
 
   ngOnDestroy() {
-    if (this._walletSubscription) {
-      this._walletSubscription.unsubscribe();
+    if (this.walletSubscription) {
+      this.walletSubscription.unsubscribe();
     }
   }
 
-  private _onWalletChange(wallet: Wallet) {
-    if (!wallet || wallet === this._wallet) {
+  private onWalletChange(wallet: Wallet) {
+    if (!wallet || wallet === this.wallet) {
       return;
     }
 
-    this._wallet = wallet;
-    if (this._productUpdateEvent) {
-      this._productUpdateEvent.stopWatching();
-      this._productUpdateEvent = null;
-    }
+    this.wallet = wallet;
   }
 }

@@ -9,11 +9,12 @@ import { DataProduct } from '../shared/models/data-product';
 import { PendingFinalisationService } from '../marketplace/services/pending-finalisation.service';
 import { UnpublishedProductsService } from '../marketplace/services/unpublished-products.service';
 import { ReadyToDownloadService } from '../marketplace/services/ready-to-download.service';
+import { ActionButtonType } from '../shared/enums/action-button-type';
 
 @Component({ selector: 'app-marketplace-action-buttons', template: '' })
 class MarketplaceActionButtonsStubComponent {
   @Input() dataProduct: DataProduct;
-  @Input() availableActions: string[];
+  @Input() availableActions: ActionButtonType[];
 }
 
 describe('NotificationsListComponent', () => {

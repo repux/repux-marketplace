@@ -6,13 +6,12 @@ import { DataProductService } from '../services/data-product.service';
 import { TaskType } from './task-type';
 import { UnpublishedProductsService } from '../marketplace/services/unpublished-products.service';
 import { DataProduct } from '../shared/models/data-product';
-import { TransactionDialogComponent } from '../shared/components/transaction-dialog/transaction-dialog.component';
-import { Subscription } from 'rxjs';
 import { MatDialog } from '@angular/material';
-import { FileUploader, EventType, FileMetaData, Attachment, Eula, PurchaseType } from 'repux-lib';
-import { EventAction, EventCategory, TagManagerService } from '../shared/services/tag-manager.service';
+import { Attachment, Eula, EventType, FileMetaData, FileUploader, PurchaseType } from 'repux-lib';
+import { TagManagerService } from '../shared/services/tag-manager.service';
 import { IpfsService } from '../services/ipfs.service';
 import { EulaSelection } from '../marketplace/marketplace-eula-selector/marketplace-eula-selector.component';
+import { ActionButtonType } from '../shared/enums/action-button-type';
 
 export const STATUS = {
   UPLOADING: 'Uploading',
@@ -25,13 +24,21 @@ export const STATUS = {
 
 export class FileUploadTask implements Task {
   public readonly taskType = TaskType.UPLOAD;
+  public readonly needsUserAction = false;
+  public readonly userActionName = '';
+
   private _uploader: FileUploader;
   private _result: string;
   private _taskManagerService: TaskManagerService;
   private _dataProduct: DataProduct;
-  private _transactionDialogSubscription: Subscription;
   private _sampleFile?: Attachment[];
   private _eula?: Eula;
+  private _progress: number;
+  private _errors: string[] = [];
+  private _finished = false;
+  private _name: string;
+  private _actionButton: ActionButtonType;
+  private _status: string;
 
   constructor(
     public readonly walletAddress: string,
@@ -58,43 +65,29 @@ export class FileUploadTask implements Task {
     this._uploader = this._repuxLibService.getInstance().createFileUploader();
   }
 
-  private _progress: number;
+  get dataProduct(): DataProduct {
+    return this._dataProduct;
+  }
 
   get progress(): number {
     return this._progress;
   }
 
-  private _errors: string[] = [];
-
   get errors(): ReadonlyArray<string> {
     return Object.freeze(Object.assign([], this._errors));
   }
-
-  private _finished = false;
 
   get finished(): boolean {
     return this._finished;
   }
 
-  private _name: string;
-
   get name(): string {
     return this._name;
   }
 
-  private _needsUserAction: boolean;
-
-  get needsUserAction(): boolean {
-    return this._needsUserAction;
+  get actionButton(): ActionButtonType {
+    return this._actionButton;
   }
-
-  private _userActionName: string;
-
-  get userActionName(): string {
-    return this._userActionName;
-  }
-
-  private _status: string;
 
   get status(): string {
     return this._status;
@@ -123,13 +116,11 @@ export class FileUploadTask implements Task {
         this._finished = true;
         this._errors.push(error);
         this._status = STATUS.CANCELED;
-        this.destroy();
       })
       .on(EventType.FINISH, (eventType, result) => {
         this._progress = 100;
         this._result = result;
-        this._needsUserAction = true;
-        this._userActionName = 'Publish';
+        this._actionButton = ActionButtonType.Publish;
         this._status = STATUS.WAITING_FOR_PUBLICATION;
         this._saveProduct();
       })
@@ -144,60 +135,9 @@ export class FileUploadTask implements Task {
     this._errors.push(STATUS.CANCELED);
     this._status = STATUS.CANCELED;
     this._taskManagerService.onTaskEvent();
-    this.destroy();
   }
 
-  destroy() {
-    this._unsubscribeTransactionDialog();
-  }
-
-  async callUserAction(): Promise<any> {
-    if (!this._needsUserAction) {
-      return;
-    }
-
-    this._tagManager.sendEvent(
-      EventCategory.Sell,
-      EventAction.PublishButton,
-      this._title,
-      this._price ? this._price.toString() : ''
-    );
-
-    this._needsUserAction = false;
-    this._status = STATUS.PUBLICATION;
-    this._taskManagerService.onTaskEvent();
-
-    const transactionDialogRef = this._dialog.open(TransactionDialogComponent, {
-      disableClose: true
-    });
-
-    this._unsubscribeTransactionDialog();
-    this._transactionDialogSubscription = transactionDialogRef.afterClosed().subscribe(result => {
-      this._finished = true;
-
-      if (result) {
-        this._unpublishedProductsService.removeProduct(this._dataProduct);
-        this._status = STATUS.FINISHED;
-
-        this._tagManager.sendEvent(
-          EventCategory.Sell,
-          EventAction.PublishButtonConfirmed,
-          this._title,
-          this._price ? this._price.toString() : ''
-        );
-      } else {
-        this._errors.push(STATUS.PUBLICATION_REJECTED);
-        this._status = STATUS.PUBLICATION_REJECTED;
-      }
-
-      this._taskManagerService.onTaskEvent();
-      this.destroy();
-    });
-
-    const transactionDialog: TransactionDialogComponent = transactionDialogRef.componentInstance;
-    transactionDialog.transaction = () => this._dataProductService.publishDataProduct(this._result, this._price, this._daysToDeliver);
-
-    return transactionDialog.callTransaction();
+  callUserAction(): void {
   }
 
   async uploadSampleFiles(sampleFiles?: FileList): Promise<Attachment[]> {
@@ -241,13 +181,6 @@ export class FileUploadTask implements Task {
       maxNumberOfDownloads: this._maxNumberOfDownloads,
       type: this._purchaseType
     };
-  }
-
-  private _unsubscribeTransactionDialog() {
-    if (this._transactionDialogSubscription) {
-      this._transactionDialogSubscription.unsubscribe();
-      this._transactionDialogSubscription = null;
-    }
   }
 
   private _saveProduct() {

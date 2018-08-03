@@ -6,10 +6,11 @@ import { DataProductListService } from '../../services/data-product-list.service
 import { DataProduct } from '../../shared/models/data-product';
 import { environment } from '../../../environments/environment';
 import { pluck } from 'rxjs/operators';
-import { DataProductEvent, DataProductUpdateAction } from 'repux-web3-api';
+import { DataProductUpdateAction } from 'repux-web3-api';
 import { DataProductService } from '../../services/data-product.service';
 import { MyActiveListingsService } from './my-active-listings.service';
-import { DataProductTransaction } from '../../shared/models/data-product-transaction';
+import { DataProductOrder } from '../../shared/models/data-product-order';
+import { DataProductEvent } from '../../shared/models/data-product-event';
 
 export function getPendingFinalisationDataProductsQuery(walletAddress: string) {
   return {
@@ -19,11 +20,11 @@ export function getPendingFinalisationDataProductsQuery(walletAddress: string) {
         { match: { ownerAddress: walletAddress } },
         {
           nested: {
-            path: 'transactions',
+            path: 'orders',
             query: {
               bool: {
                 must: [
-                  { match: { 'transactions.finalised': false } }
+                  { match: { 'orders.finalised': false } }
                 ]
               }
             }
@@ -48,7 +49,7 @@ export class PendingFinalisationService implements OnDestroy {
   private _fetchSubscription?: Subscription;
 
   private _productsSubject = new BehaviorSubject<DataProduct[]>([]);
-  private _transactionsSubject = new BehaviorSubject<DataProductTransaction[]>([]);
+  private _ordersSubject = new BehaviorSubject<DataProductOrder[]>([]);
 
   constructor(
     private _walletService: WalletService,
@@ -63,49 +64,49 @@ export class PendingFinalisationService implements OnDestroy {
     return this._productsSubject.asObservable();
   }
 
-  getTransactions(): Observable<DataProductTransaction[]> {
-    return this._transactionsSubject.asObservable();
+  getOrders(): Observable<DataProductOrder[]> {
+    return this._ordersSubject.asObservable();
   }
 
   getProductsValue(): DataProduct[] {
     return this._productsSubject.getValue();
   }
 
-  getTransactionsValue(): DataProductTransaction[] {
-    return this._transactionsSubject.getValue();
+  getOrdersValue(): DataProductOrder[] {
+    return this._ordersSubject.getValue();
   }
 
-  findTransaction(dataProductAddress: string, buyerAddress: string): DataProductTransaction {
+  findOrder(dataProductAddress: string, buyerAddress: string): DataProductOrder {
     const product = this._productsSubject.getValue().find(dataProduct => dataProduct.address === dataProductAddress);
 
-    if (!product || !product.transactions) {
+    if (!product || !product.orders) {
       return;
     }
 
-    return product.transactions.find(_transaction => _transaction.buyerAddress === buyerAddress);
+    return product.orders.find(_order => _order.buyerAddress === buyerAddress);
   }
 
-  removeTransaction(dataProductAddress: string, buyerAddress: string): void {
+  removeOrder(dataProductAddress: string, buyerAddress: string): void {
     const product = this._productsSubject.getValue().find(dataProduct => dataProduct.address === dataProductAddress);
 
-    if (!product || !product.transactions) {
+    if (!product || !product.orders) {
       return;
     }
 
-    const transaction = product.transactions.find(_transaction => _transaction.buyerAddress === buyerAddress);
+    const order = product.orders.find(_order => _order.buyerAddress === buyerAddress);
 
-    if (!transaction) {
+    if (!order) {
       return;
     }
 
-    product.transactions = product.transactions.filter(_transaction => _transaction.buyerAddress !== buyerAddress);
-    this._pluckTransactionsFromDataProducts();
+    product.orders = product.orders.filter(_order => _order.buyerAddress !== buyerAddress);
+    this._pluckOrdersFromDataProducts();
   }
 
   refresh(wallet: Wallet): Subscription {
     if (!wallet) {
       this._productsSubject.next([]);
-      this._pluckTransactionsFromDataProducts();
+      this._pluckOrdersFromDataProducts();
 
       return;
     }
@@ -120,7 +121,7 @@ export class PendingFinalisationService implements OnDestroy {
       )
       .subscribe((result: DataProduct[]) => {
         this._productsSubject.next(result);
-        this._pluckTransactionsFromDataProducts();
+        this._pluckOrdersFromDataProducts();
       });
 
     return this._fetchSubscription;
@@ -130,7 +131,7 @@ export class PendingFinalisationService implements OnDestroy {
     const currentValue = this.getProductsValue();
     if (!currentValue.find(_dataProduct => _dataProduct.address === dataProduct.address)) {
       this._productsSubject.next([ ...currentValue, dataProduct ]);
-      this._pluckTransactionsFromDataProducts();
+      this._pluckOrdersFromDataProducts();
     }
   }
 
@@ -139,7 +140,7 @@ export class PendingFinalisationService implements OnDestroy {
       this.getProductsValue()
         .filter(_dataProduct => _dataProduct.address !== dataProduct.address)
     );
-    this._pluckTransactionsFromDataProducts();
+    this._pluckOrdersFromDataProducts();
   }
 
   findProduct(dataProductAddress: string): DataProduct {
@@ -157,7 +158,7 @@ export class PendingFinalisationService implements OnDestroy {
 
     this._productsSubject.complete();
 
-    this._transactionsSubject.complete();
+    this._ordersSubject.complete();
   }
 
   private _onWalletChange(wallet: Wallet): Wallet {
@@ -195,12 +196,12 @@ export class PendingFinalisationService implements OnDestroy {
     }
   }
 
-  private _pluckTransactionsFromDataProducts() {
-    let transactions = [];
+  private _pluckOrdersFromDataProducts() {
+    let orders = [];
     this._productsSubject.getValue().forEach(product =>
-      transactions = [ ...transactions, ...product.transactions.filter(transaction => !transaction.finalised) ]
+      orders = [ ...orders, ...product.orders.filter(order => !order.finalised) ]
     );
-    this._transactionsSubject.next(transactions);
+    this._ordersSubject.next(orders);
   }
 
   private _unsubscribeFromBlockchainEvents() {

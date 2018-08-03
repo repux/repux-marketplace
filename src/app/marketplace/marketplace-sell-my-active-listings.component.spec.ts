@@ -6,12 +6,13 @@ import Wallet from '../shared/models/wallet';
 import { Component, Input } from '@angular/core';
 import { MaterialModule } from '../material.module';
 import { getCreatedDataProductsQuery } from './services/my-active-listings.service';
+import { ActionButtonType } from '../shared/enums/action-button-type';
 
 @Component({ selector: 'app-data-product-list', template: '' })
 class DataProductListStubComponent {
   @Input() staticQuery: {};
   @Input() displayedColumns: string[];
-  @Input() availableActions: string[];
+  @Input() availableActions: ActionButtonType[];
 }
 
 describe('MarketplaceSellMyActiveListingsComponent', () => {

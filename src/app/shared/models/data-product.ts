@@ -1,7 +1,7 @@
 import { BigNumber } from 'bignumber.js';
 import { Deserializable } from './deserializable';
 import { environment } from '../../../environments/environment';
-import { DataProductTransaction } from './data-product-transaction';
+import { DataProductOrder } from './data-product-order';
 import { DataProduct as BlockchainDataProduct } from 'repux-web3-api';
 import { Eula, Attachment } from 'repux-lib';
 
@@ -22,7 +22,7 @@ export class DataProduct implements Deserializable<DataProduct> {
   purchased?: string[];
   finalised?: string[];
   disabled?: boolean;
-  transactions: DataProductTransaction[] = [];
+  orders: DataProductOrder[] = [];
   lastUpdate: Date;
   daysToDeliver: number;
   daysToRate: number;
@@ -37,13 +37,13 @@ export class DataProduct implements Deserializable<DataProduct> {
     this.fundsToWithdraw = (new BigNumber(input.fundsToWithdraw)).div(Math.pow(10, environment.repux.currency.precision));
     this.lastUpdate = new Date(input.lastUpdateTimestamp);
 
-    this.transactions = [];
-    if (input.transactions) {
-      input.transactions.forEach(transactionInput => {
-        const transaction = new DataProductTransaction();
-        transaction.dataProductAddress = this.address;
-        transaction.deserialize(transactionInput);
-        this.transactions.push(transaction);
+    this.orders = [];
+    if (input.orders) {
+      input.orders.forEach(orderInput => {
+        const order = new DataProductOrder();
+        order.dataProductAddress = this.address;
+        order.deserialize(orderInput);
+        this.orders.push(order);
       });
     }
 

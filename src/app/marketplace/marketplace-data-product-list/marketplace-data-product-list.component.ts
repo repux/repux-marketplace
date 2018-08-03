@@ -3,14 +3,15 @@ import { DataProductListService } from '../../services/data-product-list.service
 import { EsResponse } from '../../shared/models/es-response';
 import { MatPaginator, MatTableDataSource, PageEvent, Sort } from '@angular/material';
 import { environment } from '../../../environments/environment';
-import { DataProductTransaction } from '../../shared/models/data-product-transaction';
+import { DataProductOrder } from '../../shared/models/data-product-order';
 import { BigNumber } from 'bignumber.js';
 import { DataProduct } from '../../shared/models/data-product';
 import { deepCopy } from '../../shared/utils/deep-copy';
 import { Subscription } from 'rxjs/internal/Subscription';
 import { PendingFinalisationService } from '../services/pending-finalisation.service';
-import { EulaType, Eula } from 'repux-lib';
+import { Eula, EulaType } from 'repux-lib';
 import { IpfsService } from '../../services/ipfs.service';
+import { ActionButtonType } from '../../shared/enums/action-button-type';
 
 const DAY_IN_MILLISECONDS = 24 * 60 * 60 * 1000;
 
@@ -32,11 +33,11 @@ export class MarketplaceDataProductListComponent implements OnChanges, OnDestroy
     'actions'
   ];
   @Input() availableActions = [
-    'buy',
-    'rate'
+    ActionButtonType.Buy,
+    ActionButtonType.Rate
   ];
   @Input() disablePendingFinalisation = false;
-  @Input() displayPendingTransactions = false;
+  @Input() displayPendingOrders = false;
   @Input() showPaginator = true;
   @Input() showSearch = true;
   @Input() showFilters = true;
@@ -140,48 +141,48 @@ export class MarketplaceDataProductListComponent implements OnChanges, OnDestroy
   }
 
   getTimesPurchased(dataProduct: DataProduct): number {
-    return dataProduct.transactions.filter(transaction => transaction.finalised).length;
+    return dataProduct.orders.filter(order => order.finalised).length;
   }
 
   getTotalEarnings(dataProduct: DataProduct): BigNumber {
-    return dataProduct.transactions.filter(transaction => transaction.finalised)
-      .reduce((acc, transaction) => acc = acc.plus(transaction.price), new BigNumber(0));
+    return dataProduct.orders.filter(order => order.finalised)
+      .reduce((acc, order) => acc = acc.plus(order.price), new BigNumber(0));
   }
 
-  getTransactionsToFinalisation(dataProduct: DataProduct): DataProductTransaction[] {
-    return dataProduct.transactions.filter(transaction => {
-      return !transaction.finalised && this._pendingFinalisationService.findTransaction(dataProduct.address, transaction.buyerAddress);
+  getOrdersToFinalisation(dataProduct: DataProduct): DataProductOrder[] {
+    return dataProduct.orders.filter(order => {
+      return !order.finalised && this._pendingFinalisationService.findOrder(dataProduct.address, order.buyerAddress);
     });
   }
 
-  getTransactionDate(dataProduct: DataProduct) {
-    const transaction = this._findTransactionByCurrentBuyerAddress(dataProduct);
+  getOrderDate(dataProduct: DataProduct) {
+    const order = this._findOrderByCurrentBuyerAddress(dataProduct);
 
-    if (!transaction) {
+    if (!order) {
       return;
     }
 
-    return new Date((transaction.deliveryDeadline.getTime() - dataProduct.daysToDeliver * DAY_IN_MILLISECONDS));
+    return new Date((order.deliveryDeadline.getTime() - dataProduct.daysToDeliver * DAY_IN_MILLISECONDS));
   }
 
   getDeliveryDeadline(dataProduct: DataProduct) {
-    const transaction = this._findTransactionByCurrentBuyerAddress(dataProduct);
+    const order = this._findOrderByCurrentBuyerAddress(dataProduct);
 
-    if (!transaction) {
+    if (!order) {
       return;
     }
 
-    return transaction.deliveryDeadline;
+    return order.deliveryDeadline;
   }
 
-  onFinaliseSuccess(event: { dataProduct: DataProduct, transaction: DataProductTransaction }) {
-    if (!this.displayPendingTransactions) {
+  onFinaliseSuccess(event: { dataProduct: DataProduct, order: DataProductOrder }) {
+    if (!this.displayPendingOrders) {
       return;
     }
 
-    const pendingFinalisationTransactions = event.dataProduct.transactions.filter(transaction => !transaction.finalised);
+    const pendingFinalisationOrders = event.dataProduct.orders.filter(order => !order.finalised);
 
-    if (pendingFinalisationTransactions) {
+    if (pendingFinalisationOrders) {
       return;
     }
 
@@ -215,12 +216,12 @@ export class MarketplaceDataProductListComponent implements OnChanges, OnDestroy
     return this.ipfsService.downloadAndSave(eula.fileHash, eula.fileName);
   }
 
-  private _findTransactionByCurrentBuyerAddress(dataProduct: DataProduct) {
+  private _findOrderByCurrentBuyerAddress(dataProduct: DataProduct) {
     if (!this.buyerAddress) {
       return;
     }
 
-    return dataProduct.transactions.find(transaction => transaction.buyerAddress === this.buyerAddress);
+    return dataProduct.orders.find(orders => orders.buyerAddress === this.buyerAddress);
   }
 
   private getColumn(columnName) {

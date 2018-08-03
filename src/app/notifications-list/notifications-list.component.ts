@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { DataProduct } from '../shared/models/data-product';
 import { PendingFinalisationService } from '../marketplace/services/pending-finalisation.service';
 import { ReadyToDownloadService } from '../marketplace/services/ready-to-download.service';
+import { ActionButtonType } from '../shared/enums/action-button-type';
 
 @Component({
   selector: 'app-notifications-list',
@@ -14,6 +15,7 @@ export class NotificationsListComponent implements OnInit {
   public unpublishedProducts$: Observable<DataProduct[]>;
   public pendingFinalisationProducts$: Observable<DataProduct[]>;
   public readyToDownloadProducts$: Observable<DataProduct[]>;
+  public actionButtonType = ActionButtonType;
 
   constructor(
     private unpublishedProductsService: UnpublishedProductsService,

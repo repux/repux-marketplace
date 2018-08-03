@@ -9,7 +9,7 @@ import { DataProductService } from '../services/data-product.service';
 import { UnpublishedProductsService } from '../marketplace/services/unpublished-products.service';
 import { MatDialog } from '@angular/material';
 import { EulaType, PurchaseType } from 'repux-lib';
-import { Attachment, Eula } from 'repux-lib/src/repux-lib';
+import { ActionButtonType } from '../shared/enums/action-button-type';
 
 describe('FileUploadTask()', () => {
   let fileUploadTask: FileUploadTask, dataProductServiceSpy, repuxLibServiceSpy, fileUploader, fileUploaderUploadSpy,
@@ -186,7 +186,7 @@ describe('FileUploadTask()', () => {
       expect(fileUploadTask.status).toBe(STATUS.CANCELED);
     });
 
-    it('should update _progress, _result, _needsUserAction, _userActionName and _status when ' +
+    it('should update _progress, _result, _actionButton and _status when ' +
       'finish event is received', async () => {
       fileUploadTask.uploadEula = jasmine.createSpy();
       fileUploadTask.uploadSampleFiles = jasmine.createSpy();
@@ -197,8 +197,7 @@ describe('FileUploadTask()', () => {
       uploaderEventHandlers[ EventType.FINISH ](EventType.FINISH, result);
       expect(fileUploadTask[ '_result' ]).toEqual(result);
       expect(fileUploadTask.progress).toEqual(100);
-      expect(fileUploadTask.needsUserAction).toBeTruthy();
-      expect(fileUploadTask.userActionName).toBe('Publish');
+      expect(fileUploadTask.actionButton).toBe(ActionButtonType.Publish);
       expect(fileUploadTask.status).toBe(STATUS.WAITING_FOR_PUBLICATION);
     });
 
@@ -234,51 +233,6 @@ describe('FileUploadTask()', () => {
       fileUploadTask.cancel();
 
       expect(taskManagerServiceSpy.onTaskEvent.calls.count()).toBe(1);
-    });
-  });
-
-  describe('#callUserAction()', () => {
-    it('should set call dataProductService.publishDataProduct and set task as finished', async () => {
-      dataProductServiceSpy.publishDataProduct.and.returnValue(Promise.resolve({ address: '0x00' }));
-      fileUploadTask[ '_taskManagerService' ] = taskManagerServiceSpy;
-      fileUploadTask[ '_needsUserAction' ] = true;
-      fileUploadTask[ '_result' ] = 'RESULT';
-      fileUploadTask[ '_price' ] = new BigNumber(1);
-
-      transactionResult = true;
-      callTransaction.and.callFake(function () {
-        this.transaction();
-      });
-
-      await fileUploadTask.callUserAction();
-
-      expect(fileUploadTask.needsUserAction).toBeFalsy();
-      expect(fileUploadTask.status).toBe(STATUS.FINISHED);
-      expect(fileUploadTask.finished).toBeTruthy();
-      expect(dataProductServiceSpy.publishDataProduct.calls.allArgs()[ 0 ][ 0 ]).toBe(fileUploadTask[ '_result' ]);
-      expect(dataProductServiceSpy.publishDataProduct.calls.allArgs()[ 0 ][ 1 ]).toBe(fileUploadTask[ '_price' ]);
-      expect(taskManagerServiceSpy.onTaskEvent.calls.count()).toBe(2);
-    });
-
-    it('should handle rejection of dataProductService.publishDataProduct', async () => {
-      const error = 'ERROR';
-      dataProductServiceSpy.publishDataProduct.and.returnValue(Promise.reject(error));
-      fileUploadTask[ '_taskManagerService' ] = taskManagerServiceSpy;
-      fileUploadTask[ '_needsUserAction' ] = true;
-      fileUploadTask[ '_result' ] = 'RESULT';
-      fileUploadTask[ '_price' ] = new BigNumber(1);
-
-      transactionResult = false;
-      callTransaction.and.callFake(function () {
-        this.transaction();
-      });
-
-      await fileUploadTask.callUserAction();
-
-      expect(fileUploadTask.needsUserAction).toBeFalsy();
-      expect(fileUploadTask.status).toBe(STATUS.PUBLICATION_REJECTED);
-      expect(fileUploadTask.finished).toBeTruthy();
-      expect(taskManagerServiceSpy.onTaskEvent.calls.count()).toBe(2);
     });
   });
 
@@ -323,19 +277,11 @@ describe('FileUploadTask()', () => {
     });
   });
 
-  describe('#get needsUserAction()', () => {
-    it('should return _needsUserAction', () => {
-      const needsUserAction = true;
-      fileUploadTask[ '_needsUserAction' ] = needsUserAction;
-      expect(fileUploadTask.needsUserAction).toBe(needsUserAction);
-    });
-  });
-
-  describe('#get userActionName()', () => {
-    it('should return _userActionName', () => {
-      const userActionName = 'ACTION_NAME';
-      fileUploadTask[ '_userActionName' ] = userActionName;
-      expect(fileUploadTask.userActionName).toBe(userActionName);
+  describe('#get actionButton()', () => {
+    it('should return _actionButton', () => {
+      const actionButton = ActionButtonType.Publish;
+      fileUploadTask[ '_actionButton' ] = actionButton;
+      expect(fileUploadTask.actionButton).toBe(actionButton);
     });
   });
 

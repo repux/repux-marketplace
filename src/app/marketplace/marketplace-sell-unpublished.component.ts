@@ -2,6 +2,7 @@ import { Component, OnDestroy } from '@angular/core';
 import { UnpublishedProductsService } from './services/unpublished-products.service';
 import { DataProduct } from '../shared/models/data-product';
 import { Subscription } from 'rxjs/internal/Subscription';
+import { ActionButtonType } from '../shared/enums/action-button-type';
 
 @Component({
   selector: 'app-marketplace-sell-unpublished-files',
@@ -10,7 +11,7 @@ import { Subscription } from 'rxjs/internal/Subscription';
 })
 export class MarketplaceSellUnpublishedComponent implements OnDestroy {
   public availableActions = [
-    'publish'
+    ActionButtonType.Publish
   ];
 
   dataProducts: DataProduct[];

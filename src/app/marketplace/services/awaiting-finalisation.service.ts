@@ -6,8 +6,9 @@ import { DataProductListService } from '../../services/data-product-list.service
 import { DataProduct } from '../../shared/models/data-product';
 import { environment } from '../../../environments/environment';
 import { pluck } from 'rxjs/operators';
-import { DataProductEvent, DataProductUpdateAction } from 'repux-web3-api';
+import { DataProductUpdateAction } from 'repux-web3-api';
 import { DataProductService } from '../../services/data-product.service';
+import { DataProductEvent } from '../../shared/models/data-product-event';
 
 export function getAwaitingFinalisationDataProductsQuery(walletAddress: string) {
   return {
@@ -15,12 +16,12 @@ export function getAwaitingFinalisationDataProductsQuery(walletAddress: string) 
       must: [
         {
           nested: {
-            path: 'transactions',
+            path: 'orders',
             query: {
               bool: {
                 must: [
-                  { match: { 'transactions.buyerAddress': walletAddress } },
-                  { match: { 'transactions.finalised': false } }
+                  { match: { 'orders.buyerAddress': walletAddress } },
+                  { match: { 'orders.finalised': false } }
                 ]
               }
             }

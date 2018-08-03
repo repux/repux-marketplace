@@ -89,8 +89,8 @@ export class MarketplaceDownloadProductButtonComponent implements OnDestroy, OnI
     if (product.owner === this._wallet.address) {
       metaHash = product.sellerMetaHash;
     } else {
-      const transaction = await this._dataProductService.getTransactionData(this.dataProduct.address, this._wallet.address);
-      metaHash = transaction.buyerMetaHash;
+      const order = await this._dataProductService.getOrderData(this.dataProduct.address, this._wallet.address);
+      metaHash = order.buyerMetaHash;
     }
 
     const fileDownloadTask = new FileDownloadTask(

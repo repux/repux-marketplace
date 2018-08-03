@@ -3,6 +3,7 @@ import Wallet from '../shared/models/wallet';
 import { WalletService } from '../services/wallet.service';
 import { Subscription } from 'rxjs/internal/Subscription';
 import { getReadyToDownloadDataProductsQuery } from './services/ready-to-download.service';
+import { ActionButtonType } from '../shared/enums/action-button-type';
 
 @Component({
   selector: 'app-marketplace-buy-ready-to-download',
@@ -11,8 +12,8 @@ import { getReadyToDownloadDataProductsQuery } from './services/ready-to-downloa
 })
 export class MarketplaceBuyReadyToDownloadComponent implements OnDestroy {
   public availableActions = [
-    'buy',
-    'rate'
+    ActionButtonType.Buy,
+    ActionButtonType.Rate
   ];
   public displayedColumns = [
     'name',
@@ -20,7 +21,7 @@ export class MarketplaceBuyReadyToDownloadComponent implements OnDestroy {
     'category',
     'size',
     'price',
-    'transactionDate',
+    'orderDate',
     'eula',
     'actions'
   ];

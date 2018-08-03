@@ -3,7 +3,7 @@ import Wallet from '../../shared/models/wallet';
 import { DataProduct } from '../../shared/models/data-product';
 import { from } from 'rxjs';
 import { Observable } from 'rxjs/internal/Observable';
-import { DataProductTransaction } from '../../shared/models/data-product-transaction';
+import { DataProductOrder } from '../../shared/models/data-product-order';
 
 describe('PendingFinalisationService', () => {
   let service: PendingFinalisationService;
@@ -11,11 +11,11 @@ describe('PendingFinalisationService', () => {
 
   const wallet = new Wallet('0x00', 0);
 
-  const transaction = new DataProductTransaction();
-  transaction.buyerAddress = wallet.address;
+  const order = new DataProductOrder();
+  order.buyerAddress = wallet.address;
 
   const dataProduct = new DataProduct();
-  dataProduct.transactions = [ transaction ];
+  dataProduct.orders = [ order ];
 
   beforeEach(() => {
     walletServiceSpy = jasmine.createSpyObj('WalletService', [ 'getWallet' ]);
@@ -57,10 +57,10 @@ describe('PendingFinalisationService', () => {
     });
   });
 
-  describe('#getTransactions()', () => {
-    it('should return transactions observable', () => {
+  describe('#getOrders()', () => {
+    it('should return orders observable', () => {
       return new Promise(resolve => {
-        service.getTransactions().subscribe(result => {
+        service.getOrders().subscribe(result => {
           expect(<any> result).toEqual([]);
           resolve();
         });
@@ -68,9 +68,9 @@ describe('PendingFinalisationService', () => {
     });
   });
 
-  describe('#getTransactionsValue()', () => {
-    it('should return transactions array', () => {
-      expect(service.getTransactionsValue()).toEqual([]);
+  describe('#getOrdersValue()', () => {
+    it('should return orders array', () => {
+      expect(service.getOrdersValue()).toEqual([]);
     });
   });
 
@@ -137,29 +137,30 @@ describe('PendingFinalisationService', () => {
     });
   });
 
-  describe('#removeTransaction()', () => {
-    it('should remove product from products', () => {
+  describe('#removeOrder()', () => {
+    it('should remove order from orders', () => {
       service.addProduct(dataProduct);
-      expect(service.getTransactionsValue()).toEqual([ transaction ]);
+      expect(service.getOrdersValue()).toEqual([ order ]);
 
-      service.removeProduct(dataProduct);
+      service.removeOrder(dataProduct.address, order.buyerAddress);
 
-      expect(service.getTransactionsValue()).toEqual([]);
+      expect(service.getOrdersValue()).toEqual([]);
     });
   });
 
-  describe('#findProduct()', () => {
-    it('should find product by address', () => {
+  describe('#findOrder()', () => {
+    it('should find order by address', () => {
       const dataProductAddress = '0x11';
       dataProduct.address = dataProductAddress;
+      dataProduct.orders = [ order ];
 
-      expect(service.findTransaction(dataProductAddress, wallet.address)).toBeUndefined();
+      expect(service.findOrder(dataProductAddress, wallet.address)).toBeUndefined();
 
       service.addProduct(dataProduct);
 
-      expect(service.findTransaction(dataProductAddress, wallet.address)).toBe(transaction);
-      expect(service.findTransaction('0x00', wallet.address)).toBeUndefined();
-      expect(service.findTransaction(dataProductAddress, '0x11')).toBeUndefined();
+      expect(service.findOrder(dataProductAddress, wallet.address)).toEqual(order);
+      expect(service.findOrder('0x00', wallet.address)).toBeUndefined();
+      expect(service.findOrder(dataProductAddress, '0x11')).toBeUndefined();
     });
   });
 });

@@ -1,17 +1,19 @@
 import { DataProductService } from './data-product.service';
 import BigNumber from 'bignumber.js';
 import { Observable } from 'rxjs';
-import { DataProductUpdateAction } from 'repux-web3-api';
+import { DataProductUpdateAction, TransactionStatus, TransactionReceipt } from 'repux-web3-api';
 import Wallet from '../shared/models/wallet';
+import { TransactionEvent } from '../shared/models/transaction-event';
+import { TransactionEventType } from '../shared/enums/transaction-event-type';
 
 describe('DataProductService', () => {
   let service: DataProductService;
-  let repuxWeb3ServiceSpy, walletServiceSpy, storageServiceSpy, websocketServiceSpy;
+  let repuxWeb3ServiceSpy, walletServiceSpy, storageServiceSpy, websocketServiceSpy, transactionServiceSpy;
   const fileHash = 'FILE_HASH';
   const price = new BigNumber(100);
   const daysToDeliver = 1;
-  const rejectError = 'ERROR';
-  const resolveResult = 'RESULT';
+  const rejectError = new Error('ERROR');
+  const successfulReceipt = { status: TransactionStatus.SUCCESSFUL } as TransactionReceipt;
   const walletAddress = '0x0000000000000000000000000000000000000000';
   const productAddress = '0x1111111111111111111111111111111111111111';
 
@@ -33,20 +35,32 @@ describe('DataProductService', () => {
     });
     websocketServiceSpy = jasmine.createSpyObj('WebsocketService', [ 'onEvent' ]);
 
+    transactionServiceSpy = jasmine.createSpyObj('TransactionService', [ 'handleTransaction' ]);
+    transactionServiceSpy.handleTransaction.and.callFake(async (subject, scope, identifier, blocksAction, transaction) => {
+      try {
+        await transaction();
+      } catch (error) {
+        return subject.next({ type: TransactionEventType.Rejected, error });
+      }
+
+      subject.next({ type: TransactionEventType.Mined, receipt: successfulReceipt });
+    });
+
     service = new DataProductService(
       <any> repuxWeb3ServiceSpy,
       <any> walletServiceSpy,
       <any> storageServiceSpy,
-      <any> websocketServiceSpy
+      <any> websocketServiceSpy,
+      <any> transactionServiceSpy
     );
   });
 
-  describe('#get _api()', () => {
-    it('should return result of _repuxWeb3Service.getRepuxApiInstance function', (done) => {
+  describe('#get api()', () => {
+    it('should return result of repuxWeb3Service.getRepuxApiInstance function', (done) => {
       const expectedResult = 'EXPECTED_RESULT';
       repuxWeb3ServiceSpy.getRepuxApiInstance.and.returnValue(expectedResult);
 
-      service[ '_api' ].then(api => {
+      service[ 'api' ].then(api => {
         expect(api).toBe(<any> expectedResult);
         expect(repuxWeb3ServiceSpy.getRepuxApiInstance.calls.count()).toBe(1);
         done();
@@ -64,62 +78,101 @@ describe('DataProductService', () => {
     });
   });
 
-  describe('#getTransactionData()', () => {
+  describe('#getOrderData()', () => {
     it('should call getDataProduct on repuxWeb3Api instance', async () => {
-      const getDataProductTransaction = jasmine.createSpy();
-      repuxWeb3ServiceSpy.getRepuxApiInstance.and.returnValue({ getDataProductTransaction });
-      await service.getTransactionData(productAddress, walletAddress);
-      expect(getDataProductTransaction.calls.count()).toBe(1);
-      expect(getDataProductTransaction.calls.allArgs()[ 0 ][ 0 ]).toBe(productAddress);
-      expect(getDataProductTransaction.calls.allArgs()[ 0 ][ 1 ]).toBe(walletAddress);
+      const getDataProductOrder = jasmine.createSpy();
+      repuxWeb3ServiceSpy.getRepuxApiInstance.and.returnValue({ getDataProductOrder });
+      await service.getOrderData(productAddress, walletAddress);
+      expect(getDataProductOrder.calls.count()).toBe(1);
+      expect(getDataProductOrder.calls.allArgs()[ 0 ][ 0 ]).toBe(productAddress);
+      expect(getDataProductOrder.calls.allArgs()[ 0 ][ 1 ]).toBe(walletAddress);
     });
   });
 
   describe('#publishDataProduct()', () => {
     it('should reject promise when createDataProduct rejects promise', async () => {
+      const createDataProduct = jasmine.createSpy();
+      createDataProduct.and.returnValue(Promise.reject(rejectError));
+
       repuxWeb3ServiceSpy.getRepuxApiInstance.and.returnValue({
-        createDataProduct: () => Promise.reject(rejectError)
+        createDataProduct
       });
-      try {
-        await service.publishDataProduct(fileHash, price, daysToDeliver);
-      } catch (error) {
-        expect(error).toBe(rejectError);
-        expect(repuxWeb3ServiceSpy.getRepuxApiInstance.calls.count()).toBe(1);
-      }
+
+      return new Promise(resolve => {
+        service.publishDataProduct(fileHash, price, daysToDeliver).subscribe((event: TransactionEvent) => {
+          if (event) {
+            expect(event.error).toEqual(rejectError);
+            expect(createDataProduct.calls.count()).toBe(1);
+            resolve();
+          }
+        });
+      });
     });
 
-    it('should resolve promise when getRepuxApiInstance returns resolved promise', async () => {
+    it('should resolve promise when getRepuxApiInstance returns resolved promise', () => {
+      const createDataProduct = jasmine.createSpy();
+      createDataProduct.and.returnValue(Promise.resolve());
+
       repuxWeb3ServiceSpy.getRepuxApiInstance.and.returnValue({
-        createDataProduct: () => Promise.resolve(resolveResult)
+        createDataProduct
       });
-      const result = await service.publishDataProduct(fileHash, price, daysToDeliver);
-      expect(result).toBe(<any> resolveResult);
-      expect(repuxWeb3ServiceSpy.getRepuxApiInstance.calls.count()).toBe(1);
+
+      return new Promise(resolve => {
+        service.publishDataProduct(fileHash, price, daysToDeliver).subscribe((event: TransactionEvent) => {
+          if (event) {
+            expect(event.receipt).toEqual(successfulReceipt);
+            expect(createDataProduct.calls.count()).toBe(1);
+            resolve();
+          }
+        });
+      });
     });
   });
 
   describe('#purchaseDataProduct()', () => {
-    it('should call purchaseDataProduct on repuxWeb3Api instance', async () => {
+    it('should resolve promise when getRepuxApiInstance returns resolved promise', () => {
       const buyerPublicKey = 'PUBLIC_KEY';
+
       const purchaseDataProduct = jasmine.createSpy();
-      repuxWeb3ServiceSpy.getRepuxApiInstance.and.returnValue({ purchaseDataProduct });
-      await service.purchaseDataProduct(productAddress, buyerPublicKey);
-      expect(purchaseDataProduct.calls.count()).toBe(1);
-      expect(purchaseDataProduct.calls.allArgs()[ 0 ][ 0 ]).toBe(productAddress);
-      expect(purchaseDataProduct.calls.allArgs()[ 0 ][ 1 ]).toBe(buyerPublicKey);
+      purchaseDataProduct.and.returnValue(Promise.resolve());
+
+      repuxWeb3ServiceSpy.getRepuxApiInstance.and.returnValue({
+        purchaseDataProduct
+      });
+
+      return new Promise(resolve => {
+        service.purchaseDataProduct(productAddress, buyerPublicKey).subscribe((event: TransactionEvent) => {
+          if (event) {
+            expect(event.receipt).toEqual(successfulReceipt);
+            expect(purchaseDataProduct.calls.count()).toBe(1);
+            resolve();
+          }
+        });
+      });
     });
   });
 
   describe('#finaliseDataProductPurchase()', () => {
-    it('should call finaliseDataProductPurchase on repuxWeb3Api instance', async () => {
+    it('should resolve promise when getRepuxApiInstance returns resolved promise', () => {
       const metaHash = 'SOME_HASH';
+      const orderAddress = '0x00';
+
       const finaliseDataProductPurchase = jasmine.createSpy();
-      repuxWeb3ServiceSpy.getRepuxApiInstance.and.returnValue({ finaliseDataProductPurchase });
-      await service.finaliseDataProductPurchase(productAddress, walletAddress, metaHash);
-      expect(finaliseDataProductPurchase.calls.count()).toBe(1);
-      expect(finaliseDataProductPurchase.calls.allArgs()[ 0 ][ 0 ]).toBe(productAddress);
-      expect(finaliseDataProductPurchase.calls.allArgs()[ 0 ][ 1 ]).toBe(walletAddress);
-      expect(finaliseDataProductPurchase.calls.allArgs()[ 0 ][ 2 ]).toBe(metaHash);
+      finaliseDataProductPurchase.and.returnValue(Promise.resolve());
+
+      repuxWeb3ServiceSpy.getRepuxApiInstance.and.returnValue({
+        finaliseDataProductPurchase
+      });
+
+      return new Promise(resolve => {
+        service.finaliseDataProductPurchase(orderAddress, productAddress, walletAddress, metaHash).subscribe((event: TransactionEvent) => {
+          if (event) {
+            expect(event.receipt).toEqual(successfulReceipt);
+            expect(finaliseDataProductPurchase.calls.count()).toBe(1);
+            resolve();
+          }
+        });
+      });
     });
   });
 

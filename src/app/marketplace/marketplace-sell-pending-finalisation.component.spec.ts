@@ -6,13 +6,14 @@ import Wallet from '../shared/models/wallet';
 import { Component, Input } from '@angular/core';
 import { MaterialModule } from '../material.module';
 import { getPendingFinalisationDataProductsQuery } from './services/pending-finalisation.service';
+import { ActionButtonType } from '../shared/enums/action-button-type';
 
 @Component({ selector: 'app-data-product-list', template: '' })
 class DataProductListStubComponent {
   @Input() staticQuery: {};
   @Input() displayedColumns: string[];
-  @Input() availableActions: string[];
-  @Input() displayPendingTransactions: boolean;
+  @Input() availableActions: ActionButtonType[];
+  @Input() displayPendingOrders: boolean;
   @Input() disablePendingFinalisation: boolean;
 }
 

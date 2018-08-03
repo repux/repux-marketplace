@@ -1,5 +1,4 @@
 import { ComponentFixture, fakeAsync, TestBed } from '@angular/core/testing';
-import { TransactionDialogComponent } from '../../shared/components/transaction-dialog/transaction-dialog.component';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import Wallet from '../../shared/models/wallet';
 import { from } from 'rxjs';
@@ -7,16 +6,31 @@ import { MarketplaceWithdrawButtonComponent } from './marketplace-withdraw-butto
 import BigNumber from 'bignumber.js';
 import { MaterialModule } from '../../material.module';
 import { DataProductService } from '../../services/data-product.service';
+import { TransactionReceipt, TransactionStatus } from 'repux-web3-api';
+import { CommonDialogService } from '../../shared/services/common-dialog.service';
+import { Transaction, TransactionService } from '../../shared/services/transaction.service';
+import { BlockchainTransactionScope } from '../../shared/enums/blockchain-transaction-scope';
+import { ActionButtonType } from '../../shared/enums/action-button-type';
 
 describe('MarketplaceWithdrawButtonComponent', () => {
   let component: MarketplaceWithdrawButtonComponent;
   let fixture: ComponentFixture<MarketplaceWithdrawButtonComponent>;
-  let dataProductServiceSpy;
+  let dataProductServiceSpy, commonDialogServiceSpy, transactionServiceSpy;
   const ownerAddress = '0x0000000000000000000000000000000000000000';
   const dataProductAddress = '0x1111111111111111111111111111111111111111';
 
   beforeEach(fakeAsync(() => {
     dataProductServiceSpy = jasmine.createSpyObj('DataProductService', [ 'withdrawFundsFromDataProduct' ]);
+
+    commonDialogServiceSpy = jasmine.createSpyObj('CommonDialogService', [ 'transaction' ]);
+    commonDialogServiceSpy.transaction.and.callFake(methodToCall => methodToCall());
+
+    transactionServiceSpy = jasmine.createSpyObj('TransactionService', [ 'getTransactionReceipt', 'getTransactions' ]);
+    transactionServiceSpy.getTransactionReceipt.and.returnValue(Promise.resolve({ status: TransactionStatus.SUCCESSFUL }));
+    transactionServiceSpy.getTransactions.and.returnValue({
+      subscribe() {
+      }
+    });
 
     TestBed.configureTestingModule({
       declarations: [
@@ -27,8 +41,9 @@ describe('MarketplaceWithdrawButtonComponent', () => {
         NoopAnimationsModule
       ],
       providers: [
-        { provide: TransactionDialogComponent, useValue: {} },
-        { provide: DataProductService, useValue: dataProductServiceSpy }
+        { provide: DataProductService, useValue: dataProductServiceSpy },
+        { provide: CommonDialogService, useValue: commonDialogServiceSpy },
+        { provide: TransactionService, useValue: transactionServiceSpy }
       ]
     })
       .compileComponents();
@@ -41,19 +56,19 @@ describe('MarketplaceWithdrawButtonComponent', () => {
       address: dataProductAddress,
       fundsToWithdraw: new BigNumber(1),
       ownerAddress,
-      transactions: []
+      orders: []
     };
     fixture.detectChanges();
   }));
 
   describe('#ngOnInit()', () => {
-    it('should call _onWalletChange', async () => {
+    it('should call onWalletChange', async () => {
       const wallet = new Wallet(ownerAddress, 0);
       const getWallet = jasmine.createSpy();
       getWallet.and.returnValue(from(Promise.resolve(wallet)));
       const onWalletChange = jasmine.createSpy();
-      component[ '_onWalletChange' ] = onWalletChange;
-      component[ '_walletService' ] = <any> {
+      component[ 'onWalletChange' ] = onWalletChange;
+      component[ 'walletService' ] = <any> {
         getWallet
       };
 
@@ -63,44 +78,70 @@ describe('MarketplaceWithdrawButtonComponent', () => {
     });
   });
 
-  describe('#_onWalletChange()', () => {
+  describe('#onWalletChange()', () => {
     it('should set wallet', () => {
       const wallet = new Wallet(ownerAddress, 0);
-      component[ '_onWalletChange' ](wallet);
+      component[ 'onWalletChange' ](wallet);
       expect(component[ 'wallet' ]).toBe(wallet);
-      component[ '_onWalletChange' ](wallet);
+      component[ 'onWalletChange' ](wallet);
       expect(component[ 'wallet' ]).toBe(wallet);
-      component[ '_onWalletChange' ](null);
+      component[ 'onWalletChange' ](null);
       expect(component[ 'wallet' ]).toBe(wallet);
       const wallet2 = new Wallet(ownerAddress, 0);
-      component[ '_onWalletChange' ](wallet2);
+      component[ 'onWalletChange' ](wallet2);
       expect(component[ 'wallet' ]).toBe(wallet2);
     });
   });
 
-  describe('#withdraw()', () => {
-    it('should create transaction dialog', async () => {
-      const expectedResult = 'RESULT';
-      const callTransaction = jasmine.createSpy();
-      const dialog = jasmine.createSpyObj('MatDialog', [ 'open' ]);
-      dialog.open.and.returnValue({
-        afterClosed() {
-          return {
-            subscribe(callback) {
-              callback(expectedResult);
-            }
-          };
-        },
-        componentInstance: {
-          callTransaction
-        }
-      });
-      component[ '_dialog' ] = <any> dialog;
+  describe('#onTransactionFinish()', () => {
+    it('should finalise transaction when transactionReceipt.status is successful', () => {
+      component.fundsToWithdraw = new BigNumber(100);
 
-      await component.withdraw();
-      expect(dialog.open.calls.count()).toBe(1);
-      expect(callTransaction.calls.count()).toBe(1);
+      component.onTransactionFinish({ status: TransactionStatus.SUCCESSFUL } as TransactionReceipt);
+
       expect(component.fundsToWithdraw).toEqual(new BigNumber(0));
+    });
+  });
+
+  describe('#onTransactionsListChange()', () => {
+    it('should set pendingTransaction when transaction list contains related transaction', async () => {
+      const transactions = [ {
+        scope: BlockchainTransactionScope.DataProduct,
+        identifier: dataProductAddress,
+        blocksAction: ActionButtonType.Withdraw
+      } ];
+
+      expect(component.pendingTransaction).toBe(undefined);
+
+      await component.onTransactionsListChange(transactions as Transaction[]);
+
+      expect(component.pendingTransaction).not.toBe(undefined);
+    });
+
+    it('should unset pendingTransaction and call onTransactionFinish when transaction list not contains related transaction', async () => {
+      const onTransactionFinish = jasmine.createSpy();
+      component.onTransactionFinish = onTransactionFinish;
+
+      component.pendingTransaction = {
+        scope: BlockchainTransactionScope.DataProduct,
+        identifier: dataProductAddress,
+        blocksAction: ActionButtonType.Withdraw
+      } as Transaction;
+
+      await component.onTransactionsListChange([]);
+
+      expect(component.pendingTransaction).toBe(undefined);
+      expect(onTransactionFinish.calls.count()).toBe(1);
+      expect(onTransactionFinish.calls.allArgs()[ 0 ]).toEqual([ { status: TransactionStatus.SUCCESSFUL } ]);
+    });
+  });
+
+  describe('#withdraw()', () => {
+    it('should call dataProductService.withdrawFundsFromDataProduct using commonDialogService.transaction', () => {
+      component.withdraw();
+
+      expect(dataProductServiceSpy.withdrawFundsFromDataProduct.calls.count()).toBe(1);
+      expect(dataProductServiceSpy.withdrawFundsFromDataProduct.calls.allArgs()[ 0 ]).toEqual([ dataProductAddress ]);
     });
   });
 });

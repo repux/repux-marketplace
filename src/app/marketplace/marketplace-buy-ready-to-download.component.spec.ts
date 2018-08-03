@@ -6,10 +6,11 @@ import { Component, Input } from '@angular/core';
 import { MarketplaceBuyReadyToDownloadComponent } from './marketplace-buy-ready-to-download.component';
 import { MaterialModule } from '../material.module';
 import { getReadyToDownloadDataProductsQuery } from './services/ready-to-download.service';
+import { ActionButtonType } from '../shared/enums/action-button-type';
 
 @Component({ selector: 'app-data-product-list', template: '' })
 class DataProductListStubComponent {
-  @Input() availableActions: string[];
+  @Input() availableActions: ActionButtonType[];
   @Input() displayedColumns: string[];
   @Input() staticQuery;
   @Input() buyerAddress: string;

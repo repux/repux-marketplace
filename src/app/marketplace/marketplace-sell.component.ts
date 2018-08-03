@@ -61,7 +61,7 @@ export class MarketplaceSellComponent implements OnDestroy {
     this._unpublishedProductsSubscription = this._unpublishedProductsService.getProducts()
       .subscribe(products => this._unpublishedLink.items = products);
 
-    this._pendingFinalisationSubscription = this._pendingFinalisationService.getTransactions()
+    this._pendingFinalisationSubscription = this._pendingFinalisationService.getOrders()
       .subscribe(pendingFinalisation => this._pendingFinalisationLink.items = pendingFinalisation);
   }
 

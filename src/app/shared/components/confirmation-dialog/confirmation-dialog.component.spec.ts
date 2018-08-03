@@ -1,6 +1,7 @@
 import { MatDialogModule } from '@angular/material';
 import { ComponentFixture, fakeAsync, TestBed } from '@angular/core/testing';
 import { ConfirmationDialogComponent } from './confirmation-dialog.component';
+import { SafeHtmlPipe } from '../../pipes/safe-html.pipe';
 
 describe('ConfirmationDialogComponent', () => {
   let component: ConfirmationDialogComponent;
@@ -8,7 +9,10 @@ describe('ConfirmationDialogComponent', () => {
 
   beforeEach(fakeAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [ ConfirmationDialogComponent ],
+      declarations: [
+        ConfirmationDialogComponent,
+        SafeHtmlPipe
+      ],
       imports: [
         MatDialogModule
       ]

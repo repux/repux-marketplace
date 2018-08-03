@@ -2,27 +2,27 @@ import { MatTableDataSource } from '@angular/material';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { Component, Input } from '@angular/core';
-import { DataProductTransaction } from '../../shared/models/data-product-transaction';
+import { DataProductOrder } from '../../shared/models/data-product-order';
 import { DataProduct } from '../../shared/models/data-product';
-import { MarketplaceDataProductTransactionsListComponent } from './marketplace-data-product-transactions-list.component';
+import { MarketplaceDataProductOrdersListComponent } from './marketplace-data-product-orders-list.component';
 import BigNumber from 'bignumber.js';
 import { SharedModule } from '../../shared/shared.module';
 import { MaterialModule } from '../../material.module';
 
 @Component({ selector: 'app-marketplace-finalise-button', template: '' })
 class FinaliseButtonStubComponent {
-  @Input() transaction: DataProductTransaction;
+  @Input() order: DataProductOrder;
   @Input() dataProduct: DataProduct;
 }
 
-describe('MarketplaceDataProductTransactionsListComponent', () => {
-  let component: MarketplaceDataProductTransactionsListComponent;
-  let fixture: ComponentFixture<MarketplaceDataProductTransactionsListComponent>;
+describe('MarketplaceDataProductOrdersListComponent', () => {
+  let component: MarketplaceDataProductOrdersListComponent;
+  let fixture: ComponentFixture<MarketplaceDataProductOrdersListComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       declarations: [
-        MarketplaceDataProductTransactionsListComponent,
+        MarketplaceDataProductOrdersListComponent,
         FinaliseButtonStubComponent
       ],
       imports: [
@@ -35,28 +35,28 @@ describe('MarketplaceDataProductTransactionsListComponent', () => {
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(MarketplaceDataProductTransactionsListComponent);
+    fixture = TestBed.createComponent(MarketplaceDataProductOrdersListComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
 
   describe('#ngOnChanges()', () => {
-    it('should assign to dataSource MatTableDataSource created from transactions array', () => {
-      const transactions = <any> [ {
+    it('should assign to dataSource MatTableDataSource created from orders array', () => {
+      const orders = <any> [ {
         buyerAddress: '0x11',
         finalised: false
       } ];
 
-      component.transactions = transactions;
+      component.orders = orders;
       component.ngOnChanges();
 
-      expect(component.dataSource.data).toEqual(transactions);
+      expect(component.dataSource.data).toEqual(orders);
     });
   });
 
-  describe('#getTransactionDate()', () => {
+  describe('#getOrderDate()', () => {
     it('should subtract daysToDeliver from deliveryDeadline date and return as a new date', () => {
-      const transaction = <any> {
+      const order = <any> {
         deliveryDeadline: new Date(1529937455000)
       };
 
@@ -64,13 +64,13 @@ describe('MarketplaceDataProductTransactionsListComponent', () => {
         daysToDeliver: 2
       };
 
-      expect(component.getTransactionDate(transaction)).toEqual(new Date(1529764655000));
+      expect(component.getOrderDate(order)).toEqual(new Date(1529764655000));
     });
   });
 
   describe('#DOM()', () => {
     it('should display table with data provided by dataSource property', () => {
-      component.transactions = <any> [ {
+      component.orders = <any> [ {
         buyerAddress: '0x00',
         price: new BigNumber(1.1),
         deliveryDeadline: new Date(1529937455000),
@@ -79,7 +79,7 @@ describe('MarketplaceDataProductTransactionsListComponent', () => {
       component.dataProduct = <any> {
         daysToDeliver: 2
       };
-      component.dataSource = new MatTableDataSource(component.transactions);
+      component.dataSource = new MatTableDataSource(component.orders);
       fixture.detectChanges();
 
       const element: HTMLElement = fixture.nativeElement;

@@ -1,7 +1,7 @@
 import BigNumber from 'bignumber.js';
 import { environment } from '../../../environments/environment';
 
-export class DataProductTransaction {
+export class DataProductOrder {
   dataProductAddress: string;
   finalised: boolean;
   buyerAddress: string;
@@ -14,7 +14,7 @@ export class DataProductTransaction {
   deliveryDeadline: Date;
   rateDeadline: Date;
 
-  deserialize(input: any): DataProductTransaction {
+  deserialize(input: any): DataProductOrder {
     Object.assign(this, input);
     this.price = (new BigNumber(input.price)).div(Math.pow(10, environment.repux.currency.precision));
     this.rating = new BigNumber(input.rating);

@@ -1,12 +1,12 @@
-import { MarketplaceRateTransactionDialogComponent } from './marketplace-rate-transaction-dialog.component';
+import { MarketplaceRateOrderDialogComponent } from './marketplace-rate-order-dialog.component';
 import { MaterialModule } from '../../material.module';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatDialogRef } from '@angular/material';
 import BigNumber from 'bignumber.js';
 
-describe('MarketplaceRateTransactionDialog', () => {
-  let component: MarketplaceRateTransactionDialogComponent;
-  let fixture: ComponentFixture<MarketplaceRateTransactionDialogComponent>;
+describe('MarketplaceRateOrderDialog', () => {
+  let component: MarketplaceRateOrderDialogComponent;
+  let fixture: ComponentFixture<MarketplaceRateOrderDialogComponent>;
   let matDialogRefSpy;
 
   beforeEach(async () => {
@@ -14,7 +14,7 @@ describe('MarketplaceRateTransactionDialog', () => {
 
     await TestBed.configureTestingModule({
       declarations: [
-        MarketplaceRateTransactionDialogComponent
+        MarketplaceRateOrderDialogComponent
       ],
       imports: [
         MaterialModule
@@ -24,7 +24,7 @@ describe('MarketplaceRateTransactionDialog', () => {
       ]
     }).compileComponents();
 
-    fixture = TestBed.createComponent(MarketplaceRateTransactionDialogComponent);
+    fixture = TestBed.createComponent(MarketplaceRateOrderDialogComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

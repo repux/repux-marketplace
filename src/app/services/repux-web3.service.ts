@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { environment } from '../../environments/environment';
-import RepuxWeb3Api from 'repux-web3-api';
+import { RepuxWeb3Api } from 'repux-web3-api';
 
 declare global {
   interface Window {
@@ -13,7 +13,9 @@ declare global {
   useFactory: RepuxWeb3ServiceFactory
 })
 export class RepuxWeb3Service {
-  constructor(private web3: any, private repuxWeb3Api: RepuxWeb3Api) {
+  constructor(
+    private web3: any,
+    private repuxWeb3Api: Promise<RepuxWeb3Api> | undefined) {
   }
 
   isProviderAvailable(): boolean {
@@ -21,7 +23,7 @@ export class RepuxWeb3Service {
   }
 
   async isDefaultAccountAvailable(): Promise<boolean> {
-    return this.isProviderAvailable() && await this.repuxWeb3Api.getDefaultAccount();
+    return this.isProviderAvailable() && Boolean(await (await this.repuxWeb3Api).getDefaultAccount());
   }
 
   async isNetworkCorrect(): Promise<boolean> {
@@ -29,7 +31,7 @@ export class RepuxWeb3Service {
       return false;
     }
 
-    const netId = await this.repuxWeb3Api.getNetworkId();
+    const netId = await (await this.repuxWeb3Api).getNetworkId();
     return +netId >= environment.networkId;
   }
 
@@ -46,7 +48,7 @@ export class RepuxWeb3Service {
   }
 }
 
-export async function RepuxWeb3ServiceFactory(): Promise<RepuxWeb3Api> {
+export async function RepuxWeb3ServiceFactory(): Promise<RepuxWeb3Service> {
   const web3Provider = window.web3;
   let repuxWeb3Api;
 
