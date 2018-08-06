@@ -12,6 +12,13 @@ body {
   margin: 0;
 }
 
+app-root {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  height: 100%;
+}
+
 .mat-dialog-actions {
   justify-content: flex-end;
 }

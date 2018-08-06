@@ -1,14 +1,14 @@
 @import '~@angular/material/theming';
 
 .sidenav-container {
-  height: 100%;
+  flex: 1;
 }
 
 .sidenav {
   width: 200px;
 
   .mat-nav-list {
-    margin: 24px 0;
+    margin: 48px 0 24px 0;
   }
 
   .active-route {
