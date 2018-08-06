@@ -1,3 +1,40 @@
+<mat-toolbar>
+  <mat-toolbar-row>
+    <button
+      type="button"
+      aria-label="Toggle sidenav"
+      mat-icon-button
+      (click)="drawer.toggle()"
+      *ngIf="isHandset$ | async">
+      <mat-icon aria-label="Side nav toggle icon">menu</mat-icon>
+    </button>
+    <span class="toolbar-spacer"></span>
+    <app-wallet-info *ngIf="!(isHandset$ | async)"></app-wallet-info>
+    <button mat-flat-button color="primary" (click)="openProductCreatorDialog()" class="sell-data-btn">
+      <mat-icon>data_usage</mat-icon>
+      Sell data
+    </button>
+    <button mat-icon-button>
+      <mat-icon
+        matBadge="0"
+        matBadgePosition="above after"
+        matBadgeColor="warn"
+        matBadgeSize="medium">notifications
+      </mat-icon>
+    </button>
+    <button mat-icon-button [matMenuTriggerFor]="menu">
+      <mat-icon>more_vert</mat-icon>
+    </button>
+    <mat-menu #menu="matMenu">
+      <button mat-menu-item routerLink="settings" fragment="wallet">My wallet</button>
+      <button mat-menu-item routerLink="settings" fragment="keys">Private & Public keys</button>
+      <a href="https://help.repux.io/" target="_blank" mat-menu-item>Help</a>
+    </mat-menu>
+  </mat-toolbar-row>
+</mat-toolbar>
+
+<app-metamask-detector></app-metamask-detector>
+
 <mat-sidenav-container class="sidenav-container">
   <mat-sidenav
     #drawer
@@ -138,39 +175,72 @@
           <g id="Desktop" transform="translate(-19.000000, -12.000000)" fill-rule="nonzero">
             <g id="Header">
               <g id="Logo" transform="translate(19.000000, 12.000000)">
-                <polyline id="XMLID_318_" fill="url(#linearGradient-1)" points="3.9804878 16 19.9804878 19.9804878 13.9707317 13.9707317 3.9804878 16"></polyline>
-                <polygon id="XMLID_317_" fill="#B2D35A" points="32 10.6926829 28.0195122 16 32 21.3073171 32 32 21.3073171 32 16 28.0195122 10.6926829 32 0 32 0 21.3073171 3.9804878 16 0 10.6926829 0 0 10.6926829 0 16 3.9804878 21.3073171 0 32 0"></polygon>
-                <polygon id="XMLID_314_" fill="#464969" points="32 32 21.3073171 32 16 28.0195122 10.6926829 32 0 32 0 21.3073171 3.9804878 16 0 10.6926829 0 0"></polygon>
-                <polygon id="XMLID_313_" fill="url(#linearGradient-2)" points="10.6926829 0 6.0097561 6.0097561 0 0"></polygon>
-                <polygon id="XMLID_312_" fill="url(#linearGradient-3)" points="6.0097561 6.0097561 16 3.9804878 10.6926829 0"></polygon>
-                <polygon id="XMLID_311_" fill="url(#linearGradient-4)" points="6.0097561 6.0097561 13.9707317 13.9707317 16 3.9804878"></polygon>
-                <polygon id="XMLID_310_" fill="url(#linearGradient-5)" points="13.9707317 13.9707317 21.3073171 0 16 3.9804878"></polygon>
-                <polygon id="XMLID_309_" fill="url(#linearGradient-6)" points="13.9707317 13.9707317 25.9902439 0 21.3073171 0"></polygon>
-                <polygon id="XMLID_308_" fill="url(#linearGradient-7)" points="13.9707317 13.9707317 32 0 25.9902439 0"></polygon>
-                <polygon id="XMLID_306_" fill="url(#linearGradient-8)" points="32 10.6926829 32 0 13.9707317 13.9707317"></polygon>
-                <polygon id="XMLID_275_" fill="url(#linearGradient-9)" points="28.0195122 16 23.0243902 12.3317073 32 10.6926829"></polygon>
-                <polygon id="XMLID_274_" fill="url(#linearGradient-10)" points="13.9707317 13.9707317 23.0243902 12.3317073 19.9804878 19.9804878"></polygon>
-                <polygon id="XMLID_273_" fill="url(#linearGradient-11)" points="19.9804878 19.9804878 28.0195122 16 23.0243902 12.3317073"></polygon>
-                <polygon id="XMLID_272_" fill="url(#linearGradient-12)" points="19.9804878 19.9804878 32 21.3073171 28.0195122 16"></polygon>
-                <polygon id="XMLID_271_" fill="url(#linearGradient-13)" points="19.9804878 19.9804878 32 32 32 21.3073171"></polygon>
-                <polygon id="XMLID_270_" fill="url(#linearGradient-14)" points="6.0097561 6.0097561 0 10.6926829 0 0"></polygon>
-                <polygon id="XMLID_269_" fill="url(#linearGradient-15)" points="6.0097561 6.0097561 3.9804878 16 0 10.6926829"></polygon>
-                <polygon id="XMLID_268_" fill="url(#linearGradient-16)" points="3.9804878 16 13.9707317 13.9707317 6.0097561 6.0097561"></polygon>
-                <polygon id="XMLID_267_" fill="url(#linearGradient-17)" points="3.9804878 16 0 28.0195122 0 21.3073171"></polygon>
-                <polygon id="XMLID_266_" fill="url(#linearGradient-18)" points="0 28.0195122 10.6926829 32 0 32"></polygon>
-                <polygon id="XMLID_264_" fill="url(#linearGradient-19)" points="13.9707317 13.9707317 3.9804878 16 19.9804878 19.9804878"></polygon>
-                <polygon id="XMLID_263_" fill="url(#linearGradient-20)" points="0 28.0195122 14.2829268 29.2682927 10.6926829 32"></polygon>
-                <polygon id="XMLID_262_" fill="url(#linearGradient-21)" points="14.2829268 29.2682927 2.34146341 20.8390244 0 28.0195122"></polygon>
-                <polygon id="XMLID_261_" fill="url(#linearGradient-22)" points="14.2829268 29.2682927 16 28.0195122 9.05365854 25.6"></polygon>
-                <polygon id="XMLID_260_" fill="url(#linearGradient-23)" points="16 28.0195122 32 32 21.3073171 32"></polygon>
-                <polygon id="XMLID_259_" fill="url(#linearGradient-24)" points="16 28.0195122 19.9804878 19.9804878 32 32"></polygon>
-                <polygon id="XMLID_229_" fill="url(#linearGradient-25)" points="16 28.0195122 16.702439 19.2 19.9804878 19.9804878"></polygon>
-                <polygon id="XMLID_227_" fill="url(#linearGradient-26)" points="9.05365854 25.6 16.2341463 24.8195122 16 28.0195122"></polygon>
-                <polygon id="XMLID_226_" fill="url(#linearGradient-27)" points="9.05365854 25.6 3.9804878 16 2.34146341 20.8390244"></polygon>
-                <polygon id="XMLID_225_" fill="url(#linearGradient-28)" points="9.05365854 25.6 16.702439 19.2 16.2341463 24.8195122"></polygon>
-                <polygon id="XMLID_224_" fill="url(#linearGradient-29)" points="9.05365854 25.6 11.395122 17.8731707 16.702439 19.2"></polygon>
-                <polygon id="XMLID_222_" fill="url(#linearGradient-30)" points="9.05365854 25.6 11.395122 17.8731707 5.77560976 19.4341463"></polygon>
-                <polygon id="XMLID_217_" fill="url(#linearGradient-31)" points="5.77560976 19.4341463 11.395122 17.8731707 3.9804878 16"></polygon>
+                <polyline id="XMLID_318_" fill="url(#linearGradient-1)"
+                          points="3.9804878 16 19.9804878 19.9804878 13.9707317 13.9707317 3.9804878 16"></polyline>
+                <polygon id="XMLID_317_" fill="#B2D35A"
+                         points="32 10.6926829 28.0195122 16 32 21.3073171 32 32 21.3073171 32 16 28.0195122 10.6926829 32 0 32 0 21.3073171 3.9804878 16 0 10.6926829 0 0 10.6926829 0 16 3.9804878 21.3073171 0 32 0"></polygon>
+                <polygon id="XMLID_314_" fill="#464969"
+                         points="32 32 21.3073171 32 16 28.0195122 10.6926829 32 0 32 0 21.3073171 3.9804878 16 0 10.6926829 0 0"></polygon>
+                <polygon id="XMLID_313_" fill="url(#linearGradient-2)"
+                         points="10.6926829 0 6.0097561 6.0097561 0 0"></polygon>
+                <polygon id="XMLID_312_" fill="url(#linearGradient-3)"
+                         points="6.0097561 6.0097561 16 3.9804878 10.6926829 0"></polygon>
+                <polygon id="XMLID_311_" fill="url(#linearGradient-4)"
+                         points="6.0097561 6.0097561 13.9707317 13.9707317 16 3.9804878"></polygon>
+                <polygon id="XMLID_310_" fill="url(#linearGradient-5)"
+                         points="13.9707317 13.9707317 21.3073171 0 16 3.9804878"></polygon>
+                <polygon id="XMLID_309_" fill="url(#linearGradient-6)"
+                         points="13.9707317 13.9707317 25.9902439 0 21.3073171 0"></polygon>
+                <polygon id="XMLID_308_" fill="url(#linearGradient-7)"
+                         points="13.9707317 13.9707317 32 0 25.9902439 0"></polygon>
+                <polygon id="XMLID_306_" fill="url(#linearGradient-8)"
+                         points="32 10.6926829 32 0 13.9707317 13.9707317"></polygon>
+                <polygon id="XMLID_275_" fill="url(#linearGradient-9)"
+                         points="28.0195122 16 23.0243902 12.3317073 32 10.6926829"></polygon>
+                <polygon id="XMLID_274_" fill="url(#linearGradient-10)"
+                         points="13.9707317 13.9707317 23.0243902 12.3317073 19.9804878 19.9804878"></polygon>
+                <polygon id="XMLID_273_" fill="url(#linearGradient-11)"
+                         points="19.9804878 19.9804878 28.0195122 16 23.0243902 12.3317073"></polygon>
+                <polygon id="XMLID_272_" fill="url(#linearGradient-12)"
+                         points="19.9804878 19.9804878 32 21.3073171 28.0195122 16"></polygon>
+                <polygon id="XMLID_271_" fill="url(#linearGradient-13)"
+                         points="19.9804878 19.9804878 32 32 32 21.3073171"></polygon>
+                <polygon id="XMLID_270_" fill="url(#linearGradient-14)"
+                         points="6.0097561 6.0097561 0 10.6926829 0 0"></polygon>
+                <polygon id="XMLID_269_" fill="url(#linearGradient-15)"
+                         points="6.0097561 6.0097561 3.9804878 16 0 10.6926829"></polygon>
+                <polygon id="XMLID_268_" fill="url(#linearGradient-16)"
+                         points="3.9804878 16 13.9707317 13.9707317 6.0097561 6.0097561"></polygon>
+                <polygon id="XMLID_267_" fill="url(#linearGradient-17)"
+                         points="3.9804878 16 0 28.0195122 0 21.3073171"></polygon>
+                <polygon id="XMLID_266_" fill="url(#linearGradient-18)"
+                         points="0 28.0195122 10.6926829 32 0 32"></polygon>
+                <polygon id="XMLID_264_" fill="url(#linearGradient-19)"
+                         points="13.9707317 13.9707317 3.9804878 16 19.9804878 19.9804878"></polygon>
+                <polygon id="XMLID_263_" fill="url(#linearGradient-20)"
+                         points="0 28.0195122 14.2829268 29.2682927 10.6926829 32"></polygon>
+                <polygon id="XMLID_262_" fill="url(#linearGradient-21)"
+                         points="14.2829268 29.2682927 2.34146341 20.8390244 0 28.0195122"></polygon>
+                <polygon id="XMLID_261_" fill="url(#linearGradient-22)"
+                         points="14.2829268 29.2682927 16 28.0195122 9.05365854 25.6"></polygon>
+                <polygon id="XMLID_260_" fill="url(#linearGradient-23)"
+                         points="16 28.0195122 32 32 21.3073171 32"></polygon>
+                <polygon id="XMLID_259_" fill="url(#linearGradient-24)"
+                         points="16 28.0195122 19.9804878 19.9804878 32 32"></polygon>
+                <polygon id="XMLID_229_" fill="url(#linearGradient-25)"
+                         points="16 28.0195122 16.702439 19.2 19.9804878 19.9804878"></polygon>
+                <polygon id="XMLID_227_" fill="url(#linearGradient-26)"
+                         points="9.05365854 25.6 16.2341463 24.8195122 16 28.0195122"></polygon>
+                <polygon id="XMLID_226_" fill="url(#linearGradient-27)"
+                         points="9.05365854 25.6 3.9804878 16 2.34146341 20.8390244"></polygon>
+                <polygon id="XMLID_225_" fill="url(#linearGradient-28)"
+                         points="9.05365854 25.6 16.702439 19.2 16.2341463 24.8195122"></polygon>
+                <polygon id="XMLID_224_" fill="url(#linearGradient-29)"
+                         points="9.05365854 25.6 11.395122 17.8731707 16.702439 19.2"></polygon>
+                <polygon id="XMLID_222_" fill="url(#linearGradient-30)"
+                         points="9.05365854 25.6 11.395122 17.8731707 5.77560976 19.4341463"></polygon>
+                <polygon id="XMLID_217_" fill="url(#linearGradient-31)"
+                         points="5.77560976 19.4341463 11.395122 17.8731707 3.9804878 16"></polygon>
               </g>
             </g>
           </g>
@@ -190,42 +260,8 @@
   </mat-sidenav>
 
   <mat-sidenav-content>
-    <mat-toolbar>
-      <button
-        type="button"
-        aria-label="Toggle sidenav"
-        mat-icon-button
-        (click)="drawer.toggle()"
-        *ngIf="isHandset$ | async">
-        <mat-icon aria-label="Side nav toggle icon">menu</mat-icon>
-      </button>
-      <span class="toolbar-spacer"></span>
-      <app-wallet-info *ngIf="!(isHandset$ | async)"></app-wallet-info>
-      <button mat-flat-button color="primary"  (click)="openProductCreatorDialog()" class="sell-data-btn">
-        <mat-icon>data_usage</mat-icon>
-        Sell data
-      </button>
-      <button mat-icon-button>
-        <mat-icon
-          matBadge="0"
-          matBadgePosition="above after"
-          matBadgeColor="warn"
-          matBadgeSize="medium">notifications</mat-icon>
-      </button>
-      <button mat-icon-button [matMenuTriggerFor]="menu">
-        <mat-icon>more_vert</mat-icon>
-      </button>
-      <mat-menu #menu="matMenu">
-        <button mat-menu-item routerLink="settings" fragment="wallet">My wallet</button>
-        <button mat-menu-item routerLink="settings" fragment="keys">Private & Public keys</button>
-        <a href="https://help.repux.io/" target="_blank" mat-menu-item>Help</a>
-      </mat-menu>
-    </mat-toolbar>
-
     <div class="app-view">
-      <app-metamask-detector></app-metamask-detector>
       <router-outlet></router-outlet>
     </div>
-
   </mat-sidenav-content>
 </mat-sidenav-container>
