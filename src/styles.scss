@@ -1,4 +1,4 @@
-@import 'variables.scss';
+@import 'theme.scss';
 
 @include angular-material-theme($theme);
 
@@ -19,6 +19,10 @@ app-root {
   height: 100%;
 }
 
+.mat-dialog-title {
+  color: map-get($app-primary, 300);
+}
+
 .mat-dialog-actions {
   justify-content: flex-end;
 }
@@ -30,3 +34,6 @@ app-root {
   text-transform: uppercase;
 }
 
+a {
+  color: map-get($repux-primary, 300);
+}

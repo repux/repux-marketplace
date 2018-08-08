@@ -1,0 +1,67 @@
+<div class="notifications-list mat-typography">
+  <div *ngIf="pendingFinalisationProducts$ | async as pendingFinalisationProducts">
+    <section *ngIf="pendingFinalisationProducts.length > 0">
+      <h2 class="notifications-list__card-header">Pending finalisation</h2>
+      <mat-card>
+        <mat-card-content>
+          <mat-list>
+            <ng-template ngFor let-product [ngForOf]="pendingFinalisationProducts">
+              <mat-list-item class="clickable" [routerLink]="product.address ? ['details', product.address] : null">
+                <h4 mat-line>{{product.title}}</h4>
+                <p mat-line> {{product.name}} </p>
+                <app-marketplace-action-buttons
+                  [availableActions]="['publish']"
+                  [dataProduct]="product"></app-marketplace-action-buttons>
+              </mat-list-item>
+              <mat-divider></mat-divider>
+            </ng-template>
+          </mat-list>
+        </mat-card-content>
+      </mat-card>
+    </section>
+  </div>
+
+  <div *ngIf="unpublishedProducts$ | async as unpublishedProducts">
+    <section *ngIf="unpublishedProducts.length > 0">
+      <h2 class="notifications-list__card-header">Unpublished</h2>
+      <mat-card>
+        <mat-card-content>
+          <mat-list>
+            <ng-template ngFor let-product [ngForOf]="unpublishedProducts">
+              <mat-list-item class="clickable" [routerLink]="product.address ? ['details', product.address] : null">
+                <h4 mat-line>{{product.title}}</h4>
+                <p mat-line> {{product.name}} </p>
+                <app-marketplace-action-buttons
+                  [availableActions]="['publish']"
+                  [dataProduct]="product"></app-marketplace-action-buttons>
+              </mat-list-item>
+              <mat-divider></mat-divider>
+            </ng-template>
+          </mat-list>
+        </mat-card-content>
+      </mat-card>
+    </section>
+  </div>
+
+  <div *ngIf="readyToDownloadProducts$ | async as readyToDownloadProducts">
+    <section *ngIf="readyToDownloadProducts.length > 0">
+      <h2 class="notifications-list__card-header">Ready to download</h2>
+      <mat-card>
+        <mat-card-content>
+          <mat-list>
+            <ng-template ngFor let-product [ngForOf]="readyToDownloadProducts">
+              <mat-list-item class="clickable" [routerLink]="product.address ? ['details', product.address] : null">
+                <h4 mat-line>{{product.title}}</h4>
+                <p mat-line> {{product.name}} </p>
+                <app-marketplace-action-buttons
+                  [availableActions]="['publish']"
+                  [dataProduct]="product"></app-marketplace-action-buttons>
+              </mat-list-item>
+              <mat-divider></mat-divider>
+            </ng-template>
+          </mat-list>
+        </mat-card-content>
+      </mat-card>
+    </section>
+  </div>
+</div>

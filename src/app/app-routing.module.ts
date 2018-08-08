@@ -10,6 +10,7 @@ import { MarketplaceBuyReadyToDownloadComponent } from './marketplace/marketplac
 import { MarketplaceBuyAwaitingFinalisationComponent } from './marketplace/marketplace-buy-awaiting-finalisation.component';
 import { SettingsIndexComponent } from './settings/settings-index/settings-index.component';
 import { MarketplaceProductDetailsComponent } from './marketplace/marketplace-product-details.component';
+import { NotificationsListComponent } from './notifications-list/notifications-list.component';
 
 const routes: Routes = [
   { path: '', redirectTo: '/marketplace', pathMatch: 'full' },
@@ -18,14 +19,24 @@ const routes: Routes = [
   {
     path: 'sell', component: MarketplaceSellComponent, children: [
       { path: '', redirectTo: MarketplaceSellLink.MY_ACTIVE_LISTINGS, pathMatch: 'full' },
-      { path: MarketplaceSellLink.MY_ACTIVE_LISTINGS, component: MarketplaceSellMyActiveListingsComponent, outlet: 'primary' },
+      {
+        path: MarketplaceSellLink.MY_ACTIVE_LISTINGS,
+        component: MarketplaceSellMyActiveListingsComponent,
+        outlet: 'primary'
+      },
       { path: MarketplaceSellLink.UNPUBLISHED, component: MarketplaceSellUnpublishedComponent },
       { path: MarketplaceSellLink.PENDING_FINALISATION, component: MarketplaceSellPendingFinalisationComponent }
     ]
   },
-  { path: `sell/${MarketplaceSellLink.MY_ACTIVE_LISTINGS}/details/:address`, component: MarketplaceProductDetailsComponent },
+  {
+    path: `sell/${MarketplaceSellLink.MY_ACTIVE_LISTINGS}/details/:address`,
+    component: MarketplaceProductDetailsComponent
+  },
   { path: `sell/${MarketplaceSellLink.UNPUBLISHED}/details/:address`, component: MarketplaceProductDetailsComponent },
-  { path: `sell/${MarketplaceSellLink.PENDING_FINALISATION}/details/:address`, component: MarketplaceProductDetailsComponent },
+  {
+    path: `sell/${MarketplaceSellLink.PENDING_FINALISATION}/details/:address`,
+    component: MarketplaceProductDetailsComponent
+  },
   {
     path: 'buy', component: MarketplaceBuyComponent, children: [
       { path: '', redirectTo: 'ready-to-download', pathMatch: 'full' },
@@ -33,8 +44,15 @@ const routes: Routes = [
       { path: MarketplaceBuyingLink.AWAITING_FINALISATION, component: MarketplaceBuyAwaitingFinalisationComponent }
     ]
   },
-  { path: `buy/${MarketplaceBuyingLink.READY_TO_DOWNLOAD}/details/:address`, component: MarketplaceProductDetailsComponent },
-  { path: `buy/${MarketplaceBuyingLink.AWAITING_FINALISATION}/details/:address`, component: MarketplaceProductDetailsComponent },
+  {
+    path: `buy/${MarketplaceBuyingLink.READY_TO_DOWNLOAD}/details/:address`,
+    component: MarketplaceProductDetailsComponent
+  },
+  {
+    path: `buy/${MarketplaceBuyingLink.AWAITING_FINALISATION}/details/:address`,
+    component: MarketplaceProductDetailsComponent
+  },
+  { path: 'notifications', component: NotificationsListComponent },
   { path: 'settings', component: SettingsIndexComponent }
 ];
 

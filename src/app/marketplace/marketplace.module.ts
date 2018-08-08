@@ -102,6 +102,7 @@ import { MarketplaceRatingComponent } from './marketplace-rating/marketplace-rat
     MarketplaceBuyComponent,
     MarketplaceBuyAwaitingFinalisationComponent,
     MarketplaceBuyReadyToDownloadComponent,
+    MarketplaceActionButtonsComponent,
     MarketplaceProductDetailsComponent
   ],
   entryComponents: [

@@ -1,10 +1,11 @@
 <div *ngIf="isUnpublished">
+  <button mat-button
+          class="remove-button"
+          (click)="remove()">Remove
+  </button>
+
   <button mat-stroked-button
           color="accent"
           (click)="publish()">Publish
-  </button>
-  <button mat-stroked-button
-          class="remove-button"
-          (click)="remove()">Remove
   </button>
 </div>

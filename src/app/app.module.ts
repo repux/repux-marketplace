@@ -9,10 +9,12 @@ import { SettingsModule } from './settings/settings.module';
 import { SharedModule } from './shared/shared.module';
 import { MaterialModule } from './material.module';
 import { MarketplaceModule } from './marketplace/marketplace.module';
+import { NotificationsListComponent } from './notifications-list/notifications-list.component';
 
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
+    NotificationsListComponent
   ],
   imports: [
     BrowserModule,

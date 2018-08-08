@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { WebpushNotificationService } from './services/webpush-notification.service';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { map } from 'rxjs/operators';
-import { Observable } from 'rxjs';
+import { Observable, concat } from 'rxjs';
 import { environment } from '../environments/environment';
 import { WalletService } from './services/wallet.service';
 import { Router } from '@angular/router';
@@ -10,6 +10,10 @@ import { OverlayContainer } from '@angular/cdk/overlay';
 import { TagManagerService } from './shared/services/tag-manager.service';
 import { MarketplaceProductCreatorDialogComponent } from './marketplace/marketplace-product-creator-dialog/marketplace-product-creator-dialog.component';
 import { MatDialog } from '@angular/material';
+import { UnpublishedProductsService } from './marketplace/services/unpublished-products.service';
+import { PendingFinalisationService } from './marketplace/services/pending-finalisation.service';
+import { AwaitingFinalisationService } from './marketplace/services/awaiting-finalisation.service';
+import { ReadyToDownloadService } from './marketplace/services/ready-to-download.service';
 
 @Component({
   selector: 'app-root',
@@ -21,6 +25,8 @@ export class AppComponent implements OnInit {
     .pipe(
       map(result => result.matches)
     );
+
+  tasksTotal$: Observable<number>;
 
   navLinks = [
     {
@@ -44,7 +50,11 @@ export class AppComponent implements OnInit {
     private walletService: WalletService,
     private overlayContainer: OverlayContainer,
     private tagManager: TagManagerService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private unpublishedProductsService: UnpublishedProductsService,
+    private pendingFinalisationService: PendingFinalisationService,
+    private awaitingFinalisationService: AwaitingFinalisationService,
+    private readyToDownloadService: ReadyToDownloadService
   ) {
   }
 
@@ -64,11 +74,24 @@ export class AppComponent implements OnInit {
         this.tagManager.sendUserId(wallet.address);
       }
     });
+
+    this.tasksTotal$ = this.getCombinedProductStreams();
   }
 
   openProductCreatorDialog() {
     this.dialog.open(MarketplaceProductCreatorDialogComponent, {
       disableClose: true
     });
+  }
+
+  getCombinedProductStreams() {
+    return concat(
+      this.unpublishedProductsService.getProducts(),
+      this.pendingFinalisationService.getProducts(),
+      this.awaitingFinalisationService.getProducts(),
+      this.readyToDownloadService.getProducts()
+    ).pipe(
+      map(result => result.length)
+    );
   }
 }
