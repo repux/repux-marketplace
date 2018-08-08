@@ -4,24 +4,34 @@
       type="button"
       aria-label="Toggle sidenav"
       mat-icon-button
-      (click)="drawer.toggle()"
+      (click)="navigation.toggle()"
       *ngIf="isHandset$ | async">
       <mat-icon aria-label="Side nav toggle icon">menu</mat-icon>
     </button>
     <span class="toolbar-spacer"></span>
     <app-wallet-info *ngIf="!(isHandset$ | async)"></app-wallet-info>
     <button mat-flat-button color="primary" (click)="openProductCreatorDialog()" class="sell-data-btn">
-      <mat-icon>data_usage</mat-icon>
       Sell data
     </button>
-    <button mat-icon-button>
+
+    <button
+      *ngIf="tasksTotal$ | async as total"
+      mat-icon-button
+      routerLink="/notifications">
       <mat-icon
-        matBadge="0"
+        [matBadge]="total"
         matBadgePosition="above after"
-        matBadgeColor="warn"
+        matBadgeColor="accent"
         matBadgeSize="medium">notifications
       </mat-icon>
     </button>
+
+    <button
+      *ngIf="!(tasksTotal$ | async)"
+      mat-icon-button disabled>
+      <mat-icon *ngIf="!(tasksTotal$ | async)">notifications</mat-icon>
+    </button>
+
     <button mat-icon-button [matMenuTriggerFor]="menu">
       <mat-icon>more_vert</mat-icon>
     </button>
@@ -37,7 +47,7 @@
 
 <mat-sidenav-container class="sidenav-container">
   <mat-sidenav
-    #drawer
+    #navigation
     class="sidenav"
     fixedInViewport="true"
     [attr.role]="(isHandset$ | async) ? 'dialog' : 'navigation'"

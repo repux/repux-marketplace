@@ -1,6 +1,6 @@
-@import '../../../variables';
+@import '../../variables';
 
-.settings {
+.notifications-list {
   max-width: 680px;
   margin: 0 auto;
 
@@ -35,5 +35,12 @@
 
   a {
     text-decoration: none;
+  }
+
+  app-marketplace-action-buttons {
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content: flex-end;
+    min-width: 300px;
   }
 }

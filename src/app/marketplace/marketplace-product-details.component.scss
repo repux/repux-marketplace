@@ -1,3 +1,5 @@
+@import '../../variables';
+
 .product-details {
   max-width: 800px;
   margin: 0 auto;
@@ -58,13 +60,13 @@
 
   &__prefix {
     font-size: 12px;
-    color: #999;
+    color: #acacac;
     margin: 0 4px 0 0;
   }
 
   &__value {
     font-size: 24px;
-    color: #ff4081;
+    color: map-get($app-primary, 300)
   }
 }
 

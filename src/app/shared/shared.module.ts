@@ -34,10 +34,10 @@ import { EulaTypePipe } from './pipes/eula-type.pipe';
     TransactionDialogComponent,
     TaskManagerComponent,
     NotificationsNumberComponent,
+    WalletInfoComponent,
     ArrayJoinPipe,
     FileSizePipe,
     CurrencyRepuxPipe,
-    WalletInfoComponent,
     EulaTypePipe
   ],
   exports: [
