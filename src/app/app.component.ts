@@ -12,7 +12,6 @@ import { MarketplaceProductCreatorDialogComponent } from './marketplace/marketpl
 import { MatDialog } from '@angular/material';
 import { UnpublishedProductsService } from './marketplace/services/unpublished-products.service';
 import { PendingFinalisationService } from './marketplace/services/pending-finalisation.service';
-import { AwaitingFinalisationService } from './marketplace/services/awaiting-finalisation.service';
 import { ReadyToDownloadService } from './marketplace/services/ready-to-download.service';
 
 @Component({
@@ -53,7 +52,6 @@ export class AppComponent implements OnInit {
     private dialog: MatDialog,
     private unpublishedProductsService: UnpublishedProductsService,
     private pendingFinalisationService: PendingFinalisationService,
-    private awaitingFinalisationService: AwaitingFinalisationService,
     private readyToDownloadService: ReadyToDownloadService
   ) {
   }
@@ -88,7 +86,6 @@ export class AppComponent implements OnInit {
     return concat(
       this.unpublishedProductsService.getProducts(),
       this.pendingFinalisationService.getProducts(),
-      this.awaitingFinalisationService.getProducts(),
       this.readyToDownloadService.getProducts()
     ).pipe(
       map(result => result.length)

@@ -11,16 +11,24 @@ import { MarketplaceModule } from './marketplace/marketplace.module';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { MarketplaceProductCreatorDialogComponent } from './marketplace/marketplace-product-creator-dialog/marketplace-product-creator-dialog.component';
 import { MatDialog } from '@angular/material';
+import { NotificationsListComponent } from './notifications-list/notifications-list.component';
+import { PendingFinalisationService } from './marketplace/services/pending-finalisation.service';
+import { UnpublishedProductsService } from './marketplace/services/unpublished-products.service';
+import { ReadyToDownloadService } from './marketplace/services/ready-to-download.service';
 
 describe('AppComponent', () => {
   let matDialog;
   beforeEach(async(() => {
 
     matDialog = jasmine.createSpyObj('MatDialog', [ 'open' ]);
+    const unpublishedProductsServiceSpy = jasmine.createSpyObj('UnpublishedProductsService', [ 'getProducts' ]);
+    const pendingFinalisationServiceSpy = jasmine.createSpyObj('PendingFinalisationService', [ 'getProducts' ]);
+    const readyToDownloadServiceSpy = jasmine.createSpyObj('ReadyToDownloadService', [ 'getProducts' ]);
 
     TestBed.configureTestingModule({
       declarations: [
-        AppComponent
+        AppComponent,
+        NotificationsListComponent
       ],
       imports: [
         AppRoutingModule,
@@ -34,7 +42,10 @@ describe('AppComponent', () => {
         { provide: MatDialog, useValue: matDialog },
         { provide: APP_BASE_HREF, useValue: '/' },
         { provide: WalletService, useValue: jasmine.createSpy() },
-        { provide: HttpClient, useValue: jasmine.createSpy() }
+        { provide: HttpClient, useValue: jasmine.createSpy() },
+        { provide: PendingFinalisationService, useValue: pendingFinalisationServiceSpy },
+        { provide: UnpublishedProductsService, useValue: unpublishedProductsServiceSpy },
+        { provide: ReadyToDownloadService, useValue: readyToDownloadServiceSpy }
       ]
     }).compileComponents();
   }));

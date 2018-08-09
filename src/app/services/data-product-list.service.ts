@@ -41,6 +41,22 @@ export class DataProductListService {
       );
   }
 
+  getBlockchainStateForDataProducts(products$: Observable<EsResponse<DataProduct>>): Observable<EsResponse<DataProduct>> {
+    return products$
+      .pipe(
+        flatMap(async esResponse => {
+          await Promise.all(esResponse.hits.map(dataProduct => {
+            const promise = this.dataProductService.getDataProductData(dataProduct.address);
+            promise.then(blockchainState => dataProduct.blockchainState = blockchainState);
+
+            return promise;
+          }));
+
+          return esResponse;
+        })
+      );
+  }
+
   getDataProduct(address: string): Observable<DataProduct> {
     const query = {
       'bool': {

@@ -101,7 +101,7 @@ describe('MarketplaceDataProductTransactionsListComponent', () => {
 
       const firstRow = table.querySelector('[mat-row]');
       expect(firstRow.querySelector('mat-cell:nth-child(1)').textContent.trim()).toBe('0x00');
-      expect(firstRow.querySelector('mat-cell:nth-child(2)').textContent.trim()).toBe('REPUX 1.1');
+      expect(firstRow.querySelector('mat-cell:nth-child(2)').textContent.trim()).toBe('REPUX 1.10');
       expect(firstRow.querySelector('mat-cell:nth-child(3)').textContent.trim()).not.toBeNull();
       expect(firstRow.querySelector('mat-cell:nth-child(4)').textContent.trim()).not.toBeNull();
       expect(firstRow.querySelector('mat-cell:nth-child(5) app-marketplace-finalise-button')).not.toBeNull();

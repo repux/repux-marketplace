@@ -272,15 +272,14 @@ describe('MarketplaceDataProductListComponent', () => {
       expect(table.querySelectorAll('[mat-row]').length).toBe(1);
 
       const firstRow = table.querySelector('[mat-row]');
-      console.log(firstRow);
       expect(firstRow.querySelector('mat-cell:nth-child(1)').textContent.trim()).toBe('test name');
       expect(firstRow.querySelector('mat-cell:nth-child(2)').textContent.trim()).toBe('test title');
       expect(firstRow.querySelector('mat-cell:nth-child(3)').textContent.trim()).toBe('test category 1, test category 2');
       expect(firstRow.querySelector('mat-cell:nth-child(4)').textContent.trim()).toBe('1.00 KB');
-      expect(firstRow.querySelector('mat-cell:nth-child(5)').textContent.trim()).toBe('1');
+      expect(firstRow.querySelector('mat-cell:nth-child(5)').textContent.trim()).toBe('REPUX 1.00');
       expect(firstRow.querySelector('mat-cell:nth-child(6)').textContent.trim()).toBe('0');
-      expect(firstRow.querySelector('mat-cell:nth-child(7)').textContent.trim()).toBe('REPUX 0');
-      expect(firstRow.querySelector('mat-cell:nth-child(8)').textContent.trim()).toBe('REPUX 0');
+      expect(firstRow.querySelector('mat-cell:nth-child(7)').textContent.trim()).toBe('REPUX 0.00');
+      expect(firstRow.querySelector('mat-cell:nth-child(8)').textContent.trim()).toBe('REPUX 0.00');
       expect(firstRow.querySelector('mat-cell:nth-child(9)').textContent.trim()).toBe('1');
       expect(firstRow.querySelector('mat-cell:nth-child(10) button').textContent.trim()).toBe('Owner');
       expect(firstRow.querySelector('mat-cell:nth-child(11) app-marketplace-action-buttons')).not.toBeNull();
