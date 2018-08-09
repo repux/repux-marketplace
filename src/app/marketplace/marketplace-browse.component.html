@@ -1,14 +1,14 @@
-<div *ngIf="dataProducts; else showSpinner" class="mat-typography">
+<div *ngIf="(products$ | async) as products; else showSpinner" class="mat-typography">
   <div class="list-search">
     <mat-icon class="list-search__icon">search</mat-icon>
     <input class="list-search__input" (keyup)="onTypeAhead($event.target.value)" placeholder="Search for a data">
   </div>
 
-  <section *ngIf="dataProducts.length; else showEmpty">
+  <section *ngIf="products.length; else showEmpty">
     <h3 class="list-header">Latest files</h3>
 
     <div class="card-list">
-      <mat-card *ngFor="let product of dataProducts" class="card-item" [routerLink]="product.address ? ['details', product.address] : null">
+      <mat-card *ngFor="let product of products" class="card-item" [routerLink]="product.address ? ['details', product.address] : null">
         <mat-card-title>{{ product.title }}</mat-card-title>
 
         <p class="card-item__file-info mat-caption">
@@ -41,7 +41,7 @@
     </div>
     <mat-paginator
       (page)="pageChanged($event)"
-      [length]="dataProducts.length"
+      [length]="products.length"
       [(pageSize)]="size"
       [pageSizeOptions]="pageSizeOptions"></mat-paginator>
   </section>

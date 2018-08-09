@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { DataProductListService } from '../services/data-product-list.service';
 import { deepCopy } from '../shared/utils/deep-copy';
 import { DataProduct } from '../shared/models/data-product';
@@ -7,17 +7,17 @@ import { environment } from '../../environments/environment';
 import { Eula } from 'repux-lib/src/repux-lib';
 import { IpfsService } from '../services/ipfs.service';
 import { PageEvent } from '@angular/material';
-import { Subscription } from 'rxjs/internal/Subscription';
 import { Subject } from 'rxjs/internal/Subject';
+import { RepuxWeb3Service } from '../services/repux-web3.service';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-marketplace-browse',
   templateUrl: './marketplace-browse.component.html',
   styleUrls: [ './marketplace-browse.component.scss' ]
 })
-export class MarketplaceBrowseComponent implements OnInit, OnDestroy {
+export class MarketplaceBrowseComponent implements OnInit {
   private inputChangeSubject = new Subject<string>();
-  private dataProductsSubscription: Subscription;
   private staticQuery = {
     bool: {
       must: [],
@@ -33,10 +33,12 @@ export class MarketplaceBrowseComponent implements OnInit, OnDestroy {
   public size: number;
   public from = 0;
   public query = [];
+  public products$: Observable<DataProduct[]>;
 
   constructor(
     private dataProductListService: DataProductListService,
-    private ipfsService: IpfsService
+    private ipfsService: IpfsService,
+    private repuxWeb3Service: RepuxWeb3Service
   ) {
     this.size = this.pageSizeOptions[ 0 ];
   }
@@ -49,12 +51,6 @@ export class MarketplaceBrowseComponent implements OnInit, OnDestroy {
         distinctUntilChanged()
       )
       .subscribe(value => this.applyFilter(value));
-  }
-
-  ngOnDestroy() {
-    if (this.dataProductsSubscription) {
-      this.dataProductsSubscription.unsubscribe();
-    }
   }
 
   onTypeAhead(value: string) {
@@ -88,22 +84,19 @@ export class MarketplaceBrowseComponent implements OnInit, OnDestroy {
     this.refreshData();
   }
 
-  refreshData(): void {
+  async refreshData(): Promise<void> {
     const query = deepCopy(this.staticQuery);
     query.bool.must.push({ bool: { should: this.query } });
 
-    if (this.dataProductsSubscription) {
-      this.dataProductsSubscription.unsubscribe();
+    let productsRaw$ = this.dataProductListService.getDataProducts(query, this.sort, this.size, this.from);
+    if ((await this.repuxWeb3Service).isProviderAvailable()) {
+      productsRaw$ = this.dataProductListService.getBlockchainStateForDataProducts(productsRaw$)
     }
 
-    this.dataProductsSubscription = this.dataProductListService
-      .getDataProductsWithBlockchainState(query, this.sort, this.size, this.from)
+    this.products$ = productsRaw$
       .pipe(
         pluck('hits')
-      )
-      .subscribe(products => {
-        this.dataProducts = products as DataProduct[];
-      });
+      );
   }
 }
 

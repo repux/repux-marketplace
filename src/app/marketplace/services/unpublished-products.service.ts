@@ -49,7 +49,7 @@ export class UnpublishedProductsService implements OnDestroy {
   }
 
   onWalletChange(wallet: Wallet): void {
-    if (!wallet && this.wallet === wallet) {
+    if (!wallet) {
       return;
     }
 

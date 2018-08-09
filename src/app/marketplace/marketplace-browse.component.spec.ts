@@ -1,4 +1,4 @@
-import { MatDialog, MatTableDataSource } from '@angular/material';
+import { MatDialog } from '@angular/material';
 import { ComponentFixture, fakeAsync, TestBed } from '@angular/core/testing';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { MarketplaceBrowseComponent } from './marketplace-browse.component';
@@ -13,6 +13,7 @@ import { PendingFinalisationService } from './services/pending-finalisation.serv
 import { DataProductListService } from '../services/data-product-list.service';
 import { EsResponse } from '../shared/models/es-response';
 import { fromPromise } from 'rxjs/internal-compatibility';
+import { Observable, of } from 'rxjs';
 
 
 @Component({ selector: 'app-marketplace-action-buttons', template: '' })
@@ -35,7 +36,12 @@ describe('MarketplaceBrowseComponent', () => {
   beforeEach(fakeAsync(() => {
     matDialog = jasmine.createSpyObj('MatDialog', [ 'open' ]);
     pendingFinalisationServiceSpy = jasmine.createSpyObj('PendingFinalisationService', [ 'findTransaction' ]);
-    dataProductListServiceSpy = jasmine.createSpyObj('DataProductListService', [ 'getDataProductsWithBlockchainState' ]);
+    dataProductListServiceSpy = jasmine.createSpyObj('DataProductListService', [ 'getDataProducts', 'getDataProductsWithBlockchainState', 'getBlockchainStateForDataProducts' ]);
+    dataProductListServiceSpy.getDataProducts.and.callFake(() => {
+      const response = new EsResponse();
+      response.hits = [];
+      return fromPromise(Promise.resolve(response));
+    });
     dataProductListServiceSpy.getDataProductsWithBlockchainState.and.callFake(() => {
       const response = new EsResponse();
       response.hits = [];
@@ -72,7 +78,7 @@ describe('MarketplaceBrowseComponent', () => {
 
   describe('#DOM', () => {
     beforeEach(() => {
-      component.dataProducts = [];
+      component.products$ = of([]);
       fixture.detectChanges();
     });
 
