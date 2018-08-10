@@ -13,6 +13,7 @@ import { MatDialog } from '@angular/material';
 import { UnpublishedProductsService } from './marketplace/services/unpublished-products.service';
 import { PendingFinalisationService } from './marketplace/services/pending-finalisation.service';
 import { ReadyToDownloadService } from './marketplace/services/ready-to-download.service';
+import Wallet from './shared/models/wallet';
 
 @Component({
   selector: 'app-root',
@@ -26,6 +27,8 @@ export class AppComponent implements OnInit {
     );
 
   tasksTotal$: Observable<number>;
+
+  wallet: Wallet;
 
   navLinks = [
     {
@@ -70,6 +73,8 @@ export class AppComponent implements OnInit {
         });
 
         this.tagManager.sendUserId(wallet.address);
+
+        this.wallet = wallet;
       }
     });
 
