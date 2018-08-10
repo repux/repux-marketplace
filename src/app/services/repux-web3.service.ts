@@ -33,6 +33,10 @@ export class RepuxWeb3Service {
     return +netId >= environment.networkId;
   }
 
+  async isWalletAvailable(): Promise<boolean> {
+      return this.isProviderAvailable() && await this.isNetworkCorrect();
+  }
+
   getWeb3Instance() {
     return this.web3;
   }

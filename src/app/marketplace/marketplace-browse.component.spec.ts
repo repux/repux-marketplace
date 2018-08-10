@@ -36,13 +36,8 @@ describe('MarketplaceBrowseComponent', () => {
   beforeEach(fakeAsync(() => {
     matDialog = jasmine.createSpyObj('MatDialog', [ 'open' ]);
     pendingFinalisationServiceSpy = jasmine.createSpyObj('PendingFinalisationService', [ 'findTransaction' ]);
-    dataProductListServiceSpy = jasmine.createSpyObj('DataProductListService', [ 'getDataProducts', 'getDataProductsWithBlockchainState', 'getBlockchainStateForDataProducts' ]);
+    dataProductListServiceSpy = jasmine.createSpyObj('DataProductListService', [ 'getDataProducts', 'getBlockchainStateForDataProducts' ]);
     dataProductListServiceSpy.getDataProducts.and.callFake(() => {
-      const response = new EsResponse();
-      response.hits = [];
-      return fromPromise(Promise.resolve(response));
-    });
-    dataProductListServiceSpy.getDataProductsWithBlockchainState.and.callFake(() => {
       const response = new EsResponse();
       response.hits = [];
       return fromPromise(Promise.resolve(response));

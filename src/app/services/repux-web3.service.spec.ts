@@ -30,7 +30,9 @@ const repuxWeb3ApiMock = {
       });
     });
   },
-
+  getNetworkId() {
+    return new Promise(resolve => resolve(1000));
+  },
   async getBalance() {
     return balanceInWei;
   }
@@ -78,6 +80,17 @@ describe('RepuxWeb3Service', () => {
     it('should return false when account is not available', async () => {
       repuxWeb3ServiceNoWeb3 = await RepuxWeb3ServiceFactory();
       expect(await repuxWeb3ServiceNoWeb3.isDefaultAccountAvailable()).toBeFalsy();
+    });
+  });
+
+  describe('#isWalletAvailable()', () => {
+    it('should return true if web3 and proper network is available', async () => {
+      expect(await repuxWeb3Service.isWalletAvailable()).toBeTruthy();
+    });
+
+    it('should return false invalid network', async () => {
+      repuxWeb3ServiceNoWeb3 = await RepuxWeb3ServiceFactory();
+      expect(await repuxWeb3ServiceNoWeb3.isWalletAvailable()).toBeFalsy();
     });
   });
 

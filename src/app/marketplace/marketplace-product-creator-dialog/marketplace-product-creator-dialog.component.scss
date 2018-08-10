@@ -9,14 +9,14 @@ form {
 }
 
 .mat-subheading-2 {
-  margin: 32px 0 10px 0;
+  margin: 0;
+  font-weight: 500;
 }
 
 .caption {
   padding: 24px 16px;
   background-color: #eee;
 }
-
 
 app-marketplace-eula-selector {
   display: block;
@@ -41,6 +41,6 @@ app-marketplace-eula-selector {
 .col {
   display: flex;
   flex-direction: column;
-  margin: 0 20px;
+  margin: 0 20px 20px 20px;
   width: 50%;
 }

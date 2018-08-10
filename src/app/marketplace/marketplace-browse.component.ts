@@ -89,7 +89,9 @@ export class MarketplaceBrowseComponent implements OnInit {
     query.bool.must.push({ bool: { should: this.query } });
 
     let productsRaw$ = this.dataProductListService.getDataProducts(query, this.sort, this.size, this.from);
-    if ((await this.repuxWeb3Service).isProviderAvailable()) {
+    const repuxWeb3Service = await this.repuxWeb3Service;
+
+    if (await repuxWeb3Service.isWalletAvailable()) {
       productsRaw$ = this.dataProductListService.getBlockchainStateForDataProducts(productsRaw$)
     }
 

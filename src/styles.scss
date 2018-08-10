@@ -19,12 +19,12 @@ app-root {
   height: 100%;
 }
 
-.mat-dialog-title {
-  color: map-get($app-primary, 300);
-}
-
 .mat-dialog-actions {
   justify-content: flex-end;
+  .mat-flat-button,
+  .mat-stroked-button {
+    margin: 0 0 0 8px;
+  }
 }
 
 .mat-button,
@@ -32,8 +32,20 @@ app-root {
 .mat-stroked-button,
 .mat-raised-button {
   text-transform: uppercase;
+  border-radius: 4px;
+}
+
+.mat-flat-button.mat-primary {
+  background: linear-gradient(45deg,#2DBD9D 0%,#0fda4d 100%);
+
+  &[disabled] {
+    background: none;
+    background-color: rgba(0, 0, 0, .12);
+  }
 }
 
 a {
   color: map-get($repux-primary, 300);
 }
+
+
