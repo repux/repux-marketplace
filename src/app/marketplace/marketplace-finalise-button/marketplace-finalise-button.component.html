@@ -1,6 +1,10 @@
-<div *ngIf="wallet && userIsOwner && !transaction.finalised">
+<div *ngIf="wallet && userIsOwner && !order.finalised">
+  <span *ngIf="pendingReencryption">Re-encrypting...</span>
+  <span *ngIf="pendingTransaction">Finalising...</span>
+
   <button mat-stroked-button
           color="accent"
+          *ngIf="!pendingReencryption && !pendingTransaction"
           (click)="finalise()">Finalise transaction
   </button>
 </div>

@@ -1,6 +1,9 @@
 <div *ngIf="userIsBuyer && (isAfterDeliveryDeadline || isDisabled) && isAwaiting">
+  <span *ngIf="pendingTransaction">Canceling transaction...</span>
+
   <button mat-stroked-button
           color="warn"
+          *ngIf="!pendingTransaction"
           (click)="cancelPurchase()">Cancel transaction
   </button>
 </div>

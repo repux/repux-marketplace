@@ -1,5 +1,4 @@
 import { ComponentFixture, fakeAsync, TestBed } from '@angular/core/testing';
-import { TransactionDialogComponent } from '../../shared/components/transaction-dialog/transaction-dialog.component';
 import { DataProductService } from '../../services/data-product.service';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { WalletService } from '../../services/wallet.service';
@@ -8,11 +7,17 @@ import { ClockService } from '../../services/clock.service';
 import Wallet from '../../shared/models/wallet';
 import { MaterialModule } from '../../material.module';
 import { AwaitingFinalisationService } from '../services/awaiting-finalisation.service';
+import { CommonDialogService } from '../../shared/services/common-dialog.service';
+import { BlockchainTransactionScope } from '../../shared/enums/blockchain-transaction-scope';
+import { ActionButtonType } from '../../shared/enums/action-button-type';
+import { Transaction, TransactionService } from '../../shared/services/transaction.service';
+import { DataProductOrder as BlockchainDataProductOrder, TransactionStatus, TransactionReceipt } from 'repux-web3-api';
 
 describe('MarketplaceCancelPurchaseButtonComponent', () => {
   let component: MarketplaceCancelPurchaseButtonComponent;
   let fixture: ComponentFixture<MarketplaceCancelPurchaseButtonComponent>;
-  let walletServiceSpy, dataProductServiceSpy, clockServiceSpy, awaitingFinalisationServiceSpy;
+  let walletServiceSpy, dataProductServiceSpy, clockServiceSpy, awaitingFinalisationServiceSpy, commonDialogServiceSpy,
+    transactionServiceSpy;
   const dataProductAddress = '0x1111111111111111111111111111111111111111';
   const buyerAddress = '0x0000000000000000000000000000000000000000';
 
@@ -33,6 +38,17 @@ describe('MarketplaceCancelPurchaseButtonComponent', () => {
       }
     });
     dataProductServiceSpy = jasmine.createSpyObj('DataProductService', [ 'cancelDataProductPurchase' ]);
+
+    commonDialogServiceSpy = jasmine.createSpyObj('CommonDialogService', [ 'transaction' ]);
+    commonDialogServiceSpy.transaction.and.callFake(methodToCall => methodToCall());
+
+    transactionServiceSpy = jasmine.createSpyObj('TransactionService', [ 'getTransactionReceipt', 'getTransactions' ]);
+    transactionServiceSpy.getTransactionReceipt.and.returnValue(Promise.resolve({ status: TransactionStatus.SUCCESSFUL }));
+    transactionServiceSpy.getTransactions.and.returnValue({
+      subscribe() {
+      }
+    });
+
     TestBed.configureTestingModule({
       declarations: [
         MarketplaceCancelPurchaseButtonComponent
@@ -42,11 +58,12 @@ describe('MarketplaceCancelPurchaseButtonComponent', () => {
         NoopAnimationsModule
       ],
       providers: [
-        { provide: TransactionDialogComponent, useValue: {} },
         { provide: DataProductService, useValue: dataProductServiceSpy },
         { provide: WalletService, useValue: walletServiceSpy },
         { provide: ClockService, useValue: clockServiceSpy },
-        { provide: AwaitingFinalisationService, useValue: awaitingFinalisationServiceSpy }
+        { provide: AwaitingFinalisationService, useValue: awaitingFinalisationServiceSpy },
+        { provide: CommonDialogService, useValue: commonDialogServiceSpy },
+        { provide: TransactionService, useValue: transactionServiceSpy }
       ]
     })
       .compileComponents();
@@ -56,17 +73,21 @@ describe('MarketplaceCancelPurchaseButtonComponent', () => {
 
     component.dataProduct = <any> {
       address: dataProductAddress,
-      transactions: [ {
+      orders: [ {
         buyerAddress,
         finalised: false
       } ]
     };
+
+    component.blockchainDataProductOrder = <BlockchainDataProductOrder> {};
+
     fixture.detectChanges();
   }));
 
   describe('#ngOnInit()', () => {
     it('should subscribe to wallet, notifications and clock services subjects', () => {
       expect(component.dataProductAddress).toBe(dataProductAddress);
+
       expect(clockServiceSpy.onEachSecond.calls.count()).toBe(1);
       expect(walletServiceSpy.getWallet.calls.count()).toBe(1);
       expect(awaitingFinalisationServiceSpy.getProducts.calls.count()).toBe(1);
@@ -74,46 +95,62 @@ describe('MarketplaceCancelPurchaseButtonComponent', () => {
   });
 
   describe('#get userIsBuyer()', () => {
-    it('should return true if _transaction object is truthy', () => {
-      component.blockchainBuyTransaction = null;
+    it('should return true if order object is truthy', () => {
+      component.blockchainDataProductOrder = null;
       expect(component.userIsBuyer).toBeFalsy();
-      component.blockchainBuyTransaction = <any> {};
+      component.blockchainDataProductOrder = <any> {};
       expect(component.userIsBuyer).toBeTruthy();
     });
   });
 
+  describe('#onTransactionFinish()', () => {
+    it('should finalise transaction when transactionReceipt.status is successful', () => {
+      component.onTransactionFinish({ status: TransactionStatus.SUCCESSFUL } as TransactionReceipt);
+
+      expect(awaitingFinalisationServiceSpy.removeProduct.calls.count()).toBe(1);
+      expect(component.blockchainDataProductOrder).toBe(undefined);
+    });
+  });
+
+  describe('#onTransactionsListChange()', () => {
+    it('should set pendingTransaction when transaction list contains related transaction', async () => {
+      const transactions = [ {
+        scope: BlockchainTransactionScope.DataProduct,
+        identifier: dataProductAddress,
+        blocksAction: ActionButtonType.CancelPurchase
+      } ];
+
+      expect(component.pendingTransaction).toBe(undefined);
+
+      await component.onTransactionsListChange(transactions as Transaction[]);
+
+      expect(component.pendingTransaction).not.toBe(undefined);
+    });
+
+    it('should unset pendingTransaction and call onTransactionFinish when transaction list not contains related transaction', async () => {
+      const onTransactionFinish = jasmine.createSpy();
+      component.onTransactionFinish = onTransactionFinish;
+
+      component.pendingTransaction = {
+        scope: BlockchainTransactionScope.DataProduct,
+        identifier: dataProductAddress,
+        blocksAction: ActionButtonType.CancelPurchase
+      } as Transaction;
+
+      await component.onTransactionsListChange([]);
+
+      expect(component.pendingTransaction).toBe(undefined);
+      expect(onTransactionFinish.calls.count()).toBe(1);
+      expect(onTransactionFinish.calls.allArgs()[ 0 ]).toEqual([ { status: TransactionStatus.SUCCESSFUL } ]);
+    });
+  });
+
   describe('#cancelPurchase()', () => {
-    it('should create transaction dialog', async () => {
-      let callback;
-      const expectedResult = 'RESULT';
-      const callTransaction = jasmine.createSpy().and.callFake(async function () {
-        await this.transaction();
-        callback(expectedResult);
-      });
-      const dialog = jasmine.createSpyObj('MatDialog', [ 'open' ]);
-      dialog.open.and.returnValue({
-        afterClosed() {
-          return {
-            subscribe(_callback) {
-              callback = _callback;
-            }
-          };
-        },
-        componentInstance: {
-          callTransaction
-        }
-      });
-      component[ '_dialog' ] = <any> dialog;
+    it('should call dataProductService.cancelDataProductPurchase using commonDialogService.transaction', () => {
+      component.cancelPurchase();
 
-      component.blockchainBuyTransaction = <any> {
-        buyerAddress
-      };
-
-      await component.cancelPurchase();
-      expect(dialog.open.calls.count()).toBe(1);
-      expect(callTransaction.calls.count()).toBe(1);
-      expect(component.blockchainBuyTransaction).toBeUndefined();
       expect(dataProductServiceSpy.cancelDataProductPurchase.calls.count()).toBe(1);
+      expect(dataProductServiceSpy.cancelDataProductPurchase.calls.allArgs()[ 0 ]).toEqual([ dataProductAddress ]);
     });
   });
 
@@ -122,9 +159,9 @@ describe('MarketplaceCancelPurchaseButtonComponent', () => {
       const clockSubscription = { unsubscribe: jasmine.createSpy() };
       const walletSubscription = { unsubscribe: jasmine.createSpy() };
       const awaitingFinalisationSubscription = { unsubscribe: jasmine.createSpy() };
-      component[ '_clockSubscription' ] = <any> clockSubscription;
-      component[ '_walletSubscription' ] = <any> walletSubscription;
-      component[ '_awaitingFinalisationSubscription' ] = <any> awaitingFinalisationSubscription;
+      component[ 'clockSubscription' ] = <any> clockSubscription;
+      component[ 'walletSubscription' ] = <any> walletSubscription;
+      component[ 'awaitingFinalisationSubscription' ] = <any> awaitingFinalisationSubscription;
 
       component.ngOnDestroy();
       expect(clockSubscription.unsubscribe.calls.count()).toBe(1);
@@ -133,31 +170,31 @@ describe('MarketplaceCancelPurchaseButtonComponent', () => {
     });
   });
 
-  describe('#_onWalletChange()', () => {
+  describe('#onWalletChange()', () => {
     it('should set wallet', () => {
       const wallet = new Wallet(buyerAddress, 1);
 
-      component[ '_onWalletChange' ](wallet);
+      component[ 'onWalletChange' ](wallet);
       expect(component.wallet).toBe(wallet);
     });
   });
 
   describe('#checkIfAfterDeliveryDeadline()', () => {
-    it('should return true when date from argument is greater than transaction.deliveryDeadline', () => {
+    it('should return true when date from argument is greater than order.deliveryDeadline', () => {
       const fakeCurrentDate = new Date(1530542099000);
       const deliveryDeadlineAfterCurrent = new Date(1530542100000);
       const deliveryDeadlineBeforeCurrent = new Date(1530542098000);
 
-      component.blockchainBuyTransaction = null;
+      component.blockchainDataProductOrder = null;
       expect(component.checkIfAfterDeliveryDeadline(fakeCurrentDate)).toBe(false);
 
-      component.blockchainBuyTransaction = <any> { deliveryDeadline: deliveryDeadlineAfterCurrent };
+      component.blockchainDataProductOrder = <any> { deliveryDeadline: deliveryDeadlineAfterCurrent };
       expect(component.checkIfAfterDeliveryDeadline(fakeCurrentDate)).toBe(false);
 
-      component.blockchainBuyTransaction = <any> { deliveryDeadline: deliveryDeadlineBeforeCurrent };
+      component.blockchainDataProductOrder = <any> { deliveryDeadline: deliveryDeadlineBeforeCurrent };
       expect(component.checkIfAfterDeliveryDeadline(fakeCurrentDate)).toBe(true);
 
-      component.blockchainBuyTransaction = <any> { deliveryDeadline: fakeCurrentDate };
+      component.blockchainDataProductOrder = <any> { deliveryDeadline: fakeCurrentDate };
       expect(component.checkIfAfterDeliveryDeadline(fakeCurrentDate)).toBe(false);
     });
   });

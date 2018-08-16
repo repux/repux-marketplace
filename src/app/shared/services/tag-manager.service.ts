@@ -17,14 +17,14 @@ export enum EventAction {
   UnpublishConfirmed = 'Unpublish-confirmed',
   Buy = 'Buy',
   BuyConfirmed = 'Buy-confirmed',
-  FinalizeTransaction = 'Finalize-transaction',
-  FinalizeTransactionConfirmed = 'Finalize-transaction-confirmed',
+  FinalizeOrder= 'Finalize-order',
+  FinalizeOrderConfirmed = 'Finalize-order-confirmed',
   Withdraw = 'Withdraw',
   WithdrawConfirmed = 'Withdraw-confirmed',
   Download = 'Download',
   DownloadConfirmed = 'Download-confirmed',
-  CancelPendingTransaction = 'Cancel-pending-transaction',
-  CancelPendingTransactionConfirmed = 'Cancel-pending-transaction-confirmed'
+  CancelPendingOrder = 'Cancel-pending-order',
+  CancelPendingOrderConfirmed = 'Cancel-pending-order-confirmed'
 }
 
 export interface EcommerceProduct {

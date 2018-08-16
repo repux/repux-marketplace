@@ -1,7 +1,6 @@
 import { ComponentFixture, fakeAsync, TestBed } from '@angular/core/testing';
 import { RepuxLibService } from '../../services/repux-lib.service';
 import { MarketplaceDownloadProductButtonComponent } from './marketplace-download-product-button.component';
-import { TransactionDialogComponent } from '../../shared/components/transaction-dialog/transaction-dialog.component';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import Wallet from '../../shared/models/wallet';
 import { from } from 'rxjs';
@@ -23,7 +22,7 @@ describe('MarketplaceDownloadProductButtonComponent', () => {
     });
     keyStoreServiceSpy = jasmine.createSpyObj('KeyStoreService', [ 'hasKeys' ]);
     tagManagerSpy = jasmine.createSpyObj('TagManagerService', [ 'sendEvent' ]);
-    dataProductServiceSpy = jasmine.createSpyObj('DataProductServiceSpy', [ 'getDataProductData', 'getTransactionData' ]);
+    dataProductServiceSpy = jasmine.createSpyObj('DataProductServiceSpy', [ 'getDataProductData', 'getOrderData' ]);
     TestBed.configureTestingModule({
       declarations: [
         MarketplaceDownloadProductButtonComponent,
@@ -36,8 +35,7 @@ describe('MarketplaceDownloadProductButtonComponent', () => {
         { provide: TagManagerService, useValue: tagManagerSpy },
         { provide: RepuxLibService, useValue: repuxLibServiceSpy },
         { provide: DataProductService, useValue: dataProductServiceSpy },
-        { provide: KeyStoreService, useValue: keyStoreServiceSpy },
-        { provide: TransactionDialogComponent, useValue: {} }
+        { provide: KeyStoreService, useValue: keyStoreServiceSpy }
       ]
     })
       .compileComponents();
@@ -47,7 +45,7 @@ describe('MarketplaceDownloadProductButtonComponent', () => {
 
     component.dataProduct = <any> {
       address: productAddress,
-      transactions: []
+      orders: []
     };
     fixture.detectChanges();
   }));
@@ -98,7 +96,7 @@ describe('MarketplaceDownloadProductButtonComponent', () => {
         owner: '0x00'
       }));
       component[ '_wallet' ] = new Wallet('0x01', 0);
-      dataProductServiceSpy.getTransactionData.and.returnValue(Promise.resolve({
+      dataProductServiceSpy.getOrderData.and.returnValue(Promise.resolve({
         buyerMetaHash
       }));
       const taskManagerService = jasmine.createSpyObj('TaskManagerService', [ 'addTask' ]);
@@ -107,7 +105,7 @@ describe('MarketplaceDownloadProductButtonComponent', () => {
       await component.downloadProduct();
       const fileDownloadTask = taskManagerService.addTask.calls.allArgs()[ 0 ][ 0 ];
       expect(dataProductServiceSpy.getDataProductData.calls.count()).toBe(1);
-      expect(dataProductServiceSpy.getTransactionData.calls.count()).toBe(1);
+      expect(dataProductServiceSpy.getOrderData.calls.count()).toBe(1);
       expect(fileDownloadTask[ '_dataProductAddress' ]).toBe(productAddress);
       expect(fileDownloadTask[ '_buyerAddress' ]).toBe('0x01');
       expect(fileDownloadTask[ '_metaFileHash' ]).toBe(buyerMetaHash);

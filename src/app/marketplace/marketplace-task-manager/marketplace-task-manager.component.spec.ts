@@ -1,11 +1,23 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-import { TaskManagerComponent } from './task-manager.component';
+import { MarketplaceTaskManagerComponent } from './marketplace-task-manager.component';
 import { MatDialogModule, MatIconModule, MatProgressSpinnerModule, MatToolbarModule } from '@angular/material';
+import { Component, Input } from '@angular/core';
+import { ActionButtonType } from '../../shared/enums/action-button-type';
+import { DataProduct } from '../../shared/models/data-product';
 
-describe('TaskManagerComponent', () => {
+@Component({
+  selector: 'app-marketplace-action-buttons',
+  template: ''
+})
+class MarketplaceActionButtonsStubComponent {
+  @Input() availableActions: ActionButtonType[];
+  @Input() dataProduct: DataProduct;
+}
+
+describe('MarketplaceTaskManagerComponent', () => {
   let taskManagerService;
-  let component: TaskManagerComponent;
-  let fixture: ComponentFixture<TaskManagerComponent>;
+  let component: MarketplaceTaskManagerComponent;
+  let fixture: ComponentFixture<MarketplaceTaskManagerComponent>;
   const tasks = [ 'TASK' ];
 
   beforeEach(async(() => {
@@ -16,7 +28,10 @@ describe('TaskManagerComponent', () => {
       }
     });
     TestBed.configureTestingModule({
-      declarations: [ TaskManagerComponent ],
+      declarations: [
+        MarketplaceTaskManagerComponent,
+        MarketplaceActionButtonsStubComponent
+      ],
       imports: [
         MatIconModule,
         MatToolbarModule,
@@ -28,7 +43,7 @@ describe('TaskManagerComponent', () => {
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(TaskManagerComponent);
+    fixture = TestBed.createComponent(MarketplaceTaskManagerComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

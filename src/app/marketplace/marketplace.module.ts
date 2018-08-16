@@ -39,18 +39,19 @@ import {
   MarketplaceDownloadProductButtonComponent
 } from './marketplace-download-product-button/marketplace-download-product-button.component';
 import {
-  MarketplaceDataProductTransactionsListComponent
-} from './marketplace-data-product-transactions-list/marketplace-data-product-transactions-list.component';
+  MarketplaceDataProductOrdersListComponent
+} from './marketplace-data-product-orders-list/marketplace-data-product-orders-list.component';
 import {
-  MarketplaceDataProductTransactionsListContainerComponent
-} from './marketplace-data-product-transactions-list-container/marketplace-data-product-transactions-list-container.component';
+  MarketplaceDataProductOrdersListContainerComponent
+} from './marketplace-data-product-orders-list-container/marketplace-data-product-orders-list-container.component';
 import {
-  MarketplaceRateTransactionDialogComponent
-} from './marketplace-rate-transaction-dialog/marketplace-rate-transaction-dialog.component';
+  MarketplaceRateOrderDialogComponent
+} from './marketplace-rate-order-dialog/marketplace-rate-order-dialog.component';
 import {
-  MarketplaceRateTransactionButtonComponent
-} from './marketplace-rate-transaction-button/marketplace-rate-transaction-button.component';
+  MarketplaceRateOrderButtonComponent
+} from './marketplace-rate-order-button/marketplace-rate-order-button.component';
 import { MarketplaceRatingComponent } from './marketplace-rating/marketplace-rating.component';
+import { MarketplaceTaskManagerComponent } from './marketplace-task-manager/marketplace-task-manager.component';
 
 @NgModule({
   imports: [
@@ -74,13 +75,13 @@ import { MarketplaceRatingComponent } from './marketplace-rating/marketplace-rat
     MarketplaceProductDetailsComponent,
 
     MarketplaceEulaSelectorComponent,
-    MarketplaceRateTransactionDialogComponent,
-    MarketplaceRateTransactionButtonComponent,
+    MarketplaceRateOrderDialogComponent,
+    MarketplaceRateOrderButtonComponent,
     MarketplaceBuyProductButtonComponent,
     MarketplaceCancelPurchaseButtonComponent,
     MarketplaceDataProductListComponent,
     MarketplaceDataProductListDetailDirective,
-    MarketplaceDataProductTransactionsListComponent,
+    MarketplaceDataProductOrdersListComponent,
     MarketplaceDownloadProductButtonComponent,
     MarketplaceFinaliseButtonComponent,
     MarketplaceProductCategorySelectorComponent,
@@ -90,8 +91,9 @@ import { MarketplaceRatingComponent } from './marketplace-rating/marketplace-rat
     MarketplaceUnpublishButtonComponent,
     MarketplaceWithdrawButtonComponent,
     MarketplaceActionButtonsComponent,
-    MarketplaceDataProductTransactionsListContainerComponent,
-    MarketplaceRatingComponent
+    MarketplaceDataProductOrdersListContainerComponent,
+    MarketplaceRatingComponent,
+    MarketplaceTaskManagerComponent
   ],
   exports: [
     MarketplaceBrowseComponent,
@@ -103,12 +105,14 @@ import { MarketplaceRatingComponent } from './marketplace-rating/marketplace-rat
     MarketplaceBuyAwaitingFinalisationComponent,
     MarketplaceBuyReadyToDownloadComponent,
     MarketplaceActionButtonsComponent,
-    MarketplaceProductDetailsComponent
+    MarketplaceProductDetailsComponent,
+    MarketplaceTaskManagerComponent
   ],
   entryComponents: [
     MarketplaceProductCreatorDialogComponent,
     MarketplacePurchaseConfirmationDialogComponent,
-    MarketplaceRateTransactionDialogComponent
+    MarketplaceRateOrderDialogComponent,
+    MarketplaceTaskManagerComponent
   ]
 })
 export class MarketplaceModule {

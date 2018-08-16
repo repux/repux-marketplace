@@ -3,13 +3,14 @@ import { Location } from '@angular/common';
 import { DataProductListService } from '../services/data-product-list.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Observable } from 'rxjs/internal/Observable';
-import { Eula, Attachment } from 'repux-lib';
+import { Attachment, Eula } from 'repux-lib';
 import { IpfsService } from '../services/ipfs.service';
 import { DataProduct } from '../shared/models/data-product';
 import { Subscription } from 'rxjs/internal/Subscription';
 import { UserService } from '../shared/services/user.service';
 import { User } from '../shared/models/user';
 import { environment } from '../../environments/environment';
+import { ActionButtonType } from '../shared/enums/action-button-type';
 
 @Component({
   selector: 'app-product-details',
@@ -19,6 +20,7 @@ import { environment } from '../../environments/environment';
 export class MarketplaceProductDetailsComponent implements OnInit, OnDestroy {
   product$: Observable<DataProduct>;
   owner$: Observable<User>;
+  availableActions = [ActionButtonType.Buy, ActionButtonType.Rate];
 
   private productSubscription: Subscription;
   public currencyFormat: string = environment.repux.currency.format;

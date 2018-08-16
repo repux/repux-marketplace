@@ -34,7 +34,7 @@
           </div>
           <div class="card-item__spacer"></div>
           <app-marketplace-action-buttons  (click)="$event.stopPropagation()"
-            [availableActions]="['buy', 'rate']"
+            [availableActions]="availableActions"
             [dataProduct]="product"></app-marketplace-action-buttons>
         </mat-card-actions>
       </mat-card>

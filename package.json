@@ -27,7 +27,7 @@
     "file-saver": "^1.3.8",
     "git": "^0.1.0",
     "repux-lib": "git+ssh://git@github.com:repux/repux-lib.git#0.6.0",
-    "repux-web3-api": "git+ssh://git@github.com:repux/repux-web3-api.git#26f890b2f9fe8ebcddfa80d056283b848fde68e2",
+    "repux-web3-api": "git+ssh://git@github.com:repux/repux-web3-api.git#1.5.0",
     "rxjs": "^6.0.0",
     "socket.io-client": "^2.1.1",
     "zone.js": "^0.8.26"

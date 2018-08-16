@@ -1,14 +1,16 @@
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { DataProduct } from '../../shared/models/data-product';
-import { MatDialog } from '@angular/material';
 import { DataProductService } from '../../services/data-product.service';
 import { WalletService } from '../../services/wallet.service';
 import Wallet from '../../shared/models/wallet';
-import { TransactionDialogComponent } from '../../shared/components/transaction-dialog/transaction-dialog.component';
 import { Subscription } from 'rxjs/internal/Subscription';
-import { DataProduct as BlockchainDataProduct } from 'repux-web3-api';
+import { DataProduct as BlockchainDataProduct, TransactionReceipt, TransactionStatus } from 'repux-web3-api';
 import { EventAction, EventCategory, TagManagerService } from '../../shared/services/tag-manager.service';
 import { UnpublishedProductsService } from '../services/unpublished-products.service';
+import { CommonDialogService } from '../../shared/services/common-dialog.service';
+import { Transaction, TransactionService } from '../../shared/services/transaction.service';
+import { BlockchainTransactionScope } from '../../shared/enums/blockchain-transaction-scope';
+import { ActionButtonType } from '../../shared/enums/action-button-type';
 
 @Component({
   selector: 'app-marketplace-unpublish-button',
@@ -22,58 +24,85 @@ export class MarketplaceUnpublishButtonComponent implements OnInit, OnDestroy {
   public dataProductAddress: string;
   public wallet: Wallet;
   public userIsOwner: boolean;
+  public pendingTransaction?: Transaction;
 
-  private _walletSubscription: Subscription;
+  private walletSubscription: Subscription;
+  private transactionsSubscription: Subscription;
 
   constructor(
-    private _walletService: WalletService,
-    private _dataProductService: DataProductService,
-    private _dialog: MatDialog,
-    private _tagManager: TagManagerService,
-    private unpublishedProductsService: UnpublishedProductsService
+    private walletService: WalletService,
+    private dataProductService: DataProductService,
+    private tagManager: TagManagerService,
+    private unpublishedProductsService: UnpublishedProductsService,
+    private commonDialogService: CommonDialogService,
+    private transactionService: TransactionService
   ) {
+  }
+
+  get hasPendingTransaction(): boolean {
+    return Boolean(this.pendingTransaction);
   }
 
   ngOnInit() {
     this.dataProductAddress = this.dataProduct.address;
-    this._walletSubscription = this._walletService.getWallet().subscribe(wallet => this._onWalletChange(wallet));
+    this.walletSubscription = this.walletService.getWallet().subscribe(wallet => this.onWalletChange(wallet));
+    this.transactionsSubscription = this.transactionService.getTransactions()
+      .subscribe(transactions => this.onTransactionsListChange(transactions));
   }
 
   getUserIsOwner(): boolean {
     return this.wallet.address === this.dataProduct.ownerAddress;
   }
 
+  onTransactionFinish(transactionReceipt: TransactionReceipt) {
+    if (transactionReceipt.status === TransactionStatus.SUCCESSFUL) {
+      this.addProductToUnpublishedProducts(this.dataProduct);
+      this.blockchainDataProduct.disabled = true;
+      this.tagManager.sendEvent(
+        EventCategory.Sell,
+        EventAction.UnpublishConfirmed,
+        this.dataProduct.title,
+        this.dataProduct.price ? this.dataProduct.price.toString() : ''
+      );
+    }
+  }
+
+  async onTransactionsListChange(transactions: Transaction[]) {
+    const foundTransaction = transactions.find(transaction =>
+      transaction.scope === BlockchainTransactionScope.DataProduct &&
+      transaction.identifier === this.dataProductAddress &&
+      transaction.blocksAction === ActionButtonType.Unpublish
+    );
+
+    if (this.pendingTransaction && !foundTransaction) {
+      this.onTransactionFinish(
+        await this.transactionService.getTransactionReceipt(this.pendingTransaction.transactionHash)
+      );
+    }
+
+    this.pendingTransaction = foundTransaction;
+  }
+
   unpublish() {
-    this._tagManager.sendEvent(
+    this.tagManager.sendEvent(
       EventCategory.Sell,
       EventAction.UnpublishButton,
       this.dataProduct.title,
       this.dataProduct.price ? this.dataProduct.price.toString() : ''
     );
 
-    const transactionDialogRef = this._dialog.open(TransactionDialogComponent, {
-      disableClose: true
-    });
-    transactionDialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        this.addProductToUnpublishedProducts(this.dataProduct);
-        this.blockchainDataProduct.disabled = true;
-        this._tagManager.sendEvent(
-          EventCategory.Sell,
-          EventAction.UnpublishConfirmed,
-          this.dataProduct.title,
-          this.dataProduct.price ? this.dataProduct.price.toString() : ''
-        );
-      }
-    });
-    const transactionDialog: TransactionDialogComponent = transactionDialogRef.componentInstance;
-    transactionDialog.transaction = () => this._dataProductService.disableDataProduct(this.dataProductAddress);
-    transactionDialog.callTransaction();
+    this.commonDialogService.transaction(
+      () => this.dataProductService.disableDataProduct(this.dataProductAddress)
+    );
   }
 
   ngOnDestroy() {
-    if (this._walletSubscription) {
-      this._walletSubscription.unsubscribe();
+    if (this.walletSubscription) {
+      this.walletSubscription.unsubscribe();
+    }
+
+    if (this.transactionsSubscription) {
+      this.transactionsSubscription.unsubscribe();
     }
   }
 
@@ -81,12 +110,12 @@ export class MarketplaceUnpublishButtonComponent implements OnInit, OnDestroy {
     const product = Object.assign({}, dataProduct);
     delete product.address;
     delete product.blockchainState;
-    delete product.transactions;
+    delete product.orders;
 
     this.unpublishedProductsService.addProduct(product);
   }
 
-  private _onWalletChange(wallet: Wallet) {
+  private onWalletChange(wallet: Wallet) {
     if (!wallet || wallet === this.wallet) {
       return;
     }

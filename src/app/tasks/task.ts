@@ -1,5 +1,7 @@
 import { TaskManagerService } from '../services/task-manager.service';
 import { TaskType } from './task-type';
+import { ActionButtonType } from '../shared/enums/action-button-type';
+import { DataProduct } from '../shared/models/data-product';
 
 export interface Task {
   taskType: TaskType;
@@ -8,14 +10,12 @@ export interface Task {
   finished: boolean;
   progress: number;
   errors: ReadonlyArray<string>;
-  needsUserAction: boolean;
-  userActionName: string;
   productAddress: string;
   walletAddress: string;
+  actionButton?: ActionButtonType;
+  dataProduct?: DataProduct;
 
   run(taskManagerService: TaskManagerService): Promise<void> | void;
 
   cancel(): void;
-
-  callUserAction(): void;
 }

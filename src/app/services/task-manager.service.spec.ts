@@ -1,6 +1,6 @@
 import { TaskManagerService } from './task-manager.service';
 import { TestBed } from '@angular/core/testing';
-import { TaskManagerComponent } from '../shared/components/task-manager/task-manager.component';
+import { MarketplaceTaskManagerComponent } from '../marketplace/marketplace-task-manager/marketplace-task-manager.component';
 import { MatDialogModule } from '@angular/material';
 import { from } from 'rxjs';
 import Wallet from '../shared/models/wallet';
@@ -25,7 +25,7 @@ describe('TaskManagerService', () => {
         MatDialogModule
       ],
       providers: [
-        { provide: TaskManagerComponent, useValue: {} }
+        { provide: MarketplaceTaskManagerComponent, useValue: {} }
       ]
     }).compileComponents();
   });

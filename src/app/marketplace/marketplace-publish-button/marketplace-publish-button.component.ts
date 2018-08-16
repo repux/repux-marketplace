@@ -1,13 +1,15 @@
 import { Component, Input, OnDestroy } from '@angular/core';
 import { DataProduct } from '../../shared/models/data-product';
-import { MatDialog } from '@angular/material';
 import { DataProductService } from '../../services/data-product.service';
 import Wallet from '../../shared/models/wallet';
-import { TransactionDialogComponent } from '../../shared/components/transaction-dialog/transaction-dialog.component';
 import { UnpublishedProductsService } from '../services/unpublished-products.service';
-import { ConfirmationDialogComponent } from '../../shared/components/confirmation-dialog/confirmation-dialog.component';
 import { Subscription } from 'rxjs/internal/Subscription';
 import { EventAction, EventCategory, TagManagerService } from '../../shared/services/tag-manager.service';
+import { CommonDialogService } from '../../shared/services/common-dialog.service';
+import { TransactionReceipt, TransactionStatus } from 'repux-web3-api';
+import { Transaction, TransactionService } from '../../shared/services/transaction.service';
+import { BlockchainTransactionScope } from '../../shared/enums/blockchain-transaction-scope';
+import { ActionButtonType } from '../../shared/enums/action-button-type';
 
 @Component({
   selector: 'app-marketplace-publish-button',
@@ -18,76 +20,96 @@ export class MarketplacePublishButtonComponent implements OnDestroy {
   @Input() dataProduct: DataProduct;
   public dataProductAddress: string;
   public wallet: Wallet;
+  public pendingTransaction?: Transaction;
 
-  private _transactionDialogSubscription: Subscription;
-  private _unpublishedProductsSubscription: Subscription;
-  private _products: DataProduct[];
+  private transactionDialogSubscription: Subscription;
+  private unpublishedProductsSubscription: Subscription;
+  private transactionsSubscription: Subscription;
+  private products: DataProduct[];
 
   constructor(
-    private _tagManager: TagManagerService,
-    private _unpublishedProductsService: UnpublishedProductsService,
-    private _dataProductService: DataProductService,
-    private _dialog: MatDialog
+    private tagManager: TagManagerService,
+    private unpublishedProductsService: UnpublishedProductsService,
+    private dataProductService: DataProductService,
+    private commonDialogService: CommonDialogService,
+    private transactionService: TransactionService
   ) {
-    this._unpublishedProductsSubscription = this._unpublishedProductsService.getProducts().subscribe(products => this._products = products);
+    this.unpublishedProductsSubscription = this.unpublishedProductsService.getProducts().subscribe(products => this.products = products);
+    this.transactionsSubscription = this.transactionService.getTransactions()
+      .subscribe(transactions => this.onTransactionsListChange(transactions));
+  }
+
+  get hasPendingTransaction(): boolean {
+    return Boolean(this.pendingTransaction);
   }
 
   get isUnpublished() {
-    return this._products.find(dataProduct => dataProduct.sellerMetaHash === this.dataProduct.sellerMetaHash);
+    return this.products.find(dataProduct => dataProduct.sellerMetaHash === this.dataProduct.sellerMetaHash);
   }
 
-  async publish() {
-    this._tagManager.sendEvent(
+  onTransactionFinish(transactionReceipt: TransactionReceipt) {
+    if (transactionReceipt.status === TransactionStatus.SUCCESSFUL) {
+      this.unpublishedProductsService.removeProduct(this.dataProduct);
+      this.tagManager.sendEvent(
+        EventCategory.Sell,
+        EventAction.PublishButtonConfirmed,
+        this.dataProduct.title,
+        this.dataProduct.price ? this.dataProduct.price.toString() : ''
+      );
+    }
+  }
+
+  async onTransactionsListChange(transactions: Transaction[]) {
+    const foundTransaction = transactions.find(transaction =>
+      transaction.scope === BlockchainTransactionScope.DataProduct &&
+      transaction.identifier === this.dataProduct.sellerMetaHash &&
+      transaction.blocksAction === ActionButtonType.Publish
+    );
+
+    if (this.pendingTransaction && !foundTransaction) {
+      this.onTransactionFinish(
+        await this.transactionService.getTransactionReceipt(this.pendingTransaction.transactionHash)
+      );
+    }
+
+    this.pendingTransaction = foundTransaction;
+  }
+
+  publish() {
+    this.tagManager.sendEvent(
       EventCategory.Sell,
       EventAction.PublishButton,
       this.dataProduct.title,
       this.dataProduct.price ? this.dataProduct.price.toString() : ''
     );
 
-    const transactionDialogRef = this._dialog.open(TransactionDialogComponent, {
-      disableClose: true
-    });
-    this._unsubscribeTransactionDialog();
-    this._transactionDialogSubscription = transactionDialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        this._unpublishedProductsService.removeProduct(this.dataProduct);
-        this._tagManager.sendEvent(
-          EventCategory.Sell,
-          EventAction.PublishButtonConfirmed,
-          this.dataProduct.title,
-          this.dataProduct.price ? this.dataProduct.price.toString() : ''
-        );
-      }
-    });
-    const transactionDialog: TransactionDialogComponent = transactionDialogRef.componentInstance;
-    transactionDialog.transaction = () => this._dataProductService.publishDataProduct(
-      this.dataProduct.sellerMetaHash,
-      this.dataProduct.price,
-      this.dataProduct.daysToDeliver
-    );
-
-    await transactionDialog.callTransaction();
+    this.commonDialogService.transaction(
+      () => this.dataProductService.publishDataProduct(
+        this.dataProduct.sellerMetaHash,
+        this.dataProduct.price,
+        this.dataProduct.daysToDeliver
+      ));
   }
 
   remove() {
-    this._tagManager.sendEvent(
+    this.tagManager.sendEvent(
       EventCategory.Sell,
       EventAction.RemoveUnpublished,
       this.dataProduct.title,
       this.dataProduct.price ? this.dataProduct.price.toString() : ''
     );
 
-    const confirmationDialogRef = this._dialog.open(ConfirmationDialogComponent, {
-      disableClose: true
-    });
-    confirmationDialogRef.componentInstance.title = 'Removing marketplace-sell-unpublished file';
-    confirmationDialogRef.componentInstance.body = `Are you sure you want to delete product ${this.dataProduct.name}?`;
-    this._unsubscribeTransactionDialog();
-    this._transactionDialogSubscription = confirmationDialogRef.afterClosed().subscribe(result => {
+    this.unsubscribeTransactionDialog();
+    this.transactionDialogSubscription = this.commonDialogService.alert(
+      `Are you sure you want to delete product ${this.dataProduct.name}?`,
+      'Removing unpublished file',
+      'Yes',
+      'No'
+    ).afterClosed().subscribe(result => {
       if (result) {
-        this._unpublishedProductsService.removeProduct(this.dataProduct);
+        this.unpublishedProductsService.removeProduct(this.dataProduct);
 
-        this._tagManager.sendEvent(
+        this.tagManager.sendEvent(
           EventCategory.Sell,
           EventAction.RemoveUnpublishedConfirmed,
           this.dataProduct.title,
@@ -98,17 +120,21 @@ export class MarketplacePublishButtonComponent implements OnDestroy {
   }
 
   ngOnDestroy() {
-    this._unsubscribeTransactionDialog();
+    this.unsubscribeTransactionDialog();
 
-    if (this._unpublishedProductsSubscription) {
-      this._unpublishedProductsSubscription.unsubscribe();
+    if (this.unpublishedProductsSubscription) {
+      this.unpublishedProductsSubscription.unsubscribe();
+    }
+
+    if (this.transactionsSubscription) {
+      this.transactionsSubscription.unsubscribe();
     }
   }
 
-  private _unsubscribeTransactionDialog() {
-    if (this._transactionDialogSubscription) {
-      this._transactionDialogSubscription.unsubscribe();
-      this._transactionDialogSubscription = null;
+  unsubscribeTransactionDialog() {
+    if (this.transactionDialogSubscription) {
+      this.transactionDialogSubscription.unsubscribe();
+      this.transactionDialogSubscription = null;
     }
   }
 }

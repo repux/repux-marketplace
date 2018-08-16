@@ -1,6 +1,5 @@
 import { ComponentFixture, fakeAsync, TestBed } from '@angular/core/testing';
 import { MatDialog } from '@angular/material';
-import { TransactionDialogComponent } from '../../shared/components/transaction-dialog/transaction-dialog.component';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import Wallet from '../../shared/models/wallet';
 import { from } from 'rxjs';
@@ -11,50 +10,46 @@ import { RepuxLibService } from '../../services/repux-lib.service';
 import { TaskManagerService } from '../../services/task-manager.service';
 import { DataProductService } from '../../services/data-product.service';
 import { MaterialModule } from '../../material.module';
-import { FileReencryptionTask } from '../../tasks/file-reencryption-task';
 import { PendingFinalisationService } from '../services/pending-finalisation.service';
 import { TagManagerService } from '../../shared/services/tag-manager.service';
 import { WalletService } from '../../services/wallet.service';
+import { EventType } from 'repux-lib';
+import { DataProductOrder as BlockchainDataProductOrder, TransactionReceipt, TransactionStatus } from 'repux-web3-api';
+import { BlockchainTransactionScope } from '../../shared/enums/blockchain-transaction-scope';
+import { ActionButtonType } from '../../shared/enums/action-button-type';
+import { Transaction, TransactionService } from '../../shared/services/transaction.service';
 
 describe('MarketplaceFinaliseButtonComponent', () => {
   let component: MarketplaceFinaliseButtonComponent;
   let fixture: ComponentFixture<MarketplaceFinaliseButtonComponent>;
-  let keyStoreService, matDialog, repuxLibService, taskManagerService,
-    dataProductService, fileReencryptionTask, pendingFinalisationService, tagManager, walletServiceSpy;
+  let keyStoreServiceSpy, matDialogSpy, repuxLibServiceSpy, taskManagerServiceSpy,
+    dataProductServiceSpy, pendingFinalisationServiceSpy, tagManagerSpy, walletServiceSpy, transactionServiceSpy;
   const ownerAddress = '0x0000000000000000000000000000000000000000';
   const dataProductAddress = '0x1111111111111111111111111111111111111111';
   const buyerAddress = '0x2222222222222222222222222222222222222222';
   const sellerAddress = '0x33';
+  const orderAddress = '0x44';
   const buyerPublicKey = 'PUBLIC_KEY';
   const sellerMetaHash = 'META_HASH';
 
   beforeEach(fakeAsync(() => {
-    tagManager = jasmine.createSpyObj('TagManagerService', [ 'sendEvent' ]);
-    keyStoreService = jasmine.createSpyObj('KeyStoreService', [ 'hasKeys' ]);
-    matDialog = jasmine.createSpyObj('MatDialog', [ 'open' ]);
-    repuxLibService = jasmine.createSpyObj('RepuxLibService', [ 'getInstance' ]);
-    taskManagerService = jasmine.createSpyObj('TaskManagerService', [ 'addTask' ]);
-    dataProductService = jasmine.createSpyObj('DataProductService', [ 'finaliseDataProductPurchase' ]);
-    pendingFinalisationService = jasmine.createSpyObj('PendingFinalisationService', [ 'getEntries' ]);
+    tagManagerSpy = jasmine.createSpyObj('TagManagerService', [ 'sendEvent' ]);
+    keyStoreServiceSpy = jasmine.createSpyObj('KeyStoreService', [ 'hasKeys' ]);
+    matDialogSpy = jasmine.createSpyObj('MatDialog', [ 'open' ]);
+    repuxLibServiceSpy = jasmine.createSpyObj('RepuxLibService', [ 'getInstance' ]);
+    taskManagerServiceSpy = jasmine.createSpyObj('TaskManagerService', [ 'addTask' ]);
+    dataProductServiceSpy = jasmine.createSpyObj('DataProductService', [ 'finaliseDataProductPurchase', 'getOrderData' ]);
+    pendingFinalisationServiceSpy = jasmine.createSpyObj('PendingFinalisationService', [ 'getEntries', 'removeOrder' ]);
     walletServiceSpy = jasmine.createSpyObj('WalletService', [ 'getWallet' ]);
 
-    fileReencryptionTask = jasmine.createSpy().and.callFake(() => {
-      return {
-        onFinish() {
-          return {
-            subscribe(callback) {
-              setTimeout(() => callback(true), 100);
-
-              return {
-                unsubscribe: jasmine.createSpy()
-              };
-            }
-          };
-        }
-      };
+    transactionServiceSpy = jasmine.createSpyObj('TransactionService', [ 'getTransactionReceipt', 'getTransactions' ]);
+    transactionServiceSpy.getTransactionReceipt.and.returnValue(Promise.resolve({ status: TransactionStatus.SUCCESSFUL }));
+    transactionServiceSpy.getTransactions.and.returnValue({
+      subscribe() {
+      }
     });
 
-    repuxLibService.getInstance.and.returnValue({
+    repuxLibServiceSpy.getInstance.and.returnValue({
       deserializePublicKey(key) {
         return 'DESERIALIZED_' + key;
       },
@@ -63,6 +58,16 @@ describe('MarketplaceFinaliseButtonComponent', () => {
     });
 
     walletServiceSpy.getWallet.and.returnValue(from(Promise.resolve(new Wallet(sellerAddress, 1))));
+
+    dataProductServiceSpy.getOrderData.and.returnValue(Promise.resolve({
+      address: orderAddress,
+      buyerAddress
+    } as BlockchainDataProductOrder));
+
+    dataProductServiceSpy.finaliseDataProductPurchase.and.returnValue({
+      subscribe() {
+      }
+    });
 
     TestBed.configureTestingModule({
       declarations: [
@@ -73,25 +78,23 @@ describe('MarketplaceFinaliseButtonComponent', () => {
         NoopAnimationsModule
       ],
       providers: [
-        { provide: TagManagerService, useValue: tagManager },
-        { provide: TransactionDialogComponent, useValue: {} },
-        { provide: KeyStoreService, useValue: keyStoreService },
-        { provide: MatDialog, useValue: matDialog },
-        { provide: RepuxLibService, useValue: repuxLibService },
-        { provide: TaskManagerService, useValue: taskManagerService },
-        { provide: DataProductService, useValue: dataProductService },
-        { provide: FileReencryptionTask, useValue: fileReencryptionTask },
-        { provide: PendingFinalisationService, useValue: pendingFinalisationService },
-        { provide: WalletService, useValue: walletServiceSpy }
+        { provide: TagManagerService, useValue: tagManagerSpy },
+        { provide: KeyStoreService, useValue: keyStoreServiceSpy },
+        { provide: MatDialog, useValue: matDialogSpy },
+        { provide: RepuxLibService, useValue: repuxLibServiceSpy },
+        { provide: TaskManagerService, useValue: taskManagerServiceSpy },
+        { provide: DataProductService, useValue: dataProductServiceSpy },
+        { provide: PendingFinalisationService, useValue: pendingFinalisationServiceSpy },
+        { provide: WalletService, useValue: walletServiceSpy },
+        { provide: TransactionService, useValue: transactionServiceSpy }
       ]
     })
       .compileComponents();
 
     fixture = TestBed.createComponent(MarketplaceFinaliseButtonComponent);
     component = fixture.componentInstance;
-    component.FileReencryptionTaskClass = fileReencryptionTask;
 
-    component.transaction = <any> {
+    component.order = <any> {
       buyerAddress,
       publicKey: buyerPublicKey,
       finalised: false,
@@ -102,19 +105,20 @@ describe('MarketplaceFinaliseButtonComponent', () => {
       fundsToWithdraw: new BigNumber(1),
       sellerMetaHash,
       ownerAddress,
-      transactions: []
+      orders: []
     };
+
     fixture.detectChanges();
   }));
 
   describe('#ngOnInit()', () => {
-    it('should call _onWalletChange', async () => {
+    it('should call onWalletChange', async () => {
       const wallet = new Wallet(ownerAddress, 0);
       const getWallet = jasmine.createSpy();
       getWallet.and.returnValue(from(Promise.resolve(wallet)));
       const onWalletChange = jasmine.createSpy();
-      component[ '_onWalletChange' ] = onWalletChange;
-      component[ '_walletService' ] = <any> {
+      component[ 'onWalletChange' ] = onWalletChange;
+      component[ 'walletService' ] = <any> {
         getWallet
       };
 
@@ -124,45 +128,143 @@ describe('MarketplaceFinaliseButtonComponent', () => {
     });
   });
 
-  describe('#_onWalletChange()', () => {
+  describe('#onWalletChange()', () => {
     it('should set wallet', () => {
       const wallet = new Wallet(ownerAddress, 0);
-      component[ '_onWalletChange' ](wallet);
+      component[ 'onWalletChange' ](wallet);
       expect(component[ 'wallet' ]).toBe(wallet);
-      component[ '_onWalletChange' ](wallet);
+      component[ 'onWalletChange' ](wallet);
       expect(component[ 'wallet' ]).toBe(wallet);
-      component[ '_onWalletChange' ](null);
+      component[ 'onWalletChange' ](null);
       expect(component[ 'wallet' ]).toBe(wallet);
       const wallet2 = new Wallet(ownerAddress, 0);
-      component[ '_onWalletChange' ](wallet2);
+      component[ 'onWalletChange' ](wallet2);
       expect(component[ 'wallet' ]).toBe(wallet2);
     });
   });
 
   describe('#finalise()', () => {
-    it('should create file reencryption task', async () => {
-      const privateKey = 'PRIVATE_KEY';
+    it('should call reencrypt method and then sendTransaction method', async () => {
+      const buyerMetaHash = 'BUYER_META_HASH';
+
+      const keyPair = {
+        privateKey: 'SELLER_PRIVATE_KEY',
+        publicKey: 'SELLER_PUBLIC_KEY'
+      };
+
       const getKeys = jasmine.createSpy();
-      getKeys.and.returnValue(Promise.resolve({ privateKey }));
-      component[ '_getKeys' ] = getKeys;
+      getKeys.and.returnValue(Promise.resolve(keyPair));
+      component[ 'getKeys' ] = getKeys;
+
+      const reencrypt = jasmine.createSpy();
+      reencrypt.and.returnValue(Promise.resolve(buyerMetaHash));
+      component.reencrypt = reencrypt;
+
+      const sendTransaction = jasmine.createSpy();
+      sendTransaction.and.returnValue(Promise.resolve(buyerMetaHash));
+      component.sendTransaction = sendTransaction;
 
       await component.finalise();
-      expect(component.transaction.finalised).toBeTruthy();
-      expect(fileReencryptionTask.calls.allArgs()[ 0 ][ 0 ]).toBe(sellerAddress);
-      expect(fileReencryptionTask.calls.allArgs()[ 0 ][ 1 ]).toBe(dataProductAddress);
-      expect(fileReencryptionTask.calls.allArgs()[ 0 ][ 2 ]).toBe(buyerAddress);
-      expect(fileReencryptionTask.calls.allArgs()[ 0 ][ 3 ]).toBe(sellerMetaHash);
-      expect(fileReencryptionTask.calls.allArgs()[ 0 ][ 4 ]).toBe(privateKey);
-      expect(fileReencryptionTask.calls.allArgs()[ 0 ][ 5 ]).toBe('DESERIALIZED_' + buyerPublicKey);
-      expect(fileReencryptionTask.calls.allArgs()[ 0 ][ 6 ]).toEqual(repuxLibService);
-      expect(fileReencryptionTask.calls.allArgs()[ 0 ][ 7 ]).toEqual(dataProductService);
-      expect(fileReencryptionTask.calls.allArgs()[ 0 ][ 8 ]).toEqual(keyStoreService);
-      expect(fileReencryptionTask.calls.allArgs()[ 0 ][ 9 ]).toEqual(pendingFinalisationService);
-      expect(fileReencryptionTask.calls.allArgs()[ 0 ][ 10 ]).toEqual(matDialog);
+
+      expect(reencrypt.calls.count()).toBe(1);
+      expect(reencrypt.calls.allArgs()[ 0 ]).toEqual([ keyPair.privateKey, 'DESERIALIZED_PUBLIC_KEY' ]);
+
+      expect(sendTransaction.calls.count()).toBe(1);
+      expect(sendTransaction.calls.allArgs()[ 0 ]).toEqual([ buyerMetaHash ]);
     });
   });
 
-  describe('#_getKeys()', () => {
+  describe('#reencrypt()', () => {
+    it('should create reencryptor and call reencrypt method on it', async () => {
+      const buyerMetaHash = 'BUYER_META_HASH';
+      const privateKey = 'PRIVATE_KEY';
+      const publicKey = 'PUBLIC_KEY';
+
+      repuxLibServiceSpy.getInstance.and.returnValue({
+        createFileReencryptor() {
+          return {
+            reencrypt() {
+              return {
+                on(eventType, callback) {
+                  if (eventType === EventType.FINISH) {
+                    callback(EventType.FINISH, buyerMetaHash);
+                  }
+
+                  return this;
+                }
+              };
+            }
+          };
+        }
+      });
+
+      const result = await component.reencrypt(privateKey as JsonWebKey, publicKey as JsonWebKey);
+      expect(result).toBe(buyerMetaHash);
+    });
+  });
+
+  describe('#sendTransaction()', () => {
+    it('should call dataProductService.finaliseDataProductPurchase using commonDialogService.transaction', async () => {
+      const buyerMetaHash = 'BUYER_META_HASH';
+
+      await component.ngOnInit();
+      component.sendTransaction(buyerMetaHash);
+
+      expect(dataProductServiceSpy.finaliseDataProductPurchase.calls.count()).toBe(1);
+      expect(dataProductServiceSpy.finaliseDataProductPurchase.calls.allArgs()[ 0 ]).toEqual([
+        orderAddress,
+        dataProductAddress,
+        buyerAddress,
+        buyerMetaHash
+      ]);
+    });
+  });
+
+  describe('#onTransactionFinish()', () => {
+    it('should finalise transaction when transactionReceipt.status is successful', () => {
+      component.onTransactionFinish({ status: TransactionStatus.SUCCESSFUL } as TransactionReceipt);
+
+      expect(pendingFinalisationServiceSpy.removeOrder.calls.count()).toBe(1);
+      expect(component.order.finalised).toBe(true);
+    });
+  });
+
+  describe('#onTransactionsListChange()', () => {
+    it('should set pendingTransaction when transaction list contains related transaction', async () => {
+      await component.ngOnInit();
+
+      const transactions = [ {
+        scope: BlockchainTransactionScope.DataProductOrder,
+        identifier: orderAddress,
+        blocksAction: ActionButtonType.Finalise
+      } ];
+
+      expect(component.pendingTransaction).toBe(undefined);
+
+      await component.onTransactionsListChange(transactions as Transaction[]);
+
+      expect(component.pendingTransaction).not.toBe(undefined);
+    });
+
+    it('should unset pendingTransaction and call onTransactionFinish when transaction list not contains related transaction', async () => {
+      const onTransactionFinish = jasmine.createSpy();
+      component.onTransactionFinish = onTransactionFinish;
+
+      component.pendingTransaction = {
+        scope: BlockchainTransactionScope.DataProductOrder,
+        identifier: orderAddress,
+        blocksAction: ActionButtonType.Finalise
+      } as Transaction;
+
+      await component.onTransactionsListChange([]);
+
+      expect(component.pendingTransaction).toBe(undefined);
+      expect(onTransactionFinish.calls.count()).toBe(1);
+      expect(onTransactionFinish.calls.allArgs()[ 0 ]).toEqual([ { status: TransactionStatus.SUCCESSFUL } ]);
+    });
+  });
+
+  describe('#getKeys()', () => {
     it('should open KeysPasswordDialogComponent when keyStoreService.hasKeys return true', async () => {
       const expectedResult = {
         publicKey: 'PUBLIC_KEY',
@@ -172,10 +274,10 @@ describe('MarketplaceFinaliseButtonComponent', () => {
       subscribe.and.callFake(callback => callback(expectedResult));
       const afterClosed = jasmine.createSpy();
       afterClosed.and.returnValue({ subscribe });
-      keyStoreService.hasKeys.and.returnValue(true);
-      matDialog.open.and.returnValue({ afterClosed });
+      keyStoreServiceSpy.hasKeys.and.returnValue(true);
+      matDialogSpy.open.and.returnValue({ afterClosed });
 
-      const result = await component[ '_getKeys' ]();
+      const result = await component[ 'getKeys' ]();
       expect(result).toEqual(<any> expectedResult);
     });
 
@@ -188,10 +290,10 @@ describe('MarketplaceFinaliseButtonComponent', () => {
       subscribe.and.callFake(callback => callback(expectedResult));
       const afterClosed = jasmine.createSpy();
       afterClosed.and.returnValue({ subscribe });
-      keyStoreService.hasKeys.and.returnValue(false);
-      matDialog.open.and.returnValue({ afterClosed });
+      keyStoreServiceSpy.hasKeys.and.returnValue(false);
+      matDialogSpy.open.and.returnValue({ afterClosed });
 
-      const result = await component[ '_getKeys' ]();
+      const result = await component[ 'getKeys' ]();
       expect(result).toEqual(<any> expectedResult);
     });
   });

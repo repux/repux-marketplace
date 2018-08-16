@@ -1,8 +1,11 @@
 <div *ngIf="canRate">
+  <span *ngIf="pendingTransaction">Rating...</span>
+
   <button
     mat-stroked-button
     color="primary"
-    (click)="rateTransaction()">
+    *ngIf="!pendingTransaction"
+    (click)="rateOrder()">
     Rate transaction
   </button>
 </div>

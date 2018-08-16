@@ -7,14 +7,13 @@ import { FileSizePipe } from './pipes/file-size.pipe';
 import { ArrayJoinPipe } from './pipes/array-join.pipe';
 import { CurrencyRepuxPipe } from './pipes/currency-repux';
 import { ConfirmationDialogComponent } from './components/confirmation-dialog/confirmation-dialog.component';
-import { TransactionDialogComponent } from './components/transaction-dialog/transaction-dialog.component';
 import { MetamaskDetectorComponent } from './components/metamask-detector/metamask-detector.component';
-import { TaskManagerComponent } from './components/task-manager/task-manager.component';
 import { MaterialModule } from '../material.module';
 import { NotificationsNumberComponent } from './components/notifications-number/notifications-number.component';
 import { MaxFileSizeDirective } from './components/file-input/max-file-size.directive';
 import { WalletInfoComponent } from './components/wallet-info/wallet-info.component';
 import { EulaTypePipe } from './pipes/eula-type.pipe';
+import { SafeHtmlPipe } from './pipes/safe-html.pipe';
 
 @NgModule({
   imports: [
@@ -31,32 +30,28 @@ import { EulaTypePipe } from './pipes/eula-type.pipe';
     MaxFileSizeDirective,
     MetamaskDetectorComponent,
     ConfirmationDialogComponent,
-    TransactionDialogComponent,
-    TaskManagerComponent,
     NotificationsNumberComponent,
     WalletInfoComponent,
     ArrayJoinPipe,
     FileSizePipe,
     CurrencyRepuxPipe,
-    EulaTypePipe
+    EulaTypePipe,
+    SafeHtmlPipe
   ],
   exports: [
     FileInputComponent,
     MetamaskDetectorComponent,
     ConfirmationDialogComponent,
-    TransactionDialogComponent,
-    TaskManagerComponent,
     NotificationsNumberComponent,
     WalletInfoComponent,
     ArrayJoinPipe,
     FileSizePipe,
     CurrencyRepuxPipe,
-    EulaTypePipe
+    EulaTypePipe,
+    SafeHtmlPipe
   ],
   entryComponents: [
-    ConfirmationDialogComponent,
-    TransactionDialogComponent,
-    TaskManagerComponent
+    ConfirmationDialogComponent
   ]
 })
 export class SharedModule {

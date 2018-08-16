@@ -1,11 +1,10 @@
 import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { MatDialog } from '@angular/material';
-import { DataProductTransaction } from '../../shared/models/data-product-transaction';
+import { DataProductOrder } from '../../shared/models/data-product-order';
 import { KeysGeneratorDialogComponent } from '../../key-store/keys-generator-dialog/keys-generator-dialog.component';
 import { KeysPasswordDialogComponent } from '../../key-store/keys-password-dialog/keys-password-dialog.component';
 import { KeyStoreService } from '../../key-store/key-store.service';
 import { Subscription } from 'rxjs';
-import { FileReencryptionTask } from '../../tasks/file-reencryption-task';
 import { DataProduct } from '../../shared/models/data-product';
 import { RepuxLibService } from '../../services/repux-lib.service';
 import { DataProductService } from '../../services/data-product.service';
@@ -15,6 +14,11 @@ import { WalletService } from '../../services/wallet.service';
 import { PendingFinalisationService } from '../services/pending-finalisation.service';
 import { EventAction, EventCategory, TagManagerService } from '../../shared/services/tag-manager.service';
 import { CommonDialogService } from '../../shared/services/common-dialog.service';
+import { EventType, FileReencryptor } from 'repux-lib';
+import { TransactionReceipt, TransactionStatus, DataProductOrder as BlockchainDataProductOrder } from 'repux-web3-api';
+import { Transaction, TransactionService } from '../../shared/services/transaction.service';
+import { BlockchainTransactionScope } from '../../shared/enums/blockchain-transaction-scope';
+import { ActionButtonType } from '../../shared/enums/action-button-type';
 
 @Component({
   selector: 'app-marketplace-finalise-button',
@@ -22,102 +26,145 @@ import { CommonDialogService } from '../../shared/services/common-dialog.service
   styleUrls: [ './marketplace-finalise-button.component.scss' ]
 })
 export class MarketplaceFinaliseButtonComponent implements OnDestroy, OnInit {
-  @Input() transaction: DataProductTransaction;
+  @Input() order: DataProductOrder;
   @Input() dataProduct: DataProduct;
-  @Output() success = new EventEmitter<DataProductTransaction>();
+  @Output() success = new EventEmitter<DataProductOrder>();
 
   public wallet: Wallet;
   public userIsOwner: boolean;
-  public FileReencryptionTaskClass = FileReencryptionTask;
+  public pendingTransaction?: Transaction;
+  public pendingReencryption = false;
 
-  private _keysSubscription: Subscription;
-  private _walletSubscription: Subscription;
-  private _reencryptionSubscription: Subscription;
+  private keysSubscription: Subscription;
+  private walletSubscription: Subscription;
+  private transactionsSubscription: Subscription;
+  private reencryptor: FileReencryptor;
+  private blockchainOrder: BlockchainDataProductOrder;
 
   constructor(
-    private _repuxLibService: RepuxLibService,
-    private _dataProductService: DataProductService,
-    private _keyStoreService: KeyStoreService,
-    private _taskManagerService: TaskManagerService,
-    private _pendingFinalisationService: PendingFinalisationService,
-    private _walletService: WalletService,
-    private _dialog: MatDialog,
-    private _tagManager: TagManagerService,
-    private commonDialogService: CommonDialogService
+    private repuxLibService: RepuxLibService,
+    private dataProductService: DataProductService,
+    private keyStoreService: KeyStoreService,
+    private taskManagerService: TaskManagerService,
+    private pendingFinalisationService: PendingFinalisationService,
+    private walletService: WalletService,
+    private dialog: MatDialog,
+    private tagManager: TagManagerService,
+    private commonDialogService: CommonDialogService,
+    private transactionService: TransactionService
   ) {
   }
 
-  ngOnInit() {
-    this._walletSubscription = this._walletService.getWallet().subscribe(wallet => this._onWalletChange(wallet));
+  async ngOnInit() {
+    this.blockchainOrder = await this.dataProductService.getOrderData(this.dataProduct.address, this.order.buyerAddress);
+
+    this.walletSubscription = this.walletService.getWallet().subscribe(wallet => this.onWalletChange(wallet));
+    this.transactionsSubscription = this.transactionService.getTransactions()
+      .subscribe(transactions => this.onTransactionsListChange(transactions));
   }
 
   getUserIsOwner(): boolean {
     return this.wallet.address === this.dataProduct.ownerAddress;
   }
 
+  onTransactionFinish(transactionReceipt: TransactionReceipt) {
+    if (transactionReceipt.status === TransactionStatus.SUCCESSFUL) {
+      this.pendingFinalisationService.removeOrder(this.dataProduct.address, this.order.buyerAddress);
+
+      this.order.finalised = true;
+      this.success.emit(this.order);
+
+      this.tagManager.sendEvent(
+        EventCategory.Sell,
+        EventAction.FinalizeOrderConfirmed,
+        this.dataProduct.title,
+        this.dataProduct.price ? this.dataProduct.price.toString() : ''
+      );
+    }
+  }
+
+  async onTransactionsListChange(transactions: Transaction[]) {
+    const foundTransaction = transactions.find(transaction =>
+      transaction.scope === BlockchainTransactionScope.DataProductOrder &&
+      transaction.identifier === this.blockchainOrder.address &&
+      transaction.blocksAction === ActionButtonType.Finalise
+    );
+
+    if (this.pendingTransaction && !foundTransaction) {
+      this.onTransactionFinish(
+        await this.transactionService.getTransactionReceipt(this.pendingTransaction.transactionHash)
+      );
+    }
+
+    this.pendingTransaction = foundTransaction;
+  }
+
   async finalise() {
-    this._tagManager.sendEvent(
+    this.tagManager.sendEvent(
       EventCategory.Sell,
-      EventAction.FinalizeTransaction,
+      EventAction.FinalizeOrder,
       this.dataProduct.title,
       this.dataProduct.price ? this.dataProduct.price.toString() : ''
     );
 
-    const { privateKey } = await this._getKeys();
-    const publicKey = this._repuxLibService.getInstance().deserializePublicKey(this.transaction.publicKey);
+    const { privateKey } = await this.getKeys();
+    const publicKey = this.repuxLibService.getInstance().deserializePublicKey(this.order.publicKey);
 
-    const fileReencryptionTask = new this.FileReencryptionTaskClass(
-      this.wallet.address,
-      this.dataProduct.address,
-      this.transaction.buyerAddress,
-      this.dataProduct.sellerMetaHash,
-      privateKey,
-      publicKey,
-      this._repuxLibService,
-      this._dataProductService,
-      this._keyStoreService,
-      this._pendingFinalisationService,
-      this._dialog,
-      this.commonDialogService
-    );
+    this.pendingReencryption = true;
+    const metaHash = await this.reencrypt(privateKey, publicKey);
 
-    return new Promise(resolve => {
-      this._reencryptionSubscription = fileReencryptionTask.onFinish().subscribe(result => {
-        if (result) {
-          this.transaction.finalised = true;
-          this.success.emit(this.transaction);
-
-          this._tagManager.sendEvent(
-            EventCategory.Sell,
-            EventAction.FinalizeTransactionConfirmed,
-            this.dataProduct.title,
-            this.dataProduct.price ? this.dataProduct.price.toString() : ''
-          );
-        }
-
-        this._reencryptionSubscription.unsubscribe();
-        resolve();
-      });
-
-      this._taskManagerService.addTask(fileReencryptionTask);
-    });
+    this.pendingReencryption = false;
+    return this.sendTransaction(metaHash);
   }
 
   ngOnDestroy() {
-    if (this._keysSubscription) {
-      this._keysSubscription.unsubscribe();
+    if (this.keysSubscription) {
+      this.keysSubscription.unsubscribe();
     }
 
-    if (this._walletSubscription) {
-      this._walletSubscription.unsubscribe();
+    if (this.walletSubscription) {
+      this.walletSubscription.unsubscribe();
     }
 
-    if (this._reencryptionSubscription) {
-      this._reencryptionSubscription.unsubscribe();
+    if (this.transactionsSubscription) {
+      this.transactionsSubscription.unsubscribe();
     }
   }
 
-  private _onWalletChange(wallet: Wallet) {
+  displayReencryptionErrorMessage() {
+    this.commonDialogService.alert(
+      'You can not re-encrypt the file. Please upload the key pair that was used during upload transaction.',
+      'Re-encryption error'
+    );
+  }
+
+  sendTransaction(result: string) {
+    this.commonDialogService.transaction(
+      () => this.dataProductService.finaliseDataProductPurchase(
+        this.blockchainOrder.address,
+        this.dataProduct.address,
+        this.blockchainOrder.buyerAddress,
+        result
+      )
+    );
+  }
+
+  async reencrypt(privateKey: JsonWebKey, publicKey: JsonWebKey): Promise<string> {
+    this.reencryptor = this.repuxLibService.getInstance().createFileReencryptor();
+
+    return new Promise<string>((resolve, reject) => {
+      this.reencryptor.reencrypt(privateKey, publicKey, this.dataProduct.sellerMetaHash)
+        .on(EventType.ERROR, () => {
+          this.displayReencryptionErrorMessage();
+          reject();
+        })
+        .on(EventType.FINISH, (eventType, result) => {
+          resolve(result);
+        });
+    });
+  }
+
+  private onWalletChange(wallet: Wallet) {
     if (!wallet || wallet === this.wallet) {
       return;
     }
@@ -126,17 +173,17 @@ export class MarketplaceFinaliseButtonComponent implements OnDestroy, OnInit {
     this.userIsOwner = this.getUserIsOwner();
   }
 
-  private _getKeys(): Promise<{ privateKey: JsonWebKey, publicKey: JsonWebKey }> {
+  private getKeys(): Promise<{ privateKey: JsonWebKey, publicKey: JsonWebKey }> {
     return new Promise(resolve => {
       let dialogRef;
 
-      if (this._keyStoreService.hasKeys()) {
-        dialogRef = this._dialog.open(KeysPasswordDialogComponent);
+      if (this.keyStoreService.hasKeys()) {
+        dialogRef = this.dialog.open(KeysPasswordDialogComponent);
       } else {
-        dialogRef = this._dialog.open(KeysGeneratorDialogComponent);
+        dialogRef = this.dialog.open(KeysGeneratorDialogComponent);
       }
 
-      this._keysSubscription = dialogRef.afterClosed().subscribe(result => {
+      this.keysSubscription = dialogRef.afterClosed().subscribe(result => {
         if (result) {
           resolve({
             privateKey: result.privateKey,

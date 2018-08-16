@@ -10,6 +10,7 @@ import { PageEvent } from '@angular/material';
 import { Subject } from 'rxjs/internal/Subject';
 import { RepuxWeb3Service } from '../services/repux-web3.service';
 import { Observable } from 'rxjs';
+import { ActionButtonType } from '../shared/enums/action-button-type';
 
 @Component({
   selector: 'app-marketplace-browse',
@@ -17,6 +18,16 @@ import { Observable } from 'rxjs';
   styleUrls: [ './marketplace-browse.component.scss' ]
 })
 export class MarketplaceBrowseComponent implements OnInit {
+  public pageSizeOptions = environment.repux.pageSizeOptions;
+  public currencyFormat: string = environment.repux.currency.format;
+  public dataProducts: DataProduct[];
+  public sort: string;
+  public size: number;
+  public from = 0;
+  public query = [];
+  public products$: Observable<DataProduct[]>;
+  public availableActions = [ ActionButtonType.Buy, ActionButtonType.Rate ];
+
   private inputChangeSubject = new Subject<string>();
   private staticQuery = {
     bool: {
@@ -26,14 +37,6 @@ export class MarketplaceBrowseComponent implements OnInit {
       ]
     }
   };
-  public pageSizeOptions = environment.repux.pageSizeOptions;
-  public currencyFormat: string = environment.repux.currency.format;
-  public dataProducts: DataProduct[];
-  public sort: string;
-  public size: number;
-  public from = 0;
-  public query = [];
-  public products$: Observable<DataProduct[]>;
 
   constructor(
     private dataProductListService: DataProductListService,
@@ -92,7 +95,7 @@ export class MarketplaceBrowseComponent implements OnInit {
     const repuxWeb3Service = await this.repuxWeb3Service;
 
     if (await repuxWeb3Service.isWalletAvailable()) {
-      productsRaw$ = this.dataProductListService.getBlockchainStateForDataProducts(productsRaw$)
+      productsRaw$ = this.dataProductListService.getBlockchainStateForDataProducts(productsRaw$);
     }
 
     this.products$ = productsRaw$

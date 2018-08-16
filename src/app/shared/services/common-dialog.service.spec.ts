@@ -2,9 +2,9 @@ import { CommonDialogService } from './common-dialog.service';
 import { MaterialModule } from '../../material.module';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { getTestBed, TestBed } from '@angular/core/testing';
-import { TransactionDialogComponent } from '../components/transaction-dialog/transaction-dialog.component';
 import { ConfirmationDialogComponent } from '../components/confirmation-dialog/confirmation-dialog.component';
 import { BrowserDynamicTestingModule } from '@angular/platform-browser-dynamic/testing';
+import { SafeHtmlPipe } from '../pipes/safe-html.pipe';
 
 describe('CommonDialogService', () => {
   let service: CommonDialogService;
@@ -13,7 +13,7 @@ describe('CommonDialogService', () => {
     TestBed.configureTestingModule({
       declarations: [
         ConfirmationDialogComponent,
-        TransactionDialogComponent
+        SafeHtmlPipe
       ],
       imports: [
         NoopAnimationsModule,
@@ -24,8 +24,7 @@ describe('CommonDialogService', () => {
     TestBed.overrideModule(BrowserDynamicTestingModule, {
       set: {
         entryComponents: [
-          ConfirmationDialogComponent,
-          TransactionDialogComponent
+          ConfirmationDialogComponent
         ]
       }
     });

@@ -39,7 +39,7 @@ const repuxWeb3ApiMock = {
 };
 
 const RepuxWeb3ServiceFactoryMock = () => {
-  return new RepuxWeb3Service(web3Mock, repuxWeb3ApiMock);
+  return new RepuxWeb3Service(web3Mock, <any> repuxWeb3ApiMock);
 };
 
 let repuxWeb3Service;
@@ -96,15 +96,15 @@ describe('RepuxWeb3Service', () => {
 
   describe('#getWeb3Instance()', () => {
     it('should return web3 instance', () => {
-      const service = new RepuxWeb3Service('Web3', 'RepuxWeb3Api');
+      const service = new RepuxWeb3Service('Web3', <any> 'RepuxWeb3Api');
       expect(service.getWeb3Instance()).toBe('Web3');
     });
   });
 
   describe('#getRepuxApiInstance()', () => {
     it('should return web3 instance', async () => {
-      const service = new RepuxWeb3Service('Web3', 'RepuxWeb3Api');
-      expect(await service.getRepuxApiInstance()).toBe('RepuxWeb3Api');
+      const service = new RepuxWeb3Service('Web3', <any> 'RepuxWeb3Api');
+      expect(await service.getRepuxApiInstance()).toBe(<any> 'RepuxWeb3Api');
     });
   });
 });

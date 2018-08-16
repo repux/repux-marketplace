@@ -14,6 +14,7 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { PendingFinalisationService } from '../services/pending-finalisation.service';
 import { IpfsService } from '../../services/ipfs.service';
 import { EulaType } from 'repux-lib';
+import { ActionButtonType } from '../../shared/enums/action-button-type';
 
 @Component({ selector: 'app-file-size', template: '{{bytes}}' })
 class MarketplaceFileSizeStubComponent {
@@ -23,13 +24,13 @@ class MarketplaceFileSizeStubComponent {
 @Component({ selector: 'app-marketplace-action-buttons', template: '' })
 class MarketplaceActionButtonsStubComponent {
   @Input() dataProduct: DataProduct;
-  @Input() availableActions: string[];
+  @Input() availableActions: ActionButtonType[];
 }
 
-@Component({ selector: 'app-marketplace-data-product-transactions-list-container', template: '' })
-class DataProductTransactionsListContainerStubComponent {
+@Component({ selector: 'app-marketplace-data-product-orders-list-container', template: '' })
+class DataProductOrdersListContainerStubComponent {
   @Input() dataProduct: DataProduct;
-  @Input() displayPendingTransactions: boolean;
+  @Input() displayPendingOrders: boolean;
   @Output() finaliseSuccess = new EventEmitter<any>();
 }
 
@@ -39,7 +40,7 @@ describe('MarketplaceDataProductListComponent', () => {
   let dataProductListServiceSpy, pendingFinalisationServiceSpy, ipfsServiceSpy;
 
   beforeEach(async(() => {
-    pendingFinalisationServiceSpy = jasmine.createSpyObj('PendingFinalisationService', [ 'findTransaction' ]);
+    pendingFinalisationServiceSpy = jasmine.createSpyObj('PendingFinalisationService', [ 'findOrder' ]);
     dataProductListServiceSpy = jasmine.createSpyObj('DataProductListService', [ 'getDataProductsWithBlockchainState' ]);
     dataProductListServiceSpy.getDataProductsWithBlockchainState.and.callFake(() => {
       const response = new EsResponse();
@@ -54,7 +55,7 @@ describe('MarketplaceDataProductListComponent', () => {
         MarketplaceFileSizeStubComponent,
         MarketplaceActionButtonsStubComponent,
         MarketplaceDataProductListDetailDirective,
-        DataProductTransactionsListContainerStubComponent
+        DataProductOrdersListContainerStubComponent
       ],
       imports: [
         SharedModule,
@@ -146,7 +147,7 @@ describe('MarketplaceDataProductListComponent', () => {
             _index: '1',
             _source: {
               price: 1,
-              transactions: []
+              orders: []
             }
           }) ]
         };
@@ -197,7 +198,7 @@ describe('MarketplaceDataProductListComponent', () => {
     });
 
     it('should display table with data provided by dataSource property', () => {
-      const transactions = [ {
+      const orders = [ {
         finalised: false
       } ];
       component.esDataProducts = {
@@ -216,7 +217,7 @@ describe('MarketplaceDataProductListComponent', () => {
             fileName: 'EULA',
             fileHash: 'EULA_HASH'
           },
-          transactions
+          orders
         }) ]
       };
       component.dataSource = new MatTableDataSource(component.esDataProducts.hits);
@@ -234,12 +235,12 @@ describe('MarketplaceDataProductListComponent', () => {
         'actions'
       ];
       component.availableActions = [
-        'buy',
-        'withdraw',
-        'unpublish'
+        ActionButtonType.Buy,
+        ActionButtonType.Withdraw,
+        ActionButtonType.Unpublish
       ];
-      component.getTransactionsToFinalisation = () => <any> transactions;
-      component.displayPendingTransactions = true;
+      component.getOrdersToFinalisation = () => <any> orders;
+      component.displayPendingOrders = true;
       fixture.detectChanges();
 
       const element: HTMLElement = fixture.nativeElement;
@@ -284,7 +285,7 @@ describe('MarketplaceDataProductListComponent', () => {
       expect(firstRow.querySelector('mat-cell:nth-child(10) button').textContent.trim()).toBe('Owner');
       expect(firstRow.querySelector('mat-cell:nth-child(11) app-marketplace-action-buttons')).not.toBeNull();
 
-      expect(table.querySelectorAll('app-marketplace-data-product-transactions-list-container').length).toBe(1);
+      expect(table.querySelectorAll('app-marketplace-data-product-orders-list-container').length).toBe(1);
     });
 
     it('should call sortChanged method when user clicks on sorting column', () => {

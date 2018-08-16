@@ -1,18 +1,23 @@
 import { MatDialog, MatDialogRef } from '@angular/material';
 import { ConfirmationDialogComponent } from '../components/confirmation-dialog/confirmation-dialog.component';
-import { Injectable } from '@angular/core';
-import { TransactionDialogComponent } from '../components/transaction-dialog/transaction-dialog.component';
+import { Injectable, SecurityContext } from '@angular/core';
+import { TransactionEvent } from '../models/transaction-event';
+import { Observable } from 'rxjs';
+import { TransactionEventType } from '../enums/transaction-event-type';
+import { DomSanitizer } from '@angular/platform-browser';
 
 @Injectable({
   providedIn: 'root'
 })
 export class CommonDialogService {
   constructor(
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private sanitizer: DomSanitizer
   ) {
   }
 
-  alert(message: string, title: string = 'Warning', confirmButtonLabel: string = 'Ok'): MatDialogRef<ConfirmationDialogComponent> {
+  alert(message: string, title: string = 'Warning', confirmButtonLabel: string = 'Ok', cancelButtonLabel: string = null)
+    : MatDialogRef<ConfirmationDialogComponent> {
     const confirmationDialogRef = this.dialog.open(ConfirmationDialogComponent, {
       disableClose: true
     });
@@ -25,15 +30,49 @@ export class CommonDialogService {
     return confirmationDialogRef;
   }
 
-  transaction(methodToCall: () => Promise<any>): MatDialogRef<TransactionDialogComponent> {
-    const transactionDialogRef = this.dialog.open(TransactionDialogComponent, {
-      disableClose: true
+  transaction(methodToCall: () => Observable<TransactionEvent>): Observable<TransactionEvent> {
+    let currentDialogRef;
+
+    const closeCurrentDialog = () => {
+      if (currentDialogRef) {
+        currentDialogRef.close();
+      }
+    };
+
+    const observable = methodToCall();
+
+    observable.subscribe(event => {
+      if (event.type === TransactionEventType.Created) {
+        closeCurrentDialog();
+        currentDialogRef = this.alert(
+          'Please confirm transaction in MetaMask extension.',
+          'Transaction',
+          null
+        );
+
+        return;
+      }
+
+      if (event.type === TransactionEventType.Confirmed) {
+        closeCurrentDialog();
+        currentDialogRef = this.alert(
+          'Your transaction is being processed. We will inform you when its status changes.',
+          'Transaction confirmed'
+        );
+        return;
+      }
+
+      if (event.type === TransactionEventType.Rejected) {
+        closeCurrentDialog();
+        currentDialogRef = this.alert(
+          'Something went wrong while confirming your transaction. Please try again.<br>Details: ' +
+          this.sanitizer.sanitize(SecurityContext.HTML, event.error),
+          'Transaction rejected'
+        );
+        return;
+      }
     });
 
-    const transactionDialog: TransactionDialogComponent = transactionDialogRef.componentInstance;
-    transactionDialog.transaction = methodToCall;
-    transactionDialog.callTransaction();
-
-    return transactionDialogRef;
+    return observable;
   }
 }

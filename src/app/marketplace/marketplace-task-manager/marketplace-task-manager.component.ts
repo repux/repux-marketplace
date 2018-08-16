@@ -1,15 +1,15 @@
 import { Component, OnDestroy } from '@angular/core';
-import { TaskManagerService } from '../../../services/task-manager.service';
-import { Task } from '../../../tasks/task';
 import { Subscription } from 'rxjs/internal/Subscription';
-import { TaskError } from '../../../tasks/task-error';
+import { Task } from '../../tasks/task';
+import { TaskError } from '../../tasks/task-error';
+import { TaskManagerService } from '../../services/task-manager.service';
 
 @Component({
-  selector: 'app-task-manager',
-  templateUrl: './task-manager.component.html',
-  styleUrls: [ './task-manager.component.scss' ]
+  selector: 'app-marketplace-task-manager',
+  templateUrl: './marketplace-task-manager.component.html',
+  styleUrls: [ './marketplace-task-manager.component.scss' ]
 })
-export class TaskManagerComponent implements OnDestroy {
+export class MarketplaceTaskManagerComponent implements OnDestroy {
   tasks: ReadonlyArray<Task> = [];
 
   taskError = TaskError;

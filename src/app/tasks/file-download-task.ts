@@ -18,6 +18,11 @@ export class FileDownloadTask implements Task {
   private _downloader: FileDownloader;
   private _result: string;
   private _taskManagerService: TaskManagerService;
+  private _progress: number;
+  private _errors: string[] = [];
+  private _finished = false;
+  private _name: string;
+  private _status: string;
 
   constructor(
     public readonly walletAddress: string,
@@ -32,43 +37,21 @@ export class FileDownloadTask implements Task {
     this._downloader = this._repuxLibService.getInstance().createFileDownloader();
   }
 
-  private _progress: number;
-
   get progress(): number {
     return this._progress;
   }
-
-  private _errors: string[] = [];
 
   get errors(): ReadonlyArray<string> {
     return Object.freeze(Object.assign([], this._errors));
   }
 
-  private _finished = false;
-
   get finished(): boolean {
     return this._finished;
   }
 
-  private _name: string;
-
   get name(): string {
     return this._name;
   }
-
-  private _needsUserAction: boolean;
-
-  get needsUserAction(): boolean {
-    return this._needsUserAction;
-  }
-
-  private _userActionName: string;
-
-  get userActionName(): string {
-    return this._userActionName;
-  }
-
-  private _status: string;
 
   get status(): string {
     return this._status;
@@ -113,10 +96,6 @@ export class FileDownloadTask implements Task {
     this._errors.push(STATUS.CANCELED);
     this._status = STATUS.CANCELED;
     this._taskManagerService.onTaskEvent();
-  }
-
-  async callUserAction(): Promise<any> {
-    return;
   }
 
   displayDecryptionErrorMessage() {

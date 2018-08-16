@@ -19,8 +19,8 @@ export class WebsocketService {
     });
   }
 
-  public onEvent(eventName: string): Observable<{}> {
-    return new Observable<{}>((observer: Observer<{}>) => {
+  public onEvent(eventName: string): Observable<any> {
+    return new Observable<any>((observer: Observer<any>) => {
       this._socket.on(eventName, data => observer.next(data));
     });
   }

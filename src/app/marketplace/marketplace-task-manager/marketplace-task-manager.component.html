@@ -11,7 +11,10 @@
     <div class="row" *ngIf="!task.finished">
       <span class="item_status">{{ task.status }}</span>
       <span class="spacer"></span>
-      <button mat-button *ngIf="task.needsUserAction" (click)="task.callUserAction()">{{ task.userActionName }}</button>
+      <app-marketplace-action-buttons
+        *ngIf="task.dataProduct"
+        [availableActions]="[task.actionButton]"
+        [dataProduct]="task.dataProduct"></app-marketplace-action-buttons>
       <button mat-button *ngIf="task.progress < 100" (click)="task.cancel()">Cancel</button>
     </div>
     <div class="row" *ngIf="task.errors.length">

@@ -3,6 +3,7 @@ import { WalletService } from '../services/wallet.service';
 import Wallet from '../shared/models/wallet';
 import { Subscription } from 'rxjs/internal/Subscription';
 import { getPendingFinalisationDataProductsQuery } from './services/pending-finalisation.service';
+import { ActionButtonType } from '../shared/enums/action-button-type';
 
 @Component({
   selector: 'app-marketplace-sell-pending-finalisation',
@@ -19,7 +20,7 @@ export class MarketplaceSellPendingFinalisationComponent implements OnDestroy {
     'actions'
   ];
   public availableActions = [
-    'finalise'
+    ActionButtonType.Finalise
   ];
   public staticQuery = {};
   private _wallet: Wallet;

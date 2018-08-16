@@ -3,6 +3,7 @@ import Wallet from '../shared/models/wallet';
 import { WalletService } from '../services/wallet.service';
 import { Subscription } from 'rxjs/internal/Subscription';
 import { getAwaitingFinalisationDataProductsQuery } from './services/awaiting-finalisation.service';
+import { ActionButtonType } from '../shared/enums/action-button-type';
 
 @Component({
   selector: 'app-marketplace-buy-awaiting-finalisation',
@@ -11,14 +12,14 @@ import { getAwaitingFinalisationDataProductsQuery } from './services/awaiting-fi
 })
 export class MarketplaceBuyAwaitingFinalisationComponent implements OnDestroy {
   public availableActions = [
-    'cancelPurchase'
+    ActionButtonType.CancelPurchase
   ];
   public displayedColumns = [
     'name',
     'title',
     'category',
     'price',
-    'transactionDate',
+    'orderDate',
     'deliveryDeadline',
     'eula',
     'actions'

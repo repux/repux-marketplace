@@ -1,15 +1,17 @@
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { DataProduct } from '../../shared/models/data-product';
-import { MatDialog } from '@angular/material';
 import { DataProductService } from '../../services/data-product.service';
 import { WalletService } from '../../services/wallet.service';
 import Wallet from '../../shared/models/wallet';
 import { ClockService } from '../../services/clock.service';
 import { Subscription } from 'rxjs/internal/Subscription';
-import { DataProductTransaction as BlockchainDataProductTransaction } from 'repux-web3-api';
-import { TransactionDialogComponent } from '../../shared/components/transaction-dialog/transaction-dialog.component';
+import { DataProductOrder as BlockchainDataProductOrder, TransactionReceipt, TransactionStatus } from 'repux-web3-api';
 import { AwaitingFinalisationService } from '../services/awaiting-finalisation.service';
 import { EventAction, EventCategory, TagManagerService } from '../../shared/services/tag-manager.service';
+import { Transaction, TransactionService } from '../../shared/services/transaction.service';
+import { ActionButtonType } from '../../shared/enums/action-button-type';
+import { BlockchainTransactionScope } from '../../shared/enums/blockchain-transaction-scope';
+import { CommonDialogService } from '../../shared/services/common-dialog.service';
 
 @Component({
   selector: 'app-marketplace-cancel-purchase-button',
@@ -17,30 +19,32 @@ import { EventAction, EventCategory, TagManagerService } from '../../shared/serv
 })
 export class MarketplaceCancelPurchaseButtonComponent implements OnInit, OnDestroy {
   @Input() dataProduct: DataProduct;
-  @Input() blockchainBuyTransaction: BlockchainDataProductTransaction;
+  @Input() blockchainDataProductOrder: BlockchainDataProductOrder;
 
   public dataProductAddress: string;
   public wallet: Wallet;
   public isAfterDeliveryDeadline: boolean;
   public isAwaiting: boolean;
+  public pendingTransaction: Transaction;
 
-  private _clockSubscription: Subscription;
-  private _walletSubscription: Subscription;
-  private _awaitingFinalisationSubscription: Subscription;
-  private _transactionDialogSubscription: Subscription;
+  private clockSubscription: Subscription;
+  private walletSubscription: Subscription;
+  private awaitingFinalisationSubscription: Subscription;
+  private transactionsSubscription: Subscription;
 
   constructor(
-    private _walletService: WalletService,
-    private _dataProductService: DataProductService,
-    private _dialog: MatDialog,
-    private _clockService: ClockService,
-    private _awaitingFinalisationService: AwaitingFinalisationService,
-    private _tagManager: TagManagerService
+    private walletService: WalletService,
+    private dataProductService: DataProductService,
+    private clockService: ClockService,
+    private awaitingFinalisationService: AwaitingFinalisationService,
+    private tagManager: TagManagerService,
+    private transactionService: TransactionService,
+    private commonDialogService: CommonDialogService
   ) {
   }
 
   get userIsBuyer(): boolean {
-    return Boolean(this.blockchainBuyTransaction);
+    return Boolean(this.blockchainDataProductOrder);
   }
 
   get isDisabled(): boolean {
@@ -53,72 +57,93 @@ export class MarketplaceCancelPurchaseButtonComponent implements OnInit, OnDestr
 
   ngOnInit() {
     this.dataProductAddress = this.dataProduct.address;
-    this._walletSubscription = this._walletService.getWallet().subscribe(wallet => this._onWalletChange(wallet));
-    this._clockSubscription = this._clockService.onEachSecond().subscribe(date => {
+
+    this.walletSubscription = this.walletService.getWallet().subscribe(wallet => this.onWalletChange(wallet));
+
+    this.clockSubscription = this.clockService.onEachSecond().subscribe(date => {
       this.isAfterDeliveryDeadline = this.checkIfAfterDeliveryDeadline(date);
     });
-    this._awaitingFinalisationSubscription = this._awaitingFinalisationService.getProducts()
-      .subscribe(() => this._checkIfIsAwaiting());
+
+    this.awaitingFinalisationSubscription = this.awaitingFinalisationService.getProducts()
+      .subscribe(() => this.checkIfIsAwaiting());
+
+    this.transactionsSubscription = this.transactionService.getTransactions()
+      .subscribe(transactions => this.onTransactionsListChange(transactions));
+  }
+
+  onTransactionFinish(transactionReceipt: TransactionReceipt) {
+    if (transactionReceipt.status === TransactionStatus.SUCCESSFUL) {
+      this.awaitingFinalisationService.removeProduct(this.dataProduct);
+      this.dataProduct.orders = this.dataProduct.orders.filter(order =>
+        order.buyerAddress !== this.blockchainDataProductOrder.buyerAddress
+      );
+      delete this.blockchainDataProductOrder;
+
+      this.tagManager.sendEvent(
+        EventCategory.Buy,
+        EventAction.CancelPendingOrderConfirmed,
+        this.dataProduct.title,
+        this.dataProduct.price ? this.dataProduct.price.toString() : ''
+      );
+    }
+  }
+
+  async onTransactionsListChange(transactions: Transaction[]) {
+    const foundTransaction = transactions.find(transaction =>
+      transaction.scope === BlockchainTransactionScope.DataProduct &&
+      transaction.identifier === this.dataProductAddress &&
+      transaction.blocksAction === ActionButtonType.CancelPurchase
+    );
+
+    if (this.pendingTransaction && !foundTransaction) {
+      this.onTransactionFinish(
+        await this.transactionService.getTransactionReceipt(this.pendingTransaction.transactionHash)
+      );
+    }
+
+    this.pendingTransaction = foundTransaction;
   }
 
   cancelPurchase() {
-    this._tagManager.sendEvent(
+    this.tagManager.sendEvent(
       EventCategory.Buy,
-      EventAction.CancelPendingTransaction,
+      EventAction.CancelPendingOrder,
       this.dataProduct.title,
       this.dataProduct.price ? this.dataProduct.price.toString() : ''
     );
 
-    const transactionDialogRef = this._dialog.open(TransactionDialogComponent, {
-      disableClose: true
-    });
-    this._unsubscribeTransactionDialog();
-    this._transactionDialogSubscription = transactionDialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        this._awaitingFinalisationService.removeProduct(this.dataProduct);
-        this.dataProduct.transactions = this.dataProduct.transactions.filter(transaction =>
-          transaction.buyerAddress !== this.blockchainBuyTransaction.buyerAddress
-        );
-        delete this.blockchainBuyTransaction;
-
-        this._tagManager.sendEvent(
-          EventCategory.Buy,
-          EventAction.CancelPendingTransactionConfirmed,
-          this.dataProduct.title,
-          this.dataProduct.price ? this.dataProduct.price.toString() : ''
-        );
-      }
-    });
-    const transactionDialog: TransactionDialogComponent = transactionDialogRef.componentInstance;
-    transactionDialog.transaction = () => this._dataProductService.cancelDataProductPurchase(this.dataProductAddress);
-    transactionDialog.callTransaction();
+    this.commonDialogService.transaction(
+      () => this.dataProductService.cancelDataProductPurchase(this.dataProductAddress)
+    );
   }
 
   ngOnDestroy() {
-    if (this._clockSubscription) {
-      this._clockSubscription.unsubscribe();
+    if (this.clockSubscription) {
+      this.clockSubscription.unsubscribe();
     }
 
-    if (this._walletSubscription) {
-      this._walletSubscription.unsubscribe();
+    if (this.walletSubscription) {
+      this.walletSubscription.unsubscribe();
     }
 
-    if (this._awaitingFinalisationSubscription) {
-      this._awaitingFinalisationSubscription.unsubscribe();
+    if (this.awaitingFinalisationSubscription) {
+      this.awaitingFinalisationSubscription.unsubscribe();
     }
 
-    this._unsubscribeTransactionDialog();
+    if (this.transactionsSubscription) {
+      this.transactionsSubscription.unsubscribe();
+    }
   }
 
   checkIfAfterDeliveryDeadline(date: Date) {
-    if (!this.blockchainBuyTransaction) {
+    if (!this.blockchainDataProductOrder) {
       return false;
     }
 
-    return date > this.blockchainBuyTransaction.deliveryDeadline;
+    return date > this.blockchainDataProductOrder.deliveryDeadline;
   }
 
-  private _onWalletChange(wallet: Wallet) {
+  private onWalletChange(wallet: Wallet) {
     if (!wallet || wallet === this.wallet) {
       return;
     }
@@ -126,14 +151,7 @@ export class MarketplaceCancelPurchaseButtonComponent implements OnInit, OnDestr
     this.wallet = wallet;
   }
 
-  private _unsubscribeTransactionDialog() {
-    if (this._transactionDialogSubscription) {
-      this._transactionDialogSubscription.unsubscribe();
-      this._transactionDialogSubscription = null;
-    }
-  }
-
-  private _checkIfIsAwaiting() {
-    this.isAwaiting = Boolean(this._awaitingFinalisationService.findProduct(this.dataProductAddress));
+  private checkIfIsAwaiting() {
+    this.isAwaiting = Boolean(this.awaitingFinalisationService.findProduct(this.dataProductAddress));
   }
 }

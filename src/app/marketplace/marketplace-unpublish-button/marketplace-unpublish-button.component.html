@@ -1,6 +1,9 @@
 <div *ngIf="!blockchainDataProduct.disabled && wallet && userIsOwner">
   <button mat-stroked-button
+          *ngIf="!hasPendingTransaction"
           color="warn"
           (click)="unpublish()">Unpublish
   </button>
+
+  <span *ngIf="hasPendingTransaction">Unpublishing...</span>
 </div>

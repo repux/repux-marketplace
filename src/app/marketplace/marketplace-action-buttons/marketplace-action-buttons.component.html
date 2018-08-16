@@ -1,30 +1,30 @@
 <div *ngIf="!loading" class="action-buttons">
   <app-marketplace-buy-product-button
-    *ngIf="availableActions.includes('buy')"
+    *ngIf="availableActions.includes(actionButtonType.Buy)"
     [dataProduct]="dataProduct"
-    [blockchainBuyTransaction]="blockchainBuyTransaction"></app-marketplace-buy-product-button>
+    [blockchainDataProductOrder]="blockchainDataProductOrder"></app-marketplace-buy-product-button>
 
   <app-marketplace-cancel-purchase-button
-    *ngIf="availableActions.includes('cancelPurchase')"
+    *ngIf="availableActions.includes(actionButtonType.CancelPurchase)"
     [dataProduct]="dataProduct"
-    [blockchainBuyTransaction]="blockchainBuyTransaction"></app-marketplace-cancel-purchase-button>
+    [blockchainDataProductOrder]="blockchainDataProductOrder"></app-marketplace-cancel-purchase-button>
 
-  <app-marketplace-rate-transaction-button
-    *ngIf="availableActions.includes('rate')"
+  <app-marketplace-rate-order-button
+    *ngIf="availableActions.includes(actionButtonType.Rate)"
     [dataProduct]="dataProduct"
-    [blockchainBuyTransaction]="blockchainBuyTransaction"></app-marketplace-rate-transaction-button>
+    [blockchainDataProductOrder]="blockchainDataProductOrder"></app-marketplace-rate-order-button>
 
   <app-marketplace-publish-button
-    *ngIf="availableActions.includes('publish')"
+    *ngIf="availableActions.includes(actionButtonType.Publish)"
     [dataProduct]="dataProduct"></app-marketplace-publish-button>
 
   <app-marketplace-unpublish-button
-    *ngIf="availableActions.includes('unpublish')"
+    *ngIf="availableActions.includes(actionButtonType.Unpublish)"
     [dataProduct]="dataProduct"
     [blockchainDataProduct]="dataProduct.blockchainState"></app-marketplace-unpublish-button>
 
   <app-marketplace-withdraw-button
-    *ngIf="availableActions.includes('withdraw')"
+    *ngIf="availableActions.includes(actionButtonType.Withdraw)"
     [dataProduct]="dataProduct"
     [blockchainDataProduct]="blockchainDataProduct"></app-marketplace-withdraw-button>
 </div>
