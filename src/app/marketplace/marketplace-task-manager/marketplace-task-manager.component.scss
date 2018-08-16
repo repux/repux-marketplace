@@ -1,7 +1,18 @@
 mat-dialog-content {
   padding: 0;
   margin: -24px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  height: 100%;
+  max-width: calc(100vw - 115px);
   width: 450px;
+  border-radius: 2px;
+  background: #fff;
+}
+
+.mat-drawer-container {
+  overflow: scroll;
 }
 
 .spacer {
@@ -13,6 +24,10 @@ mat-dialog-content {
   margin: 0 10px;
   padding: 10px 0;
 
+  &:last-child {
+    border-bottom: none;
+  }
+
   &_status {
     font-weight: bold;
     text-transform: uppercase;
@@ -22,9 +37,11 @@ mat-dialog-content {
 .row {
   display: flex;
   flex-direction: row;
+  align-items: center;
+  margin: 0 10px;
 
-  &:first-child {
-    margin-bottom: 5px;
+  &.without-margin {
+    margin: 0;
   }
 
   > span {
@@ -39,4 +56,34 @@ button {
 
 .mat-progress-spinner {
   display: inline-block;
+}
+
+.mat-toolbar {
+  min-height: 64px;
+  padding-right: 10px;
+  font-weight: 400;
+  font-size: 1.1rem;
+}
+
+.status {
+  margin-right: 10px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.toolbar-title {
+  margin-left: 15px;
+}
+
+.open-button {
+  margin: -25px;
+  width: 60px;
+  height: 60px;
+}
+
+.tasks-list {
+  flex: 1;
+  height: 100%;
+  overflow: auto;
 }

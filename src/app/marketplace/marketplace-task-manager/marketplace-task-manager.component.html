@@ -1,42 +1,70 @@
-<mat-dialog-content>
+<button mat-button
+        mat-fab
+        *ngIf="!opened"
+        (click)="openDialog()"
+        class="open-button"
+        color="primary"
+        [matBadge]="tasks.length"
+        matBadgePosition="above after"
+        matBadgeColor="accent"
+        matBadgeSize="medium">
+  <mat-icon>list</mat-icon>
+</button>
+
+<mat-dialog-content *ngIf=" opened" class="mat-elevation-z8">
   <mat-toolbar color="primary">
-    <span>Current tasks</span>
+    <mat-icon
+      [matBadge]="tasks.length"
+      matBadgeColor="accent"
+      matBadgeSize="medium">list
+    </mat-icon>
+    <span class="toolbar-title">Current tasks</span>
     <span class="spacer"></span>
-    <button mat-icon-button (click)="closeDialog()">
+    <button mat-icon-button (click)="closeDialog()" matTooltip="Close window">
       <mat-icon>close</mat-icon>
     </button>
   </mat-toolbar>
 
-  <div class="item mat-body-1" *ngFor="let task of tasks">
-    <div class="row" *ngIf="!task.finished">
-      <span class="item_status">{{ task.status }}</span>
-      <span class="spacer"></span>
-      <app-marketplace-action-buttons
-        *ngIf="task.dataProduct"
-        [availableActions]="[task.actionButton]"
-        [dataProduct]="task.dataProduct"></app-marketplace-action-buttons>
-      <button mat-button *ngIf="task.progress < 100" (click)="task.cancel()">Cancel</button>
-    </div>
-    <div class="row" *ngIf="task.errors.length">
-      <span class="item_status" *ngIf="task.errors[0] === taskError.EncryptionError">Encryption error</span>
-      <span class="item_status" *ngIf="task.errors[0] === taskError.ReencryptionError">Re-encryption error</span>
-      <span class="item_status" *ngIf="task.errors[0] === taskError.DecryptionError">Decryption error</span>
-      <span class="item_status"
-            *ngIf="![ taskError.EncryptionError, taskError.ReencryptionError, taskError.DecryptionError ].includes(task.errors[0])">
-        {{ task.errors[0] }}</span>
-    </div>
-    <div class="row">
-      <span class="item_name">{{ task.name }}</span>
-      <span class="spacer"></span>
-      <mat-progress-spinner
-        *ngIf="task.progress < 100 && !task.finished"
-        mode="determinate"
-        [value]="task.progress"
-        [strokeWidth]="4"
-        [diameter]="24">
-      </mat-progress-spinner>
-      <mat-icon *ngIf="task.finished && !task.errors.length">check_circle</mat-icon>
-      <mat-icon *ngIf="task.finished && task.errors.length">error</mat-icon>
+  <div class="tasks-list">
+    <div class="item mat-body-1" *ngFor="let task of tasks.slice().reverse()">
+      <div class="row" *ngIf="!task.finished">
+        <span class="item_status">{{ task.status }}</span>
+        <span class="spacer"></span>
+        <app-marketplace-action-buttons
+          *ngIf="task.dataProduct"
+          [availableActions]="[task.actionButton]"
+          [dataProduct]="task.dataProduct"></app-marketplace-action-buttons>
+        <button mat-button *ngIf="task.progress < 100" (click)="task.cancel()">Cancel</button>
+      </div>
+      <div class="row" *ngIf="task.errors.length">
+        <span class="item_status" *ngIf="task.errors[0] === taskError.EncryptionError">Encryption error</span>
+        <span class="item_status" *ngIf="task.errors[0] === taskError.ReencryptionError">Re-encryption error</span>
+        <span class="item_status" *ngIf="task.errors[0] === taskError.DecryptionError">Decryption error</span>
+        <span class="item_status"
+              *ngIf="![ taskError.EncryptionError, taskError.ReencryptionError, taskError.DecryptionError ].includes(task.errors[0])">
+          {{ task.errors[0] }}</span>
+      </div>
+      <div class="row without-margin">
+        <div class="status">
+          <mat-progress-spinner
+            *ngIf="task.progress < 100 && !task.finished"
+            mode="determinate"
+            [value]="task.progress"
+            [strokeWidth]="4"
+            [diameter]="24">
+          </mat-progress-spinner>
+          <mat-icon *ngIf="task.finished && !task.errors.length" color="primary">check_circle</mat-icon>
+          <mat-icon *ngIf="task.finished && task.errors.length" color="warn">error</mat-icon>
+        </div>
+        <span class="item_name">{{ task.name }}</span>
+        <span class="spacer"></span>
+        <button mat-icon-button
+                *ngIf="task.finished"
+                (click)="removeTask(task)"
+                matTooltip="Remove task">
+          <mat-icon>close</mat-icon>
+        </button>
+      </div>
     </div>
   </div>
 </mat-dialog-content>

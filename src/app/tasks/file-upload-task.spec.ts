@@ -2,7 +2,6 @@ import { FileUploadTask, STATUS } from './file-upload-task';
 import BigNumber from 'bignumber.js';
 import { EventType } from 'repux-lib';
 import { EulaSelection } from '../marketplace/marketplace-eula-selector/marketplace-eula-selector.component';
-import { TagManagerService } from '../shared/services/tag-manager.service';
 import { IpfsService } from '../services/ipfs.service';
 import { RepuxLibService } from '../services/repux-lib.service';
 import { DataProductService } from '../services/data-product.service';
@@ -14,7 +13,7 @@ import { ActionButtonType } from '../shared/enums/action-button-type';
 describe('FileUploadTask()', () => {
   let fileUploadTask: FileUploadTask, dataProductServiceSpy, repuxLibServiceSpy, fileUploader, fileUploaderUploadSpy,
     fileUploaderOnSpy, taskManagerServiceSpy, uploaderEventHandlers, fileUploaderTerminateSpy, unpublishedProductsServiceSpy,
-    matDialogSpy, callTransaction, transactionResult, tagManagerServiceSpy, ipfsServiceSpy;
+    matDialogSpy, callTransaction, transactionResult, transactionServiceSpy, ipfsServiceSpy;
   const fileName = 'FILE_NAME';
   const publicKey = 'PUBLIC_KEY';
   const title = 'TITLE';
@@ -73,7 +72,15 @@ describe('FileUploadTask()', () => {
         };
       }
     });
-    tagManagerServiceSpy = jasmine.createSpyObj('TagManagerService', [ 'sendEvent' ]);
+    transactionServiceSpy = jasmine.createSpyObj('TransactionService', [ 'getTransactions' ]);
+    transactionServiceSpy.getTransactions.and.returnValue({
+      subscribe() {
+        return {
+          unsubscribe() {
+          }
+        };
+      }
+    });
     ipfsServiceSpy = jasmine.createSpyObj('IpfsService', [ 'uploadFile' ]);
 
     fileUploadTask = new FileUploadTask(
@@ -95,7 +102,7 @@ describe('FileUploadTask()', () => {
       dataProductServiceSpy,
       unpublishedProductsServiceSpy,
       ipfsServiceSpy,
-      tagManagerServiceSpy
+      transactionServiceSpy
     );
   });
 
@@ -114,12 +121,12 @@ describe('FileUploadTask()', () => {
       expect(fileUploadTask[ '_maxNumberOfDownloads' ]).toBe(maxNumberOfDownloads);
       expect(fileUploadTask[ '_purchaseType' ]).toBe(type);
       expect(fileUploadTask[ '_uploader' ]).toBe(fileUploader);
-      expect(fileUploadTask.name).toBe('Creating ' + fileName);
+      expect(fileUploadTask.name).toBe('Uploading ' + fileName);
       expect(fileUploadTask[ '_repuxLibService' ]).toBe(repuxLibServiceSpy);
       expect(fileUploadTask[ '_dataProductService' ]).toBe(dataProductServiceSpy);
       expect(fileUploadTask[ '_unpublishedProductsService' ]).toBe(unpublishedProductsServiceSpy);
       expect(fileUploadTask[ '_ipfsService' ]).toBe(ipfsServiceSpy);
-      expect(fileUploadTask[ '_tagManager' ]).toBe(tagManagerServiceSpy);
+      expect(fileUploadTask[ 'transactionService' ]).toBe(transactionServiceSpy);
     });
   });
 
