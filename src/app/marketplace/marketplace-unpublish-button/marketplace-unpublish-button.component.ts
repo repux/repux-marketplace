@@ -65,6 +65,8 @@ export class MarketplaceUnpublishButtonComponent implements OnInit, OnDestroy {
         this.dataProduct.price ? this.dataProduct.price.toString() : ''
       );
     }
+
+    delete this.pendingTransaction;
   }
 
   async onTransactionsListChange(transactions: Transaction[]) {
@@ -78,9 +80,9 @@ export class MarketplaceUnpublishButtonComponent implements OnInit, OnDestroy {
       this.onTransactionFinish(
         await this.transactionService.getTransactionReceipt(this.pendingTransaction.transactionHash)
       );
+    } else {
+      this.pendingTransaction = foundTransaction;
     }
-
-    this.pendingTransaction = foundTransaction;
   }
 
   unpublish() {

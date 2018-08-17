@@ -6024,19 +6024,19 @@ repeating@^2.0.0:
     ipfs-api "^20.0.0"
     threads "^0.10.1"
 
-"repux-smart-contracts@git+ssh://git@github.com:repux/repux-smart-contracts#255e4852217c41a63f7c58e69d2c95bcb2e9e76d":
+"repux-smart-contracts@git+ssh://git@github.com:repux/repux-smart-contracts#a3ba6c04e655874f14effeb722baddc53282d3fe":
   version "1.2.0"
-  resolved "git+ssh://git@github.com:repux/repux-smart-contracts#255e4852217c41a63f7c58e69d2c95bcb2e9e76d"
+  resolved "git+ssh://git@github.com:repux/repux-smart-contracts#a3ba6c04e655874f14effeb722baddc53282d3fe"
   dependencies:
     truffle "^4.0.1"
 
-"repux-web3-api@git+ssh://git@github.com:repux/repux-web3-api.git#1.5.0":
-  version "1.5.0"
-  resolved "git+ssh://git@github.com:repux/repux-web3-api.git#153c7f3fd6fb63344e27ba033d96fb7e89834003"
+"repux-web3-api@git+ssh://git@github.com:repux/repux-web3-api.git#7125977a65bc64e15fb7d14f2bbc6b96294033d4":
+  version "1.4.1"
+  resolved "git+ssh://git@github.com:repux/repux-web3-api.git#7125977a65bc64e15fb7d14f2bbc6b96294033d4"
   dependencies:
     bignumber.js "^7.2.0"
     fs-extra "^7.0.0"
-    repux-smart-contracts "git+ssh://git@github.com:repux/repux-smart-contracts#255e4852217c41a63f7c58e69d2c95bcb2e9e76d"
+    repux-smart-contracts "git+ssh://git@github.com:repux/repux-smart-contracts#a3ba6c04e655874f14effeb722baddc53282d3fe"
     web3 "^0.20.6"
 
 request@2.87.0, request@^2.74.0, request@^2.83.0, request@^2.87.0:

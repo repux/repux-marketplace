@@ -9,7 +9,7 @@ import Wallet from '../models/wallet';
 import { BehaviorSubject } from 'rxjs/internal/BehaviorSubject';
 import { TransactionEvent } from '../models/transaction-event';
 import { TransactionEventType } from '../enums/transaction-event-type';
-import { TransactionReceipt } from 'repux-web3-api';
+import { TransactionReceipt, TransactionStatus } from 'repux-web3-api';
 
 export interface Transaction {
   transactionHash: string;
@@ -48,18 +48,30 @@ export class TransactionService implements OnDestroy {
 
   async handleTransaction(subject: BehaviorSubject<TransactionEvent>, scope: BlockchainTransactionScope, identifier: string,
                           blocksAction: ActionButtonType, transaction: () => Promise<string>): Promise<void> {
+    let transactionHash;
+
     try {
       subject.next({ type: TransactionEventType.Created });
 
-      const transactionHash = await transaction();
+      transactionHash = await transaction();
       this.addTransaction({ transactionHash, scope, identifier, blocksAction });
       subject.next({ type: TransactionEventType.Confirmed });
 
       const transactionReceipt = await this.getTransactionReceipt(transactionHash);
+
+      if (transactionReceipt.status === TransactionStatus.FAILED) {
+        throw new Error('Unknown error');
+      }
+
       this.removeTransaction({ transactionHash, scope, identifier, blocksAction });
       subject.next({ type: TransactionEventType.Mined, receipt: transactionReceipt });
     } catch (error) {
       console.warn(error);
+
+      if (transactionHash) {
+        this.removeTransaction({ transactionHash, scope, identifier, blocksAction });
+      }
+
       subject.next({ type: TransactionEventType.Rejected, error });
     }
 

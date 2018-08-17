@@ -62,6 +62,8 @@ export class MarketplaceRateOrderButtonComponent implements OnDestroy, OnInit {
     if (transactionReceipt.status === TransactionStatus.SUCCESSFUL) {
       this.blockchainDataProductOrder.rating = this.selectedRating;
     }
+
+    delete this.pendingTransaction;
   }
 
   async onTransactionsListChange(transactions: Transaction[]) {
@@ -75,9 +77,9 @@ export class MarketplaceRateOrderButtonComponent implements OnDestroy, OnInit {
       this.onTransactionFinish(
         await this.transactionService.getTransactionReceipt(this.pendingTransaction.transactionHash)
       );
+    } else {
+      this.pendingTransaction = foundTransaction;
     }
-
-    this.pendingTransaction = foundTransaction;
   }
 
   ngOnDestroy(): void {

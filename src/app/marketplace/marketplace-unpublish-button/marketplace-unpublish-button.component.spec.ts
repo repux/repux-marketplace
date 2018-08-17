@@ -103,6 +103,12 @@ describe('MarketplaceUnpublishButtonComponent', () => {
 
   describe('#onTransactionFinish()', () => {
     it('should finalise transaction when transactionReceipt.status is successful', () => {
+      component.pendingTransaction = {
+        scope: BlockchainTransactionScope.DataProduct,
+        identifier: dataProductAddress,
+        blocksAction: ActionButtonType.Unpublish
+      } as Transaction;
+
       const addProductToUnpublishedProducts = jasmine.createSpy();
       component.addProductToUnpublishedProducts = addProductToUnpublishedProducts;
 
@@ -110,6 +116,7 @@ describe('MarketplaceUnpublishButtonComponent', () => {
 
       expect(addProductToUnpublishedProducts.calls.count()).toBe(1);
       expect(component.blockchainDataProduct.disabled).toBe(true);
+      expect(component.pendingTransaction).toBe(undefined);
     });
   });
 
@@ -128,7 +135,7 @@ describe('MarketplaceUnpublishButtonComponent', () => {
       expect(component.pendingTransaction).not.toBe(undefined);
     });
 
-    it('should unset pendingTransaction and call onTransactionFinish when transaction list not contains related transaction', async () => {
+    it('should call onTransactionFinish when transaction list not contains related transaction', async () => {
       const onTransactionFinish = jasmine.createSpy();
       component.onTransactionFinish = onTransactionFinish;
 
@@ -140,7 +147,6 @@ describe('MarketplaceUnpublishButtonComponent', () => {
 
       await component.onTransactionsListChange([]);
 
-      expect(component.pendingTransaction).toBe(undefined);
       expect(onTransactionFinish.calls.count()).toBe(1);
       expect(onTransactionFinish.calls.allArgs()[ 0 ]).toEqual([ { status: TransactionStatus.SUCCESSFUL } ]);
     });

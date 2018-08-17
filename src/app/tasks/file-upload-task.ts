@@ -152,6 +152,8 @@ export class FileUploadTask implements Task {
       this._status = STATUS.FINISHED;
       this.destroy();
     }
+
+    delete this.pendingTransaction;
   }
 
   async onTransactionsListChange(transactions: Transaction[]) {
@@ -165,9 +167,9 @@ export class FileUploadTask implements Task {
       this.onTransactionFinish(
         await this.transactionService.getTransactionReceipt(this.pendingTransaction.transactionHash)
       );
+    } else {
+      this.pendingTransaction = foundTransaction;
     }
-
-    this.pendingTransaction = foundTransaction;
   }
 
   async uploadSampleFiles(sampleFiles?: FileList): Promise<Attachment[]> {
