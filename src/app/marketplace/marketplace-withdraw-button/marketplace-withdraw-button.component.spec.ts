@@ -95,11 +95,18 @@ describe('MarketplaceWithdrawButtonComponent', () => {
 
   describe('#onTransactionFinish()', () => {
     it('should finalise transaction when transactionReceipt.status is successful', () => {
+      component.pendingTransaction = {
+        scope: BlockchainTransactionScope.DataProduct,
+        identifier: dataProductAddress,
+        blocksAction: ActionButtonType.Withdraw
+      } as Transaction;
+
       component.fundsToWithdraw = new BigNumber(100);
 
       component.onTransactionFinish({ status: TransactionStatus.SUCCESSFUL } as TransactionReceipt);
 
       expect(component.fundsToWithdraw).toEqual(new BigNumber(0));
+      expect(component.pendingTransaction).toBe(undefined);
     });
   });
 
@@ -118,7 +125,7 @@ describe('MarketplaceWithdrawButtonComponent', () => {
       expect(component.pendingTransaction).not.toBe(undefined);
     });
 
-    it('should unset pendingTransaction and call onTransactionFinish when transaction list not contains related transaction', async () => {
+    it('should call onTransactionFinish when transaction list not contains related transaction', async () => {
       const onTransactionFinish = jasmine.createSpy();
       component.onTransactionFinish = onTransactionFinish;
 
@@ -130,7 +137,6 @@ describe('MarketplaceWithdrawButtonComponent', () => {
 
       await component.onTransactionsListChange([]);
 
-      expect(component.pendingTransaction).toBe(undefined);
       expect(onTransactionFinish.calls.count()).toBe(1);
       expect(onTransactionFinish.calls.allArgs()[ 0 ]).toEqual([ { status: TransactionStatus.SUCCESSFUL } ]);
     });

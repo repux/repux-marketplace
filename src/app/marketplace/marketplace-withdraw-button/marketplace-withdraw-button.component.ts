@@ -57,6 +57,8 @@ export class MarketplaceWithdrawButtonComponent implements OnInit, OnDestroy, On
         this.dataProduct.fundsToWithdraw ? this.dataProduct.fundsToWithdraw.toString() : ''
       );
     }
+
+    delete this.pendingTransaction;
   }
 
   async onTransactionsListChange(transactions: Transaction[]) {
@@ -70,9 +72,9 @@ export class MarketplaceWithdrawButtonComponent implements OnInit, OnDestroy, On
       this.onTransactionFinish(
         await this.transactionService.getTransactionReceipt(this.pendingTransaction.transactionHash)
       );
+    } else {
+      this.pendingTransaction = foundTransaction;
     }
-
-    this.pendingTransaction = foundTransaction;
   }
 
   ngOnChanges() {

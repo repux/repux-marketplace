@@ -105,10 +105,17 @@ describe('MarketplaceCancelPurchaseButtonComponent', () => {
 
   describe('#onTransactionFinish()', () => {
     it('should finalise transaction when transactionReceipt.status is successful', () => {
+      component.pendingTransaction = {
+        scope: BlockchainTransactionScope.DataProduct,
+        identifier: dataProductAddress,
+        blocksAction: ActionButtonType.CancelPurchase
+      } as Transaction;
+
       component.onTransactionFinish({ status: TransactionStatus.SUCCESSFUL } as TransactionReceipt);
 
       expect(awaitingFinalisationServiceSpy.removeProduct.calls.count()).toBe(1);
       expect(component.blockchainDataProductOrder).toBe(undefined);
+      expect(component.pendingTransaction).toBe(undefined);
     });
   });
 
@@ -127,7 +134,7 @@ describe('MarketplaceCancelPurchaseButtonComponent', () => {
       expect(component.pendingTransaction).not.toBe(undefined);
     });
 
-    it('should unset pendingTransaction and call onTransactionFinish when transaction list not contains related transaction', async () => {
+    it('should call onTransactionFinish when transaction list not contains related transaction', async () => {
       const onTransactionFinish = jasmine.createSpy();
       component.onTransactionFinish = onTransactionFinish;
 
@@ -139,7 +146,6 @@ describe('MarketplaceCancelPurchaseButtonComponent', () => {
 
       await component.onTransactionsListChange([]);
 
-      expect(component.pendingTransaction).toBe(undefined);
       expect(onTransactionFinish.calls.count()).toBe(1);
       expect(onTransactionFinish.calls.allArgs()[ 0 ]).toEqual([ { status: TransactionStatus.SUCCESSFUL } ]);
     });

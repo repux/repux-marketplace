@@ -83,6 +83,8 @@ export class MarketplaceBuyProductButtonComponent implements OnInit, OnDestroy {
       this.dialog.open(MarketplacePurchaseConfirmationDialogComponent);
       this.emitBuyConfirmedEvent(transactionReceipt);
     }
+
+    delete this.pendingTransaction;
   }
 
   async onTransactionsListChange(transactions: Transaction[]) {
@@ -93,10 +95,12 @@ export class MarketplaceBuyProductButtonComponent implements OnInit, OnDestroy {
     );
 
     if (this.pendingApproveTransaction && !foundApproveTransaction) {
-      this.onApproveTransactionFinish();
+      this.onApproveTransactionFinish(
+        await this.transactionService.getTransactionReceipt(this.pendingApproveTransaction.transactionHash)
+      );
+    } else {
+      this.pendingApproveTransaction = foundApproveTransaction;
     }
-
-    this.pendingApproveTransaction = foundApproveTransaction;
 
     const foundTransaction = transactions.find(transaction =>
       transaction.scope === BlockchainTransactionScope.DataProduct &&
@@ -108,18 +112,22 @@ export class MarketplaceBuyProductButtonComponent implements OnInit, OnDestroy {
       this.onTransactionFinish(
         await this.transactionService.getTransactionReceipt(this.pendingTransaction.transactionHash)
       );
+    } else {
+      this.pendingTransaction = foundTransaction;
     }
-
-    this.pendingTransaction = foundTransaction;
   }
 
-  async onApproveTransactionFinish() {
-    const { publicKey } = await this.getKeys();
-    const serializedKey = await this.repuxLibService.getInstance().serializePublicKey(publicKey);
+  async onApproveTransactionFinish(transactionReceipt: TransactionReceipt) {
+    if (transactionReceipt.status === TransactionStatus.SUCCESSFUL) {
+      const { publicKey } = await this.getKeys();
+      const serializedKey = await this.repuxLibService.getInstance().serializePublicKey(publicKey);
 
-    this.commonDialogService.transaction(
-      () => this.dataProductService.purchaseDataProduct(this.dataProductAddress, serializedKey)
-    );
+      this.commonDialogService.transaction(
+        () => this.dataProductService.purchaseDataProduct(this.dataProductAddress, serializedKey)
+      );
+    }
+
+    delete this.pendingApproveTransaction;
   }
 
   buyDataProduct(): MatDialogRef<MarketplaceBeforeBuyConfirmationDialogComponent> {

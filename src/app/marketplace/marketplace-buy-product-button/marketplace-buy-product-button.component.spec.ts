@@ -18,6 +18,7 @@ import { BrowserDynamicTestingModule } from '@angular/platform-browser-dynamic/t
 import { CurrencyRepuxPipe } from '../../shared/pipes/currency-repux';
 import { FileSizePipe } from '../../shared/pipes/file-size.pipe';
 import { ArrayJoinPipe } from '../../shared/pipes/array-join.pipe';
+import { TransactionStatus, TransactionReceipt } from 'repux-web3-api';
 
 @Component({ selector: 'app-marketplace-download-product-button', template: '' })
 class DownloadProductButtonStubComponent {
@@ -155,7 +156,7 @@ describe('MarketplaceBuyProductButtonComponent', () => {
         serializePublicKey
       });
 
-      await component.onApproveTransactionFinish();
+      await component.onApproveTransactionFinish({ status: TransactionStatus.SUCCESSFUL } as TransactionReceipt);
 
       expect(dataProductServiceSpy.purchaseDataProduct.calls.count()).toBe(1);
       expect(dataProductServiceSpy.purchaseDataProduct.calls.allArgs()[ 0 ]).toEqual([ dataProductAddress, 'SERIALIZED_PUBLIC_KEY' ]);
