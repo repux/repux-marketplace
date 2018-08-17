@@ -23,6 +23,7 @@ import { PurchaseType } from 'repux-lib';
 import { WalletService } from '../../services/wallet.service';
 import Wallet from '../../shared/models/wallet';
 import { TransactionService } from '../../shared/services/transaction.service';
+import { SettingsService } from '../../settings/services/settings.service';
 
 @Component({
   selector: 'app-marketplace-product-creator-dialog',
@@ -56,6 +57,7 @@ export class MarketplaceProductCreatorDialogComponent implements OnInit, OnDestr
     private unpublishedProductsService: UnpublishedProductsService,
     private ipfsService: IpfsService,
     private walletService: WalletService,
+    private settingsService: SettingsService,
     private transactionService: TransactionService,
     private dialog: MatDialog,
     public dialogRef: MatDialogRef<MarketplaceProductCreatorDialogComponent>) {
@@ -87,17 +89,10 @@ export class MarketplaceProductCreatorDialogComponent implements OnInit, OnDestr
         Validators.required
       ] ],
       sampleFile: [ '', [] ],
-      daysToDeliver: [ 1, [
-        Validators.required
-      ] ],
       eula: [ null, [
         Validators.required
       ] ]
     });
-  }
-
-  get daysToDeliverOptions() {
-    return Array.from(Array(environment.repux.maxDaysToDeliver + 1).keys());
   }
 
   async ngOnInit() {
@@ -134,7 +129,7 @@ export class MarketplaceProductCreatorDialogComponent implements OnInit, OnDestr
       this.categoryInput.value,
       new BigNumber(this.formGroup.value.price),
       this.fileInput.value[ 0 ],
-      this.formGroup.value.daysToDeliver,
+      this.settingsService.daysToDeliver,
       this.sampleFileInput.value,
       this.formGroup.value.eula,
       -1,
