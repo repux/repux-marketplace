@@ -1,5 +1,18 @@
-<mat-form-field *ngIf="flatCategories">
-  <mat-select [placeholder]="placeholder" multiple [required]="required" [formControl]="formControl" [(value)]="value">
+<mat-form-field
+  *ngIf="flatCategories"
+  [class.app-no-underline]="noUnderline"
+  [class.app-no-padding]="noPadding"
+  [floatLabel]="noFloatPlaceholder ? 'never' : 'auto'">
+  <mat-select [placeholder]="placeholder" multiple [required]="required" [formControl]="formControl"
+              [(value)]="value" (valueChange)="onValueChange()">
+    <mat-checkbox class="mat-option mat-checkbox_full-width"
+                  *ngIf="showAllCheckbox"
+                  (click)="$event.stopPropagation()"
+                  (change)="toggleAll($event)"
+                  [checked]="!formControl.value.length || !itemsNotSelected.length"
+                  [disabled]="!formControl.value.length">
+      All categories
+    </mat-checkbox>
     <mat-option *ngFor="let category of flatCategories" [value]="category">
       {{ category }}
     </mat-option>

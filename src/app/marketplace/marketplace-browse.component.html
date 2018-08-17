@@ -1,14 +1,25 @@
-<div *ngIf="(products$ | async) as products; else showSpinner" class="mat-typography">
-  <div class="list-search">
+<div class="list-search">
+  <input class="list-search__input" (keyup)="onTypeAhead($event.target.value)" placeholder="Search for a data">
+  <div class="list-search__accent-area">
+    <app-marketplace-product-category-selector
+      class="list-search__category-selector"
+      [showAllCheckbox]="true"
+      placeholder="All categories"
+      [noUnderline]="true"
+      [noFloatPlaceholder]="true"
+      [noPadding]="true"
+      (valueChange)="onCategoryChange($event)"></app-marketplace-product-category-selector>
     <mat-icon class="list-search__icon">search</mat-icon>
-    <input class="list-search__input" (keyup)="onTypeAhead($event.target.value)" placeholder="Search for a data">
   </div>
+</div>
 
-  <section *ngIf="products.length; else showEmpty">
+<div *ngIf="(products$ | async) as products; else showSpinner" class="mat-typography">
+  <section *ngIf="products.hits.length; else showEmpty">
     <h3 class="list-header">Latest files</h3>
 
     <div class="card-list">
-      <mat-card *ngFor="let product of products" class="card-item" [routerLink]="product.address ? ['details', product.address] : null">
+      <mat-card *ngFor="let product of products.hits" class="card-item"
+                [routerLink]="product.address ? ['details', product.address] : null">
         <mat-card-title>{{ product.title }}</mat-card-title>
 
         <p class="card-item__file-info mat-caption">
@@ -33,7 +44,8 @@
           '' : currencyFormat }}</span>
           </div>
           <div class="card-item__spacer"></div>
-          <app-marketplace-action-buttons  (click)="$event.stopPropagation()"
+          <app-marketplace-action-buttons
+            (click)="$event.stopPropagation()"
             [availableActions]="availableActions"
             [dataProduct]="product"></app-marketplace-action-buttons>
         </mat-card-actions>
@@ -41,7 +53,8 @@
     </div>
     <mat-paginator
       (page)="pageChanged($event)"
-      [length]="products.length"
+      [pageIndex]="from / size"
+      [length]="products.total"
       [(pageSize)]="size"
       [pageSizeOptions]="pageSizeOptions"></mat-paginator>
   </section>

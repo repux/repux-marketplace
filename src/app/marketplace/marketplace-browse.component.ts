@@ -2,15 +2,15 @@ import { Component, OnInit } from '@angular/core';
 import { DataProductListService } from '../services/data-product-list.service';
 import { deepCopy } from '../shared/utils/deep-copy';
 import { DataProduct } from '../shared/models/data-product';
-import { debounceTime, distinctUntilChanged, pluck } from 'rxjs/operators';
+import { debounceTime, distinctUntilChanged, filter } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
 import { Eula } from 'repux-lib/src/repux-lib';
 import { IpfsService } from '../services/ipfs.service';
 import { PageEvent } from '@angular/material';
-import { Subject } from 'rxjs/internal/Subject';
 import { RepuxWeb3Service } from '../services/repux-web3.service';
-import { Observable } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 import { ActionButtonType } from '../shared/enums/action-button-type';
+import { EsResponse } from '../shared/models/es-response';
 
 @Component({
   selector: 'app-marketplace-browse',
@@ -25,10 +25,12 @@ export class MarketplaceBrowseComponent implements OnInit {
   public size: number;
   public from = 0;
   public query = [];
-  public products$: Observable<DataProduct[]>;
+  public categoryFilter = [];
+  public products$: Observable<EsResponse<DataProduct>>;
   public availableActions = [ ActionButtonType.Buy, ActionButtonType.Rate ];
 
-  private inputChangeSubject = new Subject<string>();
+  private inputChangeSubject = new BehaviorSubject<string>(undefined);
+  private categoryChangeSubject = new BehaviorSubject<string[]>(undefined);
   private staticQuery = {
     bool: {
       must: [],
@@ -51,17 +53,29 @@ export class MarketplaceBrowseComponent implements OnInit {
     this.inputChangeSubject
       .pipe(
         debounceTime(500),
-        distinctUntilChanged()
+        distinctUntilChanged(),
+        filter(value => typeof value !== 'undefined')
       )
-      .subscribe(value => this.applyFilter(value));
+      .subscribe(() => this.applyFilter());
+    this.categoryChangeSubject
+      .pipe(
+        debounceTime(500),
+        distinctUntilChanged(),
+        filter(value => typeof value !== 'undefined')
+      )
+      .subscribe(() => this.applyFilter());
+  }
+
+  onCategoryChange(value: string[]) {
+    this.categoryChangeSubject.next(value);
   }
 
   onTypeAhead(value: string) {
     this.inputChangeSubject.next(value);
   }
 
-  applyFilter(filterValue: string): void {
-    const search = filterValue.trim().toLowerCase();
+  applyFilter(): void {
+    const search = (this.inputChangeSubject.getValue() || '').trim().toLowerCase();
 
     this.query = [
       { regexp: { name: '.*"' + search + '".*' } },
@@ -71,6 +85,10 @@ export class MarketplaceBrowseComponent implements OnInit {
       { fuzzy: { title: search } },
       { fuzzy: { category: search } }
     ];
+
+    this.categoryFilter = (this.categoryChangeSubject.getValue() || []).map(category => {
+      return { match: { category } };
+    });
 
     this.from = 0;
     this.refreshData();
@@ -91,6 +109,10 @@ export class MarketplaceBrowseComponent implements OnInit {
     const query = deepCopy(this.staticQuery);
     query.bool.must.push({ bool: { should: this.query } });
 
+    if (this.categoryFilter.length) {
+      query.bool.must.push({ bool: { must: this.categoryFilter } });
+    }
+
     let productsRaw$ = this.dataProductListService.getDataProducts(query, this.sort, this.size, this.from);
     const repuxWeb3Service = await this.repuxWeb3Service;
 
@@ -98,10 +120,7 @@ export class MarketplaceBrowseComponent implements OnInit {
       productsRaw$ = this.dataProductListService.getBlockchainStateForDataProducts(productsRaw$);
     }
 
-    this.products$ = productsRaw$
-      .pipe(
-        pluck('hits')
-      );
+    this.products$ = productsRaw$;
   }
 }
 

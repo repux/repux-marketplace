@@ -74,27 +74,47 @@
 
 .list-search {
   position: relative;
-  padding: 16px;
   border-radius: 2px;
   background: white;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  overflow: hidden;
   color: rgba(0, 0, 0, 0.87);
-  box-shadow: 0 3px 1px -2px rgba(0,0,0,.2), 0 2px 2px 0 rgba(0,0,0,.14), 0 1px 5px 0 rgba(0,0,0,.12);
+  box-shadow: 0 3px 1px -2px rgba(0, 0, 0, .2), 0 2px 2px 0 rgba(0, 0, 0, .14), 0 1px 5px 0 rgba(0, 0, 0, .12);
 
-  &__icon {
-    position: absolute;
-    top: 50%;
-    right: 16px;
-    transform: translateY(-50%);
+  &__accent-area {
+    padding: 9px 16px 9px 16px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    border-left: 1px solid #e4e4e4;
   }
 
   &__input {
     width: 100%;
     border: 0;
-    font-size: 18px;
+    font-size: 16px;
     font-weight: 400;
+    flex: 1;
+    padding: 16px;
 
     &:focus {
       outline: none;
+    }
+  }
+
+  &__category-selector {
+    margin-right: 10px;
+  }
+
+  @media screen and (max-width: 700px) {
+    &__icon {
+      display: none;
+    }
+
+    &__category-selector {
+      max-width: 140px;
     }
   }
 }

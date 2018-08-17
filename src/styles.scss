@@ -56,3 +56,28 @@ a {
   }
 }
 
+.mat-form-field.app-no-underline .mat-form-field-underline {
+  display: none;
+}
+
+.mat-form-field.app-no-padding {
+  .mat-form-field-infix {
+    border-top: none;
+  }
+
+  .mat-form-field-wrapper {
+    padding-bottom: 0;
+  }
+}
+
+.mat-checkbox {
+  &_full-width {
+    .mat-checkbox-layout {
+      width: 100%;
+    }
+
+    .mat-checkbox-label {
+      flex: 1;
+    }
+  }
+}
