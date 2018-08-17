@@ -13,6 +13,7 @@ export class MarketplaceTaskManagerComponent implements OnDestroy {
   tasks: ReadonlyArray<Task> = [];
 
   taskError = TaskError;
+  opened = true;
 
   private tasksSubscription: Subscription;
   private _taskManagerService: TaskManagerService;
@@ -22,9 +23,11 @@ export class MarketplaceTaskManagerComponent implements OnDestroy {
   }
 
   closeDialog() {
-    if (this.taskManagerService) {
-      this.taskManagerService.closeDialog();
-    }
+    this.opened = false;
+  }
+
+  openDialog() {
+    this.opened = true;
   }
 
   setTaskManagerService(taskManagerService: TaskManagerService) {
@@ -38,6 +41,10 @@ export class MarketplaceTaskManagerComponent implements OnDestroy {
 
   ngOnDestroy() {
     this.unsubscribeTasks();
+  }
+
+  removeTask(task: Task) {
+    this._taskManagerService.removeTask(task);
   }
 
   private unsubscribeTasks() {

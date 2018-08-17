@@ -22,6 +22,7 @@ import { createEulaSelection } from '../marketplace-eula-selector/marketplace-eu
 import { PurchaseType } from 'repux-lib';
 import { WalletService } from '../../services/wallet.service';
 import Wallet from '../../shared/models/wallet';
+import { TransactionService } from '../../shared/services/transaction.service';
 
 @Component({
   selector: 'app-marketplace-product-creator-dialog',
@@ -55,6 +56,7 @@ export class MarketplaceProductCreatorDialogComponent implements OnInit, OnDestr
     private unpublishedProductsService: UnpublishedProductsService,
     private ipfsService: IpfsService,
     private walletService: WalletService,
+    private transactionService: TransactionService,
     private dialog: MatDialog,
     public dialogRef: MatDialogRef<MarketplaceProductCreatorDialogComponent>) {
     this.walletSubscription = this.walletService.getWallet().subscribe(wallet => this.wallet = wallet);
@@ -142,7 +144,7 @@ export class MarketplaceProductCreatorDialogComponent implements OnInit, OnDestr
       this.dataProductService,
       this.unpublishedProductsService,
       this.ipfsService,
-      this.tagManager
+      this.transactionService
     );
 
     this.taskManagerService.addTask(fileUploadTask);

@@ -99,6 +99,7 @@ export class MarketplaceDownloadProductButtonComponent implements OnDestroy, OnI
       this._wallet.address,
       metaHash,
       privateKey,
+      this.dataProduct.name,
       this._repuxLibService,
       this.commonDialogService
     );

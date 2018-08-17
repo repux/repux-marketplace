@@ -20,11 +20,11 @@ import { UnpublishedProductsService } from '../services/unpublished-products.ser
 import { MarketplaceEulaSelectorComponent } from '../marketplace-eula-selector/marketplace-eula-selector.component';
 import { from } from 'rxjs';
 import Wallet from '../../shared/models/wallet';
-import { EulaTypePipe } from '../../shared/pipes/eula-type.pipe';
+import { TransactionService } from '../../shared/services/transaction.service';
 
 describe('MarketplaceProductCreatorDialogComponent', () => {
   let tagManagerServiceSpy, keyStoreServiceSpy, repuxLibServiceSpy, dataProductServiceSpy, taskManagerServiceSpy, matDialogSpy,
-    matDialogRefSpy, unpublishedProductsServiceSpy, ipfsServiceSpy, walletServiceSpy;
+    matDialogRefSpy, unpublishedProductsServiceSpy, ipfsServiceSpy, walletServiceSpy, transactionServiceSpy;
   let formBuilder: FormBuilder;
   let component: MarketplaceProductCreatorDialogComponent;
   let fixture: ComponentFixture<MarketplaceProductCreatorDialogComponent>;
@@ -48,6 +48,11 @@ describe('MarketplaceProductCreatorDialogComponent', () => {
     walletServiceSpy.getWallet.and.returnValue(from(Promise.resolve(wallet)));
     matDialogRefSpy = jasmine.createSpyObj('MatDialogRef', [ 'close', 'afterClosed' ]);
     matDialogSpy = jasmine.createSpyObj('MatDialog', [ 'open' ]);
+    transactionServiceSpy = jasmine.createSpyObj('TransactionServiceSpy', [ 'getTransactions' ]);
+    transactionServiceSpy.getTransactions.and.returnValue({
+      subscribe() {
+      }
+    });
 
     TestBed.configureTestingModule({
       declarations: [
@@ -71,7 +76,8 @@ describe('MarketplaceProductCreatorDialogComponent', () => {
         { provide: RepuxLibService, useValue: repuxLibServiceSpy },
         { provide: TaskManagerService, useValue: taskManagerServiceSpy },
         { provide: DataProductService, useValue: dataProductServiceSpy },
-        { provide: IpfsService, useValue: ipfsServiceSpy }
+        { provide: IpfsService, useValue: ipfsServiceSpy },
+        { provide: TransactionService, useValue: transactionServiceSpy }
       ]
     }).compileComponents();
   }));
@@ -95,7 +101,8 @@ describe('MarketplaceProductCreatorDialogComponent', () => {
         ipfsServiceSpy,
         walletServiceSpy,
         matDialogSpy,
-        matDialogRefSpy
+        matDialogRefSpy,
+        transactionServiceSpy,
       );
 
       expect(component.formGroup.controls[ 'title' ]).toBeDefined();

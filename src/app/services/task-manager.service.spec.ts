@@ -100,7 +100,7 @@ describe('TaskManagerService', () => {
 
       const open = jasmine.createSpy().and.returnValue({
         componentInstance: {
-          setTaskManagerService
+          setTaskManagerService,
         },
         close: jasmine.createSpy()
       });
@@ -114,9 +114,11 @@ describe('TaskManagerService', () => {
 
     it('should not call open method when dialogRef is defined', () => {
       const ngDoCheck = jasmine.createSpy();
+      const openDialog = jasmine.createSpy();
       service[ 'dialogRef' ] = <any> {
         componentInstance: {
-          ngDoCheck
+          ngDoCheck,
+          openDialog
         },
         close: jasmine.createSpy()
       };

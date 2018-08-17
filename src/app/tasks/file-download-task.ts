@@ -30,10 +30,11 @@ export class FileDownloadTask implements Task {
     private _buyerAddress: string,
     private _metaFileHash: string,
     private _buyerPrivateKey: JsonWebKey,
+    private fileName: string,
     private _repuxLibService: RepuxLibService,
     private commonDialogService: CommonDialogService
   ) {
-    this._name = `Downloading ${this._dataProductAddress}`;
+    this._name = `Downloading ${this.fileName}`;
     this._downloader = this._repuxLibService.getInstance().createFileDownloader();
   }
 

@@ -8,10 +8,13 @@ import { UnpublishedProductsService } from '../marketplace/services/unpublished-
 import { DataProduct } from '../shared/models/data-product';
 import { MatDialog } from '@angular/material';
 import { Attachment, Eula, EventType, FileMetaData, FileUploader, PurchaseType } from 'repux-lib';
-import { TagManagerService } from '../shared/services/tag-manager.service';
 import { IpfsService } from '../services/ipfs.service';
 import { EulaSelection } from '../marketplace/marketplace-eula-selector/marketplace-eula-selector.component';
 import { ActionButtonType } from '../shared/enums/action-button-type';
+import { TransactionReceipt, TransactionStatus } from 'repux-web3-api';
+import { Transaction, TransactionService } from '../shared/services/transaction.service';
+import { BlockchainTransactionScope } from '../shared/enums/blockchain-transaction-scope';
+import { Subscription } from 'rxjs';
 
 export const STATUS = {
   UPLOADING: 'Uploading',
@@ -39,6 +42,8 @@ export class FileUploadTask implements Task {
   private _name: string;
   private _actionButton: ActionButtonType;
   private _status: string;
+  private pendingTransaction: Transaction;
+  private transactionsSubscription: Subscription;
 
   constructor(
     public readonly walletAddress: string,
@@ -59,10 +64,13 @@ export class FileUploadTask implements Task {
     private _dataProductService: DataProductService,
     private _unpublishedProductsService: UnpublishedProductsService,
     private _ipfsService: IpfsService,
-    private _tagManager: TagManagerService
+    private transactionService: TransactionService
   ) {
-    this._name = `Creating ${this._file.name}`;
+    this._name = `Uploading ${this._file.name}`;
     this._uploader = this._repuxLibService.getInstance().createFileUploader();
+
+    this.transactionsSubscription = this.transactionService.getTransactions()
+      .subscribe(transactions => this.onTransactionsListChange(transactions));
   }
 
   get dataProduct(): DataProduct {
@@ -134,10 +142,32 @@ export class FileUploadTask implements Task {
     this._finished = true;
     this._errors.push(STATUS.CANCELED);
     this._status = STATUS.CANCELED;
+    this.destroy();
     this._taskManagerService.onTaskEvent();
   }
 
-  callUserAction(): void {
+  onTransactionFinish(transactionReceipt: TransactionReceipt) {
+    if (transactionReceipt.status === TransactionStatus.SUCCESSFUL) {
+      this._finished = true;
+      this._status = STATUS.FINISHED;
+      this.destroy();
+    }
+  }
+
+  async onTransactionsListChange(transactions: Transaction[]) {
+    const foundTransaction = transactions.find(transaction =>
+      transaction.scope === BlockchainTransactionScope.DataProduct &&
+      transaction.identifier === this.dataProduct.sellerMetaHash &&
+      transaction.blocksAction === ActionButtonType.Publish
+    );
+
+    if (this.pendingTransaction && !foundTransaction) {
+      this.onTransactionFinish(
+        await this.transactionService.getTransactionReceipt(this.pendingTransaction.transactionHash)
+      );
+    }
+
+    this.pendingTransaction = foundTransaction;
   }
 
   async uploadSampleFiles(sampleFiles?: FileList): Promise<Attachment[]> {
@@ -181,6 +211,10 @@ export class FileUploadTask implements Task {
       maxNumberOfDownloads: this._maxNumberOfDownloads,
       type: this._purchaseType
     };
+  }
+
+  destroy() {
+    this.transactionsSubscription.unsubscribe();
   }
 
   private _saveProduct() {

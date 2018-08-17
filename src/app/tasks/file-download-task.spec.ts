@@ -8,6 +8,7 @@ describe('FileDownloadTask', () => {
   const buyerAddress = '0x0000000000000000000000000000000000000000';
   const fileHash = 'BUYER_META_HASH';
   const privateKey = 'BUYER_PRIVATE_KEY';
+  const filename = 'filename.txt';
 
   beforeEach(() => {
     fileDownloaderDownload = jasmine.createSpy().and.callFake(function () {
@@ -39,6 +40,7 @@ describe('FileDownloadTask', () => {
       buyerAddress,
       fileHash,
       <any> privateKey,
+      filename,
       repuxLibService,
       commonDialogServiceSpy
     );
@@ -53,7 +55,7 @@ describe('FileDownloadTask', () => {
       expect(fileDownloadTask[ '_repuxLibService' ]).toBe(repuxLibService);
       expect(fileDownloadTask[ '_downloader' ]).toBe(fileDownloader);
       expect(fileDownloadTask[ 'commonDialogService' ]).toBe(commonDialogServiceSpy);
-      expect(fileDownloadTask.name).toBe('Downloading ' + productAddress);
+      expect(fileDownloadTask.name).toBe('Downloading ' + filename);
     });
   });
 

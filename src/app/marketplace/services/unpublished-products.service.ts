@@ -65,15 +65,6 @@ export class UnpublishedProductsService implements OnDestroy {
       this.productsSubject.next(this.config.dataProducts.slice());
       this.saveToStore(this.config);
     }
-
-    const foundTask = this.taskManagerService.tasks.find(task =>
-      (<FileUploadTask> task).sellerMetaHash &&
-      (<FileUploadTask> task).sellerMetaHash === dataProduct.sellerMetaHash
-    );
-
-    if (foundTask) {
-      this.taskManagerService.removeTask(foundTask);
-    }
   }
 
   private getStorageKey(walletAddress?: string): string {

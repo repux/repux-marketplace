@@ -1,9 +1,10 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { MarketplaceTaskManagerComponent } from './marketplace-task-manager.component';
-import { MatDialogModule, MatIconModule, MatProgressSpinnerModule, MatToolbarModule } from '@angular/material';
 import { Component, Input } from '@angular/core';
 import { ActionButtonType } from '../../shared/enums/action-button-type';
 import { DataProduct } from '../../shared/models/data-product';
+import { Task } from '../../tasks/task';
+import { MaterialModule } from '../../material.module';
 
 @Component({
   selector: 'app-marketplace-action-buttons',
@@ -21,7 +22,7 @@ describe('MarketplaceTaskManagerComponent', () => {
   const tasks = [ 'TASK' ];
 
   beforeEach(async(() => {
-    taskManagerService = jasmine.createSpyObj('TaskManagerService', [ 'closeDialog', 'getForegroundTasks' ]);
+    taskManagerService = jasmine.createSpyObj('TaskManagerService', [ 'removeTask', 'getForegroundTasks' ]);
     taskManagerService.getForegroundTasks.and.returnValue({
       subscribe(callback) {
         callback(tasks);
@@ -33,10 +34,7 @@ describe('MarketplaceTaskManagerComponent', () => {
         MarketplaceActionButtonsStubComponent
       ],
       imports: [
-        MatIconModule,
-        MatToolbarModule,
-        MatProgressSpinnerModule,
-        MatDialogModule
+        MaterialModule
       ]
     })
       .compileComponents();
@@ -49,10 +47,29 @@ describe('MarketplaceTaskManagerComponent', () => {
   });
 
   describe('#closeDialog()', () => {
-    it('should call taskManagerService.closeDialog method', () => {
-      component[ '_taskManagerService' ] = taskManagerService;
+    it('should set opened to false', () => {
+      component.opened = true;
       component.closeDialog();
-      expect(taskManagerService.closeDialog.calls.count()).toBe(1);
+      expect(component.opened).toBe(false);
+    });
+  });
+
+  describe('#openDialog()', () => {
+    it('should set opened to true', () => {
+      component.opened = false;
+      component.openDialog();
+      expect(component.opened).toBe(true);
+    });
+  });
+
+  describe('#removeTask()', () => {
+    it('should call taskManagerService.removeTask', () => {
+      const task = { progress: 100 } as Task;
+      component.setTaskManagerService(taskManagerService);
+
+      component.removeTask(task);
+
+      expect(taskManagerService.removeTask.calls.count()).toBe(1);
     });
   });
 

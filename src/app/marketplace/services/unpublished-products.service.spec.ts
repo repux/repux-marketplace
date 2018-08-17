@@ -69,7 +69,7 @@ describe('UnpublishedProductsService', () => {
   });
 
   describe('#removeProduct()', () => {
-    it('should remove product from config and remove task from taskManagerService', () => {
+    it('should remove product from config', () => {
       const task = <any> {
         sellerMetaHash
       };
@@ -83,7 +83,6 @@ describe('UnpublishedProductsService', () => {
       expect(service[ 'config' ].dataProducts).toEqual([]);
       expect(storageServiceSpy.setItem.calls.allArgs()[ 1 ][ 0 ]).toBe('UnpublishedProductsService_' + wallet.address);
       expect(storageServiceSpy.setItem.calls.allArgs()[ 1 ][ 1 ]).toEqual({ dataProducts: [] });
-      expect(taskManagerServiceSpy.removeTask.calls.allArgs()[ 0 ][ 0 ]).toBe(task);
     });
   });
 });

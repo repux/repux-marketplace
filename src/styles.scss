@@ -36,7 +36,7 @@ app-root {
 }
 
 .mat-flat-button.mat-primary {
-  background: linear-gradient(45deg,#2DBD9D 0%,#0fda4d 100%);
+  background: linear-gradient(45deg, #2DBD9D 0%, #0fda4d 100%);
 
   &[disabled] {
     background: none;
@@ -48,4 +48,11 @@ a {
   color: map-get($repux-primary, 300);
 }
 
+.transparent-modal {
+  .mat-dialog-container {
+    box-shadow: none;
+    background: none;
+    overflow: initial;
+  }
+}
 

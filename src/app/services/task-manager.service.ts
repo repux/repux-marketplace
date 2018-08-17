@@ -55,6 +55,11 @@ export class TaskManagerService implements OnDestroy {
     }
   }
 
+  markTaskAsFinished(task: Task): void {
+    task.finished = true;
+    this.tasksSubject.next(this.tasks);
+  }
+
   onTaskEvent() {
     this.tasksSubject.next(this.tasks);
     this.foregroundTasksSubject.next(this.foregroundTasks);
@@ -62,15 +67,17 @@ export class TaskManagerService implements OnDestroy {
 
   openDialog() {
     if (this.dialogRef) {
+      this.dialogRef.componentInstance.openDialog();
       return;
     }
 
     this.dialogRef = this.dialog.open(MarketplaceTaskManagerComponent, {
       position: {
-        right: '15px',
-        bottom: '15px'
+        left: '20px',
+        bottom: '20px'
       },
-      hasBackdrop: false
+      hasBackdrop: false,
+      panelClass: 'transparent-modal'
     });
 
     this.dialogRef.componentInstance.setTaskManagerService(this);
