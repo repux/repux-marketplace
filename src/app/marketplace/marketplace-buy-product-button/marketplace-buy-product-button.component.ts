@@ -2,7 +2,7 @@ import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { RepuxLibService } from '../../services/repux-lib.service';
 import { WalletService } from '../../services/wallet.service';
 import { DataProductService } from '../../services/data-product.service';
-import { MatDialog } from '@angular/material';
+import { MatDialog, MatDialogRef } from '@angular/material';
 import Wallet from '../../shared/models/wallet';
 import { KeysPasswordDialogComponent } from '../../key-store/keys-password-dialog/keys-password-dialog.component';
 import { KeysGeneratorDialogComponent } from '../../key-store/keys-generator-dialog/keys-generator-dialog.component';
@@ -20,6 +20,7 @@ import { Transaction, TransactionService } from '../../shared/services/transacti
 import { BlockchainTransactionScope } from '../../shared/enums/blockchain-transaction-scope';
 import { ActionButtonType } from '../../shared/enums/action-button-type';
 import { CommonDialogService } from '../../shared/services/common-dialog.service';
+import { MarketplaceBeforeBuyConfirmationDialogComponent } from '../marketplace-before-buy-confirmation-dialog/marketplace-before-buy-confirmation-dialog.component';
 
 @Component({
   selector: 'app-marketplace-buy-product-button',
@@ -121,7 +122,21 @@ export class MarketplaceBuyProductButtonComponent implements OnInit, OnDestroy {
     );
   }
 
-  buyDataProduct(): void {
+  buyDataProduct(): MatDialogRef<MarketplaceBeforeBuyConfirmationDialogComponent> {
+    const dialogRef = this.dialog.open(MarketplaceBeforeBuyConfirmationDialogComponent);
+
+    dialogRef.componentInstance.dataProduct = this.dataProduct;
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.sendTransaction();
+      }
+    });
+
+    return dialogRef;
+  }
+
+  sendTransaction(): void {
     this.tagManager.sendEvent(
       EventCategory.Buy,
       EventAction.Buy,

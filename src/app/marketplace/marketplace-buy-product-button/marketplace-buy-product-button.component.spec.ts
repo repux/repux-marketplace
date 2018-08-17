@@ -13,6 +13,11 @@ import { TagManagerService } from '../../shared/services/tag-manager.service';
 import { DataProduct } from '../../shared/models/data-product';
 import BigNumber from 'bignumber.js';
 import { CommonDialogService } from '../../shared/services/common-dialog.service';
+import { MarketplaceBeforeBuyConfirmationDialogComponent } from '../marketplace-before-buy-confirmation-dialog/marketplace-before-buy-confirmation-dialog.component';
+import { BrowserDynamicTestingModule } from '@angular/platform-browser-dynamic/testing';
+import { CurrencyRepuxPipe } from '../../shared/pipes/currency-repux';
+import { FileSizePipe } from '../../shared/pipes/file-size.pipe';
+import { ArrayJoinPipe } from '../../shared/pipes/array-join.pipe';
 
 @Component({ selector: 'app-marketplace-download-product-button', template: '' })
 class DownloadProductButtonStubComponent {
@@ -39,7 +44,11 @@ describe('MarketplaceBuyProductButtonComponent', () => {
     TestBed.configureTestingModule({
       declarations: [
         MarketplaceBuyProductButtonComponent,
-        DownloadProductButtonStubComponent
+        DownloadProductButtonStubComponent,
+        MarketplaceBeforeBuyConfirmationDialogComponent,
+        CurrencyRepuxPipe,
+        FileSizePipe,
+        ArrayJoinPipe
       ],
       imports: [
         MaterialModule,
@@ -55,6 +64,14 @@ describe('MarketplaceBuyProductButtonComponent', () => {
       ]
     })
       .compileComponents();
+
+    TestBed.overrideModule(BrowserDynamicTestingModule, {
+      set: {
+        entryComponents: [
+          MarketplaceBeforeBuyConfirmationDialogComponent
+        ]
+      }
+    });
 
     fixture = TestBed.createComponent(MarketplaceBuyProductButtonComponent);
     component = fixture.componentInstance;
@@ -105,8 +122,16 @@ describe('MarketplaceBuyProductButtonComponent', () => {
   });
 
   describe('#buyDataProduct()', () => {
+    it('should open confirmation dialog', () => {
+      const dialogRef = component.buyDataProduct();
+
+      expect(dialogRef.componentInstance.dataProduct).toEqual(component.dataProduct);
+    });
+  });
+
+  describe('#sendTransaction()', () => {
     it('should call dataProductService.approveTokensTransferForDataProductPurchase using commonDialogService.transaction', () => {
-      component.buyDataProduct();
+      component.sendTransaction();
 
       expect(dataProductServiceSpy.approveTokensTransferForDataProductPurchase.calls.count()).toBe(1);
       expect(dataProductServiceSpy.approveTokensTransferForDataProductPurchase.calls.allArgs()[ 0 ]).toEqual([ dataProductAddress ]);

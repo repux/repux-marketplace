@@ -52,6 +52,9 @@ import {
 } from './marketplace-rate-order-button/marketplace-rate-order-button.component';
 import { MarketplaceRatingComponent } from './marketplace-rating/marketplace-rating.component';
 import { MarketplaceTaskManagerComponent } from './marketplace-task-manager/marketplace-task-manager.component';
+import {
+  MarketplaceBeforeBuyConfirmationDialogComponent
+} from './marketplace-before-buy-confirmation-dialog/marketplace-before-buy-confirmation-dialog.component';
 
 @NgModule({
   imports: [
@@ -93,7 +96,8 @@ import { MarketplaceTaskManagerComponent } from './marketplace-task-manager/mark
     MarketplaceActionButtonsComponent,
     MarketplaceDataProductOrdersListContainerComponent,
     MarketplaceRatingComponent,
-    MarketplaceTaskManagerComponent
+    MarketplaceTaskManagerComponent,
+    MarketplaceBeforeBuyConfirmationDialogComponent
   ],
   exports: [
     MarketplaceBrowseComponent,
@@ -112,7 +116,8 @@ import { MarketplaceTaskManagerComponent } from './marketplace-task-manager/mark
     MarketplaceProductCreatorDialogComponent,
     MarketplacePurchaseConfirmationDialogComponent,
     MarketplaceRateOrderDialogComponent,
-    MarketplaceTaskManagerComponent
+    MarketplaceTaskManagerComponent,
+    MarketplaceBeforeBuyConfirmationDialogComponent
   ]
 })
 export class MarketplaceModule {
