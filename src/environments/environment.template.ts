@@ -52,6 +52,7 @@ export const environment = {
     registryContractAddress: '${MARKETPLACE_SC_REGISTRY_ADDRESS}' || '0x0fe6a11f60c62e8f2a1b2d6b0c12133e4616fe7a',
     categoriesListPath: '${MARKETPLACE_CATEGORIES_PATH}' || './assets/data-product-categories.json',
     maxDaysToDeliver: 14,
+    defaultDaysToDeliver: 14,
     maxDaysToRate: 30,
     minProductRate: 1,
     maxProductRate: 5

@@ -21,10 +21,12 @@ import { MarketplaceEulaSelectorComponent } from '../marketplace-eula-selector/m
 import { from } from 'rxjs';
 import Wallet from '../../shared/models/wallet';
 import { TransactionService } from '../../shared/services/transaction.service';
+import { SettingsService } from '../../settings/services/settings.service';
+import { environment } from '../../../environments/environment';
 
 describe('MarketplaceProductCreatorDialogComponent', () => {
   let tagManagerServiceSpy, keyStoreServiceSpy, repuxLibServiceSpy, dataProductServiceSpy, taskManagerServiceSpy, matDialogSpy,
-    matDialogRefSpy, unpublishedProductsServiceSpy, ipfsServiceSpy, walletServiceSpy, transactionServiceSpy;
+    matDialogRefSpy, unpublishedProductsServiceSpy, ipfsServiceSpy, walletServiceSpy, transactionServiceSpy, settingsServiceSpy;
   let formBuilder: FormBuilder;
   let component: MarketplaceProductCreatorDialogComponent;
   let fixture: ComponentFixture<MarketplaceProductCreatorDialogComponent>;
@@ -53,6 +55,9 @@ describe('MarketplaceProductCreatorDialogComponent', () => {
       subscribe() {
       }
     });
+    settingsServiceSpy = {
+      daysToDeliver: environment.repux.defaultDaysToDeliver
+    };
 
     TestBed.configureTestingModule({
       declarations: [
@@ -77,7 +82,8 @@ describe('MarketplaceProductCreatorDialogComponent', () => {
         { provide: TaskManagerService, useValue: taskManagerServiceSpy },
         { provide: DataProductService, useValue: dataProductServiceSpy },
         { provide: IpfsService, useValue: ipfsServiceSpy },
-        { provide: TransactionService, useValue: transactionServiceSpy }
+        { provide: TransactionService, useValue: transactionServiceSpy },
+        { provide: SettingsService, useValue: settingsServiceSpy }
       ]
     }).compileComponents();
   }));
@@ -100,9 +106,10 @@ describe('MarketplaceProductCreatorDialogComponent', () => {
         unpublishedProductsServiceSpy,
         ipfsServiceSpy,
         walletServiceSpy,
+        settingsServiceSpy,
         matDialogSpy,
         matDialogRefSpy,
-        transactionServiceSpy,
+        transactionServiceSpy
       );
 
       expect(component.formGroup.controls[ 'title' ]).toBeDefined();

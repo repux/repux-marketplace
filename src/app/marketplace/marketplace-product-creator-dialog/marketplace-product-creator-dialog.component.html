@@ -24,7 +24,7 @@
       </div>
 
       <div class="col">
-        <h3 class="mat-subheading-2">Set price & delivery time</h3>
+        <h3 class="mat-subheading-2">Set price</h3>
         <mat-form-field class="field-row">
           <input matInput
                  type="text"
@@ -41,14 +41,6 @@
           <mat-error *ngIf="formGroup.controls['price'].hasError('pattern')">
             Price should be number containing at most {{ repuxPrecision }} decimal places.
           </mat-error>
-        </mat-form-field>
-        <mat-form-field class="field-row">
-          <mat-select placeholder="Days to deliver" required="true" [formControl]="formGroup.controls['daysToDeliver']">
-            <mat-option *ngFor="let day of daysToDeliverOptions" [value]="day">
-              {{ day }}
-            </mat-option>
-          </mat-select>
-          <mat-hint>Max. number of days for a seller to finalise transaction.</mat-hint>
         </mat-form-field>
       </div>
     </div>

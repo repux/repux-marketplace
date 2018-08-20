@@ -10,6 +10,7 @@ import { NavigationEnd, Router } from '@angular/router';
 import { Observable } from 'rxjs/internal/Observable';
 import Wallet from '../../shared/models/wallet';
 import { WalletService } from '../../services/wallet.service';
+import { SettingsService } from '../services/settings.service';
 
 @Component({
   selector: 'app-settings-index',
@@ -18,14 +19,15 @@ import { WalletService } from '../../services/wallet.service';
 })
 export class SettingsIndexComponent implements OnInit, OnDestroy {
   wallet$: Observable<Wallet>;
-  private subscription: Subscription;
   public hasKeys = false;
+  private subscription: Subscription;
 
   constructor(
     private keyStoreService: KeyStoreService,
     private walletService: WalletService,
     private dialog: MatDialog,
-    private router: Router
+    private router: Router,
+    public settingsService: SettingsService
   ) {
     this.hasKeys = this.keyStoreService.hasKeys();
     router.events.subscribe(s => {

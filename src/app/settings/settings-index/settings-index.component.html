@@ -43,6 +43,27 @@
     </mat-card>
   </section>
 
+  <section id="selling">
+    <h2 class="settings__card-header">Selling</h2>
+    <mat-card>
+      <mat-card-content>
+        <mat-list>
+          <mat-list-item>
+            <h3 matLine>
+              <span>Delivery time</span>
+              <mat-select [(value)]="settingsService.daysToDeliver">
+                <mat-option *ngFor="let day of settingsService.daysToDeliverOptions" [value]="day">
+                  {{ day }}
+                </mat-option>
+              </mat-select>
+            </h3>
+            <p matLine>Max. number of days for a seller to finalise transaction.</p>
+          </mat-list-item>
+        </mat-list>
+      </mat-card-content>
+    </mat-card>
+  </section>
+
   <section id="help">
     <h2 class="settings__card-header">Help</h2>
     <mat-card>

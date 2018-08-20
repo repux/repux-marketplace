@@ -4,6 +4,7 @@ import { SettingsIndexComponent } from './settings-index.component';
 import { MaterialModule } from '../../material.module';
 import { SharedModule } from '../../shared/shared.module';
 import { RouterTestingModule } from '@angular/router/testing';
+import { SettingsService } from '../services/settings.service';
 
 describe('SettingsIndexComponent', () => {
   let component: SettingsIndexComponent;
@@ -16,7 +17,10 @@ describe('SettingsIndexComponent', () => {
         SharedModule,
         RouterTestingModule,
       ],
-      declarations: [ SettingsIndexComponent ]
+      declarations: [ SettingsIndexComponent ],
+      providers: [
+        { provide: SettingsService, useValue: { daysToDeliver: 14 } }
+      ]
     })
       .compileComponents();
   }));
