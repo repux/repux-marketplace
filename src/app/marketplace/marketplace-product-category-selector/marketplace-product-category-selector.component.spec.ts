@@ -37,7 +37,7 @@ describe('MarketplaceProductCategorySelectorComponent', () => {
     });
   });
 
-  describe('#getCategories', () => {
+  describe('#getCategories()', () => {
     it('should getFlattenCategories on productCategoryService', async () => {
       const categories = [ 'CATEGORY_1', 'CATEGORY_2' ];
       const getFlattenCategories = jasmine.createSpy();
@@ -47,6 +47,41 @@ describe('MarketplaceProductCategorySelectorComponent', () => {
       await component.fetchCategories();
       expect(component.flatCategories).toEqual(categories);
       expect(getFlattenCategories.calls.count()).toBe(1);
+    });
+  });
+
+  describe('#onValueChange()', () => {
+    it('should call valueChange.emit', () => {
+      const emit = jasmine.createSpy();
+      const value = [ 'VALUE' ];
+
+      component.value = value;
+      component.valueChange = <any> {
+        emit
+      };
+
+      component.onValueChange();
+
+      expect(emit.calls.count()).toBe(1);
+      expect(emit.calls.allArgs()[ 0 ]).toEqual([ value ]);
+    });
+  });
+
+  describe('#toggleAll()', () => {
+    it('should deselect all categories when checkbox is checked', () => {
+      const emit = jasmine.createSpy();
+
+      component.valueChange = <any> {
+        emit
+      };
+
+      component.formControl.setValue([ 'VALUE' ]);
+
+      component.toggleAll(<any> { checked: true });
+
+      expect(emit.calls.count()).toBe(1);
+      expect(emit.calls.allArgs()[ 0 ]).toEqual([ [] ]);
+      expect(component.formControl.value).toEqual([]);
     });
   });
 });

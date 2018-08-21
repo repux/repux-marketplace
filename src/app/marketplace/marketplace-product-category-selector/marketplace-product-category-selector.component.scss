@@ -1,11 +1,13 @@
+@import '../../../variables.scss';
+
 .mat-form-field {
   width: 100%;
 }
 
-span {
-  opacity: 0;
-  transition: opacity 200ms;
-}
 :host.floating span {
   opacity: 1;
+}
+
+.mat-checkbox {
+  border-bottom: 1px solid map-get($mat-light-theme-foreground, divider);
 }

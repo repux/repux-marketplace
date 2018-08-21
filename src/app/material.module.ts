@@ -1,9 +1,11 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+
 import {
   MatBadgeModule,
   MatButtonModule,
   MatCardModule,
+  MatCheckboxModule,
   MatChipsModule,
   MatDialogModule,
   MatGridListModule,
@@ -13,7 +15,8 @@ import {
   MatMenuModule,
   MatPaginatorModule,
   MatProgressBarModule,
-  MatProgressSpinnerModule, MatRadioModule,
+  MatProgressSpinnerModule,
+  MatRadioModule,
   MatSelectModule,
   MatSidenavModule,
   MatSortModule,
@@ -46,7 +49,8 @@ import {
     MatSidenavModule,
     MatListModule,
     MatRadioModule,
-    MatBadgeModule
+    MatBadgeModule,
+    MatCheckboxModule
   ],
   exports: [
     MatTableModule,
@@ -69,7 +73,8 @@ import {
     MatSidenavModule,
     MatListModule,
     MatRadioModule,
-    MatBadgeModule
+    MatBadgeModule,
+    MatCheckboxModule
   ]
 })
 export class MaterialModule {

@@ -1,21 +1,20 @@
 import { MatDialog } from '@angular/material';
-import { ComponentFixture, fakeAsync, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { MarketplaceBrowseComponent } from './marketplace-browse.component';
-import { Component, Input } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { MaterialModule } from '../material.module';
 import { RouterTestingModule } from '@angular/router/testing';
 import { FileSizePipe } from '../shared/pipes/file-size.pipe';
 import { EulaTypePipe } from '../shared/pipes/eula-type.pipe';
 import { DataProduct } from '../shared/models/data-product';
 import { IpfsService } from '../services/ipfs.service';
-import { PendingFinalisationService } from './services/pending-finalisation.service';
 import { DataProductListService } from '../services/data-product-list.service';
 import { EsResponse } from '../shared/models/es-response';
 import { fromPromise } from 'rxjs/internal-compatibility';
 import { of } from 'rxjs';
 import { ActionButtonType } from '../shared/enums/action-button-type';
-
+import { RepuxWeb3Service } from '../services/repux-web3.service';
 
 @Component({ selector: 'app-marketplace-action-buttons', template: '' })
 class MarketplaceActionButtonsStubComponent {
@@ -23,20 +22,24 @@ class MarketplaceActionButtonsStubComponent {
   @Input() availableActions: ActionButtonType[];
 }
 
-@Component({ selector: 'app-data-product-list', template: '' })
-class DataProductListStubComponent {
-  @Input() staticQuery: {};
+@Component({ selector: 'app-marketplace-product-category-selector', template: '' })
+class MarketplaceProductCategorySelectorStubComponent {
+  @Input() showAllCheckbox: boolean;
+  @Input() placeholder: string;
+  @Input() noUnderline: boolean;
+  @Input() noFloatPlaceholder: boolean;
+  @Input() noPadding: boolean;
+  @Output() valueChange = new EventEmitter<string[]>();
 }
 
 describe('MarketplaceBrowseComponent', () => {
   let component: MarketplaceBrowseComponent;
   let fixture: ComponentFixture<MarketplaceBrowseComponent>;
   let matDialog;
-  let dataProductListServiceSpy, pendingFinalisationServiceSpy, ipfsServiceSpy;
+  let dataProductListServiceSpy, repuxWeb3ServiceSpy, ipfsServiceSpy;
 
-  beforeEach(fakeAsync(() => {
+  beforeEach(async () => {
     matDialog = jasmine.createSpyObj('MatDialog', [ 'open' ]);
-    pendingFinalisationServiceSpy = jasmine.createSpyObj('PendingFinalisationService', [ 'findOrder' ]);
     dataProductListServiceSpy = jasmine.createSpyObj('DataProductListService', [ 'getDataProducts', 'getBlockchainStateForDataProducts' ]);
     dataProductListServiceSpy.getDataProducts.and.callFake(() => {
       const response = new EsResponse();
@@ -44,12 +47,13 @@ describe('MarketplaceBrowseComponent', () => {
       return fromPromise(Promise.resolve(response));
     });
     ipfsServiceSpy = jasmine.createSpyObj('IpfsService', [ 'downloadAndSave' ]);
+    repuxWeb3ServiceSpy = jasmine.createSpyObj('RepuxWeb3Service', [ 'isWalletAvailable' ]);
 
-    TestBed.configureTestingModule({
+    await TestBed.configureTestingModule({
       declarations: [
-        DataProductListStubComponent,
         MarketplaceBrowseComponent,
         MarketplaceActionButtonsStubComponent,
+        MarketplaceProductCategorySelectorStubComponent,
         FileSizePipe,
         EulaTypePipe
       ],
@@ -60,21 +64,25 @@ describe('MarketplaceBrowseComponent', () => {
       ],
       providers: [
         { provide: DataProductListService, useValue: dataProductListServiceSpy },
-        { provide: PendingFinalisationService, useValue: pendingFinalisationServiceSpy },
-        { provide: IpfsService, useValue: ipfsServiceSpy }
+        { provide: IpfsService, useValue: ipfsServiceSpy },
+        { provide: RepuxWeb3Service, useValue: repuxWeb3ServiceSpy }
       ]
-    })
-      .compileComponents();
+    }).compileComponents();
 
     fixture = TestBed.createComponent(MarketplaceBrowseComponent);
     component = fixture.componentInstance;
 
     fixture.detectChanges();
-  }));
+  });
 
   describe('#DOM', () => {
     beforeEach(() => {
-      component.products$ = of([]);
+      const esResponse = new EsResponse<DataProduct>();
+      esResponse.hits = [];
+      esResponse.total = 0;
+
+      component.products$ = of(esResponse);
+
       fixture.detectChanges();
     });
 
