@@ -14,6 +14,7 @@ import { WalletInfoComponent } from './components/wallet-info/wallet-info.compon
 import { EulaTypePipe } from './pipes/eula-type.pipe';
 import { SafeHtmlPipe } from './pipes/safe-html.pipe';
 import { OrderDatePipe } from './pipes/order-date.pipe';
+import { PriceInputComponent } from './components/price-input/price-input.component';
 
 @NgModule({
   imports: [
@@ -36,7 +37,8 @@ import { OrderDatePipe } from './pipes/order-date.pipe';
     CurrencyRepuxPipe,
     EulaTypePipe,
     SafeHtmlPipe,
-    OrderDatePipe
+    OrderDatePipe,
+    PriceInputComponent
   ],
   exports: [
     FileInputComponent,
@@ -48,7 +50,8 @@ import { OrderDatePipe } from './pipes/order-date.pipe';
     CurrencyRepuxPipe,
     EulaTypePipe,
     SafeHtmlPipe,
-    OrderDatePipe
+    OrderDatePipe,
+    PriceInputComponent
   ],
   entryComponents: [
     ConfirmationDialogComponent
