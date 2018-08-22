@@ -25,23 +25,14 @@
 
       <div class="col">
         <h3 class="mat-subheading-2">Set price</h3>
-        <mat-form-field class="field-row">
-          <input matInput
-                 type="text"
-                 placeholder="Price"
-                 required
-                 [formControl]="formGroup.controls['price']">
-          <span matSuffix="">{{ currencyName }}</span>
-          <mat-error *ngIf="formGroup.controls['price'].hasError('required')">
-            Price is <strong>required</strong>
-          </mat-error>
-          <mat-error *ngIf="formGroup.controls['price'].hasError('min')">
-            Price should be <strong>positive number</strong>
-          </mat-error>
-          <mat-error *ngIf="formGroup.controls['price'].hasError('pattern')">
-            Price should be number containing at most {{ repuxPrecision }} decimal places.
-          </mat-error>
-        </mat-form-field>
+
+        <div class="field-row">
+          <app-price-input
+            placeholder="Price"
+            [formControl]="formGroup.controls['price']"
+            [required]="true"
+            ngDefaultControl></app-price-input>
+        </div>
       </div>
     </div>
 
@@ -115,7 +106,8 @@
           ngDefaultControl></app-marketplace-eula-selector>
 
         <p class="mat-body caption">
-          By clicking <strong>UPLOAD</strong> you'll send your data file to a decentralized storage. Next step is to wait for notification and then publish data to Ethereum Network.
+          By clicking <strong>UPLOAD</strong> you'll send your data file to a decentralized storage. Next step is to
+          wait for notification and then publish data to Ethereum Network.
         </p>
       </div>
     </div>

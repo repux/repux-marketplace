@@ -31,7 +31,6 @@ import { SettingsService } from '../../settings/services/settings.service';
   styleUrls: [ './marketplace-product-creator-dialog.component.scss' ]
 })
 export class MarketplaceProductCreatorDialogComponent implements OnInit, OnDestroy {
-  public currencyName: string = environment.repux.currency.defaultName;
   public formGroup: FormGroup;
   public titleMinLength = 3;
   public titleMaxLength = 100;
@@ -81,9 +80,7 @@ export class MarketplaceProductCreatorDialogComponent implements OnInit, OnDestr
         Validators.required
       ] ],
       price: [ '', [
-        Validators.required,
-        Validators.min(0),
-        Validators.pattern(environment.repux.currency.pattern)
+        Validators.required
       ] ],
       file: [ [], [
         Validators.required

@@ -1,0 +1,17 @@
+<mat-form-field>
+  <input matInput
+         type="text"
+         [placeholder]="placeholder"
+         [required]="required"
+         [pattern]="pattern"
+         (input)="onInput($event)"
+         (change)="onChange()"
+         (keypress)="isNumber($event)"
+         [formControl]="formControl">
+
+  <span matSuffix>{{currencyName}}</span>
+
+  <mat-error *ngIf="formControl.hasError('required')">
+    {{placeholder}} is <strong>required</strong>
+  </mat-error>
+</mat-form-field>
