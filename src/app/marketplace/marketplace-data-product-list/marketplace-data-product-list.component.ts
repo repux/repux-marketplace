@@ -175,27 +175,6 @@ export class MarketplaceDataProductListComponent implements OnChanges, OnDestroy
     return order.deliveryDeadline;
   }
 
-  onFinaliseSuccess(event: { dataProduct: DataProduct, order: DataProductOrder }) {
-    if (!this.displayPendingOrders) {
-      return;
-    }
-
-    const pendingFinalisationOrders = event.dataProduct.orders.filter(order => !order.finalised);
-
-    if (pendingFinalisationOrders) {
-      return;
-    }
-
-    if (this.dataProducts) {
-      this.dataProducts = this.dataProducts.filter(dataProduct => dataProduct.address !== event.dataProduct.address);
-    } else {
-      this.esDataProducts.hits = this.esDataProducts.hits
-        .filter((dataProduct: DataProduct) => dataProduct.address !== event.dataProduct.address);
-    }
-
-    this.reloadRecords();
-  }
-
   ngOnDestroy() {
     this._unsubscribeDataProducts();
   }

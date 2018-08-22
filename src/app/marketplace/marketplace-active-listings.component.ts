@@ -2,28 +2,31 @@ import { Component, OnDestroy } from '@angular/core';
 import Wallet from '../shared/models/wallet';
 import { WalletService } from '../services/wallet.service';
 import { Subscription } from 'rxjs/internal/Subscription';
-import { getReadyToDownloadDataProductsQuery } from './services/ready-to-download.service';
+import { getCreatedDataProductsQuery } from './services/my-active-listings.service';
 import { ActionButtonType } from '../shared/enums/action-button-type';
 
 @Component({
-  selector: 'app-marketplace-buy-ready-to-download',
-  templateUrl: './marketplace-buy-ready-to-download.component.html',
-  styleUrls: [ './marketplace-buy-ready-to-download.component.scss' ]
+  selector: 'app-marketplace-sell-my-active-listings',
+  templateUrl: './marketplace-active-listings.component.html',
+  styleUrls: [ './marketplace-active-listings.component.scss' ]
 })
-export class MarketplaceBuyReadyToDownloadComponent implements OnDestroy {
-  public availableActions = [
-    ActionButtonType.Buy,
-    ActionButtonType.Rate
-  ];
+export class MarketplaceActiveListingsComponent implements OnDestroy {
   public displayedColumns = [
     'name',
     'title',
     'category',
     'size',
     'price',
-    'orderDate',
+    'timesPurchased',
+    'totalEarnings',
+    'fundsToWithdraw',
+    'pendingFinalisationRequests',
     'eula',
     'actions'
+  ];
+  public availableActions = [
+    ActionButtonType.Withdraw,
+    ActionButtonType.Unpublish
   ];
   public staticQuery = {};
 
@@ -33,16 +36,8 @@ export class MarketplaceBuyReadyToDownloadComponent implements OnDestroy {
   constructor(
     private _walletService: WalletService
   ) {
-    this.staticQuery = getReadyToDownloadDataProductsQuery('');
+    this.staticQuery = getCreatedDataProductsQuery('');
     this._walletSubscription = this._walletService.getWallet().subscribe(wallet => this._onWalletChange(wallet));
-  }
-
-  get buyerAddress() {
-    if (!this._wallet) {
-      return;
-    }
-
-    return this._wallet.address;
   }
 
   ngOnDestroy() {
@@ -57,6 +52,6 @@ export class MarketplaceBuyReadyToDownloadComponent implements OnDestroy {
     }
 
     this._wallet = wallet;
-    this.staticQuery = getReadyToDownloadDataProductsQuery(this._wallet.address);
+    this.staticQuery = getCreatedDataProductsQuery(this._wallet.address);
   }
 }

@@ -32,7 +32,7 @@ app-root {
 .mat-stroked-button,
 .mat-raised-button {
   text-transform: uppercase;
-  border-radius: 4px;
+  border-radius: 4px !important;
 }
 
 .mat-flat-button.mat-primary {
@@ -79,5 +79,37 @@ a {
     .mat-checkbox-label {
       flex: 1;
     }
+  }
+}
+
+.spinner-wrapper {
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.empty-list {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 48px 0;
+
+  &__icon {
+    color: #b4b4b4;
+    font-size: 72px;
+    width: 72px !important;
+    height: 72px !important;
+    margin: 0 0 24px 0;
+  }
+
+  &__text {
+    color: #6e6e6e;
+    font-size: 16px;
+    font-weight: 500;
   }
 }

@@ -1,21 +1,14 @@
-<div class="notifications-list mat-typography">
+<div class="notifications-list mat-typography"
+     *ngIf="(notificationsTotal$ | async) as notificationsTotal; else showEmpty">
   <div *ngIf="pendingFinalisationProducts$ | async as pendingFinalisationProducts">
     <section *ngIf="pendingFinalisationProducts.length > 0">
-      <h2 class="notifications-list__card-header">Pending finalisation</h2>
+      <h2 class="notifications-list__card-header">Pending finalisation by you</h2>
       <mat-card>
         <mat-card-content>
-          <mat-list>
-            <ng-template ngFor let-product [ngForOf]="pendingFinalisationProducts">
-              <mat-list-item class="clickable" [routerLink]="product.address ? ['details', product.address] : null">
-                <h4 mat-line>{{product.title}}</h4>
-                <p mat-line> {{product.name}} </p>
-                <app-marketplace-action-buttons
-                  [availableActions]="[actionButtonType.Publish]"
-                  [dataProduct]="product"></app-marketplace-action-buttons>
-              </mat-list-item>
-              <mat-divider></mat-divider>
-            </ng-template>
-          </mat-list>
+          <ng-template ngFor let-product [ngForOf]="pendingFinalisationProducts">
+            <app-notifications-list-item [product]="product"></app-notifications-list-item>
+            <mat-divider></mat-divider>
+          </ng-template>
         </mat-card-content>
       </mat-card>
     </section>
@@ -26,42 +19,41 @@
       <h2 class="notifications-list__card-header">Unpublished</h2>
       <mat-card>
         <mat-card-content>
-          <mat-list>
-            <ng-template ngFor let-product [ngForOf]="unpublishedProducts">
-              <mat-list-item class="clickable" [routerLink]="product.address ? ['details', product.address] : null">
-                <h4 mat-line>{{product.title}}</h4>
-                <p mat-line> {{product.name}} </p>
-                <app-marketplace-action-buttons
-                  [availableActions]="[actionButtonType.Publish]"
-                  [dataProduct]="product"></app-marketplace-action-buttons>
-              </mat-list-item>
-              <mat-divider></mat-divider>
-            </ng-template>
-          </mat-list>
+          <ng-template ngFor let-product [ngForOf]="unpublishedProducts">
+            <app-notifications-list-item [product]="product"
+                                         [actions]="[actionButtonType.Publish]"></app-notifications-list-item>
+            <mat-divider></mat-divider>
+          </ng-template>
         </mat-card-content>
       </mat-card>
     </section>
   </div>
 
-  <div *ngIf="readyToDownloadProducts$ | async as readyToDownloadProducts">
-    <section *ngIf="readyToDownloadProducts.length > 0">
-      <h2 class="notifications-list__card-header">Ready to download</h2>
+  <div *ngIf="awaitingFinalisationProducts$ | async as awaitingFinalisationProducts">
+    <section *ngIf="awaitingFinalisationProducts.length > 0">
+      <h2 class="notifications-list__card-header">Awaiting finalisation by the seller</h2>
       <mat-card>
         <mat-card-content>
-          <mat-list>
-            <ng-template ngFor let-product [ngForOf]="readyToDownloadProducts">
-              <mat-list-item class="clickable" [routerLink]="product.address ? ['details', product.address] : null">
-                <h4 mat-line>{{product.title}}</h4>
-                <p mat-line> {{product.name}} </p>
-                <app-marketplace-action-buttons
-                  [availableActions]="[actionButtonType.Publish]"
-                  [dataProduct]="product"></app-marketplace-action-buttons>
-              </mat-list-item>
-              <mat-divider></mat-divider>
-            </ng-template>
-          </mat-list>
+          <ng-template ngFor let-product [ngForOf]="awaitingFinalisationProducts">
+            <app-notifications-list-item [product]="product"
+                                         [actions]="[actionButtonType.CancelPurchase]"></app-notifications-list-item>
+            <mat-divider></mat-divider>
+          </ng-template>
         </mat-card-content>
       </mat-card>
     </section>
   </div>
 </div>
+
+<ng-template #showSpinner>
+  <div class="spinner-wrapper">
+    <mat-spinner></mat-spinner>
+  </div>
+</ng-template>
+
+<ng-template #showEmpty>
+  <figure class="empty-list mat-typography">
+    <mat-icon class="empty-list__icon">notifications</mat-icon>
+    <figcaption class="empty-list__text">There is no notifications at the moment</figcaption>
+  </figure>
+</ng-template>

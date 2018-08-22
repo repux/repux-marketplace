@@ -34,9 +34,7 @@ export class MarketplaceProductDetailsComponent implements OnInit, OnDestroy {
     private ipfsService: IpfsService) {
   }
 
-  downloadEula(event: MouseEvent, eula: Eula): Promise<void> {
-    event.stopPropagation();
-
+  downloadEula(eula: Eula): Promise<void> {
     return this.ipfsService.downloadAndSave(eula.fileHash, eula.fileName);
   }
 

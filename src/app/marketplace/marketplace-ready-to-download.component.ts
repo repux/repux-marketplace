@@ -2,31 +2,28 @@ import { Component, OnDestroy } from '@angular/core';
 import Wallet from '../shared/models/wallet';
 import { WalletService } from '../services/wallet.service';
 import { Subscription } from 'rxjs/internal/Subscription';
-import { getCreatedDataProductsQuery } from './services/my-active-listings.service';
+import { getReadyToDownloadDataProductsQuery } from './services/ready-to-download.service';
 import { ActionButtonType } from '../shared/enums/action-button-type';
 
 @Component({
-  selector: 'app-marketplace-sell-my-active-listings',
-  templateUrl: './marketplace-sell-my-active-listings.component.html',
-  styleUrls: [ './marketplace-sell-my-active-listings.component.scss' ]
+  selector: 'app-marketplace-buy-ready-to-download',
+  templateUrl: './marketplace-ready-to-download.component.html',
+  styleUrls: [ './marketplace-ready-to-download.component.scss' ]
 })
-export class MarketplaceSellMyActiveListingsComponent implements OnDestroy {
+export class MarketplaceReadyToDownloadComponent implements OnDestroy {
+  public availableActions = [
+    ActionButtonType.Buy,
+    ActionButtonType.Rate
+  ];
   public displayedColumns = [
     'name',
     'title',
     'category',
     'size',
     'price',
-    'timesPurchased',
-    'totalEarnings',
-    'fundsToWithdraw',
-    'pendingFinalisationRequests',
+    'orderDate',
     'eula',
     'actions'
-  ];
-  public availableActions = [
-    ActionButtonType.Withdraw,
-    ActionButtonType.Unpublish
   ];
   public staticQuery = {};
 
@@ -36,8 +33,16 @@ export class MarketplaceSellMyActiveListingsComponent implements OnDestroy {
   constructor(
     private _walletService: WalletService
   ) {
-    this.staticQuery = getCreatedDataProductsQuery('');
+    this.staticQuery = getReadyToDownloadDataProductsQuery('');
     this._walletSubscription = this._walletService.getWallet().subscribe(wallet => this._onWalletChange(wallet));
+  }
+
+  get buyerAddress() {
+    if (!this._wallet) {
+      return;
+    }
+
+    return this._wallet.address;
   }
 
   ngOnDestroy() {
@@ -52,6 +57,6 @@ export class MarketplaceSellMyActiveListingsComponent implements OnDestroy {
     }
 
     this._wallet = wallet;
-    this.staticQuery = getCreatedDataProductsQuery(this._wallet.address);
+    this.staticQuery = getReadyToDownloadDataProductsQuery(this._wallet.address);
   }
 }

@@ -4,7 +4,7 @@ import { deepCopy } from '../shared/utils/deep-copy';
 import { DataProduct } from '../shared/models/data-product';
 import { debounceTime, distinctUntilChanged, filter } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
-import { Eula } from 'repux-lib/src/repux-lib';
+import { Eula } from 'repux-lib';
 import { IpfsService } from '../services/ipfs.service';
 import { PageEvent } from '@angular/material';
 import { RepuxWeb3Service } from '../services/repux-web3.service';
@@ -19,7 +19,7 @@ import { EsResponse } from '../shared/models/es-response';
 })
 export class MarketplaceBrowseComponent implements OnInit {
   public pageSizeOptions = environment.repux.pageSizeOptions;
-  public currencyFormat: string = environment.repux.currency.format;
+  public currencyFormat: string = environment.repux.currency.shortFormat;
   public dataProducts: DataProduct[];
   public sort: string;
   public size: number;

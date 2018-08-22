@@ -29,7 +29,7 @@
           product.eula.type | eulaType }} EULA</a>
         </p>
 
-        <mat-card-subtitle>{{ product.shortDescription }}</mat-card-subtitle>
+        <mat-card-subtitle>{{ product.shortDescription | slice:0:200 }}{{ product.shortDescription.length > 200 ? '...' : '' }}</mat-card-subtitle>
 
         <mat-card-content>
           <mat-chip-list>
@@ -68,6 +68,6 @@
 <ng-template #showEmpty>
   <figure class="empty-list">
     <mat-icon class="empty-list__icon">file_copy</mat-icon>
-    <figcaption class="empty-list__text">Sorry, there is no data you trying to find...</figcaption>
+    <figcaption class="empty-list__text">Sorry, there is no data</figcaption>
   </figure>
 </ng-template>

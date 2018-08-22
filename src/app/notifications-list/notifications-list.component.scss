@@ -1,7 +1,7 @@
 @import '../../variables';
 
 .notifications-list {
-  max-width: 680px;
+  max-width: 780px;
   margin: 0 auto;
 
   mat-card {
@@ -13,34 +13,5 @@
     font-weight: 500;
     color: map-get($app-primary, 300);
     margin: 30px 0 6px 0;
-  }
-
-  .mat-line {
-    font-size: 13px;
-    font-weight: 400;
-  }
-
-  .clickable {
-    cursor: pointer;
-  }
-
-  h3.mat-line {
-    color: #212121;
-    line-height: 1.4;
-  }
-
-  p.mat-line {
-    color: #757575;
-  }
-
-  a {
-    text-decoration: none;
-  }
-
-  app-marketplace-action-buttons {
-    display: flex;
-    flex-wrap: nowrap;
-    justify-content: flex-end;
-    min-width: 300px;
   }
 }

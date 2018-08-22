@@ -1,0 +1,67 @@
+@import '../../variables';
+
+.item {
+  cursor: pointer;
+  padding: 16px;
+  display: flex;
+  justify-items: baseline;
+
+  &__icon {
+    margin: 16px 16px 0 0;
+    color: #999;
+  }
+
+  &__content {
+    margin: 0 auto 0 0;
+  }
+
+  &__actions {
+    flex: 0 0 auto;
+    padding: 0 0 0 24px;
+    margin: 12px 0 0 0;
+  }
+
+  &__title-wrapper {
+    display: flex;
+    align-content: baseline;
+    margin: 0 0 4px 0;
+    align-items: baseline;
+  }
+
+  &__title {
+    margin: 0 8px 0 0;
+    line-height: 1.4;
+  }
+
+  &__subtitle {
+    margin: 0;
+    font-weight: 700;
+  }
+
+  &__file-info {
+    font-size: 13px;
+    color: #999;
+  }
+
+  &__price {
+    white-space: nowrap;
+
+    &-prefix {
+      font-size: 11px;
+      color: #999;
+    }
+
+    &-value {
+      font-weight: 700;
+    }
+  }
+
+  &__description {
+    color: #757575;
+    margin: 0 0 16px 0;
+  }
+
+  &__categories {
+    margin: 0 0 16px 0;
+  }
+}

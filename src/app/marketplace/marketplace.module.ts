@@ -5,15 +5,9 @@ import { MarketplaceBrowseComponent } from './marketplace-browse.component';
 import { MarketplaceProductDetailsComponent } from './marketplace-product-details.component';
 import { SharedModule } from '../shared/shared.module';
 import { KeyStoreModule } from '../key-store/key-store.module';
-import { MarketplaceSellComponent } from './marketplace-sell.component';
-import { MarketplaceBuyComponent } from './marketplace-buy.component';
-import { MarketplaceSellMyActiveListingsComponent } from './marketplace-sell-my-active-listings.component';
-import { MarketplaceSellPendingFinalisationComponent } from './marketplace-sell-pending-finalisation.component';
-import { MarketplaceSellUnpublishedComponent } from './marketplace-sell-unpublished.component';
-import { MarketplaceBuyAwaitingFinalisationComponent } from './marketplace-buy-awaiting-finalisation.component';
-import { MarketplaceBuyReadyToDownloadComponent } from './marketplace-buy-ready-to-download.component';
+import { MarketplaceActiveListingsComponent } from './marketplace-active-listings.component';
+import { MarketplaceReadyToDownloadComponent } from './marketplace-ready-to-download.component';
 import { MarketplaceDataProductListComponent } from './marketplace-data-product-list/marketplace-data-product-list.component';
-import { MarketplaceDataProductListDetailDirective } from './marketplace-data-product-list/marketplace-data-product-list-detail.directive';
 import { AppRoutingModule } from '../app-routing.module';
 import { MarketplaceBuyProductButtonComponent } from './marketplace-buy-product-button/marketplace-buy-product-button.component';
 import { MarketplaceFinaliseButtonComponent } from './marketplace-finalise-button/marketplace-finalise-button.component';
@@ -39,12 +33,6 @@ import {
   MarketplaceDownloadProductButtonComponent
 } from './marketplace-download-product-button/marketplace-download-product-button.component';
 import {
-  MarketplaceDataProductOrdersListComponent
-} from './marketplace-data-product-orders-list/marketplace-data-product-orders-list.component';
-import {
-  MarketplaceDataProductOrdersListContainerComponent
-} from './marketplace-data-product-orders-list-container/marketplace-data-product-orders-list-container.component';
-import {
   MarketplaceRateOrderDialogComponent
 } from './marketplace-rate-order-dialog/marketplace-rate-order-dialog.component';
 import {
@@ -55,6 +43,7 @@ import { MarketplaceTaskManagerComponent } from './marketplace-task-manager/mark
 import {
   MarketplaceBeforeBuyConfirmationDialogComponent
 } from './marketplace-before-buy-confirmation-dialog/marketplace-before-buy-confirmation-dialog.component';
+import { MarketplaceMyFilesComponent } from './marketplace-my-files.component';
 
 @NgModule({
   imports: [
@@ -68,23 +57,15 @@ import {
   ],
   declarations: [
     MarketplaceBrowseComponent,
-    MarketplaceSellComponent,
-    MarketplaceSellMyActiveListingsComponent,
-    MarketplaceSellPendingFinalisationComponent,
-    MarketplaceSellUnpublishedComponent,
-    MarketplaceBuyComponent,
-    MarketplaceBuyAwaitingFinalisationComponent,
-    MarketplaceBuyReadyToDownloadComponent,
+    MarketplaceActiveListingsComponent,
+    MarketplaceReadyToDownloadComponent,
     MarketplaceProductDetailsComponent,
-
     MarketplaceEulaSelectorComponent,
     MarketplaceRateOrderDialogComponent,
     MarketplaceRateOrderButtonComponent,
     MarketplaceBuyProductButtonComponent,
     MarketplaceCancelPurchaseButtonComponent,
     MarketplaceDataProductListComponent,
-    MarketplaceDataProductListDetailDirective,
-    MarketplaceDataProductOrdersListComponent,
     MarketplaceDownloadProductButtonComponent,
     MarketplaceFinaliseButtonComponent,
     MarketplaceProductCategorySelectorComponent,
@@ -94,21 +75,17 @@ import {
     MarketplaceUnpublishButtonComponent,
     MarketplaceWithdrawButtonComponent,
     MarketplaceActionButtonsComponent,
-    MarketplaceDataProductOrdersListContainerComponent,
     MarketplaceRatingComponent,
     MarketplaceTaskManagerComponent,
-    MarketplaceBeforeBuyConfirmationDialogComponent
+    MarketplaceBeforeBuyConfirmationDialogComponent,
+    MarketplaceMyFilesComponent
   ],
   exports: [
     MarketplaceBrowseComponent,
-    MarketplaceSellComponent,
-    MarketplaceSellMyActiveListingsComponent,
-    MarketplaceSellPendingFinalisationComponent,
-    MarketplaceSellUnpublishedComponent,
-    MarketplaceBuyComponent,
-    MarketplaceBuyAwaitingFinalisationComponent,
-    MarketplaceBuyReadyToDownloadComponent,
+    MarketplaceActiveListingsComponent,
+    MarketplaceReadyToDownloadComponent,
     MarketplaceActionButtonsComponent,
+    MarketplaceFinaliseButtonComponent,
     MarketplaceProductDetailsComponent,
     MarketplaceTaskManagerComponent
   ],

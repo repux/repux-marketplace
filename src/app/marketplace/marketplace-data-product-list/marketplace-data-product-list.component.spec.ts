@@ -7,7 +7,6 @@ import { from as fromPromise } from 'rxjs';
 import { EsResponse } from '../../shared/models/es-response';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { DataProduct } from '../../shared/models/data-product';
-import { MarketplaceDataProductListDetailDirective } from './marketplace-data-product-list-detail.directive';
 import { SharedModule } from '../../shared/shared.module';
 import { MaterialModule } from '../../material.module';
 import { RouterTestingModule } from '@angular/router/testing';
@@ -54,7 +53,6 @@ describe('MarketplaceDataProductListComponent', () => {
         MarketplaceDataProductListComponent,
         MarketplaceFileSizeStubComponent,
         MarketplaceActionButtonsStubComponent,
-        MarketplaceDataProductListDetailDirective,
         DataProductOrdersListContainerStubComponent
       ],
       imports: [
@@ -284,8 +282,6 @@ describe('MarketplaceDataProductListComponent', () => {
       expect(firstRow.querySelector('mat-cell:nth-child(9)').textContent.trim()).toBe('1');
       expect(firstRow.querySelector('mat-cell:nth-child(10) button').textContent.trim()).toBe('Owner');
       expect(firstRow.querySelector('mat-cell:nth-child(11) app-marketplace-action-buttons')).not.toBeNull();
-
-      expect(table.querySelectorAll('app-marketplace-data-product-orders-list-container').length).toBe(1);
     });
 
     it('should call sortChanged method when user clicks on sorting column', () => {

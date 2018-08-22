@@ -47,6 +47,10 @@
   }
 }
 
+.mat-card-subtitle {
+  word-break: break-all;
+}
+
 .mat-card-content {
   margin: 0 0 32px 0;
 }
@@ -59,17 +63,6 @@
 .mat-paginator {
   margin: 0 0 80px 0;
   background: transparent;
-}
-
-.spinner-wrapper {
-  position: fixed;
-  top: 0;
-  left: 0;
-  bottom: 0;
-  right: 0;
-  display: flex;
-  justify-content: center;
-  align-items: center;
 }
 
 .list-search {
@@ -124,25 +117,4 @@
   font-weight: 500;
   color: map-get($app-primary, 300);
   margin: 30px 0 6px 0;
-}
-
-.empty-list {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin: 48px 0;
-
-  &__icon {
-    color: #b4b4b4;
-    font-size: 72px;
-    width: 72px;
-    height: 72px;
-    margin: 0 0 24px 0;
-  }
-
-  &__text {
-    color: #6e6e6e;
-    font-size: 16px;
-    font-weight: 500;
-  }
 }
