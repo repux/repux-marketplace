@@ -158,6 +158,7 @@ export class FileUploadTask implements Task {
 
   async onTransactionsListChange(transactions: Transaction[]) {
     const foundTransaction = transactions.find(transaction =>
+      this.dataProduct &&
       transaction.scope === BlockchainTransactionScope.DataProduct &&
       transaction.identifier === this.dataProduct.sellerMetaHash &&
       transaction.blocksAction === ActionButtonType.Publish
