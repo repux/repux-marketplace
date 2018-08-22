@@ -5,7 +5,6 @@ import Wallet from '../../shared/models/wallet';
 import { from } from 'rxjs';
 import { MarketplaceFinaliseButtonComponent } from './marketplace-finalise-button.component';
 import BigNumber from 'bignumber.js';
-import { KeyStoreService } from '../../key-store/key-store.service';
 import { RepuxLibService } from '../../services/repux-lib.service';
 import { TaskManagerService } from '../../services/task-manager.service';
 import { DataProductService } from '../../services/data-product.service';
@@ -18,11 +17,13 @@ import { DataProductOrder as BlockchainDataProductOrder, TransactionReceipt, Tra
 import { BlockchainTransactionScope } from '../../shared/enums/blockchain-transaction-scope';
 import { ActionButtonType } from '../../shared/enums/action-button-type';
 import { Transaction, TransactionService } from '../../shared/services/transaction.service';
+import { CommonDialogService } from '../../shared/services/common-dialog.service';
+import { KeyStoreDialogService } from '../../key-store/key-store-dialog.service';
 
 describe('MarketplaceFinaliseButtonComponent', () => {
   let component: MarketplaceFinaliseButtonComponent;
   let fixture: ComponentFixture<MarketplaceFinaliseButtonComponent>;
-  let keyStoreServiceSpy, matDialogSpy, repuxLibServiceSpy, taskManagerServiceSpy,
+  let matDialogSpy, repuxLibServiceSpy, taskManagerServiceSpy, commonDialogServiceSpy, keyStoreDialogServiceSpy,
     dataProductServiceSpy, pendingFinalisationServiceSpy, tagManagerSpy, walletServiceSpy, transactionServiceSpy;
   const ownerAddress = '0x0000000000000000000000000000000000000000';
   const dataProductAddress = '0x1111111111111111111111111111111111111111';
@@ -34,7 +35,6 @@ describe('MarketplaceFinaliseButtonComponent', () => {
 
   beforeEach(fakeAsync(() => {
     tagManagerSpy = jasmine.createSpyObj('TagManagerService', [ 'sendEvent' ]);
-    keyStoreServiceSpy = jasmine.createSpyObj('KeyStoreService', [ 'hasKeys' ]);
     matDialogSpy = jasmine.createSpyObj('MatDialog', [ 'open' ]);
     repuxLibServiceSpy = jasmine.createSpyObj('RepuxLibService', [ 'getInstance' ]);
     taskManagerServiceSpy = jasmine.createSpyObj('TaskManagerService', [ 'addTask' ]);
@@ -48,6 +48,9 @@ describe('MarketplaceFinaliseButtonComponent', () => {
       subscribe() {
       }
     });
+
+    commonDialogServiceSpy = jasmine.createSpyObj('CommonDialogService', [ 'transaction' ]);
+    keyStoreDialogServiceSpy = jasmine.createSpyObj('KeyStoreDialogServiceSpy', [ 'getKeys' ]);
 
     repuxLibServiceSpy.getInstance.and.returnValue({
       deserializePublicKey(key) {
@@ -79,14 +82,15 @@ describe('MarketplaceFinaliseButtonComponent', () => {
       ],
       providers: [
         { provide: TagManagerService, useValue: tagManagerSpy },
-        { provide: KeyStoreService, useValue: keyStoreServiceSpy },
         { provide: MatDialog, useValue: matDialogSpy },
         { provide: RepuxLibService, useValue: repuxLibServiceSpy },
         { provide: TaskManagerService, useValue: taskManagerServiceSpy },
         { provide: DataProductService, useValue: dataProductServiceSpy },
         { provide: PendingFinalisationService, useValue: pendingFinalisationServiceSpy },
         { provide: WalletService, useValue: walletServiceSpy },
-        { provide: TransactionService, useValue: transactionServiceSpy }
+        { provide: TransactionService, useValue: transactionServiceSpy },
+        { provide: CommonDialogService, useValue: commonDialogServiceSpy },
+        { provide: KeyStoreDialogService, useValue: keyStoreDialogServiceSpy }
       ]
     })
       .compileComponents();
@@ -152,9 +156,7 @@ describe('MarketplaceFinaliseButtonComponent', () => {
         publicKey: 'SELLER_PUBLIC_KEY'
       };
 
-      const getKeys = jasmine.createSpy();
-      getKeys.and.returnValue(Promise.resolve(keyPair));
-      component[ 'getKeys' ] = getKeys;
+      keyStoreDialogServiceSpy.getKeys.and.returnValue(Promise.resolve(keyPair));
 
       const reencrypt = jasmine.createSpy();
       reencrypt.and.returnValue(Promise.resolve(buyerMetaHash));
@@ -206,6 +208,8 @@ describe('MarketplaceFinaliseButtonComponent', () => {
   describe('#sendTransaction()', () => {
     it('should call dataProductService.finaliseDataProductPurchase using commonDialogService.transaction', async () => {
       const buyerMetaHash = 'BUYER_META_HASH';
+
+      commonDialogServiceSpy.transaction.and.callFake(methodToCall => methodToCall());
 
       await component.ngOnInit();
       component.sendTransaction(buyerMetaHash);
@@ -267,40 +271,6 @@ describe('MarketplaceFinaliseButtonComponent', () => {
 
       expect(onTransactionFinish.calls.count()).toBe(1);
       expect(onTransactionFinish.calls.allArgs()[ 0 ]).toEqual([ { status: TransactionStatus.SUCCESSFUL } ]);
-    });
-  });
-
-  describe('#getKeys()', () => {
-    it('should open KeysPasswordDialogComponent when keyStoreService.hasKeys return true', async () => {
-      const expectedResult = {
-        publicKey: 'PUBLIC_KEY',
-        privateKey: 'PRIVATE_KEY'
-      };
-      const subscribe = jasmine.createSpy();
-      subscribe.and.callFake(callback => callback(expectedResult));
-      const afterClosed = jasmine.createSpy();
-      afterClosed.and.returnValue({ subscribe });
-      keyStoreServiceSpy.hasKeys.and.returnValue(true);
-      matDialogSpy.open.and.returnValue({ afterClosed });
-
-      const result = await component[ 'getKeys' ]();
-      expect(result).toEqual(<any> expectedResult);
-    });
-
-    it('should open KeysGeneratorDialogComponent when keyStoreService.hasKeys return true', async () => {
-      const expectedResult = {
-        publicKey: 'PUBLIC_KEY',
-        privateKey: 'PRIVATE_KEY'
-      };
-      const subscribe = jasmine.createSpy();
-      subscribe.and.callFake(callback => callback(expectedResult));
-      const afterClosed = jasmine.createSpy();
-      afterClosed.and.returnValue({ subscribe });
-      keyStoreServiceSpy.hasKeys.and.returnValue(false);
-      matDialogSpy.open.and.returnValue({ afterClosed });
-
-      const result = await component[ 'getKeys' ]();
-      expect(result).toEqual(<any> expectedResult);
     });
   });
 });

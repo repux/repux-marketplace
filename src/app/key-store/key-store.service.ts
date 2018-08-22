@@ -1,15 +1,20 @@
 import { Injectable } from '@angular/core';
 import { VaultService } from '../vault/vault.service';
+import { StorageService } from '../vault/storage.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class KeyStoreService {
+  static PRIVATE_KEY = 'pk';
+  static PUBLIC_KEY = 'pub';
   private static VAULT_NAME = 'keystore';
   private static LS_PASSWORD_HASH = 'keystore_phash';
 
-  static PRIVATE_KEY = 'pk';
-  static PUBLIC_KEY = 'pub';
+  constructor(
+    private vaultService: VaultService,
+    private storageService: StorageService) {
+  }
 
   static hashCode(input): number {
     const inputLength = input.length;
@@ -31,32 +36,31 @@ export class KeyStoreService {
     return passwordHashFromStorage === KeyStoreService.hashCode(password);
   }
 
-  constructor(private vaultService: VaultService) {
+  hasKeys(): boolean {
+    return Boolean(this.vaultService.hasVault(`${KeyStoreService.VAULT_NAME}`) &&
+      this.storageService.getItem(KeyStoreService.PUBLIC_KEY) &&
+      this.storageService.getItem(KeyStoreService.LS_PASSWORD_HASH)
+    );
   }
 
-  hasKeys() {
-    return this.vaultService.hasVault(KeyStoreService.VAULT_NAME);
+  async storePrivateKey(value: {}, password: string): Promise<void> {
+    return this.vaultService.storeValue(KeyStoreService.VAULT_NAME, password, KeyStoreService.PRIVATE_KEY, JSON.stringify(value));
   }
 
-  async store(item: string, value: {}, password: string): Promise<void> {
-    return this.vaultService.storeValue(KeyStoreService.VAULT_NAME, password, item, JSON.stringify(value));
+  storePublicKey(value: {}): void {
+    return this.storageService.setItem(KeyStoreService.PUBLIC_KEY, JSON.stringify(value));
   }
 
-  async get(item: string, password: string): Promise<string> {
-    return this.vaultService.getValue(KeyStoreService.VAULT_NAME, password, item);
+  getPublicKey(): JsonWebKey {
+    const publicKeySerialized = this.storageService.getItem(KeyStoreService.PUBLIC_KEY);
+
+    return JSON.parse(publicKeySerialized) as JsonWebKey;
   }
 
-  async getKeys(password: string): Promise<{ privateKey: JsonWebKey, publicKey: JsonWebKey }> {
-    const publicKeySerialized = await this.vaultService.getValue(KeyStoreService.VAULT_NAME, password, KeyStoreService.PUBLIC_KEY);
+  async getPrivateKey(password: string): Promise<JsonWebKey> {
     const privateKeySerialized = await this.vaultService.getValue(KeyStoreService.VAULT_NAME, password, KeyStoreService.PRIVATE_KEY);
 
-    const privateKey = JSON.parse(privateKeySerialized) as JsonWebKey;
-    const publicKey = JSON.parse(publicKeySerialized) as JsonWebKey;
-
-    return {
-      privateKey,
-      publicKey
-    };
+    return JSON.parse(privateKeySerialized) as JsonWebKey;
   }
 
   savePasswordAsHash(password: string): void {

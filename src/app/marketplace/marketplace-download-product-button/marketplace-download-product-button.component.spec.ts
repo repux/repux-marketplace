@@ -4,15 +4,15 @@ import { MarketplaceDownloadProductButtonComponent } from './marketplace-downloa
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import Wallet from '../../shared/models/wallet';
 import { from } from 'rxjs';
-import { KeyStoreService } from '../../key-store/key-store.service';
 import { MaterialModule } from '../../material.module';
 import { DataProductService } from '../../services/data-product.service';
 import { TagManagerService } from '../../shared/services/tag-manager.service';
+import { KeyStoreDialogService } from '../../key-store/key-store-dialog.service';
 
 describe('MarketplaceDownloadProductButtonComponent', () => {
   let component: MarketplaceDownloadProductButtonComponent;
   let fixture: ComponentFixture<MarketplaceDownloadProductButtonComponent>;
-  let repuxLibServiceSpy, keyStoreServiceSpy, dataProductServiceSpy, tagManagerSpy;
+  let repuxLibServiceSpy, keyStoreDialogServiceSpy, dataProductServiceSpy, tagManagerSpy;
   const productAddress = '0x1111111111111111111111111111111111111111';
 
   beforeEach(fakeAsync(() => {
@@ -20,7 +20,7 @@ describe('MarketplaceDownloadProductButtonComponent', () => {
     repuxLibServiceSpy.getInstance.and.returnValue({
       createFileDownloader: jasmine.createSpy()
     });
-    keyStoreServiceSpy = jasmine.createSpyObj('KeyStoreService', [ 'hasKeys' ]);
+    keyStoreDialogServiceSpy = jasmine.createSpyObj('KeyStoreDialogService', [ 'getKeys' ]);
     tagManagerSpy = jasmine.createSpyObj('TagManagerService', [ 'sendEvent' ]);
     dataProductServiceSpy = jasmine.createSpyObj('DataProductServiceSpy', [ 'getDataProductData', 'getOrderData' ]);
     TestBed.configureTestingModule({
@@ -35,7 +35,7 @@ describe('MarketplaceDownloadProductButtonComponent', () => {
         { provide: TagManagerService, useValue: tagManagerSpy },
         { provide: RepuxLibService, useValue: repuxLibServiceSpy },
         { provide: DataProductService, useValue: dataProductServiceSpy },
-        { provide: KeyStoreService, useValue: keyStoreServiceSpy }
+        { provide: KeyStoreDialogService, useValue: keyStoreDialogServiceSpy }
       ]
     })
       .compileComponents();
@@ -89,9 +89,7 @@ describe('MarketplaceDownloadProductButtonComponent', () => {
         publicKey: 'PUBLIC_KEY'
       };
       const buyerMetaHash = 'SOME_HASH';
-      const getKeys = jasmine.createSpy();
-      getKeys.and.returnValue(Promise.resolve(keyPair));
-      component[ '_getKeys' ] = getKeys;
+      keyStoreDialogServiceSpy.getKeys.and.returnValue(Promise.resolve(keyPair));
       dataProductServiceSpy.getDataProductData.and.returnValue(Promise.resolve({
         owner: '0x00'
       }));
@@ -118,9 +116,7 @@ describe('MarketplaceDownloadProductButtonComponent', () => {
         publicKey: 'PUBLIC_KEY'
       };
       const sellerMetaHash = 'SOME_HASH';
-      const getKeys = jasmine.createSpy();
-      getKeys.and.returnValue(Promise.resolve(keyPair));
-      component[ '_getKeys' ] = getKeys;
+      keyStoreDialogServiceSpy.getKeys.and.returnValue(Promise.resolve(keyPair));
       dataProductServiceSpy.getDataProductData.and.returnValue(Promise.resolve({
         owner: '0x00',
         sellerMetaHash
@@ -136,44 +132,6 @@ describe('MarketplaceDownloadProductButtonComponent', () => {
       expect(fileDownloadTask[ '_buyerAddress' ]).toBe('0x00');
       expect(fileDownloadTask[ '_metaFileHash' ]).toBe(sellerMetaHash);
       expect(fileDownloadTask[ '_buyerPrivateKey' ]).toBe(keyPair.privateKey);
-    });
-  });
-
-  describe('#_getKeys()', () => {
-    it('should open KeysPasswordDialogComponent when keyStoreService.hasKeys return true', async () => {
-      const expectedResult = {
-        publicKey: 'PUBLICK_KEY',
-        privateKey: 'PRIVATE_KEY'
-      };
-      const subscribe = jasmine.createSpy();
-      subscribe.and.callFake(callback => callback(expectedResult));
-      const afterClosed = jasmine.createSpy();
-      afterClosed.and.returnValue({ subscribe });
-      keyStoreServiceSpy.hasKeys.and.returnValue(true);
-      const matDialog = jasmine.createSpyObj('MatDialog', [ 'open' ]);
-      matDialog.open.and.returnValue({ afterClosed });
-      component[ '_dialog' ] = matDialog;
-
-      const result = await component[ '_getKeys' ]();
-      expect(result).toEqual(<any> expectedResult);
-    });
-
-    it('should open KeysGeneratorDialogComponent when keyStoreService.hasKeys return true', async () => {
-      const expectedResult = {
-        publicKey: 'PUBLICK_KEY',
-        privateKey: 'PRIVATE_KEY'
-      };
-      const subscribe = jasmine.createSpy();
-      subscribe.and.callFake(callback => callback(expectedResult));
-      const afterClosed = jasmine.createSpy();
-      afterClosed.and.returnValue({ subscribe });
-      keyStoreServiceSpy.hasKeys.and.returnValue(false);
-      const matDialog = jasmine.createSpyObj('MatDialog', [ 'open' ]);
-      matDialog.open.and.returnValue({ afterClosed });
-      component[ '_dialog' ] = matDialog;
-
-      const result = await component[ '_getKeys' ]();
-      expect(result).toEqual(<any> expectedResult);
     });
   });
 });

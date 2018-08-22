@@ -62,8 +62,8 @@ export class KeysUpdateDialogComponent implements OnInit {
       this.keyStoreService.savePasswordAsHash(password);
     }
 
-    await this.keyStoreService.store(KeyStoreService.PRIVATE_KEY, privateKey, password);
-    await this.keyStoreService.store(KeyStoreService.PUBLIC_KEY, publicKey, password);
+    await this.keyStoreService.storePrivateKey(privateKey, password);
+    this.keyStoreService.storePublicKey(publicKey);
 
     this.dialogRef.close({
       publicKey,

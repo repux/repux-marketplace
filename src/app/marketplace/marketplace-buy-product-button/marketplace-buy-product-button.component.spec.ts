@@ -5,7 +5,6 @@ import { RepuxLibService } from '../../services/repux-lib.service';
 import Wallet from '../../shared/models/wallet';
 import { from } from 'rxjs';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
-import { KeyStoreService } from '../../key-store/key-store.service';
 import { MaterialModule } from '../../material.module';
 import { AwaitingFinalisationService } from '../services/awaiting-finalisation.service';
 import { DataProductService } from '../../services/data-product.service';
@@ -13,12 +12,15 @@ import { TagManagerService } from '../../shared/services/tag-manager.service';
 import { DataProduct } from '../../shared/models/data-product';
 import BigNumber from 'bignumber.js';
 import { CommonDialogService } from '../../shared/services/common-dialog.service';
-import { MarketplaceBeforeBuyConfirmationDialogComponent } from '../marketplace-before-buy-confirmation-dialog/marketplace-before-buy-confirmation-dialog.component';
+import {
+  MarketplaceBeforeBuyConfirmationDialogComponent
+} from '../marketplace-before-buy-confirmation-dialog/marketplace-before-buy-confirmation-dialog.component';
 import { BrowserDynamicTestingModule } from '@angular/platform-browser-dynamic/testing';
 import { CurrencyRepuxPipe } from '../../shared/pipes/currency-repux';
 import { FileSizePipe } from '../../shared/pipes/file-size.pipe';
 import { ArrayJoinPipe } from '../../shared/pipes/array-join.pipe';
 import { TransactionStatus, TransactionReceipt } from 'repux-web3-api';
+import { KeyStoreDialogService } from '../../key-store/key-store-dialog.service';
 
 @Component({ selector: 'app-marketplace-download-product-button', template: '' })
 class DownloadProductButtonStubComponent {
@@ -28,19 +30,21 @@ class DownloadProductButtonStubComponent {
 describe('MarketplaceBuyProductButtonComponent', () => {
   let component: MarketplaceBuyProductButtonComponent;
   let fixture: ComponentFixture<MarketplaceBuyProductButtonComponent>;
-  let repuxLibServiceSpy, keyStoreServiceSpy, awaitingFinalisationServiceSpy, dataProductServiceSpy, tagManager, commonDialogServiceSpy;
+  let repuxLibServiceSpy, awaitingFinalisationServiceSpy, dataProductServiceSpy, tagManager, commonDialogServiceSpy,
+    keyStoreDialogServiceSpy;
   const dataProductAddress = '0x1111111111111111111111111111111111111111';
   const buyerAddress = '0x0000000000000000000000000000000000000000';
 
   beforeEach(fakeAsync(() => {
     tagManager = jasmine.createSpyObj('TagManagerService', [ 'sendEvent' ]);
     repuxLibServiceSpy = jasmine.createSpyObj('RepuxLibService', [ 'getInstance' ]);
-    keyStoreServiceSpy = jasmine.createSpyObj('KeyStoreService', [ 'hasKeys' ]);
     awaitingFinalisationServiceSpy = jasmine.createSpyObj('AwaitingFinalisationService', [ 'addProduct' ]);
     dataProductServiceSpy = jasmine.createSpyObj('DataProductService',
       [ 'purchaseDataProduct', 'approveTokensTransferForDataProductPurchase' ]);
     commonDialogServiceSpy = jasmine.createSpyObj('CommonDialogService', [ 'transaction' ]);
     commonDialogServiceSpy.transaction.and.callFake(methodToCall => methodToCall());
+
+    keyStoreDialogServiceSpy = jasmine.createSpyObj('KeyStoreDialogService', [ 'getKeys' ]);
 
     TestBed.configureTestingModule({
       declarations: [
@@ -59,9 +63,9 @@ describe('MarketplaceBuyProductButtonComponent', () => {
         { provide: TagManagerService, useValue: tagManager },
         { provide: DataProductService, useValue: dataProductServiceSpy },
         { provide: RepuxLibService, useValue: repuxLibServiceSpy },
-        { provide: KeyStoreService, useValue: keyStoreServiceSpy },
         { provide: AwaitingFinalisationService, useValue: awaitingFinalisationServiceSpy },
-        { provide: CommonDialogService, useValue: commonDialogServiceSpy }
+        { provide: CommonDialogService, useValue: commonDialogServiceSpy },
+        { provide: KeyStoreDialogService, useValue: keyStoreDialogServiceSpy }
       ]
     })
       .compileComponents();
@@ -141,14 +145,7 @@ describe('MarketplaceBuyProductButtonComponent', () => {
 
   describe('#onApproveTransactionFinish()', () => {
     it('should call dataProductService.purchaseDataProduct using commonDialogService.transaction', async () => {
-      const keyPair = {
-        privateKey: 'PRIVATE_KEY',
-        publicKey: 'PUBLIC_KEY'
-      };
-
-      const getKeys = jasmine.createSpy();
-      getKeys.and.returnValue(Promise.resolve(keyPair));
-      component[ 'getKeys' ] = getKeys;
+      keyStoreDialogServiceSpy.getKeys.and.returnValue(Promise.resolve({ publicKey: 'PUBLIC_KEY' }));
 
       const serializePublicKey = jasmine.createSpy();
       serializePublicKey.and.callFake(key => 'SERIALIZED_' + key);
@@ -208,44 +205,6 @@ describe('MarketplaceBuyProductButtonComponent', () => {
 
       component.productOwnerAddress = '0x01';
       expect(component.getUserIsOwner()).toBeFalsy();
-    });
-  });
-
-  describe('#getKeys()', () => {
-    it('should open KeysPasswordDialogComponent when keyStoreService.hasKeys return true', async () => {
-      const expectedResult = {
-        publicKey: 'PUBLICK_KEY',
-        privateKey: 'PRIVATE_KEY'
-      };
-      const subscribe = jasmine.createSpy();
-      subscribe.and.callFake(callback => callback(expectedResult));
-      const afterClosed = jasmine.createSpy();
-      afterClosed.and.returnValue({ subscribe });
-      keyStoreServiceSpy.hasKeys.and.returnValue(true);
-      const matDialog = jasmine.createSpyObj('MatDialog', [ 'open' ]);
-      matDialog.open.and.returnValue({ afterClosed });
-      component[ 'dialog' ] = matDialog;
-
-      const result = await component[ 'getKeys' ]();
-      expect(result).toEqual(<any> expectedResult);
-    });
-
-    it('should open KeysGeneratorDialogComponent when keyStoreService.hasKeys return true', async () => {
-      const expectedResult = {
-        publicKey: 'PUBLICK_KEY',
-        privateKey: 'PRIVATE_KEY'
-      };
-      const subscribe = jasmine.createSpy();
-      subscribe.and.callFake(callback => callback(expectedResult));
-      const afterClosed = jasmine.createSpy();
-      afterClosed.and.returnValue({ subscribe });
-      keyStoreServiceSpy.hasKeys.and.returnValue(false);
-      const matDialog = jasmine.createSpyObj('MatDialog', [ 'open' ]);
-      matDialog.open.and.returnValue({ afterClosed });
-      component[ 'dialog' ] = matDialog;
-
-      const result = await component[ 'getKeys' ]();
-      expect(result).toEqual(<any> expectedResult);
     });
   });
 });

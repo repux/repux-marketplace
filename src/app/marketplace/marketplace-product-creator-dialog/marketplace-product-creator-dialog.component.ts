@@ -8,9 +8,6 @@ import { FileInputComponent } from '../../shared/components/file-input/file-inpu
 import { TaskManagerService } from '../../services/task-manager.service';
 import { MatDialog, MatDialogRef } from '@angular/material';
 import { DataProductService } from '../../services/data-product.service';
-import { KeyStoreService } from '../../key-store/key-store.service';
-import { KeysPasswordDialogComponent } from '../../key-store/keys-password-dialog/keys-password-dialog.component';
-import { KeysGeneratorDialogComponent } from '../../key-store/keys-generator-dialog/keys-generator-dialog.component';
 import { Subscription } from 'rxjs/internal/Subscription';
 import { UnpublishedProductsService } from '../services/unpublished-products.service';
 import {
@@ -24,6 +21,7 @@ import { WalletService } from '../../services/wallet.service';
 import Wallet from '../../shared/models/wallet';
 import { TransactionService } from '../../shared/services/transaction.service';
 import { SettingsService } from '../../settings/services/settings.service';
+import { KeyStoreDialogService } from '../../key-store/key-store-dialog.service';
 
 @Component({
   selector: 'app-marketplace-product-creator-dialog',
@@ -49,7 +47,6 @@ export class MarketplaceProductCreatorDialogComponent implements OnInit, OnDestr
   constructor(
     private tagManager: TagManagerService,
     private formBuilder: FormBuilder,
-    private keyStoreService: KeyStoreService,
     private repuxLibService: RepuxLibService,
     private dataProductService: DataProductService,
     private taskManagerService: TaskManagerService,
@@ -58,6 +55,7 @@ export class MarketplaceProductCreatorDialogComponent implements OnInit, OnDestr
     private walletService: WalletService,
     private settingsService: SettingsService,
     private transactionService: TransactionService,
+    private keyStoreDialogService: KeyStoreDialogService,
     private dialog: MatDialog,
     public dialogRef: MatDialogRef<MarketplaceProductCreatorDialogComponent>) {
     this.walletSubscription = this.walletService.getWallet().subscribe(wallet => this.wallet = wallet);
@@ -108,7 +106,7 @@ export class MarketplaceProductCreatorDialogComponent implements OnInit, OnDestr
       this.formGroup.value.price
     );
 
-    const { publicKey } = await this.getKeys();
+    const { publicKey } = await this.keyStoreDialogService.getKeys({ publicKey: true });
 
     this.tagManager.sendEvent(
       EventCategory.Sell,
@@ -162,26 +160,5 @@ export class MarketplaceProductCreatorDialogComponent implements OnInit, OnDestr
     if (this.walletSubscription) {
       this.walletSubscription.unsubscribe();
     }
-  }
-
-  private getKeys(): Promise<{ privateKey: JsonWebKey, publicKey: JsonWebKey }> {
-    return new Promise(resolve => {
-      let dialogRef;
-
-      if (this.keyStoreService.hasKeys()) {
-        dialogRef = this.dialog.open(KeysPasswordDialogComponent);
-      } else {
-        dialogRef = this.dialog.open(KeysGeneratorDialogComponent);
-      }
-
-      this.subscription = dialogRef.afterClosed().subscribe(result => {
-        if (result) {
-          resolve({
-            privateKey: result.privateKey,
-            publicKey: result.publicKey
-          });
-        }
-      });
-    });
   }
 }

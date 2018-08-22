@@ -1,9 +1,5 @@
 import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
-import { MatDialog } from '@angular/material';
 import { DataProductOrder } from '../../shared/models/data-product-order';
-import { KeysGeneratorDialogComponent } from '../../key-store/keys-generator-dialog/keys-generator-dialog.component';
-import { KeysPasswordDialogComponent } from '../../key-store/keys-password-dialog/keys-password-dialog.component';
-import { KeyStoreService } from '../../key-store/key-store.service';
 import { Subscription } from 'rxjs';
 import { DataProduct } from '../../shared/models/data-product';
 import { RepuxLibService } from '../../services/repux-lib.service';
@@ -19,6 +15,7 @@ import { TransactionReceipt, TransactionStatus, DataProductOrder as BlockchainDa
 import { Transaction, TransactionService } from '../../shared/services/transaction.service';
 import { BlockchainTransactionScope } from '../../shared/enums/blockchain-transaction-scope';
 import { ActionButtonType } from '../../shared/enums/action-button-type';
+import { KeyStoreDialogService } from '../../key-store/key-store-dialog.service';
 
 @Component({
   selector: 'app-marketplace-finalise-button',
@@ -44,13 +41,12 @@ export class MarketplaceFinaliseButtonComponent implements OnDestroy, OnInit {
   constructor(
     private repuxLibService: RepuxLibService,
     private dataProductService: DataProductService,
-    private keyStoreService: KeyStoreService,
     private taskManagerService: TaskManagerService,
     private pendingFinalisationService: PendingFinalisationService,
     private walletService: WalletService,
-    private dialog: MatDialog,
     private tagManager: TagManagerService,
     private commonDialogService: CommonDialogService,
+    private keyStoreDialogServiceSpy: KeyStoreDialogService,
     private transactionService: TransactionService
   ) {
   }
@@ -109,7 +105,7 @@ export class MarketplaceFinaliseButtonComponent implements OnDestroy, OnInit {
       this.dataProduct.price ? this.dataProduct.price.toString() : ''
     );
 
-    const { privateKey } = await this.getKeys();
+    const { privateKey } = await this.keyStoreDialogServiceSpy.getKeys();
     const publicKey = this.repuxLibService.getInstance().deserializePublicKey(this.order.publicKey);
 
     this.pendingReencryption = true;
@@ -173,26 +169,5 @@ export class MarketplaceFinaliseButtonComponent implements OnDestroy, OnInit {
 
     this.wallet = wallet;
     this.userIsOwner = this.getUserIsOwner();
-  }
-
-  private getKeys(): Promise<{ privateKey: JsonWebKey, publicKey: JsonWebKey }> {
-    return new Promise(resolve => {
-      let dialogRef;
-
-      if (this.keyStoreService.hasKeys()) {
-        dialogRef = this.dialog.open(KeysPasswordDialogComponent);
-      } else {
-        dialogRef = this.dialog.open(KeysGeneratorDialogComponent);
-      }
-
-      this.keysSubscription = dialogRef.afterClosed().subscribe(result => {
-        if (result) {
-          resolve({
-            privateKey: result.privateKey,
-            publicKey: result.publicKey
-          });
-        }
-      });
-    });
   }
 }

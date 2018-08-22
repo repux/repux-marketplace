@@ -7,7 +7,6 @@ import { DataProductService } from '../../services/data-product.service';
 import { FormBuilder, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
-import { KeyStoreService } from '../../key-store/key-store.service';
 import { KeyStoreModule } from '../../key-store/key-store.module';
 import { SharedModule } from '../../shared/shared.module';
 import { MaterialModule } from '../../material.module';
@@ -23,9 +22,10 @@ import Wallet from '../../shared/models/wallet';
 import { TransactionService } from '../../shared/services/transaction.service';
 import { SettingsService } from '../../settings/services/settings.service';
 import { environment } from '../../../environments/environment';
+import { KeyStoreDialogService } from '../../key-store/key-store-dialog.service';
 
 describe('MarketplaceProductCreatorDialogComponent', () => {
-  let tagManagerServiceSpy, keyStoreServiceSpy, repuxLibServiceSpy, dataProductServiceSpy, taskManagerServiceSpy, matDialogSpy,
+  let tagManagerServiceSpy, repuxLibServiceSpy, dataProductServiceSpy, taskManagerServiceSpy, matDialogSpy, keyStoreDialogServiceSpy,
     matDialogRefSpy, unpublishedProductsServiceSpy, ipfsServiceSpy, walletServiceSpy, transactionServiceSpy, settingsServiceSpy;
   let formBuilder: FormBuilder;
   let component: MarketplaceProductCreatorDialogComponent;
@@ -36,7 +36,6 @@ describe('MarketplaceProductCreatorDialogComponent', () => {
   beforeEach(async(() => {
     tagManagerServiceSpy = jasmine.createSpyObj('TagManagerService', [ 'sendUserId', 'sendEvent' ]);
     formBuilder = new FormBuilder();
-    keyStoreServiceSpy = jasmine.createSpyObj('KeyStoreService', [ 'hasKeys' ]);
     repuxLibServiceSpy = jasmine.createSpyObj('RepuxLibService', [ 'getInstance' ]);
     repuxLibServiceSpy.getInstance.and.returnValue({
       createFileUploader: jasmine.createSpy()
@@ -55,6 +54,9 @@ describe('MarketplaceProductCreatorDialogComponent', () => {
       subscribe() {
       }
     });
+
+    keyStoreDialogServiceSpy = jasmine.createSpyObj('KeyStoreDialogService', [ 'getKeys' ]);
+
     settingsServiceSpy = {
       daysToDeliver: environment.repux.defaultDaysToDeliver
     };
@@ -76,14 +78,14 @@ describe('MarketplaceProductCreatorDialogComponent', () => {
       ],
       providers: [
         { provide: TagManagerService, useValue: tagManagerServiceSpy },
-        { provide: KeyStoreService, useValue: keyStoreServiceSpy },
         { provide: MatDialogRef, useValue: matDialogRefSpy },
         { provide: RepuxLibService, useValue: repuxLibServiceSpy },
         { provide: TaskManagerService, useValue: taskManagerServiceSpy },
         { provide: DataProductService, useValue: dataProductServiceSpy },
         { provide: IpfsService, useValue: ipfsServiceSpy },
         { provide: TransactionService, useValue: transactionServiceSpy },
-        { provide: SettingsService, useValue: settingsServiceSpy }
+        { provide: SettingsService, useValue: settingsServiceSpy },
+        { provide: KeyStoreDialogService, useValue: keyStoreDialogServiceSpy }
       ]
     }).compileComponents();
   }));
@@ -99,7 +101,6 @@ describe('MarketplaceProductCreatorDialogComponent', () => {
       component = new MarketplaceProductCreatorDialogComponent(
         tagManagerServiceSpy,
         formBuilder,
-        keyStoreServiceSpy,
         repuxLibServiceSpy,
         dataProductServiceSpy,
         taskManagerServiceSpy,
@@ -107,6 +108,7 @@ describe('MarketplaceProductCreatorDialogComponent', () => {
         ipfsServiceSpy,
         walletServiceSpy,
         settingsServiceSpy,
+        keyStoreDialogServiceSpy,
         matDialogSpy,
         matDialogRefSpy,
         transactionServiceSpy
@@ -141,10 +143,7 @@ describe('MarketplaceProductCreatorDialogComponent', () => {
       const publicKey = 'PUBLIC_KEY';
       const file = 'FILE';
 
-      const getKeys = spyOn<any>(component, 'getKeys');
-      getKeys.and.returnValue(Promise.resolve({
-        publicKey
-      }));
+      keyStoreDialogServiceSpy.getKeys.and.returnValue(Promise.resolve({ publicKey }));
 
       component.wallet = wallet;
       component.fileInput = <any> { value: [ file ] };
@@ -160,7 +159,7 @@ describe('MarketplaceProductCreatorDialogComponent', () => {
 
       await component.upload();
       expect(taskManagerServiceSpy.addTask.calls.count()).toBe(1);
-      expect(getKeys.calls.count()).toBe(1);
+      expect(keyStoreDialogServiceSpy.getKeys.calls.count()).toBe(1);
       expect(matDialogRefSpy.close.calls.count()).toBe(1);
     });
   });

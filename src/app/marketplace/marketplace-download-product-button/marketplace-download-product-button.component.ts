@@ -5,15 +5,12 @@ import { FileDownloadTask } from '../../tasks/file-download-task';
 import Wallet from '../../shared/models/wallet';
 import { RepuxLibService } from '../../services/repux-lib.service';
 import { TaskManagerService } from '../../services/task-manager.service';
-import { KeysPasswordDialogComponent } from '../../key-store/keys-password-dialog/keys-password-dialog.component';
-import { KeysGeneratorDialogComponent } from '../../key-store/keys-generator-dialog/keys-generator-dialog.component';
-import { KeyStoreService } from '../../key-store/key-store.service';
 import { Subscription } from 'rxjs/internal/Subscription';
-import { MatDialog } from '@angular/material';
 import { Task } from '../../tasks/task';
 import { TaskType } from '../../tasks/task-type';
 import { EventAction, EventCategory, TagManagerService } from '../../shared/services/tag-manager.service';
 import { DataProduct } from '../../shared/models/data-product';
+import { KeyStoreDialogService } from '../../key-store/key-store-dialog.service';
 import { CommonDialogService } from '../../shared/services/common-dialog.service';
 
 @Component({
@@ -34,10 +31,9 @@ export class MarketplaceDownloadProductButtonComponent implements OnDestroy, OnI
     private _dataProductService: DataProductService,
     private _repuxLibService: RepuxLibService,
     private _taskManagerService: TaskManagerService,
-    private _keyStoreService: KeyStoreService,
-    private _dialog: MatDialog,
     private _tagManager: TagManagerService,
-    private commonDialogService: CommonDialogService
+    private commonDialogService: CommonDialogService,
+    private keyStoreDialogService: KeyStoreDialogService
   ) {
   }
 
@@ -74,7 +70,7 @@ export class MarketplaceDownloadProductButtonComponent implements OnDestroy, OnI
       this.dataProduct.price ? this.dataProduct.price.toString() : ''
     );
 
-    const { privateKey } = await this._getKeys();
+    const { privateKey } = await this.keyStoreDialogService.getKeys();
 
     this._tagManager.sendEvent(
       EventCategory.Buy,
@@ -135,26 +131,5 @@ export class MarketplaceDownloadProductButtonComponent implements OnDestroy, OnI
       task.productAddress === this.dataProduct.address &&
       !task.finished
     );
-  }
-
-  private _getKeys(): Promise<{ privateKey: JsonWebKey, publicKey: JsonWebKey }> {
-    return new Promise(resolve => {
-      let dialogRef;
-
-      if (this._keyStoreService.hasKeys()) {
-        dialogRef = this._dialog.open(KeysPasswordDialogComponent);
-      } else {
-        dialogRef = this._dialog.open(KeysGeneratorDialogComponent);
-      }
-
-      this._keyStoreSubscription = dialogRef.afterClosed().subscribe(result => {
-        if (result) {
-          resolve({
-            privateKey: result.privateKey,
-            publicKey: result.publicKey
-          });
-        }
-      });
-    });
   }
 }
