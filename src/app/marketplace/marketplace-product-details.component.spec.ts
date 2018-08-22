@@ -61,16 +61,14 @@ describe('MarketplaceProductDetailsComponent', () => {
 
   describe('#downloadEula()', () => {
     it('should call ipfsService.downloadAndSave() method', async () => {
-      const event = jasmine.createSpyObj('MouseEvent', [ 'stopPropagation' ]);
       const eula = {
         type: EulaType.OWNER,
         fileHash: 'FILE_HASH',
         fileName: 'FILE_NAME'
       };
 
-      await component.downloadEula(event, eula);
+      await component.downloadEula(eula);
 
-      expect(event.stopPropagation.calls.count()).toBe(1);
       expect(ipfsServiceSpy.downloadAndSave.calls.allArgs()[ 0 ][ 0 ]).toBe(eula.fileHash);
       expect(ipfsServiceSpy.downloadAndSave.calls.allArgs()[ 0 ][ 1 ]).toBe(eula.fileName);
     });
