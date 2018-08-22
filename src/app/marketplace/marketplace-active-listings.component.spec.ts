@@ -1,7 +1,7 @@
 import { MatDialog } from '@angular/material';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { ComponentFixture, fakeAsync, TestBed } from '@angular/core/testing';
-import { MarketplaceSellMyActiveListingsComponent } from './marketplace-sell-my-active-listings.component';
+import { MarketplaceActiveListingsComponent } from './marketplace-active-listings.component';
 import Wallet from '../shared/models/wallet';
 import { Component, Input } from '@angular/core';
 import { MaterialModule } from '../material.module';
@@ -16,8 +16,8 @@ class DataProductListStubComponent {
 }
 
 describe('MarketplaceSellMyActiveListingsComponent', () => {
-  let component: MarketplaceSellMyActiveListingsComponent;
-  let fixture: ComponentFixture<MarketplaceSellMyActiveListingsComponent>;
+  let component: MarketplaceActiveListingsComponent;
+  let fixture: ComponentFixture<MarketplaceActiveListingsComponent>;
   let matDialog;
   const ownerAddress = '0x0000000000000000000000000000000000000000';
 
@@ -26,7 +26,7 @@ describe('MarketplaceSellMyActiveListingsComponent', () => {
 
     TestBed.configureTestingModule({
       declarations: [
-        MarketplaceSellMyActiveListingsComponent,
+        MarketplaceActiveListingsComponent,
         DataProductListStubComponent
       ],
       imports: [
@@ -39,7 +39,7 @@ describe('MarketplaceSellMyActiveListingsComponent', () => {
     })
       .compileComponents();
 
-    fixture = TestBed.createComponent(MarketplaceSellMyActiveListingsComponent);
+    fixture = TestBed.createComponent(MarketplaceActiveListingsComponent);
     component = fixture.componentInstance;
 
     fixture.detectChanges();

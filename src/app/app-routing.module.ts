@@ -1,57 +1,34 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { MarketplaceSellComponent, MarketplaceSellLink } from './marketplace/marketplace-sell.component';
-import { MarketplaceSellMyActiveListingsComponent } from './marketplace/marketplace-sell-my-active-listings.component';
-import { MarketplaceSellPendingFinalisationComponent } from './marketplace/marketplace-sell-pending-finalisation.component';
+import { MarketplaceActiveListingsComponent } from './marketplace/marketplace-active-listings.component';
 import { MarketplaceBrowseComponent } from './marketplace/marketplace-browse.component';
-import { MarketplaceSellUnpublishedComponent } from './marketplace/marketplace-sell-unpublished.component';
-import { MarketplaceBuyComponent, MarketplaceBuyingLink } from './marketplace/marketplace-buy.component';
-import { MarketplaceBuyReadyToDownloadComponent } from './marketplace/marketplace-buy-ready-to-download.component';
-import { MarketplaceBuyAwaitingFinalisationComponent } from './marketplace/marketplace-buy-awaiting-finalisation.component';
+import { MarketplaceReadyToDownloadComponent } from './marketplace/marketplace-ready-to-download.component';
 import { SettingsIndexComponent } from './settings/settings-index/settings-index.component';
 import { MarketplaceProductDetailsComponent } from './marketplace/marketplace-product-details.component';
 import { NotificationsListComponent } from './notifications-list/notifications-list.component';
+import { MarketplaceMyFilesComponent } from './marketplace/marketplace-my-files.component';
 
 const routes: Routes = [
   { path: '', redirectTo: '/marketplace', pathMatch: 'full' },
   { path: 'marketplace', component: MarketplaceBrowseComponent },
   { path: 'marketplace/details/:address', component: MarketplaceProductDetailsComponent },
   {
-    path: 'sell', component: MarketplaceSellComponent, children: [
-      { path: '', redirectTo: MarketplaceSellLink.MY_ACTIVE_LISTINGS, pathMatch: 'full' },
+    path: 'my-files', component: MarketplaceMyFilesComponent, children: [
+      { path: '', redirectTo: 'active-listings', pathMatch: 'full' },
       {
-        path: MarketplaceSellLink.MY_ACTIVE_LISTINGS,
-        component: MarketplaceSellMyActiveListingsComponent,
+        path: 'active-listings',
+        component: MarketplaceActiveListingsComponent,
         outlet: 'primary'
       },
-      { path: MarketplaceSellLink.UNPUBLISHED, component: MarketplaceSellUnpublishedComponent },
-      { path: MarketplaceSellLink.PENDING_FINALISATION, component: MarketplaceSellPendingFinalisationComponent }
+      {
+        path: 'files-to-download',
+        component: MarketplaceReadyToDownloadComponent,
+        outlet: 'primary'
+      }
     ]
   },
-  {
-    path: `sell/${MarketplaceSellLink.MY_ACTIVE_LISTINGS}/details/:address`,
-    component: MarketplaceProductDetailsComponent
-  },
-  { path: `sell/${MarketplaceSellLink.UNPUBLISHED}/details/:address`, component: MarketplaceProductDetailsComponent },
-  {
-    path: `sell/${MarketplaceSellLink.PENDING_FINALISATION}/details/:address`,
-    component: MarketplaceProductDetailsComponent
-  },
-  {
-    path: 'buy', component: MarketplaceBuyComponent, children: [
-      { path: '', redirectTo: 'ready-to-download', pathMatch: 'full' },
-      { path: MarketplaceBuyingLink.READY_TO_DOWNLOAD, component: MarketplaceBuyReadyToDownloadComponent },
-      { path: MarketplaceBuyingLink.AWAITING_FINALISATION, component: MarketplaceBuyAwaitingFinalisationComponent }
-    ]
-  },
-  {
-    path: `buy/${MarketplaceBuyingLink.READY_TO_DOWNLOAD}/details/:address`,
-    component: MarketplaceProductDetailsComponent
-  },
-  {
-    path: `buy/${MarketplaceBuyingLink.AWAITING_FINALISATION}/details/:address`,
-    component: MarketplaceProductDetailsComponent
-  },
+  { path: `my-files/active-listings/details/:address`, component: MarketplaceProductDetailsComponent },
+  { path: `my-files/files-to-download/details/:address`, component: MarketplaceProductDetailsComponent },
   { path: 'notifications', component: NotificationsListComponent },
   { path: 'settings', component: SettingsIndexComponent }
 ];

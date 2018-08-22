@@ -3,7 +3,7 @@ import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { WalletService } from '../services/wallet.service';
 import Wallet from '../shared/models/wallet';
 import { Component, Input } from '@angular/core';
-import { MarketplaceBuyReadyToDownloadComponent } from './marketplace-buy-ready-to-download.component';
+import { MarketplaceReadyToDownloadComponent } from './marketplace-ready-to-download.component';
 import { MaterialModule } from '../material.module';
 import { getReadyToDownloadDataProductsQuery } from './services/ready-to-download.service';
 import { ActionButtonType } from '../shared/enums/action-button-type';
@@ -17,8 +17,8 @@ class DataProductListStubComponent {
 }
 
 describe('MarketplaceBuyReadyToDownloadComponent', () => {
-  let component: MarketplaceBuyReadyToDownloadComponent;
-  let fixture: ComponentFixture<MarketplaceBuyReadyToDownloadComponent>;
+  let component: MarketplaceReadyToDownloadComponent;
+  let fixture: ComponentFixture<MarketplaceReadyToDownloadComponent>;
   let walletServiceSpy;
   const buyerAddress = '0x00';
 
@@ -30,7 +30,7 @@ describe('MarketplaceBuyReadyToDownloadComponent', () => {
     });
     TestBed.configureTestingModule({
       declarations: [
-        MarketplaceBuyReadyToDownloadComponent,
+        MarketplaceReadyToDownloadComponent,
         DataProductListStubComponent
       ],
       imports: [
@@ -43,7 +43,7 @@ describe('MarketplaceBuyReadyToDownloadComponent', () => {
     })
       .compileComponents();
 
-    fixture = TestBed.createComponent(MarketplaceBuyReadyToDownloadComponent);
+    fixture = TestBed.createComponent(MarketplaceReadyToDownloadComponent);
     component = fixture.componentInstance;
 
     fixture.detectChanges();

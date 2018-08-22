@@ -37,6 +37,7 @@ export const environment = {
       defaultName: 'REPUX',
       precision: 18,
       format: '1.2-18',
+      shortFormat: '1.2-4',
       pattern: /^\d*([,\.]\d{0,18})?$/
     },
     eulaUrls: [ {

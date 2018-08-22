@@ -1,0 +1,26 @@
+.list-orders {
+  margin: 0 0 24px 0;
+
+  .mat-header-cell {
+    white-space: nowrap;
+  }
+
+  tr.mat-header-row {
+    height: 48px;
+  }
+
+  th,
+  td {
+    padding: 0 12px 0 0;
+  }
+
+  th.mat-header-cell:first-child,
+  td.mat-cell:first-child {
+    padding-left: 0;
+  }
+
+  th.mat-header-cell:last-child,
+  td.mat-cell:last-child {
+    padding-right: 0;
+  }
+}

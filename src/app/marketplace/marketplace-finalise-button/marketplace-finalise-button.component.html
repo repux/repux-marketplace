@@ -3,8 +3,7 @@
   <span *ngIf="pendingTransaction">Finalising...</span>
 
   <button mat-stroked-button
-          color="accent"
+          color="primary"
           *ngIf="!pendingReencryption && !pendingTransaction"
-          (click)="finalise()">Finalise transaction
-  </button>
+          (click)="finalise()">Finalise</button>
 </div>

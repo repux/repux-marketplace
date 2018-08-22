@@ -151,8 +151,6 @@
       <mat-row mat-header-row *matHeaderRowDef="displayedColumns"></mat-row>
       <mat-row mat-row *matRowDef="let row; columns: displayedColumns;"
                [routerLink]="row.address ? ['details', row.address] : null"
-               [appMarketplaceDataProductListDetailRow]="row"
-               [appMarketplaceDataProductListDetailTpl]="tpl"
                [class.disabled]="row.blockchainState?.disabled"></mat-row>
     </mat-table>
   </div>
@@ -160,10 +158,3 @@
   <mat-paginator (page)="pageChanged($event)" [length]="esDataProducts.total" [(pageSize)]="size"
                  [pageSizeOptions]="pageSizeOptions" *ngIf="showPaginator"></mat-paginator>
 </div>
-
-<ng-template #tpl let-element>
-  <app-marketplace-data-product-orders-list-container
-    [dataProduct]="element"
-    [displayPendingOrders]="displayPendingOrders && !element.blockchainState?.disabled"
-    (finaliseSuccess)="onFinaliseSuccess($event)"></app-marketplace-data-product-orders-list-container>
-</ng-template>

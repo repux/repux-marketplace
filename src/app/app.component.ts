@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { WebpushNotificationService } from './services/webpush-notification.service';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
-import { map } from 'rxjs/operators';
-import { Observable, concat } from 'rxjs';
+import { concatAll, map, reduce, scan, startWith, tap } from 'rxjs/operators';
+import { Observable, merge, concat, forkJoin, combineLatest } from 'rxjs';
 import { environment } from '../environments/environment';
 import { WalletService } from './services/wallet.service';
 import { Router } from '@angular/router';
@@ -12,8 +12,9 @@ import { MarketplaceProductCreatorDialogComponent } from './marketplace/marketpl
 import { MatDialog } from '@angular/material';
 import { UnpublishedProductsService } from './marketplace/services/unpublished-products.service';
 import { PendingFinalisationService } from './marketplace/services/pending-finalisation.service';
-import { ReadyToDownloadService } from './marketplace/services/ready-to-download.service';
 import Wallet from './shared/models/wallet';
+import { AwaitingFinalisationService } from './marketplace/services/awaiting-finalisation.service';
+import { DataProduct } from './shared/models/data-product';
 
 @Component({
   selector: 'app-root',
@@ -36,12 +37,8 @@ export class AppComponent implements OnInit {
       path: 'marketplace'
     },
     {
-      label: 'Sell',
-      path: 'sell'
-    },
-    {
-      label: 'Buy',
-      path: 'buy'
+      label: 'My files',
+      path: 'my-files'
     }
   ];
 
@@ -55,7 +52,7 @@ export class AppComponent implements OnInit {
     private dialog: MatDialog,
     private unpublishedProductsService: UnpublishedProductsService,
     private pendingFinalisationService: PendingFinalisationService,
-    private readyToDownloadService: ReadyToDownloadService
+    private awaitingFinalisationService: AwaitingFinalisationService
   ) {
   }
 
@@ -76,9 +73,8 @@ export class AppComponent implements OnInit {
 
         this.wallet = wallet;
       }
+      this.tasksTotal$ = this.countProducts();
     });
-
-    this.tasksTotal$ = this.getCombinedProductStreams();
   }
 
   openProductCreatorDialog() {
@@ -87,13 +83,14 @@ export class AppComponent implements OnInit {
     });
   }
 
-  getCombinedProductStreams() {
-    return concat(
+  countProducts(): Observable<number> {
+    return combineLatest(
       this.unpublishedProductsService.getProducts(),
       this.pendingFinalisationService.getProducts(),
-      this.readyToDownloadService.getProducts()
-    ).pipe(
-      map(result => result.length)
-    );
+      this.awaitingFinalisationService.getProducts()
+    )
+      .pipe(
+        map(result => result.reduce((acc, current) => acc + current.length, 0))
+      );
   }
 }

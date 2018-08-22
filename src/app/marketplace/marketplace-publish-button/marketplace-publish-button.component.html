@@ -1,12 +1,13 @@
 <div *ngIf="isUnpublished">
-  <button mat-button
+  <button mat-stroked-button
+          color="accent"
           class="remove-button"
           *ngIf="!hasPendingTransaction"
           (click)="remove()">Remove
   </button>
 
   <button mat-stroked-button
-          color="accent"
+          color="primary"
           *ngIf="!hasPendingTransaction"
           (click)="publish()">Publish
   </button>

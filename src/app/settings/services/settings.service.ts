@@ -30,7 +30,12 @@ export class SettingsService implements OnDestroy {
   }
 
   get daysToDeliver(): number {
-    return this.readFromStore().daysToDeliver;
+    const data = this.readFromStore();
+    if (data) {
+      return this.readFromStore().daysToDeliver;
+    }
+
+    return environment.repux.defaultDaysToDeliver;
   }
 
   set daysToDeliver(value: number) {

@@ -1,10 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { UnpublishedProductsService } from '../marketplace/services/unpublished-products.service';
-import { Observable } from 'rxjs';
+import { combineLatest, Observable } from 'rxjs';
 import { DataProduct } from '../shared/models/data-product';
 import { PendingFinalisationService } from '../marketplace/services/pending-finalisation.service';
-import { ReadyToDownloadService } from '../marketplace/services/ready-to-download.service';
+import { AwaitingFinalisationService } from '../marketplace/services/awaiting-finalisation.service';
 import { ActionButtonType } from '../shared/enums/action-button-type';
+import { map, tap } from 'rxjs/operators';
 
 @Component({
   selector: 'app-notifications-list',
@@ -12,22 +13,41 @@ import { ActionButtonType } from '../shared/enums/action-button-type';
   styleUrls: [ './notifications-list.component.scss' ]
 })
 export class NotificationsListComponent implements OnInit {
-  public unpublishedProducts$: Observable<DataProduct[]>;
-  public pendingFinalisationProducts$: Observable<DataProduct[]>;
-  public readyToDownloadProducts$: Observable<DataProduct[]>;
-  public actionButtonType = ActionButtonType;
+  unpublishedProducts$: Observable<DataProduct[]>;
+  pendingFinalisationProducts$: Observable<DataProduct[]>;
+  awaitingFinalisationProducts$: Observable<DataProduct[]>;
+  actionButtonType = ActionButtonType;
+  notificationsTotal$: Observable<number>;
+  loading: boolean;
 
   constructor(
     private unpublishedProductsService: UnpublishedProductsService,
     private pendingFinalisationService: PendingFinalisationService,
-    private readyToDownloadService: ReadyToDownloadService
+    private awaitingFinalisationService: AwaitingFinalisationService
   ) {
   }
 
   ngOnInit() {
+    this.loading = true;
     this.unpublishedProducts$ = this.unpublishedProductsService.getProducts();
     this.pendingFinalisationProducts$ = this.pendingFinalisationService.getProducts();
-    this.readyToDownloadProducts$ = this.readyToDownloadService.getProducts();
+    this.awaitingFinalisationProducts$ = this.awaitingFinalisationService.getProducts();
+
+    this.notificationsTotal$ = this.countProducts();
   }
 
+  countProducts(): Observable<number> {
+    return combineLatest(
+      this.unpublishedProducts$,
+      this.pendingFinalisationProducts$,
+      this.awaitingFinalisationProducts$
+    )
+      .pipe(
+        map(result => {
+          console.log('TAP!');
+          this.loading = false;
+          return result.reduce((acc, current) => acc + current.length, 0)
+        })
+      );
+  }
 }

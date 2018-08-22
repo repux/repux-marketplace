@@ -10,11 +10,15 @@ import { SharedModule } from './shared/shared.module';
 import { MaterialModule } from './material.module';
 import { MarketplaceModule } from './marketplace/marketplace.module';
 import { NotificationsListComponent } from './notifications-list/notifications-list.component';
+import { NotificationsListItemComponent } from './notifications-list-item/notifications-list-item.component';
+import { NotificationsListOrdersComponent } from './notifications-list-orders/notifications-list-orders.component';
 
 @NgModule({
   declarations: [
     AppComponent,
-    NotificationsListComponent
+    NotificationsListComponent,
+    NotificationsListItemComponent,
+    NotificationsListOrdersComponent
   ],
   imports: [
     BrowserModule,

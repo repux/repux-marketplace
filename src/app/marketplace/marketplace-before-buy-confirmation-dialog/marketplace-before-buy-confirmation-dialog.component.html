@@ -21,7 +21,7 @@
       <span [ngPlural]="dataProduct.daysToDeliver">
         <ng-template ngPluralCase="=0">{{dataProduct.daysToDeliver}} days</ng-template>
         <ng-template ngPluralCase="=1">{{dataProduct.daysToDeliver}} day</ng-template>
-        <ng-template ngPluralCase="few">{{dataProduct.daysToDeliver}} days</ng-template>
+        <ng-template ngPluralCase="other">{{dataProduct.daysToDeliver}} days</ng-template>
       </span>
       in order to confirm transaction, if not you can cancel the
       transaction and funds will be returned to your wallet.

@@ -4,10 +4,11 @@
      [routerLink]="link.path"
      routerLinkActive #rla="routerLinkActive"
      [active]="rla.isActive">
-    <span class="text">{{link.label}}</span>
-    <app-notifications-number
-      [number]="link.items.length"
-      [maxNumber]="maxItemsNumber"></app-notifications-number>
+    <span
+      [matBadge]="link.notifications$ | async"
+      [matBadgeHidden]="!(link.notifications$ | async)"
+      matBadgeColor="accent"
+      matBadgeOverlap="false">{{ link.label }}</span>
   </a>
 </nav>
 

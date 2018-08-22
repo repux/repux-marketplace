@@ -11,7 +11,8 @@ import { ActionButtonType } from '../../shared/enums/action-button-type';
 
 @Component({
   selector: 'app-marketplace-action-buttons',
-  templateUrl: './marketplace-action-buttons.component.html'
+  templateUrl: './marketplace-action-buttons.component.html',
+  styleUrls:['./marketplace-action-buttons.component.scss']
 })
 export class MarketplaceActionButtonsComponent implements OnDestroy, OnChanges {
   @Input() availableActions: ActionButtonType[] = [];

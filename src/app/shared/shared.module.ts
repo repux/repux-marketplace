@@ -9,11 +9,11 @@ import { CurrencyRepuxPipe } from './pipes/currency-repux';
 import { ConfirmationDialogComponent } from './components/confirmation-dialog/confirmation-dialog.component';
 import { MetamaskDetectorComponent } from './components/metamask-detector/metamask-detector.component';
 import { MaterialModule } from '../material.module';
-import { NotificationsNumberComponent } from './components/notifications-number/notifications-number.component';
 import { MaxFileSizeDirective } from './components/file-input/max-file-size.directive';
 import { WalletInfoComponent } from './components/wallet-info/wallet-info.component';
 import { EulaTypePipe } from './pipes/eula-type.pipe';
 import { SafeHtmlPipe } from './pipes/safe-html.pipe';
+import { OrderDatePipe } from './pipes/order-date.pipe';
 
 @NgModule({
   imports: [
@@ -30,25 +30,25 @@ import { SafeHtmlPipe } from './pipes/safe-html.pipe';
     MaxFileSizeDirective,
     MetamaskDetectorComponent,
     ConfirmationDialogComponent,
-    NotificationsNumberComponent,
     WalletInfoComponent,
     ArrayJoinPipe,
     FileSizePipe,
     CurrencyRepuxPipe,
     EulaTypePipe,
-    SafeHtmlPipe
+    SafeHtmlPipe,
+    OrderDatePipe
   ],
   exports: [
     FileInputComponent,
     MetamaskDetectorComponent,
     ConfirmationDialogComponent,
-    NotificationsNumberComponent,
     WalletInfoComponent,
     ArrayJoinPipe,
     FileSizePipe,
     CurrencyRepuxPipe,
     EulaTypePipe,
-    SafeHtmlPipe
+    SafeHtmlPipe,
+    OrderDatePipe
   ],
   entryComponents: [
     ConfirmationDialogComponent

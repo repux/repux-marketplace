@@ -1,0 +1,44 @@
+<section class="item" (click)="toggle()">
+  <mat-icon class="item__icon">{{ expanded ? 'expand_less' : 'expand_more' }}</mat-icon>
+
+  <div class="item__content">
+    <div class="item__title-wrapper">
+      <h3 class="item__title">{{product.title}}</h3>
+      <div class="price">
+        <span class="item__price-prefix">REPUX </span>
+        <span class="item__price-value">{{ product.price.toString() | currency : '' : '' }}</span>
+      </div>
+    </div>
+    <p class="item__file-info">
+      {{ product.name }} | {{ product.size | fileSize }} | <a href=""
+                                                              (click)="$event.stopPropagation(); $event.preventDefault(); downloadEula(product.eula)">{{
+      product.eula.type | eulaType }} EULA</a>
+    </p>
+
+    <app-notifications-list-orders
+      [dataProduct]="product"
+      [displayPendingOrders]="!product.blockchainState?.disabled">
+    </app-notifications-list-orders>
+
+    <div *ngIf="expanded" class="item__expandable">
+
+      <p class="item__description">{{ product.shortDescription | slice:0:200 }}{{ product.shortDescription.length > 200 ? '...' : '' }}</p>
+
+      <div class="item__categories">
+        <mat-chip-list>
+          <mat-chip disabled *ngFor="let category of product.category">{{ category }}</mat-chip>
+        </mat-chip-list>
+      </div>
+
+      <h4 class="item__subtitle" *ngIf="product.fullDescription">Detailed description</h4>
+      <p class="item__description" *ngIf="product.fullDescription">{{ product.fullDescription | slice:0:400 }}{{ product.fullDescription.length > 400 ? '...' : '' }}</p>
+    </div>
+  </div>
+
+  <div class="item__actions" *ngIf="actions">
+    <app-marketplace-action-buttons
+      (click)="$event.stopPropagation()"
+      [availableActions]="actions"
+      [dataProduct]="product"></app-marketplace-action-buttons>
+  </div>
+</section>
