@@ -4,7 +4,8 @@
         (click)="openDialog()"
         class="open-button"
         color="primary"
-        [matBadge]="tasks.length"
+        [matBadge]="pendingTasks.length"
+        [matBadgeHidden]="!pendingTasks.length"
         matBadgePosition="above after"
         matBadgeColor="accent"
         matBadgeSize="medium">
@@ -14,7 +15,8 @@
 <mat-dialog-content *ngIf=" opened" class="mat-elevation-z8">
   <mat-toolbar color="primary">
     <mat-icon
-      [matBadge]="tasks.length"
+      [matBadge]="pendingTasks.length"
+      [matBadgeHidden]="!pendingTasks.length"
       matBadgeColor="accent"
       matBadgeSize="medium">list
     </mat-icon>
