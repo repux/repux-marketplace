@@ -13,11 +13,13 @@ import { TransactionReceipt, TransactionStatus } from 'repux-web3-api';
 import { BlockchainTransactionScope } from '../../shared/enums/blockchain-transaction-scope';
 import { ActionButtonType } from '../../shared/enums/action-button-type';
 import { Transaction, TransactionService } from '../../shared/services/transaction.service';
+import { TaskManagerService } from '../../services/task-manager.service';
 
 describe('MarketplacePublishButtonComponent', () => {
   let component: MarketplacePublishButtonComponent;
   let fixture: ComponentFixture<MarketplacePublishButtonComponent>;
-  let tagManagerService, unpublishedProductsServiceSpy, dataProductServiceSpy, commonDialogServiceSpy, transactionServiceSpy;
+  let tagManagerService, unpublishedProductsServiceSpy, dataProductServiceSpy, commonDialogServiceSpy, transactionServiceSpy,
+    taskManagerServiceSpy;
   const ownerAddress = '0x0000000000000000000000000000000000000000';
   const dataProductAddress = '0x1111111111111111111111111111111111111111';
   const sellerMetaHash = 'SELLER_META_HASH';
@@ -40,6 +42,11 @@ describe('MarketplacePublishButtonComponent', () => {
       }
     });
 
+    taskManagerServiceSpy = jasmine.createSpyObj('TaskManagerServiceSpy', [ 'removeTask' ]);
+    taskManagerServiceSpy.fileUploadTasks = {
+      find: jasmine.createSpy()
+    };
+
     TestBed.configureTestingModule({
       declarations: [
         MarketplacePublishButtonComponent
@@ -53,7 +60,8 @@ describe('MarketplacePublishButtonComponent', () => {
         { provide: DataProductService, useValue: dataProductServiceSpy },
         { provide: UnpublishedProductsService, useValue: unpublishedProductsServiceSpy },
         { provide: CommonDialogService, useValue: commonDialogServiceSpy },
-        { provide: TransactionService, useValue: transactionServiceSpy }
+        { provide: TransactionService, useValue: transactionServiceSpy },
+        { provide: TaskManagerService, useValue: taskManagerServiceSpy }
       ]
     })
       .compileComponents();
@@ -161,6 +169,8 @@ describe('MarketplacePublishButtonComponent', () => {
         'No'
       ]);
       expect(unpublishedProductsServiceSpy.removeProduct.calls.count()).toBe(1);
+      expect(taskManagerServiceSpy.removeTask.calls.count()).toBe(1);
+      expect(taskManagerServiceSpy.fileUploadTasks.find.calls.count()).toBe(1);
     });
   });
 });

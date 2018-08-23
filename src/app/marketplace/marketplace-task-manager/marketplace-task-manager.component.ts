@@ -22,6 +22,10 @@ export class MarketplaceTaskManagerComponent implements OnDestroy {
     return this._taskManagerService;
   }
 
+  get pendingTasks(): Task[] {
+    return this.tasks.filter(task => !task.finished);
+  }
+
   closeDialog() {
     this.opened = false;
   }

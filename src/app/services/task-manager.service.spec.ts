@@ -4,6 +4,8 @@ import { MarketplaceTaskManagerComponent } from '../marketplace/marketplace-task
 import { MatDialogModule } from '@angular/material';
 import { from } from 'rxjs';
 import Wallet from '../shared/models/wallet';
+import { FileUploadTask } from '../tasks/file-upload-task';
+import { TaskType } from '../tasks/task-type';
 
 describe('TaskManagerService', () => {
   let matDialogSpy: { open: jasmine.Spy },
@@ -36,6 +38,15 @@ describe('TaskManagerService', () => {
       service[ '_tasks' ] = <any> tasks;
 
       expect(service.tasks).toEqual(<any> tasks);
+    });
+  });
+
+  describe('#get fileUploadTasks()', () => {
+    it('should return task with type FileUploadTask', () => {
+      const tasks = [ { taskType: TaskType.UPLOAD }, { taskType: TaskType.DOWNLOAD } ];
+      service[ '_tasks' ] = <any> tasks;
+
+      expect(service.fileUploadTasks).toEqual(<any> [ tasks[ 0 ] ]);
     });
   });
 

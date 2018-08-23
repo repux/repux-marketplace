@@ -10,6 +10,7 @@ import { TransactionReceipt, TransactionStatus } from 'repux-web3-api';
 import { Transaction, TransactionService } from '../../shared/services/transaction.service';
 import { BlockchainTransactionScope } from '../../shared/enums/blockchain-transaction-scope';
 import { ActionButtonType } from '../../shared/enums/action-button-type';
+import { TaskManagerService } from '../../services/task-manager.service';
 
 @Component({
   selector: 'app-marketplace-publish-button',
@@ -32,7 +33,8 @@ export class MarketplacePublishButtonComponent implements OnInit, OnDestroy {
     private unpublishedProductsService: UnpublishedProductsService,
     private dataProductService: DataProductService,
     private commonDialogService: CommonDialogService,
-    private transactionService: TransactionService
+    private transactionService: TransactionService,
+    private taskManagerService: TaskManagerService
   ) {
     this.unpublishedProductsSubscription = this.unpublishedProductsService.getProducts().subscribe(products => this.products = products);
   }
@@ -114,6 +116,9 @@ export class MarketplacePublishButtonComponent implements OnInit, OnDestroy {
     ).afterClosed().subscribe(result => {
       if (result) {
         this.unpublishedProductsService.removeProduct(this.dataProduct);
+        this.taskManagerService.removeTask(
+          this.taskManagerService.fileUploadTasks.find(task => task.sellerMetaHash === this.dataProduct.sellerMetaHash)
+        );
 
         this.tagManager.sendEvent(
           EventCategory.Sell,

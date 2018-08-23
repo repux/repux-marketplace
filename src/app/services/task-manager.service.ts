@@ -7,6 +7,8 @@ import Wallet from '../shared/models/wallet';
 import { BehaviorSubject } from 'rxjs/internal/BehaviorSubject';
 import { Observable } from 'rxjs/internal/Observable';
 import { Subscription } from 'rxjs/internal/Subscription';
+import { FileUploadTask } from '../tasks/file-upload-task';
+import { TaskType } from '../tasks/task-type';
 
 @Injectable({
   providedIn: 'root'
@@ -28,6 +30,10 @@ export class TaskManagerService implements OnDestroy {
 
   get tasks(): ReadonlyArray<Task> {
     return Object.freeze(Object.assign([], this._tasks));
+  }
+
+  get fileUploadTasks(): ReadonlyArray<FileUploadTask> {
+    return Object.freeze(Object.assign([], this._tasks.filter(task => task.taskType === TaskType.UPLOAD)));
   }
 
   get foregroundTasks(): ReadonlyArray<Task> {
