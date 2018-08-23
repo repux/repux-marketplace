@@ -1,4 +1,4 @@
-import { Component, Input, OnDestroy } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { DataProduct } from '../../shared/models/data-product';
 import { DataProductService } from '../../services/data-product.service';
 import Wallet from '../../shared/models/wallet';
@@ -16,7 +16,7 @@ import { ActionButtonType } from '../../shared/enums/action-button-type';
   templateUrl: './marketplace-publish-button.component.html',
   styleUrls: [ './marketplace-publish-button.component.scss' ]
 })
-export class MarketplacePublishButtonComponent implements OnDestroy {
+export class MarketplacePublishButtonComponent implements OnInit, OnDestroy {
   @Input() dataProduct: DataProduct;
   public dataProductAddress: string;
   public wallet: Wallet;
@@ -35,8 +35,6 @@ export class MarketplacePublishButtonComponent implements OnDestroy {
     private transactionService: TransactionService
   ) {
     this.unpublishedProductsSubscription = this.unpublishedProductsService.getProducts().subscribe(products => this.products = products);
-    this.transactionsSubscription = this.transactionService.getTransactions()
-      .subscribe(transactions => this.onTransactionsListChange(transactions));
   }
 
   get hasPendingTransaction(): boolean {
@@ -45,6 +43,11 @@ export class MarketplacePublishButtonComponent implements OnDestroy {
 
   get isUnpublished() {
     return this.products.find(dataProduct => dataProduct.sellerMetaHash === this.dataProduct.sellerMetaHash);
+  }
+
+  ngOnInit() {
+    this.transactionsSubscription = this.transactionService.getTransactions()
+      .subscribe(transactions => this.onTransactionsListChange(transactions));
   }
 
   onTransactionFinish(transactionReceipt: TransactionReceipt) {
@@ -63,6 +66,7 @@ export class MarketplacePublishButtonComponent implements OnDestroy {
 
   async onTransactionsListChange(transactions: Transaction[]) {
     const foundTransaction = transactions.find(transaction =>
+      this.dataProduct &&
       transaction.scope === BlockchainTransactionScope.DataProduct &&
       transaction.identifier === this.dataProduct.sellerMetaHash &&
       transaction.blocksAction === ActionButtonType.Publish

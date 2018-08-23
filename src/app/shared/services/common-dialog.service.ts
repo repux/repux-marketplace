@@ -25,7 +25,7 @@ export class CommonDialogService {
     confirmationDialogRef.componentInstance.title = title;
     confirmationDialogRef.componentInstance.body = message;
     confirmationDialogRef.componentInstance.confirmButton = confirmButtonLabel;
-    confirmationDialogRef.componentInstance.cancelButton = null;
+    confirmationDialogRef.componentInstance.cancelButton = cancelButtonLabel;
 
     return confirmationDialogRef;
   }
