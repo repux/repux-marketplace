@@ -1,5 +1,28 @@
 @import '../variables';
 
+.navigation {
+  display: flex;
+  height: 100%;
+  box-sizing: border-box;
+  margin: 0 0 0 48px;
+  padding: 19px 0 0 0;
+  align-items: center;
+
+  &__item {
+    font-size: 16px;
+    font-weight: 400;
+    color: #666;
+    text-decoration: none;
+    padding: 0 24px;
+    height: 100%;
+
+    &.active {
+      color: map-get($app-primary, 300);
+      background: linear-gradient(0deg, map-get($app-primary, 50), transparent);
+    }
+  }
+}
+
 .sidenav-container {
   flex: 1;
 }
@@ -22,8 +45,11 @@
 }
 
 .logotype {
+  display: flex;
+
   &__text {
-    margin: 0 0 0 16px;
+    margin: 0 0 0 12px;
+    text-transform: uppercase;
   }
 }
 
@@ -43,6 +69,11 @@
 .app-view {
   padding: 20px;
   overflow: auto;
+
+  &__container {
+    max-width: 1600px;
+    margin: 0 auto;
+  }
 }
 
 .sell-data-btn {
