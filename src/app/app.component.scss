@@ -3,9 +3,7 @@
 .navigation {
   display: flex;
   height: 100%;
-  box-sizing: border-box;
   margin: 0 0 0 48px;
-  padding: 19px 0 0 0;
   align-items: center;
 
   &__item {
@@ -13,14 +11,16 @@
     font-weight: 400;
     color: #666;
     text-decoration: none;
-    padding: 0 24px;
-    height: 100%;
+    padding: 0 12px;
 
     &.active {
       color: map-get($app-primary, 300);
-      background: linear-gradient(0deg, map-get($app-primary, 50), transparent);
     }
   }
+}
+
+.sell-data-btn {
+  margin: 0 0 0 12px;
 }
 
 .sidenav-container {
@@ -74,8 +74,4 @@
     max-width: 1600px;
     margin: 0 auto;
   }
-}
-
-.sell-data-btn {
-  margin: 0 8px 0 4px;
 }

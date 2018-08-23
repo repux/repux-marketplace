@@ -1,36 +1,32 @@
-<h2 mat-dialog-title>You are about to buy file "{{dataProduct.title}}"?</h2>
+<h2 mat-dialog-title>You are about to buy file "{{dataProduct.title}}" for {{dataProduct.price.toString() |
+  currencyRepux}}</h2>
 
 <mat-dialog-content>
   <div class="mat-body-1">
     <p>
-      You will be asked to confirm two transactions in MetaMask
-      <mat-icon
-        class="tooltip-icon"
-        matTooltip="First transaction only allows product contract to transfer REPUX tokens from your wallet. Second one creates purchase order.">
-        help
-      </mat-icon>
+      You will be asked to confirm two transactions in MetaMask.
     </p>
-    <p>
-      Please note that we will deduct REPUX tokens from your wallet immediately, but they will be deposited on the
-      smart contract until Seller confirms the transaction. Once transaction is confirmed by the Seller your file will
-      be
-      ready to download.
-    </p>
-    <p>
-      Seller would have
-      <span [ngPlural]="dataProduct.daysToDeliver">
+    <ol>
+      <li>First transaction only allows product contract to transfer REPUX tokens from your wallet.</li>
+      <li>Second one creates purchase order.</li>
+    </ol>
+    <p>Please note:</p>
+    <ul>
+      <li>Buy transaction requires confirmation from the seller, until then you won't be able to download the file.</li>
+      <li><strong>{{dataProduct.price.toString() | currency : '' : '' : currencyFormat}} REPUX</strong> tokens will be deducted from your wallet immediately, but they will be deposited on the smart
+        contract until seller approves the transaction.
+      </li>
+      <li>Seller would have
+        <strong><span [ngPlural]="dataProduct.daysToDeliver">
         <ng-template ngPluralCase="=0">{{dataProduct.daysToDeliver}} days</ng-template>
         <ng-template ngPluralCase="=1">{{dataProduct.daysToDeliver}} day</ng-template>
         <ng-template ngPluralCase="other">{{dataProduct.daysToDeliver}} days</ng-template>
-      </span>
-      in order to confirm transaction, if not you can cancel the
-      transaction and funds will be returned to your wallet.
-    </p>
-
-    <h3>File details</h3>
-    <div><span>Price: </span><strong>{{dataProduct.price.toString() | currencyRepux}}</strong></div>
-    <div><span>Size: </span><strong>{{dataProduct.size | fileSize}}</strong></div>
-    <div><span>Category: </span><strong>{{dataProduct.category | array_join: ', '}}</strong></div>
+      </span></strong>
+        in order to confirm transaction, if not you can cancel the
+        transaction and funds will be returned to your wallet.
+      </li>
+      <li>Once transaction is approved by the seller, you will be notified that your file is ready to download.</li>
+    </ul>
   </div>
 </mat-dialog-content>
 <mat-dialog-actions>
