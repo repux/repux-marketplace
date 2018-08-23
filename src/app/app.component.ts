@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { WebpushNotificationService } from './services/webpush-notification.service';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
-import { concatAll, map, reduce, scan, startWith, tap } from 'rxjs/operators';
-import { Observable, merge, concat, forkJoin, combineLatest } from 'rxjs';
+import { map } from 'rxjs/operators';
+import { Observable, combineLatest } from 'rxjs';
 import { environment } from '../environments/environment';
 import { WalletService } from './services/wallet.service';
 import { Router } from '@angular/router';
@@ -14,7 +14,6 @@ import { UnpublishedProductsService } from './marketplace/services/unpublished-p
 import { PendingFinalisationService } from './marketplace/services/pending-finalisation.service';
 import Wallet from './shared/models/wallet';
 import { AwaitingFinalisationService } from './marketplace/services/awaiting-finalisation.service';
-import { DataProduct } from './shared/models/data-product';
 
 @Component({
   selector: 'app-root',
@@ -22,7 +21,10 @@ import { DataProduct } from './shared/models/data-product';
   styleUrls: [ './app.component.scss' ]
 })
 export class AppComponent implements OnInit {
-  isHandset$: Observable<boolean> = this.breakpointObserver.observe(Breakpoints.Handset)
+  isHandset$: Observable<boolean> = this.breakpointObserver.observe([
+    Breakpoints.Handset,
+    Breakpoints.Tablet
+  ])
     .pipe(
       map(result => result.matches)
     );
