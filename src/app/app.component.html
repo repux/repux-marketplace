@@ -231,14 +231,14 @@
       </a>
     </nav>
 
-    <span class="toolbar-spacer"></span>
-    <app-wallet-info *ngIf="!(isHandset$ | async)"></app-wallet-info>
-
     <button
       mat-flat-button color="primary" class="sell-data-btn"
       (click)="openProductCreatorDialog()"
       [disabled]="!wallet">Sell data
     </button>
+
+    <span class="toolbar-spacer"></span>
+    <app-wallet-info *ngIf="!(isHandset$ | async)"></app-wallet-info>
 
     <button
       *ngIf="tasksTotal$ | async as total"
