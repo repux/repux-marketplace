@@ -1,12 +1,35 @@
-<div class="star" *ngIf="displayStar">
-  <div class="background-star">
-    <mat-icon color="accent" *ngFor="let rate of availableRates;">star_rate</mat-icon>
-  </div>
-  <div class="foreground-star" [style.width]="percentageRating + '%'">
-    <mat-icon color="accent" *ngFor="let rate of availableRates;">star_rate</mat-icon>
-  </div>
-</div>
+<section class="snapshot">
+  <h3 class="title">Rating Snapshot</h3>
 
-<div *ngIf="displayLabel">
-  {{ this.rating.toNumber() | number : '1.0-1' }}/{{this.maxRate | number : '1.0-1'}}
-</div>
+  <div
+    class="snapshot__item"
+    *ngFor="let rating of ratingSnapshot.slice().reverse(); let i = index">
+    <span class="snapshot__item__rate">{{maxRate - i}}</span>
+    <mat-icon class="snapshot__item__icon">star_rate</mat-icon>
+    <mat-progress-bar
+      color="accent"
+      mode="determinate"
+      class="snapshot__item__progress"
+      [value]="rating / ratingSnapshotTotal * 100"></mat-progress-bar>
+    <span class="snapshot__item__total">{{rating}}</span>
+  </div>
+</section>
+
+<section class="average">
+  <h3 class="title">Average Customer Ratings</h3>
+
+  <div class="average__content">
+    <div class="average__star">
+      <div class="average__background-star">
+        <mat-icon color="accent" *ngFor="let rate of availableRates;">star_rate</mat-icon>
+      </div>
+      <div class="average__foreground-star" [style.width]="percentageRating + '%'">
+        <mat-icon color="accent" *ngFor="let rate of availableRates;">star_rate</mat-icon>
+      </div>
+    </div>
+
+    <div>
+      {{ this.rating.toNumber() | number : '1.0-1' }}
+    </div>
+  </div>
+</section>
