@@ -9,6 +9,8 @@
          (keypress)="isNumber($event)"
          [formControl]="formControl">
 
+  <mat-hint>Up to {{precision}} decimal places</mat-hint>
+
   <span matSuffix>{{currencyName}}</span>
 
   <mat-error *ngIf="formControl.hasError('required')">
