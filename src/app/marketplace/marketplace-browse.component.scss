@@ -77,9 +77,9 @@
   box-shadow: 0 3px 1px -2px rgba(0, 0, 0, .2), 0 2px 2px 0 rgba(0, 0, 0, .14), 0 1px 5px 0 rgba(0, 0, 0, .12);
 
   &__accent-area {
-    padding: 9px 16px 9px 16px;
+    padding: 9px 9px 9px 16px;
+    margin: 0 0 0 12px;
     display: flex;
-    flex-direction: row;
     align-items: center;
     border-left: 1px solid #e4e4e4;
   }
@@ -99,6 +99,10 @@
 
   &__category-selector {
     margin-right: 10px;
+  }
+
+  &__icon {
+    color: #999;
   }
 
   @media screen and (max-width: 700px) {

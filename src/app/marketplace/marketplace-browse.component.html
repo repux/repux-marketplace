@@ -1,5 +1,6 @@
 <div class="list-search">
   <input class="list-search__input" (keyup)="onTypeAhead($event.target.value)" placeholder="Search for a data">
+  <mat-icon class="list-search__icon">search</mat-icon>
   <div class="list-search__accent-area">
     <app-marketplace-product-category-selector
       class="list-search__category-selector"
@@ -9,7 +10,6 @@
       [noFloatPlaceholder]="true"
       [noPadding]="true"
       (valueChange)="onCategoryChange($event)"></app-marketplace-product-category-selector>
-    <mat-icon class="list-search__icon">search</mat-icon>
   </div>
 </div>
 

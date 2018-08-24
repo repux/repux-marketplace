@@ -1,96 +1,72 @@
 <div *ngIf="dataSource">
 
-  <mat-form-field *ngIf="showSearch">
-    <mat-icon class="search-icon" matPrefix>search</mat-icon>
-    <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Search">
-  </mat-form-field>
+  <div class="list-search" *ngIf="showSearch">
+    <input class="list-search__input" (keyup)="onTypeAhead($event.target.value)" placeholder="Search">
+    <mat-icon class="list-search__icon">search</mat-icon>
+  </div>
 
   <div class="data-container">
     <div class="loading-shade" *ngIf="isLoadingResults">
       <mat-spinner *ngIf="isLoadingResults"></mat-spinner>
     </div>
 
-    <mat-table #table [dataSource]="dataSource" matSort (matSortChange)="sortChanged($event)">
+    <table mat-table #table [dataSource]="dataSource" matSort (matSortChange)="sortChanged($event)">
 
-      <!-- Name Column -->
-      <ng-container matColumnDef="name">
-        <mat-header-cell *matHeaderCellDef mat-sort-header [disabled]="disableSorting"> File name</mat-header-cell>
-        <mat-cell *matCellDef="let element"> {{element.name}}</mat-cell>
-      </ng-container>
-
-      <!-- Title Column -->
-      <ng-container matColumnDef="title">
-        <mat-header-cell *matHeaderCellDef mat-sort-header [disabled]="disableSorting"> Title</mat-header-cell>
-        <mat-cell *matCellDef="let element"> {{element.title}}</mat-cell>
-      </ng-container>
-
-      <!-- Categories Column -->
-      <ng-container matColumnDef="category">
-        <mat-header-cell *matHeaderCellDef> Categories</mat-header-cell>
-        <mat-cell *matCellDef="let element"> {{element.category | array_join: ', '}}</mat-cell>
-      </ng-container>
-      <!-- Size Column -->
-      <ng-container matColumnDef="size">
-        <mat-header-cell *matHeaderCellDef mat-sort-header [disabled]="disableSorting"> Size</mat-header-cell>
-        <mat-cell *matCellDef="let element"> {{ element.size | fileSize }}</mat-cell>
+      <!-- Details Column -->
+      <ng-container matColumnDef="details">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header [disabled]="disableSorting">File details</th>
+        <td mat-cell *matCellDef="let element">
+          <p>
+            <strong>{{element.title}}</strong><br/>
+            <span class="mat-hint">{{element.name}} | {{ element.size | fileSize }}</span>
+          </p>
+        </td>
       </ng-container>
 
       <!-- Price Column -->
       <ng-container matColumnDef="price">
-        <mat-header-cell *matHeaderCellDef mat-sort-header [disabled]="disableSorting"> List price</mat-header-cell>
-        <mat-cell *matCellDef="let element"> {{ element.price.toString() | currency : '' :
-          currencyName :
+        <th mat-header-cell *matHeaderCellDef mat-sort-header [disabled]="disableSorting">Price<br/> (REPUX)</th>
+        <td mat-cell *matCellDef="let element"> {{ element.price.toString() | currency : '' : '' :
           currencyFormat }}
-        </mat-cell>
-      </ng-container>
-
-      <!-- Delivery time Column -->
-      <ng-container matColumnDef="daysToDeliver">
-        <mat-header-cell *matHeaderCellDef mat-sort-header [disabled]="disableSorting">
-          Delivery time
-          <mat-icon matTooltip="Max number of days for seller to finalise transaction">
-            help
-          </mat-icon>
-        </mat-header-cell>
-        <mat-cell *matCellDef="let element"> {{ element.daysToDeliver }}</mat-cell>
+        </td>
       </ng-container>
 
       <!-- Times purchased Column -->
       <ng-container matColumnDef="timesPurchased">
-        <mat-header-cell *matHeaderCellDef> Times purchased</mat-header-cell>
-        <mat-cell *matCellDef="let element"> {{ getTimesPurchased(element) }}</mat-cell>
+        <th mat-header-cell *matHeaderCellDef>Purchased</th>
+        <td mat-cell *matCellDef="let element"> {{ getTimesPurchased(element) }}</td>
       </ng-container>
 
       <!-- Total earnings Column -->
       <ng-container matColumnDef="totalEarnings">
-        <mat-header-cell *matHeaderCellDef> Total earnings</mat-header-cell>
-        <mat-cell *matCellDef="let element"> {{ getTotalEarnings(element).toString() | currency : '' :
-          currencyName : currencyFormat }}
-        </mat-cell>
+        <th mat-header-cell *matHeaderCellDef>Earnings<br/> (REPUX)</th>
+        <td mat-cell *matCellDef="let element"> {{ getTotalEarnings(element).toString() | currency : '' : '' :
+          currencyFormat }}
+        </td>
       </ng-container>
 
       <!-- Total deposit Column -->
       <ng-container matColumnDef="fundsToWithdraw">
-        <mat-header-cell *matHeaderCellDef>
+        <th mat-header-cell *matHeaderCellDef>
           <div class="row">
-            Total deposit
+            Deposit<br/> (REPUX)
             <mat-icon
               matTooltip="Funds accumulated in the product Smart Contract that can be released using the Withdraw function">
-              help
+              help_outline
             </mat-icon>
           </div>
-        </mat-header-cell>
-        <mat-cell *matCellDef="let element"> {{ element.fundsToWithdraw.toString() | currency : '' :
-          currencyName : currencyFormat }}
-        </mat-cell>
+        </th>
+        <td mat-cell *matCellDef="let element"> {{ element.fundsToWithdraw.toString() | currency : '' :
+          '' : currencyFormat }}
+        </td>
       </ng-container>
 
       <!-- Times purchased Column -->
       <ng-container matColumnDef="pendingFinalisationRequests">
-        <mat-header-cell *matHeaderCellDef> Pending finalisation requests</mat-header-cell>
-        <mat-cell *matCellDef="let element">
+        <th mat-header-cell *matHeaderCellDef>Finalisation requests</th>
+        <td mat-cell *matCellDef="let element">
           <button mat-button
-                  routerLink="/sell/pending-finalisation"
+                  routerLink="/notifications"
                   *ngIf="!disablePendingFinalisation"
                   color="primary"
                   (click)="$event.stopPropagation()">
@@ -99,60 +75,49 @@
           <span *ngIf="disablePendingFinalisation">
             {{ getOrdersToFinalisation(element).length }}
           </span>
-        </mat-cell>
+        </td>
       </ng-container>
 
       <!-- Order date -->
       <ng-container matColumnDef="orderDate">
-        <mat-header-cell *matHeaderCellDef> Transaction date</mat-header-cell>
-        <mat-cell *matCellDef="let element"> {{ getOrderDate(element) | date : 'short' }}
-        </mat-cell>
-      </ng-container>
-
-      <!-- Delivery deadline -->
-      <ng-container matColumnDef="deliveryDeadline">
-        <mat-header-cell *matHeaderCellDef> Delivery deadline
-          <mat-icon
-            matTooltip="Once passed and seller didn't finalise the transaction, buyer can withdraw money and transaction will be cancelled">
-            help
-          </mat-icon>
-        </mat-header-cell>
-        <mat-cell *matCellDef="let element"> {{ getDeliveryDeadline(element) | date : 'short' }}
-        </mat-cell>
+        <th mat-header-cell *matHeaderCellDef> Transaction date</th>
+        <td mat-cell *matCellDef="let element"> {{ getOrderDate(element) | date : 'short' }}
+        </td>
       </ng-container>
 
       <!-- EULA -->
       <ng-container matColumnDef="eula">
-        <mat-header-cell *matHeaderCellDef> EULA
-          <mat-icon
-            matTooltip="End User License Agreement">
-            help
-          </mat-icon>
-        </mat-header-cell>
-        <mat-cell *matCellDef="let element">
-          <button
-            mat-button
-            color="primary"
-            (click)="downloadEula($event, element.eula)"
-            matTooltip="Download EULA content">{{ element.eula.type | eulaType }}</button>
-        </mat-cell>
+        <th mat-header-cell *matHeaderCellDef>
+          <div class="row">
+            EULA
+            <mat-icon
+              matTooltip="End User License Agreement">
+              help_outline
+            </mat-icon>
+          </div>
+        </th>
+        <td mat-cell *matCellDef="let element">
+          <a href=""
+             (click)="downloadEula($event, element.eula)"
+             matTooltip="Download EULA content">{{ element.eula.type | eulaType }}</a>
+        </td>
       </ng-container>
 
       <!-- Actions Column -->
       <ng-container matColumnDef="actions">
-        <mat-header-cell *matHeaderCellDef></mat-header-cell>
-        <mat-cell *matCellDef="let element" (click)="$event.stopPropagation()">
+        <th mat-header-cell *matHeaderCellDef></th>
+        <td mat-cell *matCellDef="let element" (click)="$event.stopPropagation()">
           <app-marketplace-action-buttons
             [availableActions]="availableActions"
             [dataProduct]="element"></app-marketplace-action-buttons>
-        </mat-cell>
+        </td>
       </ng-container>
 
-      <mat-row mat-header-row *matHeaderRowDef="displayedColumns"></mat-row>
-      <mat-row mat-row *matRowDef="let row; columns: displayedColumns;"
-               [routerLink]="row.address ? ['details', row.address] : null"
-               [class.disabled]="row.blockchainState?.disabled"></mat-row>
-    </mat-table>
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"
+          [routerLink]="row.address ? ['details', row.address] : null"
+          [class.disabled]="row.blockchainState?.disabled"></tr>
+    </table>
   </div>
 
   <mat-paginator (page)="pageChanged($event)" [length]="esDataProducts.total" [(pageSize)]="size"

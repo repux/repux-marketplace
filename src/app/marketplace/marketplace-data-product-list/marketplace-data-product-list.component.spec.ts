@@ -79,7 +79,8 @@ describe('MarketplaceDataProductListComponent', () => {
   describe('#applyFilter()', () => {
     it('should add filterValue to query attribute and should set from attribute to 0', () => {
       component.from = 5;
-      component.applyFilter('String to search for');
+      component.onTypeAhead('String to search for');
+      component.applyFilter();
       expect(component.from).toBe(0);
       expect(component.query).toEqual([
         { regexp: { name: '.*"string to search for".*' } },
@@ -93,7 +94,7 @@ describe('MarketplaceDataProductListComponent', () => {
 
     it('should call refreshData method', () => {
       const refreshData = spyOn(component, 'refreshData');
-      component.applyFilter('');
+      component.applyFilter();
       expect(refreshData.calls.count()).toBe(1, 'one call');
     });
   });
@@ -169,7 +170,7 @@ describe('MarketplaceDataProductListComponent', () => {
 
   describe('#downloadEula()', () => {
     it('should call ipfsService.downloadAndSave() method', async () => {
-      const event = jasmine.createSpyObj('MouseEvent', [ 'stopPropagation' ]);
+      const event = jasmine.createSpyObj('MouseEvent', [ 'stopPropagation', 'preventDefault' ]);
       const eula = {
         type: EulaType.OWNER,
         fileHash: 'FILE_HASH',
@@ -220,10 +221,7 @@ describe('MarketplaceDataProductListComponent', () => {
       };
       component.dataSource = new MatTableDataSource(component.esDataProducts.hits);
       component.displayedColumns = [
-        'name',
-        'title',
-        'category',
-        'size',
+        'details',
         'price',
         'timesPurchased',
         'totalEarnings',
@@ -242,62 +240,53 @@ describe('MarketplaceDataProductListComponent', () => {
       fixture.detectChanges();
 
       const element: HTMLElement = fixture.nativeElement;
-      const table = element.querySelector('mat-table');
+      const table = element.querySelector('.mat-table');
 
       expect(table).toBeDefined();
       expect(table.getAttribute('matsort')).not.toBeNull();
-      expect(table.querySelector('mat-header-cell:nth-child(1)').textContent.trim()).toBe('File name');
-      expect(table.querySelector('mat-header-cell:nth-child(1)').getAttribute('mat-sort-header')).not.toBeNull();
-      expect(table.querySelector('mat-header-cell:nth-child(2)').textContent.trim()).toBe('Title');
-      expect(table.querySelector('mat-header-cell:nth-child(2)').getAttribute('mat-sort-header')).not.toBeNull();
-      expect(table.querySelector('mat-header-cell:nth-child(3)').textContent.trim()).toBe('Categories');
-      expect(table.querySelector('mat-header-cell:nth-child(3)').getAttribute('mat-sort-header')).toBeNull();
-      expect(table.querySelector('mat-header-cell:nth-child(4)').textContent.trim()).toBe('Size');
-      expect(table.querySelector('mat-header-cell:nth-child(4)').getAttribute('mat-sort-header')).not.toBeNull();
-      expect(table.querySelector('mat-header-cell:nth-child(5)').textContent.trim()).toBe('List price');
-      expect(table.querySelector('mat-header-cell:nth-child(5)').getAttribute('mat-sort-header')).not.toBeNull();
-      expect(table.querySelector('mat-header-cell:nth-child(6)').textContent.trim()).toBe('Times purchased');
-      expect(table.querySelector('mat-header-cell:nth-child(6)').getAttribute('mat-sort-header')).toBeNull();
-      expect(table.querySelector('mat-header-cell:nth-child(7)').textContent.trim()).toBe('Total earnings');
-      expect(table.querySelector('mat-header-cell:nth-child(7)').getAttribute('mat-sort-header')).toBeNull();
-      expect(table.querySelector('mat-header-cell:nth-child(8)').textContent.trim()).toBe('Total deposit  help');
-      expect(table.querySelector('mat-header-cell:nth-child(8)').getAttribute('mat-sort-header')).toBeNull();
-      expect(table.querySelector('mat-header-cell:nth-child(9)').textContent.trim()).toBe('Pending finalisation requests');
-      expect(table.querySelector('mat-header-cell:nth-child(9)').getAttribute('mat-sort-header')).toBeNull();
-      expect(table.querySelector('mat-header-cell:nth-child(10)').textContent.trim()).toBe('EULA  help');
-      expect(table.querySelector('mat-header-cell:nth-child(10)').getAttribute('mat-sort-header')).toBeNull();
-      expect(table.querySelector('mat-header-cell:nth-child(11)').textContent.trim()).toBe('');
-      expect(table.querySelector('mat-header-cell:nth-child(11)').getAttribute('mat-sort-header')).toBeNull();
+      expect(table.querySelector('.mat-header-cell:nth-child(1)').textContent.trim()).toBe('File details');
+      expect(table.querySelector('.mat-header-cell:nth-child(1)').getAttribute('mat-sort-header')).not.toBeNull();
+      expect(table.querySelector('.mat-header-cell:nth-child(2)').textContent.trim()).toBe('Price (REPUX)');
+      expect(table.querySelector('.mat-header-cell:nth-child(2)').getAttribute('mat-sort-header')).not.toBeNull();
+      expect(table.querySelector('.mat-header-cell:nth-child(3)').textContent.trim()).toBe('Purchased');
+      expect(table.querySelector('.mat-header-cell:nth-child(3)').getAttribute('mat-sort-header')).toBeNull();
+      expect(table.querySelector('.mat-header-cell:nth-child(4)').textContent.trim()).toBe('Earnings (REPUX)');
+      expect(table.querySelector('.mat-header-cell:nth-child(4)').getAttribute('mat-sort-header')).toBeNull();
+      expect(table.querySelector('.mat-header-cell:nth-child(5)').textContent.trim()).toBe('Deposit (REPUX)  help_outline');
+      expect(table.querySelector('.mat-header-cell:nth-child(5)').getAttribute('mat-sort-header')).toBeNull();
+      expect(table.querySelector('.mat-header-cell:nth-child(6)').textContent.trim()).toBe('Finalisation requests');
+      expect(table.querySelector('.mat-header-cell:nth-child(6)').getAttribute('mat-sort-header')).toBeNull();
+      expect(table.querySelector('.mat-header-cell:nth-child(7)').textContent.trim()).toBe('EULA  help_outline');
+      expect(table.querySelector('.mat-header-cell:nth-child(7)').getAttribute('mat-sort-header')).toBeNull();
+      expect(table.querySelector('.mat-header-cell:nth-child(8)').textContent.trim()).toBe('');
+      expect(table.querySelector('.mat-header-cell:nth-child(8)').getAttribute('mat-sort-header')).toBeNull();
       expect(table.querySelectorAll('[mat-row]').length).toBe(1);
 
       const firstRow = table.querySelector('[mat-row]');
-      expect(firstRow.querySelector('mat-cell:nth-child(1)').textContent.trim()).toBe('test name');
-      expect(firstRow.querySelector('mat-cell:nth-child(2)').textContent.trim()).toBe('test title');
-      expect(firstRow.querySelector('mat-cell:nth-child(3)').textContent.trim()).toBe('test category 1, test category 2');
-      expect(firstRow.querySelector('mat-cell:nth-child(4)').textContent.trim()).toBe('1.00 KB');
-      expect(firstRow.querySelector('mat-cell:nth-child(5)').textContent.trim()).toBe('REPUX 1.00');
-      expect(firstRow.querySelector('mat-cell:nth-child(6)').textContent.trim()).toBe('0');
-      expect(firstRow.querySelector('mat-cell:nth-child(7)').textContent.trim()).toBe('REPUX 0.00');
-      expect(firstRow.querySelector('mat-cell:nth-child(8)').textContent.trim()).toBe('REPUX 0.00');
-      expect(firstRow.querySelector('mat-cell:nth-child(9)').textContent.trim()).toBe('1');
-      expect(firstRow.querySelector('mat-cell:nth-child(10) button').textContent.trim()).toBe('Owner');
-      expect(firstRow.querySelector('mat-cell:nth-child(11) app-marketplace-action-buttons')).not.toBeNull();
+      expect(firstRow.querySelector('.mat-cell:nth-child(1)').textContent.trim()).toBe('test titletest name | 1.00 KB');
+      expect(firstRow.querySelector('.mat-cell:nth-child(2)').textContent.trim()).toBe('1.00');
+      expect(firstRow.querySelector('.mat-cell:nth-child(3)').textContent.trim()).toBe('0');
+      expect(firstRow.querySelector('.mat-cell:nth-child(4)').textContent.trim()).toBe('0.00');
+      expect(firstRow.querySelector('.mat-cell:nth-child(5)').textContent.trim()).toBe('0.00');
+      expect(firstRow.querySelector('.mat-cell:nth-child(6)').textContent.trim()).toBe('1');
+      expect(firstRow.querySelector('.mat-cell:nth-child(7) a').textContent.trim()).toBe('Owner');
+      expect(firstRow.querySelector('.mat-cell:nth-child(8) app-marketplace-action-buttons')).not.toBeNull();
     });
 
     it('should call sortChanged method when user clicks on sorting column', () => {
       const sortChanged = spyOn(component, 'sortChanged');
-      const element = fixture.debugElement.nativeElement.querySelector('mat-table');
+      const element = fixture.debugElement.nativeElement.querySelector('.mat-table');
       element.dispatchEvent(new CustomEvent('matSortChange'));
 
       expect(sortChanged.calls.count()).toBe(1, 'one call');
     });
 
-    it('should call applyFilter method when user changes search input value', () => {
-      const applyFilter = spyOn(component, 'applyFilter');
+    it('should call onTypeAhead method when user changes search input value', () => {
+      const onTypeAhead = spyOn(component, 'onTypeAhead');
       const element = fixture.debugElement.nativeElement.querySelector('input');
       element.dispatchEvent(new CustomEvent('keyup'));
 
-      expect(applyFilter.calls.count()).toBe(1, 'one call');
+      expect(onTypeAhead.calls.count()).toBe(1, 'one call');
     });
 
     it('should call pageChanged method when user changes pagination settings', () => {
@@ -316,13 +305,6 @@ describe('MarketplaceDataProductListComponent', () => {
       expect(element.getAttribute('ng-reflect-page-size-options')).toBe('1,3,13,22');
       expect(element.getAttribute('ng-reflect-page-size')).toBe('13');
       expect(element.getAttribute('ng-reflect-length')).toBe('1');
-    });
-
-    it('should display search icon before input and \'Search\' as a placeholder', () => {
-      const element = fixture.debugElement.nativeElement.querySelector('mat-form-field');
-      expect(element.querySelector('mat-icon').getAttribute('matprefix')).not.toBeNull();
-      expect(element.querySelector('mat-icon').textContent).toBe('search');
-      expect(element.querySelector('input').getAttribute('placeholder')).toBe('Search');
     });
   });
 });

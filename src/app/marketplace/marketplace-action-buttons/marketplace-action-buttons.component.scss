@@ -1,5 +1,6 @@
 .action-buttons {
   display: flex;
+  justify-content: flex-end;
 
   &__button {
     margin: 0 0 0 12px;

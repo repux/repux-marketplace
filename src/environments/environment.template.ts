@@ -32,7 +32,7 @@ export const environment = {
       host: '${MARKETPLACE_METAINDEXER_HOST}' || 'localhost',
       port: '${MARKETPLACE_METAINDEXER_PORT}' || 9201
     },
-    pageSizeOptions: [ 10, 25, 50, 100 ],
+    pageSizeOptions: [ 12, 24, 48, 96 ],
     currency: {
       defaultName: 'REPUX',
       precision: 18,

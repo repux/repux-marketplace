@@ -16,10 +16,7 @@ export class MarketplaceReadyToDownloadComponent implements OnDestroy {
     ActionButtonType.Rate
   ];
   public displayedColumns = [
-    'name',
-    'title',
-    'category',
-    'size',
+    'details',
     'price',
     'orderDate',
     'eula',
