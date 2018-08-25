@@ -110,7 +110,7 @@ export class MarketplaceBrowseComponent implements OnInit {
     query.bool.must.push({ bool: { should: this.query } });
 
     if (this.categoryFilter.length) {
-      query.bool.must.push({ bool: { must: this.categoryFilter } });
+      query.bool.must.push({ bool: { should: this.categoryFilter } });
     }
 
     let productsRaw$ = this.dataProductListService.getDataProducts(query, this.sort, this.size, this.from);
