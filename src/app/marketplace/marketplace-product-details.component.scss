@@ -49,21 +49,26 @@
     justify-content: space-between;
     margin: 0 0 20px 0;
   }
-
-  &__note {
-    font-size: 14px;
-    background-color: #efefef;
-    padding: 24px;
-    margin: 0 0 20px 0;
+  
+  &__description {
+    margin: 0 0 32px 0;
   }
 
-  &__description {
-    margin: 0 0 20px 0;
+  &__detailed-description {
+    margin: 0 0 32px 0;
+  }
+
+  &__rating {
+    margin: 0 0 32px 0;
+  }
+
+  &__rules {
+    margin: 0 0 32px 0;
   }
 
   &__file-info {
     color: #7e7e7e;
-    margin: 0 0 20px 0;
+    margin: 0 0 32px 0;
 
     .mat-icon {
       vertical-align: bottom;
@@ -93,7 +98,12 @@
 }
 
 .sample-files {
-  margin: 0 0 40px 0;
+  margin: 0 0 32px 0;
+
+  &__list {
+    margin: 0;
+    padding: 0;
+  }
 
   &__line {
     display: flex;
@@ -106,20 +116,26 @@
   &__list-item {
     cursor: pointer;
     position: relative;
+    transition: background-color 0.3s;
 
     &:hover {
-      background: map-get($mat-light-theme-background, hover);
+      background-color: map-get($mat-light-theme-background, hover);
     }
+  }
+
+  .mat-icon {
+    color: #999;
+  }
+
+  .mat-list-item .mat-list-item-content {
+    padding: 0;
   }
 }
 
 section {
   h2 {
-    button {
+    a {
       visibility: hidden;
-      border: none;
-      background: none;
-      text-decoration: underline;
       font-size: 0.8rem;
       vertical-align: middle;
       cursor: pointer;
@@ -130,7 +146,7 @@ section {
     }
 
     &:hover {
-      button {
+      a {
         visibility: visible;
       }
     }
