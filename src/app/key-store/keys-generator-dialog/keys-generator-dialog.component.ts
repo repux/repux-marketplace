@@ -46,8 +46,8 @@ export class KeysGeneratorDialogComponent implements OnInit {
       this.keyStoreService.savePasswordAsHash(password);
     }
 
-    await this.keyStoreService.store(KeyStoreService.PRIVATE_KEY, keys.privateKey, password);
-    await this.keyStoreService.store(KeyStoreService.PUBLIC_KEY, keys.publicKey, password);
+    await this.keyStoreService.storePrivateKey(keys.privateKey, password);
+    this.keyStoreService.storePublicKey(keys.publicKey);
 
     this.dialogRef.close({
       publicKey: keys.publicKey,

@@ -4,9 +4,6 @@ import { WalletService } from '../../services/wallet.service';
 import { DataProductService } from '../../services/data-product.service';
 import { MatDialog, MatDialogRef } from '@angular/material';
 import Wallet from '../../shared/models/wallet';
-import { KeysPasswordDialogComponent } from '../../key-store/keys-password-dialog/keys-password-dialog.component';
-import { KeysGeneratorDialogComponent } from '../../key-store/keys-generator-dialog/keys-generator-dialog.component';
-import { KeyStoreService } from '../../key-store/key-store.service';
 import { Subscription } from 'rxjs/internal/Subscription';
 import { DataProduct } from '../../shared/models/data-product';
 import {
@@ -21,6 +18,7 @@ import { BlockchainTransactionScope } from '../../shared/enums/blockchain-transa
 import { ActionButtonType } from '../../shared/enums/action-button-type';
 import { CommonDialogService } from '../../shared/services/common-dialog.service';
 import { MarketplaceBeforeBuyConfirmationDialogComponent } from '../marketplace-before-buy-confirmation-dialog/marketplace-before-buy-confirmation-dialog.component';
+import { KeyStoreDialogService } from '../../key-store/key-store-dialog.service';
 
 @Component({
   selector: 'app-marketplace-buy-product-button',
@@ -47,10 +45,10 @@ export class MarketplaceBuyProductButtonComponent implements OnInit, OnDestroy {
     private dataProductService: DataProductService,
     private repuxLibService: RepuxLibService,
     private walletService: WalletService,
-    private keyStoreService: KeyStoreService,
     private awaitingFinalisationService: AwaitingFinalisationService,
     private transactionService: TransactionService,
     private commonDialogService: CommonDialogService,
+    private keyStoreDialogServiceSpy: KeyStoreDialogService,
     private dialog: MatDialog) {
   }
 
@@ -119,7 +117,7 @@ export class MarketplaceBuyProductButtonComponent implements OnInit, OnDestroy {
 
   async onApproveTransactionFinish(transactionReceipt: TransactionReceipt) {
     if (transactionReceipt.status === TransactionStatus.SUCCESSFUL) {
-      const { publicKey } = await this.getKeys();
+      const { publicKey } = await this.keyStoreDialogServiceSpy.getKeys({ publicKey: true });
       const serializedKey = await this.repuxLibService.getInstance().serializePublicKey(publicKey);
 
       this.commonDialogService.transaction(
@@ -210,26 +208,5 @@ export class MarketplaceBuyProductButtonComponent implements OnInit, OnDestroy {
 
     this.wallet = wallet;
     this.userIsOwner = this.getUserIsOwner();
-  }
-
-  private getKeys(): Promise<{ privateKey: JsonWebKey, publicKey: JsonWebKey }> {
-    return new Promise(resolve => {
-      let dialogRef;
-
-      if (this.keyStoreService.hasKeys()) {
-        dialogRef = this.dialog.open(KeysPasswordDialogComponent);
-      } else {
-        dialogRef = this.dialog.open(KeysGeneratorDialogComponent);
-      }
-
-      this.keysSubscription = dialogRef.afterClosed().subscribe(result => {
-        if (result) {
-          resolve({
-            privateKey: result.privateKey,
-            publicKey: result.publicKey
-          });
-        }
-      });
-    });
   }
 }

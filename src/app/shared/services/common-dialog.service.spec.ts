@@ -19,7 +19,8 @@ describe('CommonDialogService', () => {
         NoopAnimationsModule,
         MaterialModule
       ]
-    });
+    })
+    ;
 
     TestBed.overrideModule(BrowserDynamicTestingModule, {
       set: {

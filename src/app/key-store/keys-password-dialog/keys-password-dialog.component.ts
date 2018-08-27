@@ -32,11 +32,12 @@ export class KeysPasswordDialogComponent implements OnInit {
     }
 
     const password = this.formGroup.value.password;
-    const keys = await this.keyStoreService.getKeys(password);
+    const privateKey = await this.keyStoreService.getPrivateKey(password);
+    const publicKey = this.keyStoreService.getPublicKey();
 
     this.dialogRef.close({
-      publicKey: keys.publicKey,
-      privateKey: keys.privateKey,
+      privateKey,
+      publicKey
     });
   }
 }
