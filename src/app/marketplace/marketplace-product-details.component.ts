@@ -87,7 +87,7 @@ export class MarketplaceProductDetailsComponent implements OnInit, OnDestroy {
       this.loadProduct(routeParams.address);
     });
 
-    this.clockSubscription = this.clockService.onEachSecond().subscribe(date => {
+    this.clockSubscription = this.clockService.onEachHour().subscribe(date => {
       this.daysToDeliverLeft = this.checkDaysToDeliverLeft(date);
     });
   }

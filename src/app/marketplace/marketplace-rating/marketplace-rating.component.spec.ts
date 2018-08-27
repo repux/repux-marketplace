@@ -3,7 +3,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import BigNumber from 'bignumber.js';
 import { MarketplaceRatingComponent } from './marketplace-rating.component';
 
-fdescribe('MarketplaceRatingComponent', () => {
+describe('MarketplaceRatingComponent', () => {
   let component: MarketplaceRatingComponent;
   let fixture: ComponentFixture<MarketplaceRatingComponent>;
 
