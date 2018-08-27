@@ -17,6 +17,7 @@ import {
   MatProgressBarModule,
   MatProgressSpinnerModule,
   MatRadioModule,
+  MatRippleModule,
   MatSelectModule,
   MatSidenavModule,
   MatSortModule,
@@ -50,7 +51,8 @@ import {
     MatListModule,
     MatRadioModule,
     MatBadgeModule,
-    MatCheckboxModule
+    MatCheckboxModule,
+    MatRippleModule
   ],
   exports: [
     MatTableModule,
@@ -74,7 +76,8 @@ import {
     MatListModule,
     MatRadioModule,
     MatBadgeModule,
-    MatCheckboxModule
+    MatCheckboxModule,
+    MatRippleModule
   ]
 })
 export class MaterialModule {

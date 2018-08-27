@@ -1,5 +1,28 @@
 @import '../../variables';
 
+.days-to-deliver {
+  max-width: 800px;
+  margin: 0 auto 20px;
+  background: #fff2a9;
+  box-shadow: none !important;
+  border: 1px solid #f3df72;
+  color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+
+  @media screen and (max-width: 700px) {
+    display: block;
+
+    app-marketplace-action-buttons {
+      margin-top: 10px;
+      display: flex;
+      justify-content: center;
+    }
+  }
+}
+
 .product-details {
   max-width: 800px;
   margin: 0 auto;
@@ -16,7 +39,7 @@
     justify-content: space-between;
     margin: 0 0 16px 0;
 
-    h1  {
+    h1 {
       margin: 0;
     }
   }
@@ -26,22 +49,26 @@
     justify-content: space-between;
     margin: 0 0 20px 0;
   }
-
-  &__note {
-    font-size: 14px;
-    background-color: #efefef;
-    padding: 24px;
-    margin: 0 0 20px 0;
+  
+  &__description {
+    margin: 0 0 32px 0;
   }
 
-  &__description {
-    margin: 0 0 20px 0;
+  &__detailed-description {
+    margin: 0 0 32px 0;
+  }
+
+  &__rating {
+    margin: 0 0 32px 0;
+  }
+
+  &__rules {
+    margin: 0 0 32px 0;
   }
 
   &__file-info {
-    padding: 16px 0;
     color: #7e7e7e;
-    margin: 0 0 20px 0;
+    margin: 0 0 32px 0;
 
     .mat-icon {
       vertical-align: bottom;
@@ -70,12 +97,12 @@
   }
 }
 
-
 .sample-files {
-  margin: 0 0 40px 0;
+  margin: 0 0 32px 0;
 
-  &__button {
-    color: #999;
+  &__list {
+    margin: 0;
+    padding: 0;
   }
 
   &__line {
@@ -84,5 +111,44 @@
     align-items: center;
     justify-content: space-between;
     min-height: 50px;
+  }
+
+  &__list-item {
+    cursor: pointer;
+    position: relative;
+    transition: background-color 0.3s;
+
+    &:hover {
+      background-color: map-get($mat-light-theme-background, hover);
+    }
+  }
+
+  .mat-icon {
+    color: #999;
+  }
+
+  .mat-list-item .mat-list-item-content {
+    padding: 0;
+  }
+}
+
+section {
+  h2 {
+    a {
+      visibility: hidden;
+      font-size: 0.8rem;
+      vertical-align: middle;
+      cursor: pointer;
+
+      &:focus {
+        outline: none;
+      }
+    }
+
+    &:hover {
+      a {
+        visibility: visible;
+      }
+    }
   }
 }

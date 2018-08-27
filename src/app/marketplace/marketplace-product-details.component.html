@@ -1,63 +1,107 @@
-<mat-card *ngIf="(product$ | async) as product" class="product-details mat-typography">
-  <section class="product-details__title">
-    <h1>{{ product.title }}</h1>
-
-    <app-marketplace-rating
-      *ngIf="(owner$ | async) as owner"
-      [rating]="owner.sellerRating"></app-marketplace-rating>
-  </section>
-
-  <section class="product-details__price-buy">
-    <div class="price">
-      <span class="price__prefix">REPUX</span>
-      <span class="price__value">{{ product.price.toString() | currency : '' : '' : currencyFormat }}</span>
+<div *ngIf="(product$ | async) as product">
+  <mat-card class="days-to-deliver" *ngIf="userIsBuyer && !blockchainDataProductOrder.finalised">
+    <div class="days-to-deliver__message">
+      Your transaction is awaiting confirmation from the Seller,
+      <span *ngIf="daysToDeliverLeft > 0">if not confirmed within the next
+        <strong [ngPlural]="daysToDeliverLeft">
+          <ng-template ngPluralCase="=0">{{daysToDeliverLeft}} days</ng-template>
+          <ng-template ngPluralCase="=1">{{daysToDeliverLeft}} day</ng-template>
+          <ng-template ngPluralCase="other">{{daysToDeliverLeft}} days</ng-template>
+        </strong>,
+      </span>you can cancel transaction and your funds will be returned to your wallet.
     </div>
+
     <app-marketplace-action-buttons
+      *ngIf="daysToDeliverLeft <= 0"
       [dataProduct]="product"
-      [availableActions]="availableActions"></app-marketplace-action-buttons>
-  </section>
+      [blockchainDataProductOrder]="blockchainDataProductOrder"
+      [availableActions]="[ actionButtonType.CancelPurchase ]"></app-marketplace-action-buttons>
+  </mat-card>
 
-  <section class="product-details__description">
-    <p>{{ product.shortDescription }}</p>
-    <mat-chip-list>
-      <mat-chip *ngFor="let category of product.category" disabled>{{ category }}</mat-chip>
-    </mat-chip-list>
-  </section>
+  <mat-card class="product-details mat-typography">
+    <section class="product-details__title">
+      <h1>{{ product.title }}</h1>
+    </section>
 
-  <section class="product-details__file-info">
-    <mat-icon>attach_file</mat-icon>
-    {{ product.name }} | {{ product.size | fileSize }} | <a href=""
-                                                            (click)="$event.stopPropagation(); $event.preventDefault(); downloadEula(product.eula)">{{
-    product.eula.type | eulaType }} EULA</a>
-  </section>
+    <section class="product-details__price-buy">
+      <div class="price">
+        <span class="price__prefix">REPUX</span>
+        <span class="price__value">{{ product.price.toString() | currency : '' : '' : currencyFormat }}</span>
+      </div>
+      <app-marketplace-action-buttons
+        [dataProduct]="product"
+        [availableActions]="availableActions"></app-marketplace-action-buttons>
+    </section>
 
-  <div class="product-details__note">
-    <span>Max. number of days for seller to finalise transaction: <strong>{{ product.daysToDeliver }} days</strong></span>
-  </div>
+    <section class="product-details__description">
+      <p>{{ product.shortDescription }}</p>
+      <mat-chip-list>
+        <mat-chip *ngFor="let category of product.category" disabled>{{ category }}</mat-chip>
+      </mat-chip-list>
+    </section>
 
-  <section *ngIf="product.fullDescription">
-    <h2>Detailed description</h2>
-    <p>{{ product.fullDescription }}</p>
-  </section>
+    <section class="product-details__file-info">
+      <mat-icon>attach_file</mat-icon>
+      {{ product.name }} | {{ product.size | fileSize }} |
+      <a href=""
+         (click)="$event.stopPropagation(); $event.preventDefault(); downloadEula(product.eula)">
+        {{product.eula.type | eulaType}} EULA</a>
+    </section>
 
-  <section *ngIf="product.sampleFile?.length > 0" class="sample-files">
-    <h2>Sample files</h2>
-    <mat-list>
-      <mat-list-item *ngFor="let file of product.sampleFile;">
-        <div mat-line>
-          <div class="sample-files__line">
-            {{ file.fileName }}
-            <button class="sample-files__button"
-                    mat-stroked-button
-                    (click)="downloadSampleFile($event, file)">
-              Download
-            </button>
+    <section *ngIf="product.fullDescription" class="product-details__detailed-description">
+      <h2>Detailed description
+        <a href="" (click)="$event.preventDefault();scrollToTop()">Back to top</a>
+      </h2>
+      <p>{{ product.fullDescription }}</p>
+    </section>
+
+    <section *ngIf="product.sampleFile?.length > 0" class="sample-files">
+      <h2>Sample files
+        <a href="" (click)="$event.preventDefault();scrollToTop()">Back to top</a>
+      </h2>
+      <mat-list class="sample-files__list">
+        <mat-list-item
+          matRipple
+          *ngFor="let file of product.sampleFile;"
+          class="sample-files__list-item"
+          (click)="downloadSampleFile($event, file)">
+          <div mat-line>
+            <div class="sample-files__line">
+              {{ file.fileName }}
+              <mat-icon>get_app</mat-icon>
+            </div>
           </div>
-        </div>
-        <mat-divider></mat-divider>
-      </mat-list-item>
-    </mat-list>
-  </section>
+          <mat-divider></mat-divider>
+        </mat-list-item>
+      </mat-list>
+    </section>
 
-  <a routerLink="../../">Back to list</a>
-</mat-card>
+    <section class="product-details__rules">
+      <h2>Rules
+        <a href="" (click)="$event.preventDefault();scrollToTop()">Back to top</a>
+      </h2>
+      <p>
+        Each buy transaction needs to be confirmed by the seller. Seller would have
+        <strong [ngPlural]="product.daysToDeliver">
+          <ng-template ngPluralCase="=0">{{product.daysToDeliver}} days</ng-template>
+          <ng-template ngPluralCase="=1">{{product.daysToDeliver}} day</ng-template>
+          <ng-template ngPluralCase="other">{{product.daysToDeliver}} days</ng-template>
+        </strong>
+        in order to confirm transaction, if not buyer can cancel the transaction and funds will be returned.
+      </p>
+    </section>
+
+    <section class="product-details__rating">
+      <h2>Seller rating
+        <a href="" (click)="$event.preventDefault();scrollToTop()">Back to top</a>
+      </h2>
+      <app-marketplace-rating
+        *ngIf="(owner$ | async) as owner"
+        [rating]="owner.sellerRating"
+        [orders]="product.orders"></app-marketplace-rating>
+    </section>
+
+
+    <a routerLink="../../">Back to list</a>
+  </mat-card>
+</div>

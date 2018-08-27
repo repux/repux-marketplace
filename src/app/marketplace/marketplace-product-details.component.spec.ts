@@ -13,11 +13,13 @@ import { IpfsService } from '../services/ipfs.service';
 import { MarketplaceRatingComponent } from './marketplace-rating/marketplace-rating.component';
 import { EulaTypePipe } from '../shared/pipes/eula-type.pipe';
 import { ActionButtonType } from '../shared/enums/action-button-type';
+import { DataProductOrder as BlockchainDataProductOrder } from 'repux-web3-api';
 
 @Component({ selector: 'app-marketplace-action-buttons', template: '' })
 class MarketplaceActionButtonsStubComponent {
   @Input() dataProduct: DataProduct;
   @Input() availableActions: ActionButtonType[];
+  @Input() blockchainDataProductOrder: BlockchainDataProductOrder;
 }
 
 describe('MarketplaceProductDetailsComponent', () => {

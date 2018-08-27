@@ -12,7 +12,7 @@ import { ActionButtonType } from '../../shared/enums/action-button-type';
 @Component({
   selector: 'app-marketplace-action-buttons',
   templateUrl: './marketplace-action-buttons.component.html',
-  styleUrls:['./marketplace-action-buttons.component.scss']
+  styleUrls: [ './marketplace-action-buttons.component.scss' ]
 })
 export class MarketplaceActionButtonsComponent implements OnDestroy, OnChanges {
   @Input() availableActions: ActionButtonType[] = [];
@@ -21,7 +21,7 @@ export class MarketplaceActionButtonsComponent implements OnDestroy, OnChanges {
 
   blockchainDataProduct?: BlockchainDataProduct;
 
-  blockchainDataProductOrder?: BlockchainDataProductOrder;
+  @Input() blockchainDataProductOrder?: BlockchainDataProductOrder;
 
   fundsToWithdraw?: BigNumber;
 
@@ -58,7 +58,10 @@ export class MarketplaceActionButtonsComponent implements OnDestroy, OnChanges {
     if (this.dataProduct && this._wallet) {
       if (this.dataProduct.address) {
         this.loading = true;
-        this.blockchainDataProductOrder = await this._dataProductService.getOrderData(this.dataProduct.address, this._wallet.address);
+
+        if (!this.blockchainDataProductOrder) {
+          this.blockchainDataProductOrder = await this._dataProductService.getOrderData(this.dataProduct.address, this._wallet.address);
+        }
 
         if (this.dataProduct.blockchainState) {
           this.blockchainDataProduct = this.dataProduct.blockchainState;
