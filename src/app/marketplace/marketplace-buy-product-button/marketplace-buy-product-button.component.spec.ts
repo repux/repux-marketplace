@@ -16,7 +16,7 @@ import {
   MarketplaceBeforeBuyConfirmationDialogComponent
 } from '../marketplace-before-buy-confirmation-dialog/marketplace-before-buy-confirmation-dialog.component';
 import { BrowserDynamicTestingModule } from '@angular/platform-browser-dynamic/testing';
-import { CurrencyRepuxPipe } from '../../shared/pipes/currency-repux';
+import { CurrencyRepuxPipe } from '../../shared/pipes/currency-repux.pipe';
 import { FileSizePipe } from '../../shared/pipes/file-size.pipe';
 import { ArrayJoinPipe } from '../../shared/pipes/array-join.pipe';
 import { TransactionStatus, TransactionReceipt } from 'repux-web3-api';

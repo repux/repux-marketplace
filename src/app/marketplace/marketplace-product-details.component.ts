@@ -29,7 +29,6 @@ export class MarketplaceProductDetailsComponent implements OnInit, OnDestroy {
   owner$: Observable<User>;
   actionButtonType = ActionButtonType;
   availableActions = [ ActionButtonType.Buy, ActionButtonType.Rate ];
-  public currencyFormat: string = environment.repux.currency.format;
   public wallet: Wallet;
   public blockchainDataProductOrder: BlockchainDataProductOrder;
   public daysToDeliverLeft: number;

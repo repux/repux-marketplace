@@ -19,7 +19,7 @@ import { EsResponse } from '../shared/models/es-response';
 })
 export class MarketplaceBrowseComponent implements OnInit {
   public pageSizeOptions = environment.repux.pageSizeOptions;
-  public currencyFormat: string = environment.repux.currency.shortFormat;
+  public currencyPrecision = environment.repux.currency.shortPrecision;
   public dataProducts: DataProduct[];
   public sort: string;
   public size: number;

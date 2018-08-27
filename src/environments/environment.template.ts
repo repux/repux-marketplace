@@ -6,7 +6,7 @@ BigNumber.config({
   EXPONENTIAL_AT: [ -40, 40 ],
   FORMAT: {
     decimalSeparator: '.',
-    groupSeparator: '',
+    groupSeparator: ',',
     groupSize: 3,
     secondaryGroupSize: 0,
     fractionGroupSeparator: ' ',
@@ -36,8 +36,7 @@ export const environment = {
     currency: {
       defaultName: 'REPUX',
       precision: 18,
-      format: '1.2-18',
-      shortFormat: '1.2-4'
+      shortPrecision: 4
     },
     eulaUrls: [ {
       type: EulaType.STANDARD,

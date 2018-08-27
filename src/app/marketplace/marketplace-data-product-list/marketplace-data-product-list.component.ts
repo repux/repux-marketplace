@@ -53,7 +53,6 @@ export class MarketplaceDataProductListComponent implements OnInit, OnChanges, O
   public sort: string;
   public size: number;
   public from: number;
-  public currencyFormat: string = environment.repux.currency.format;
   public textColumns: string[] = [
     'name',
     'title',

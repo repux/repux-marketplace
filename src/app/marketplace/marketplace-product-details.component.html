@@ -26,7 +26,7 @@
     <section class="product-details__price-buy">
       <div class="price">
         <span class="price__prefix">REPUX</span>
-        <span class="price__value">{{ product.price.toString() | currency : '' : '' : currencyFormat }}</span>
+        <span class="price__value">{{ product.price.toString() | currencyRepux : '' }}</span>
       </div>
       <app-marketplace-action-buttons
         [dataProduct]="product"

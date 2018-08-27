@@ -40,8 +40,7 @@
         <mat-card-actions>
           <div class="price">
             <span class="price__prefix">REPUX</span>
-            <span class="price__value">{{ product.price.toString() | currency : '' :
-          '' : currencyFormat }}</span>
+            <span class="price__value">{{ product.price.toString() | currencyRepux : '' : currencyPrecision }}</span>
           </div>
           <div class="card-item__spacer"></div>
           <app-marketplace-action-buttons

@@ -5,7 +5,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule, MatFormFieldModule, MatInputModule } from '@angular/material';
 import { FileSizePipe } from './pipes/file-size.pipe';
 import { ArrayJoinPipe } from './pipes/array-join.pipe';
-import { CurrencyRepuxPipe } from './pipes/currency-repux';
+import { CurrencyRepuxPipe } from './pipes/currency-repux.pipe';
 import { ConfirmationDialogComponent } from './components/confirmation-dialog/confirmation-dialog.component';
 import { MetamaskDetectorComponent } from './components/metamask-detector/metamask-detector.component';
 import { MaterialModule } from '../material.module';
