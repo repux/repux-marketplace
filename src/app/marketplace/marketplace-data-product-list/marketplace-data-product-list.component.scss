@@ -1,5 +1,43 @@
 $shadow-color: rgba(0, 0, 0, .03);
 
+.list-search {
+  position: relative;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  overflow: hidden;
+  color: rgba(0, 0, 0, 0.87);
+  padding: 8px;
+  background-color: #efefef;
+
+  &__input {
+    width: 100%;
+    border: 0;
+    font-size: 16px;
+    font-weight: 400;
+    flex: 1;
+    padding: 12px;
+    border-radius: 4px;
+
+    &:focus {
+      outline: none;
+    }
+  }
+
+  &__icon {
+    position: absolute;
+    right: 8px;
+    color: #999;
+    margin: 0 12px;
+  }
+
+  @media screen and (max-width: 700px) {
+    &__icon {
+      display: none;
+    }
+  }
+}
+
 .mat-form-field, .mat-table {
   font-size: 14px;
   width: 100%;
@@ -58,4 +96,10 @@ mat-row {
   &.disabled mat-cell:not(:last-child) {
     opacity: 0.5;
   }
+}
+
+.mat-header-cell .mat-icon {
+  width: 16px;
+  height: 16px;
+  font-size: 16px;
 }

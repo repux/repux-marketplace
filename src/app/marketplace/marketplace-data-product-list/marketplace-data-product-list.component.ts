@@ -1,4 +1,4 @@
-import { Component, Input, OnChanges, OnDestroy, ViewChild } from '@angular/core';
+import { Component, Input, OnChanges, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { DataProductListService } from '../../services/data-product-list.service';
 import { EsResponse } from '../../shared/models/es-response';
 import { MatPaginator, MatTableDataSource, PageEvent, Sort } from '@angular/material';
@@ -12,6 +12,8 @@ import { PendingFinalisationService } from '../services/pending-finalisation.ser
 import { Eula, EulaType } from 'repux-lib';
 import { IpfsService } from '../../services/ipfs.service';
 import { ActionButtonType } from '../../shared/enums/action-button-type';
+import { BehaviorSubject } from 'rxjs';
+import { debounceTime, distinctUntilChanged, filter } from 'rxjs/operators';
 
 const DAY_IN_MILLISECONDS = 24 * 60 * 60 * 1000;
 
@@ -20,14 +22,11 @@ const DAY_IN_MILLISECONDS = 24 * 60 * 60 * 1000;
   templateUrl: './marketplace-data-product-list.component.html',
   styleUrls: [ './marketplace-data-product-list.component.scss' ]
 })
-export class MarketplaceDataProductListComponent implements OnChanges, OnDestroy {
+export class MarketplaceDataProductListComponent implements OnInit, OnChanges, OnDestroy {
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @Input() staticQuery = { bool: {} };
   @Input() displayedColumns = [
-    'name',
     'title',
-    'category',
-    'size',
     'price',
     'eula',
     'actions'
@@ -54,17 +53,16 @@ export class MarketplaceDataProductListComponent implements OnChanges, OnDestroy
   public sort: string;
   public size: number;
   public from: number;
-  public currencyName = ` ${environment.repux.currency.defaultName} `;
   public currencyFormat: string = environment.repux.currency.format;
   public textColumns: string[] = [
     'name',
     'title',
-    'category',
     'shortDescription',
     'fullDescription'
   ];
 
   private _dataProductsSubscription: Subscription;
+  private inputChangeSubject = new BehaviorSubject<string>(undefined);
 
   constructor(
     public dataProductListService: DataProductListService,
@@ -73,13 +71,27 @@ export class MarketplaceDataProductListComponent implements OnChanges, OnDestroy
     this.size = this.pageSizeOptions[ 0 ];
   }
 
+  ngOnInit() {
+    this.inputChangeSubject
+      .pipe(
+        debounceTime(500),
+        distinctUntilChanged(),
+        filter(value => typeof value !== 'undefined')
+      )
+      .subscribe(() => this.applyFilter());
+  }
+
   ngOnChanges() {
     this.reloadRecords();
     return this.refreshData();
   }
 
-  applyFilter(filterValue: string): Promise<void> {
-    const search = filterValue.trim().toLowerCase();
+  onTypeAhead(value: string) {
+    this.inputChangeSubject.next(value);
+  }
+
+  applyFilter(): Promise<void> {
+    const search = (this.inputChangeSubject.getValue() || '').trim().toLowerCase();
 
     this.query = [
       { regexp: { name: '.*"' + search + '".*' } },
@@ -165,16 +177,6 @@ export class MarketplaceDataProductListComponent implements OnChanges, OnDestroy
     return new Date((order.deliveryDeadline.getTime() - dataProduct.daysToDeliver * DAY_IN_MILLISECONDS));
   }
 
-  getDeliveryDeadline(dataProduct: DataProduct) {
-    const order = this._findOrderByCurrentBuyerAddress(dataProduct);
-
-    if (!order) {
-      return;
-    }
-
-    return order.deliveryDeadline;
-  }
-
   ngOnDestroy() {
     this._unsubscribeDataProducts();
   }
@@ -190,6 +192,7 @@ export class MarketplaceDataProductListComponent implements OnChanges, OnDestroy
   }
 
   downloadEula(event: MouseEvent, eula: Eula): Promise<void> {
+    event.preventDefault();
     event.stopPropagation();
 
     return this.ipfsService.downloadAndSave(eula.fileHash, eula.fileName);
