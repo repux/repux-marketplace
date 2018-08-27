@@ -4,13 +4,13 @@ import { MarketplaceTaskManagerComponent } from '../marketplace/marketplace-task
 import { MatDialogModule } from '@angular/material';
 import { from } from 'rxjs';
 import Wallet from '../shared/models/wallet';
-import { FileUploadTask } from '../tasks/file-upload-task';
 import { TaskType } from '../tasks/task-type';
 
 describe('TaskManagerService', () => {
   let matDialogSpy: { open: jasmine.Spy },
     walletServiceSpy: { getWallet: jasmine.Spy };
   let service: TaskManagerService;
+  let componentInstance;
   const walletAddress = '0x00';
   const wallet = new Wallet(walletAddress, 1);
 
@@ -18,6 +18,16 @@ describe('TaskManagerService', () => {
     walletServiceSpy = jasmine.createSpyObj('WalletService', [ 'getWallet' ]);
     walletServiceSpy.getWallet.and.returnValue(from(Promise.resolve(wallet)));
     matDialogSpy = jasmine.createSpyObj('MatDialog', [ 'open' ]);
+    componentInstance = {
+      setTaskManagerService: jasmine.createSpy(),
+      openDialog: jasmine.createSpy(),
+      closeDialog: jasmine.createSpy(),
+      close: jasmine.createSpy()
+    };
+    matDialogSpy.open.and.returnValue({
+      componentInstance
+    });
+
     service = new TaskManagerService(<any> matDialogSpy, <any> walletServiceSpy);
     window.addEventListener = () => {
     };
@@ -64,23 +74,13 @@ describe('TaskManagerService', () => {
     it('should add task to tasks list, run it and call openDialog method', () => {
       service[ 'wallet' ] = wallet;
 
-      spyOn(service, 'openDialog').and.callFake(function () {
-        const ngDoCheck = jasmine.createSpy();
-        this.dialogRef = {
-          componentInstance: {
-            ngDoCheck
-          },
-          close: jasmine.createSpy()
-        };
-      });
-
       const task = {
         run: jasmine.createSpy(),
         finished: true
       };
 
       service.addTask(<any> task);
-      expect((<jasmine.Spy> service.openDialog).calls.count()).toBe(1);
+      expect(componentInstance.openDialog.calls.count()).toBe(1);
       expect(task.run.calls.count()).toBe(1);
       expect(service.tasks.length).toEqual(1);
     });
@@ -93,76 +93,17 @@ describe('TaskManagerService', () => {
         next
       };
 
-      spyOn(service, 'openDialog').and.callFake(function () {
-        this.dialogRef = {
-          close: jasmine.createSpy()
-        };
-      });
-
       service.openDialog();
       service.onTaskEvent();
-      expect(next.calls.count()).toBe(1);
+      expect(next.calls.count()).toBe(2);
     });
   });
 
   describe('#openDialog()', () => {
     it('should call open method on dialog object and setTaskManagerService componentInstance', () => {
-      const setTaskManagerService = jasmine.createSpy();
-
-      const open = jasmine.createSpy().and.returnValue({
-        componentInstance: {
-          setTaskManagerService,
-        },
-        close: jasmine.createSpy()
-      });
-      service[ 'dialog' ].open = open;
-      service[ 'closeDialog' ] = jasmine.createSpy();
-
       service.openDialog();
-      expect(setTaskManagerService.calls.count()).toBe(1);
-      expect(open.calls.count()).toBe(1);
-    });
-
-    it('should not call open method when dialogRef is defined', () => {
-      const ngDoCheck = jasmine.createSpy();
-      const openDialog = jasmine.createSpy();
-      service[ 'dialogRef' ] = <any> {
-        componentInstance: {
-          ngDoCheck,
-          openDialog
-        },
-        close: jasmine.createSpy()
-      };
-      const setTaskManagerService = jasmine.createSpy();
-
-      const open = jasmine.createSpy().and.returnValue({
-        componentInstance: {
-          setTaskManagerService
-        },
-        close: jasmine.createSpy()
-      });
-      service[ 'dialog' ].open = open;
-      service[ 'closeDialog' ] = jasmine.createSpy();
-
-      service.openDialog();
-      expect(setTaskManagerService.calls.count()).toBe(0);
-      expect(open.calls.count()).toBe(0);
-    });
-  });
-
-  describe('#closeDialog()', () => {
-    it('should call close method on dialogRef object', () => {
-      const ngDoCheck = jasmine.createSpy();
-      const close = jasmine.createSpy();
-      service[ 'dialogRef' ] = <any> {
-        componentInstance: {
-          ngDoCheck
-        },
-        close
-      };
-
-      service.closeDialog();
-      expect(close.calls.count()).toBe(1);
+      expect(componentInstance.setTaskManagerService.calls.count()).toBe(2);
+      expect(matDialogSpy.open.calls.count()).toBe(2);
     });
   });
 

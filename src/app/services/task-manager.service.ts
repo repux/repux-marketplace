@@ -18,7 +18,7 @@ export class TaskManagerService implements OnDestroy {
   private wallet: Wallet;
   private tasksSubject = new BehaviorSubject<ReadonlyArray<Task>>([]);
   private foregroundTasksSubject = new BehaviorSubject<ReadonlyArray<Task>>([]);
-  private walletSubscription: Subscription;
+  private readonly walletSubscription: Subscription;
   private _tasks: Task[] = [];
 
   constructor(
@@ -26,6 +26,7 @@ export class TaskManagerService implements OnDestroy {
     private walletService: WalletService) {
     this.addConfirmationPrompt();
     this.walletSubscription = this.walletService.getWallet().subscribe(wallet => this.onWalletChange(wallet));
+    this.openDialog();
   }
 
   get tasks(): ReadonlyArray<Task> {
@@ -45,7 +46,7 @@ export class TaskManagerService implements OnDestroy {
     this._tasks.push(task);
     this.tasksSubject.next(this.tasks);
     this.foregroundTasksSubject.next(this.foregroundTasks);
-    this.openDialog();
+    this.dialogRef.componentInstance.openDialog();
   }
 
   removeTask(task: Task) {
@@ -55,15 +56,6 @@ export class TaskManagerService implements OnDestroy {
 
   afterTaskRemove() {
     this.onTaskEvent();
-
-    if (this.foregroundTasks.length === 0) {
-      this.closeDialog();
-    }
-  }
-
-  markTaskAsFinished(task: Task): void {
-    task.finished = true;
-    this.tasksSubject.next(this.tasks);
   }
 
   onTaskEvent() {
@@ -72,11 +64,6 @@ export class TaskManagerService implements OnDestroy {
   }
 
   openDialog() {
-    if (this.dialogRef) {
-      this.dialogRef.componentInstance.openDialog();
-      return;
-    }
-
     this.dialogRef = this.dialog.open(MarketplaceTaskManagerComponent, {
       position: {
         left: '20px',
@@ -89,15 +76,10 @@ export class TaskManagerService implements OnDestroy {
     this.dialogRef.componentInstance.setTaskManagerService(this);
     this.tasksSubject.next(this.tasks);
     this.foregroundTasksSubject.next(this.foregroundTasks);
-  }
 
-  closeDialog() {
-    if (!this.dialogRef) {
-      return;
+    if (!this.foregroundTasks.length) {
+      this.dialogRef.componentInstance.closeDialog();
     }
-
-    this.dialogRef.close();
-    this.dialogRef = null;
   }
 
   hasUnfinishedTasks(): boolean {
