@@ -30,7 +30,7 @@
   <div class="tasks-list">
     <div class="item mat-body-1" *ngFor="let task of tasks.slice().reverse()">
       <div class="row" *ngIf="!task.finished">
-        <span class="item_status">{{ task.status }}</span>
+        <span class="item__status">{{ task.status }}</span>
         <span class="spacer"></span>
         <app-marketplace-action-buttons
           *ngIf="task.dataProduct"
@@ -39,10 +39,10 @@
         <button mat-button *ngIf="task.progress < 100" (click)="task.cancel()">Cancel</button>
       </div>
       <div class="row" *ngIf="task.errors.length">
-        <span class="item_status" *ngIf="task.errors[0] === taskError.EncryptionError">Encryption error</span>
-        <span class="item_status" *ngIf="task.errors[0] === taskError.ReencryptionError">Re-encryption error</span>
-        <span class="item_status" *ngIf="task.errors[0] === taskError.DecryptionError">Decryption error</span>
-        <span class="item_status"
+        <span class="item__status" *ngIf="task.errors[0] === taskError.EncryptionError">Encryption error</span>
+        <span class="item__status" *ngIf="task.errors[0] === taskError.ReencryptionError">Re-encryption error</span>
+        <span class="item__status" *ngIf="task.errors[0] === taskError.DecryptionError">Decryption error</span>
+        <span class="item__status"
               *ngIf="![ taskError.EncryptionError, taskError.ReencryptionError, taskError.DecryptionError ].includes(task.errors[0])">
           {{ task.errors[0] }}</span>
       </div>
@@ -58,7 +58,7 @@
           <mat-icon *ngIf="task.finished && !task.errors.length" color="primary">check_circle</mat-icon>
           <mat-icon *ngIf="task.finished && task.errors.length" color="warn">error</mat-icon>
         </div>
-        <span class="item_name">{{ task.name }}</span>
+        <span class="item__name">{{ task.name }}</span>
         <span class="spacer"></span>
         <button mat-icon-button
                 *ngIf="task.finished"
@@ -67,6 +67,10 @@
           <mat-icon>close</mat-icon>
         </button>
       </div>
+    </div>
+
+    <div class="item mat-body-1 no-tasks" *ngIf='tasks.length === 0'>
+      No current tasks pending
     </div>
   </div>
 </mat-dialog-content>

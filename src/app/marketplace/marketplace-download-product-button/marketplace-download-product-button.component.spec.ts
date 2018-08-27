@@ -8,11 +8,12 @@ import { MaterialModule } from '../../material.module';
 import { DataProductService } from '../../services/data-product.service';
 import { TagManagerService } from '../../shared/services/tag-manager.service';
 import { KeyStoreDialogService } from '../../key-store/key-store-dialog.service';
+import { TaskManagerService } from '../../services/task-manager.service';
 
 describe('MarketplaceDownloadProductButtonComponent', () => {
   let component: MarketplaceDownloadProductButtonComponent;
   let fixture: ComponentFixture<MarketplaceDownloadProductButtonComponent>;
-  let repuxLibServiceSpy, keyStoreDialogServiceSpy, dataProductServiceSpy, tagManagerSpy;
+  let repuxLibServiceSpy, keyStoreDialogServiceSpy, dataProductServiceSpy, tagManagerSpy, taskManagerServiceSpy;
   const productAddress = '0x1111111111111111111111111111111111111111';
 
   beforeEach(fakeAsync(() => {
@@ -22,7 +23,13 @@ describe('MarketplaceDownloadProductButtonComponent', () => {
     });
     keyStoreDialogServiceSpy = jasmine.createSpyObj('KeyStoreDialogService', [ 'getKeys' ]);
     tagManagerSpy = jasmine.createSpyObj('TagManagerService', [ 'sendEvent' ]);
-    dataProductServiceSpy = jasmine.createSpyObj('DataProductServiceSpy', [ 'getDataProductData', 'getOrderData' ]);
+    dataProductServiceSpy = jasmine.createSpyObj('DataProductService', [ 'getDataProductData', 'getOrderData' ]);
+    taskManagerServiceSpy = jasmine.createSpyObj('TaskManagerService', [ 'getTasks', 'addTask' ]);
+    taskManagerServiceSpy.getTasks.and.returnValue({
+      subscribe() {
+      }
+    });
+
     TestBed.configureTestingModule({
       declarations: [
         MarketplaceDownloadProductButtonComponent,
@@ -35,7 +42,8 @@ describe('MarketplaceDownloadProductButtonComponent', () => {
         { provide: TagManagerService, useValue: tagManagerSpy },
         { provide: RepuxLibService, useValue: repuxLibServiceSpy },
         { provide: DataProductService, useValue: dataProductServiceSpy },
-        { provide: KeyStoreDialogService, useValue: keyStoreDialogServiceSpy }
+        { provide: KeyStoreDialogService, useValue: keyStoreDialogServiceSpy },
+        { provide: TaskManagerService, useValue: taskManagerServiceSpy }
       ]
     })
       .compileComponents();
