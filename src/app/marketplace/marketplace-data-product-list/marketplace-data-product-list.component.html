@@ -13,7 +13,7 @@
     <table mat-table #table [dataSource]="dataSource" matSort (matSortChange)="sortChanged($event)">
 
       <!-- Details Column -->
-      <ng-container matColumnDef="details">
+      <ng-container matColumnDef="title">
         <th mat-header-cell *matHeaderCellDef mat-sort-header [disabled]="disableSorting">File details</th>
         <td mat-cell *matCellDef="let element">
           <p>

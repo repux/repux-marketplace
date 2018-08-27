@@ -26,7 +26,7 @@ export class MarketplaceDataProductListComponent implements OnInit, OnChanges, O
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @Input() staticQuery = { bool: {} };
   @Input() displayedColumns = [
-    'details',
+    'title',
     'price',
     'eula',
     'actions'

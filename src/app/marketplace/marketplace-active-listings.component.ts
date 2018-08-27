@@ -12,7 +12,7 @@ import { ActionButtonType } from '../shared/enums/action-button-type';
 })
 export class MarketplaceActiveListingsComponent implements OnDestroy {
   public displayedColumns = [
-    'details',
+    'title',
     'price',
     'timesPurchased',
     'totalEarnings',

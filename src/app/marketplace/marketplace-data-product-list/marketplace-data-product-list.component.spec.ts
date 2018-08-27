@@ -221,7 +221,7 @@ describe('MarketplaceDataProductListComponent', () => {
       };
       component.dataSource = new MatTableDataSource(component.esDataProducts.hits);
       component.displayedColumns = [
-        'details',
+        'title',
         'price',
         'timesPurchased',
         'totalEarnings',
