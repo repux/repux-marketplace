@@ -19,8 +19,10 @@ import { BrowserDynamicTestingModule } from '@angular/platform-browser-dynamic/t
 import { CurrencyRepuxPipe } from '../../shared/pipes/currency-repux.pipe';
 import { FileSizePipe } from '../../shared/pipes/file-size.pipe';
 import { ArrayJoinPipe } from '../../shared/pipes/array-join.pipe';
-import { TransactionStatus, TransactionReceipt } from 'repux-web3-api';
 import { KeyStoreDialogService } from '../../key-store/key-store-dialog.service';
+import { Task } from '../../tasks/task';
+import { TaskType } from '../../tasks/task-type';
+import { TaskManagerService } from '../../services/task-manager.service';
 import { MatDialogRef } from '@angular/material';
 import { ConfirmationDialogComponent } from '../../shared/components/confirmation-dialog/confirmation-dialog.component';
 
@@ -33,7 +35,7 @@ describe('MarketplaceBuyProductButtonComponent', () => {
   let component: MarketplaceBuyProductButtonComponent;
   let fixture: ComponentFixture<MarketplaceBuyProductButtonComponent>;
   let repuxLibServiceSpy, awaitingFinalisationServiceSpy, dataProductServiceSpy, tagManager, commonDialogServiceSpy,
-    keyStoreDialogServiceSpy;
+    keyStoreDialogServiceSpy, taskManagerServiceSpy;
   const dataProductAddress = '0x1111111111111111111111111111111111111111';
   const buyerAddress = '0x0000000000000000000000000000000000000000';
 
@@ -46,6 +48,7 @@ describe('MarketplaceBuyProductButtonComponent', () => {
     commonDialogServiceSpy = jasmine.createSpyObj('CommonDialogService', [ 'transaction', 'alert' ]);
     commonDialogServiceSpy.transaction.and.callFake(methodToCall => methodToCall());
     keyStoreDialogServiceSpy = jasmine.createSpyObj('KeyStoreDialogService', [ 'getKeys' ]);
+    taskManagerServiceSpy = jasmine.createSpyObj('TaskManagerService', [ 'addTask' ]);
 
     TestBed.configureTestingModule({
       declarations: [
@@ -66,7 +69,8 @@ describe('MarketplaceBuyProductButtonComponent', () => {
         { provide: RepuxLibService, useValue: repuxLibServiceSpy },
         { provide: AwaitingFinalisationService, useValue: awaitingFinalisationServiceSpy },
         { provide: CommonDialogService, useValue: commonDialogServiceSpy },
-        { provide: KeyStoreDialogService, useValue: keyStoreDialogServiceSpy }
+        { provide: KeyStoreDialogService, useValue: keyStoreDialogServiceSpy },
+        { provide: TaskManagerService, useValue: taskManagerServiceSpy }
       ]
     })
       .compileComponents();
@@ -144,28 +148,15 @@ describe('MarketplaceBuyProductButtonComponent', () => {
   });
 
   describe('#sendTransaction()', () => {
-    it('should call dataProductService.approveTokensTransferForDataProductPurchase using commonDialogService.transaction', () => {
+    it('should add task to taskManagerService', () => {
+      component.wallet = new Wallet('0x00', 0);
       component.sendTransaction();
 
-      expect(dataProductServiceSpy.approveTokensTransferForDataProductPurchase.calls.count()).toBe(1);
-      expect(dataProductServiceSpy.approveTokensTransferForDataProductPurchase.calls.allArgs()[ 0 ]).toEqual([ dataProductAddress ]);
-    });
-  });
-
-  describe('#onApproveTransactionFinish()', () => {
-    it('should call dataProductService.purchaseDataProduct using commonDialogService.transaction', async () => {
-      keyStoreDialogServiceSpy.getKeys.and.returnValue(Promise.resolve({ publicKey: 'PUBLIC_KEY' }));
-
-      const serializePublicKey = jasmine.createSpy();
-      serializePublicKey.and.callFake(key => 'SERIALIZED_' + key);
-      repuxLibServiceSpy.getInstance.and.returnValue({
-        serializePublicKey
-      });
-
-      await component.onApproveTransactionFinish({ status: TransactionStatus.SUCCESSFUL } as TransactionReceipt);
-
-      expect(dataProductServiceSpy.purchaseDataProduct.calls.count()).toBe(1);
-      expect(dataProductServiceSpy.purchaseDataProduct.calls.allArgs()[ 0 ]).toEqual([ dataProductAddress, 'SERIALIZED_PUBLIC_KEY' ]);
+      expect(taskManagerServiceSpy.addTask.calls.count()).toBe(1);
+      const task = <Task> taskManagerServiceSpy.addTask.calls.allArgs()[ 0 ][ 0 ];
+      expect(task.taskType).toBe(TaskType.BUY);
+      expect(task.productAddress).toEqual(component.dataProduct.address);
+      expect(task.walletAddress).toBe(component.wallet.address);
     });
   });
 
