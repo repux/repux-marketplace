@@ -36,7 +36,7 @@
           *ngIf="task.dataProduct"
           [availableActions]="[task.actionButton]"
           [dataProduct]="task.dataProduct"></app-marketplace-action-buttons>
-        <button mat-button *ngIf="task.progress < 100" (click)="task.cancel()">Cancel</button>
+        <button mat-stroked-button color="accent" *ngIf="task.progress < 100" (click)="task.cancel()">Cancel</button>
       </div>
       <div class="row" *ngIf="task.errors.length">
         <span class="item__status" *ngIf="task.errors[0] === taskError.EncryptionError">Encryption error</span>
@@ -58,7 +58,7 @@
           <mat-icon *ngIf="task.finished && !task.errors.length" color="primary">check_circle</mat-icon>
           <mat-icon *ngIf="task.finished && task.errors.length" color="warn">error</mat-icon>
         </div>
-        <span class="item__name">{{ task.name }}</span>
+        <p class="item__name">{{ task.name }}</p>
         <span class="spacer"></span>
         <button mat-icon-button
                 *ngIf="task.finished"
