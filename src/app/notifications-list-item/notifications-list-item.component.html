@@ -15,7 +15,13 @@
       product.eula.type | eulaType }} EULA</a>
     </p>
 
+    <p *ngIf="showMyOrderData && myOrderData">
+      Item bought at <strong>{{ myOrderData.deliveryDeadline | orderDate : product.daysToDeliver | date : 'short' }}</strong>.
+      If Seller don’t confirm transaction till <strong>{{ myOrderData.deliveryDeadline | date : 'short' }}</strong>, then you can choose to cancel transaction and funds will be returned to your wallet.
+    </p>
+
     <app-notifications-list-orders
+      *ngIf="showOrders"
       [dataProduct]="product"
       [displayPendingOrders]="!product.blockchainState?.disabled">
     </app-notifications-list-orders>
