@@ -38,7 +38,7 @@
 
       <!-- Total earnings Column -->
       <ng-container matColumnDef="totalEarnings">
-        <th mat-header-cell *matHeaderCellDef>Earnings<br/> (REPUX)</th>
+        <th mat-header-cell *matHeaderCellDef>Total Earnings<br/> (REPUX)</th>
         <td mat-cell *matCellDef="let element"> {{ getTotalEarnings(element).toString() | currencyRepux : '' }}
         </td>
       </ng-container>
