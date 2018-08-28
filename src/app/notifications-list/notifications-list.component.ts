@@ -44,7 +44,6 @@ export class NotificationsListComponent implements OnInit {
     )
       .pipe(
         map(result => {
-          console.log('TAP!');
           this.loading = false;
           return result.reduce((acc, current) => acc + current.length, 0)
         })

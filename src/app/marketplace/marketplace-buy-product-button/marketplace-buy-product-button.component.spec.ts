@@ -21,6 +21,8 @@ import { FileSizePipe } from '../../shared/pipes/file-size.pipe';
 import { ArrayJoinPipe } from '../../shared/pipes/array-join.pipe';
 import { TransactionStatus, TransactionReceipt } from 'repux-web3-api';
 import { KeyStoreDialogService } from '../../key-store/key-store-dialog.service';
+import { MatDialogRef } from '@angular/material';
+import { ConfirmationDialogComponent } from '../../shared/components/confirmation-dialog/confirmation-dialog.component';
 
 @Component({ selector: 'app-marketplace-download-product-button', template: '' })
 class DownloadProductButtonStubComponent {
@@ -41,9 +43,8 @@ describe('MarketplaceBuyProductButtonComponent', () => {
     awaitingFinalisationServiceSpy = jasmine.createSpyObj('AwaitingFinalisationService', [ 'addProduct' ]);
     dataProductServiceSpy = jasmine.createSpyObj('DataProductService',
       [ 'purchaseDataProduct', 'approveTokensTransferForDataProductPurchase' ]);
-    commonDialogServiceSpy = jasmine.createSpyObj('CommonDialogService', [ 'transaction' ]);
+    commonDialogServiceSpy = jasmine.createSpyObj('CommonDialogService', [ 'transaction', 'alert' ]);
     commonDialogServiceSpy.transaction.and.callFake(methodToCall => methodToCall());
-
     keyStoreDialogServiceSpy = jasmine.createSpyObj('KeyStoreDialogService', [ 'getKeys' ]);
 
     TestBed.configureTestingModule({
@@ -128,9 +129,17 @@ describe('MarketplaceBuyProductButtonComponent', () => {
 
   describe('#buyDataProduct()', () => {
     it('should open confirmation dialog', () => {
+      component.wallet = new Wallet('0x00', 10);
       const dialogRef = component.buyDataProduct();
 
-      expect(dialogRef.componentInstance.dataProduct).toEqual(component.dataProduct);
+      expect(dialogRef.componentInstance instanceof MarketplaceBeforeBuyConfirmationDialogComponent).toBe(true);
+    });
+
+    it('should call alert function on commonDialogService', () => {
+      component.wallet = new Wallet('0x00', 0.5);
+      component.buyDataProduct();
+
+      expect(commonDialogServiceSpy.alert.calls.count()).toBe(1);
     });
   });
 

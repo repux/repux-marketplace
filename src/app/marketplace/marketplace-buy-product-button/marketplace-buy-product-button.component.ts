@@ -19,6 +19,8 @@ import { ActionButtonType } from '../../shared/enums/action-button-type';
 import { CommonDialogService } from '../../shared/services/common-dialog.service';
 import { MarketplaceBeforeBuyConfirmationDialogComponent } from '../marketplace-before-buy-confirmation-dialog/marketplace-before-buy-confirmation-dialog.component';
 import { KeyStoreDialogService } from '../../key-store/key-store-dialog.service';
+import BigNumber from 'bignumber.js';
+import { ConfirmationDialogComponent } from '../../shared/components/confirmation-dialog/confirmation-dialog.component';
 
 @Component({
   selector: 'app-marketplace-buy-product-button',
@@ -128,7 +130,15 @@ export class MarketplaceBuyProductButtonComponent implements OnInit, OnDestroy {
     delete this.pendingApproveTransaction;
   }
 
-  buyDataProduct(): MatDialogRef<MarketplaceBeforeBuyConfirmationDialogComponent> {
+  buyDataProduct(): MatDialogRef<MarketplaceBeforeBuyConfirmationDialogComponent | ConfirmationDialogComponent> {
+    if (!this.hasSufficentFunds(this.wallet.balance, this.dataProduct.price)) {
+      return this.commonDialogService.alert(
+        'Unfortunately, you don\'t have sufficient funds to buy this file',
+        'Insufficient funds',
+        'Got it!'
+      );
+    }
+
     const dialogRef = this.dialog.open(MarketplaceBeforeBuyConfirmationDialogComponent);
 
     dialogRef.componentInstance.dataProduct = this.dataProduct;
@@ -208,5 +218,9 @@ export class MarketplaceBuyProductButtonComponent implements OnInit, OnDestroy {
 
     this.wallet = wallet;
     this.userIsOwner = this.getUserIsOwner();
+  }
+
+  private hasSufficentFunds(walletBalance: number, productPrice: BigNumber): boolean {
+    return new BigNumber(walletBalance).comparedTo(productPrice) >= 0;
   }
 }
