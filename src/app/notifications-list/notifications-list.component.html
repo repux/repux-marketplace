@@ -20,8 +20,10 @@
       <mat-card>
         <mat-card-content>
           <ng-template ngFor let-product [ngForOf]="unpublishedProducts">
-            <app-notifications-list-item [product]="product"
-                                         [actions]="[actionButtonType.Publish]"></app-notifications-list-item>
+            <app-notifications-list-item
+              [showOrders]="false"
+              [product]="product"
+              [actions]="[actionButtonType.Publish]"></app-notifications-list-item>
             <mat-divider></mat-divider>
           </ng-template>
         </mat-card-content>
@@ -35,8 +37,11 @@
       <mat-card>
         <mat-card-content>
           <ng-template ngFor let-product [ngForOf]="awaitingFinalisationProducts">
-            <app-notifications-list-item [product]="product"
-                                         [actions]="[actionButtonType.CancelPurchase]"></app-notifications-list-item>
+            <app-notifications-list-item
+              [showOrders]="false"
+              [showMyOrderData]="true"
+              [product]="product"
+              [actions]="[actionButtonType.CancelPurchase]"></app-notifications-list-item>
             <mat-divider></mat-divider>
           </ng-template>
         </mat-card-content>

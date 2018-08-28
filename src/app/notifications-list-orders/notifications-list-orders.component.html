@@ -15,7 +15,7 @@
 
     <!-- Delivery deadline Column -->
     <ng-container matColumnDef="deliveryDeadline">
-      <th mat-header-cell *matHeaderCellDef>Delivery deadline</th>
+      <th mat-header-cell *matHeaderCellDef>Delivery time</th>
       <td mat-cell *matCellDef="let order">{{ order.deliveryDeadline | date : 'short' }}</td>
     </ng-container>
 

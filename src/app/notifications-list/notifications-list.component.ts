@@ -5,7 +5,7 @@ import { DataProduct } from '../shared/models/data-product';
 import { PendingFinalisationService } from '../marketplace/services/pending-finalisation.service';
 import { AwaitingFinalisationService } from '../marketplace/services/awaiting-finalisation.service';
 import { ActionButtonType } from '../shared/enums/action-button-type';
-import { map, tap } from 'rxjs/operators';
+import { map } from 'rxjs/operators';
 
 @Component({
   selector: 'app-notifications-list',

@@ -18,7 +18,7 @@ import { Component, Input } from '@angular/core';
 import { DataProduct } from './shared/models/data-product';
 import Wallet from './shared/models/wallet';
 import { AwaitingFinalisationService } from './marketplace/services/awaiting-finalisation.service';
-import { Observable, of } from 'rxjs';
+import { of } from 'rxjs';
 
 @Component({ selector: 'app-notifications-list-item', template: '' })
 class NotificationsListItemStub {
