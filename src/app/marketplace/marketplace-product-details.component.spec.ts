@@ -2,7 +2,7 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { MarketplaceProductDetailsComponent } from './marketplace-product-details.component';
 import { MaterialModule } from '../material.module';
-import { CurrencyRepuxPipe } from '../shared/pipes/currency-repux';
+import { CurrencyRepuxPipe } from '../shared/pipes/currency-repux.pipe';
 import { FileSizePipe } from '../shared/pipes/file-size.pipe';
 import { RouterTestingModule } from '@angular/router/testing';
 import { HttpClientModule } from '@angular/common/http';

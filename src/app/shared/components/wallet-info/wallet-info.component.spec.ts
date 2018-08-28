@@ -1,7 +1,7 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { WalletInfoComponent } from './wallet-info.component';
-import { CurrencyRepuxPipe } from '../../pipes/currency-repux';
+import { CurrencyRepuxPipe } from '../../pipes/currency-repux.pipe';
 import { MaterialModule } from '../../../material.module';
 
 describe('WalletInfoComponent', () => {

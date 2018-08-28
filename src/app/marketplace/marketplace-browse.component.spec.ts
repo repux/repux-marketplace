@@ -15,6 +15,7 @@ import { fromPromise } from 'rxjs/internal-compatibility';
 import { of } from 'rxjs';
 import { ActionButtonType } from '../shared/enums/action-button-type';
 import { RepuxWeb3Service } from '../services/repux-web3.service';
+import { CurrencyRepuxPipe } from '../shared/pipes/currency-repux.pipe';
 
 @Component({ selector: 'app-marketplace-action-buttons', template: '' })
 class MarketplaceActionButtonsStubComponent {
@@ -55,7 +56,8 @@ describe('MarketplaceBrowseComponent', () => {
         MarketplaceActionButtonsStubComponent,
         MarketplaceProductCategorySelectorStubComponent,
         FileSizePipe,
-        EulaTypePipe
+        EulaTypePipe,
+        CurrencyRepuxPipe
       ],
       imports: [
         MaterialModule,
