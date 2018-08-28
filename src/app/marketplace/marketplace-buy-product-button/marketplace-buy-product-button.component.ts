@@ -6,19 +6,17 @@ import { MatDialog, MatDialogRef } from '@angular/material';
 import Wallet from '../../shared/models/wallet';
 import { Subscription } from 'rxjs/internal/Subscription';
 import { DataProduct } from '../../shared/models/data-product';
-import {
-  MarketplacePurchaseConfirmationDialogComponent
-} from '../marketplace-purchase-confirmation-dialog/marketplace-purchase-confirmation-dialog.component';
 import { AwaitingFinalisationService } from '../services/awaiting-finalisation.service';
-import { DataProductOrder as BlockchainDataProducOrder, TransactionReceipt, TransactionStatus } from 'repux-web3-api';
+import { DataProductOrder as BlockchainDataProducOrder } from 'repux-web3-api';
 import { EventAction, EventCategory, TagManagerService } from '../../shared/services/tag-manager.service';
-import { environment } from '../../../environments/environment';
 import { Transaction, TransactionService } from '../../shared/services/transaction.service';
 import { BlockchainTransactionScope } from '../../shared/enums/blockchain-transaction-scope';
 import { ActionButtonType } from '../../shared/enums/action-button-type';
 import { CommonDialogService } from '../../shared/services/common-dialog.service';
 import { MarketplaceBeforeBuyConfirmationDialogComponent } from '../marketplace-before-buy-confirmation-dialog/marketplace-before-buy-confirmation-dialog.component';
 import { KeyStoreDialogService } from '../../key-store/key-store-dialog.service';
+import { FileBuyTask } from '../../tasks/file-buy-task';
+import { TaskManagerService } from '../../services/task-manager.service';
 import BigNumber from 'bignumber.js';
 import { ConfirmationDialogComponent } from '../../shared/components/confirmation-dialog/confirmation-dialog.component';
 
@@ -43,14 +41,15 @@ export class MarketplaceBuyProductButtonComponent implements OnInit, OnDestroy {
   private keysSubscription: Subscription;
 
   constructor(
-    private tagManager: TagManagerService,
+    private tagManagerService: TagManagerService,
     private dataProductService: DataProductService,
     private repuxLibService: RepuxLibService,
     private walletService: WalletService,
     private awaitingFinalisationService: AwaitingFinalisationService,
     private transactionService: TransactionService,
     private commonDialogService: CommonDialogService,
-    private keyStoreDialogServiceSpy: KeyStoreDialogService,
+    private keyStoreDialogService: KeyStoreDialogService,
+    private taskManagerService: TaskManagerService,
     private dialog: MatDialog) {
   }
 
@@ -74,19 +73,6 @@ export class MarketplaceBuyProductButtonComponent implements OnInit, OnDestroy {
       .subscribe(transactions => this.onTransactionsListChange(transactions));
   }
 
-  onTransactionFinish(transactionReceipt: TransactionReceipt) {
-    if (transactionReceipt.status === TransactionStatus.SUCCESSFUL) {
-      this.blockchainDataProductOrder = <any> {
-        purchased: true
-      };
-      this.awaitingFinalisationService.addProduct(this.dataProduct);
-      this.dialog.open(MarketplacePurchaseConfirmationDialogComponent);
-      this.emitBuyConfirmedEvent(transactionReceipt);
-    }
-
-    delete this.pendingTransaction;
-  }
-
   async onTransactionsListChange(transactions: Transaction[]) {
     const foundApproveTransaction = transactions.find(transaction =>
       transaction.scope === BlockchainTransactionScope.DataProduct &&
@@ -95,9 +81,7 @@ export class MarketplaceBuyProductButtonComponent implements OnInit, OnDestroy {
     );
 
     if (this.pendingApproveTransaction && !foundApproveTransaction) {
-      this.onApproveTransactionFinish(
-        await this.transactionService.getTransactionReceipt(this.pendingApproveTransaction.transactionHash)
-      );
+      delete this.pendingApproveTransaction;
     } else {
       this.pendingApproveTransaction = foundApproveTransaction;
     }
@@ -109,26 +93,15 @@ export class MarketplaceBuyProductButtonComponent implements OnInit, OnDestroy {
     );
 
     if (this.pendingTransaction && !foundTransaction) {
-      this.onTransactionFinish(
-        await this.transactionService.getTransactionReceipt(this.pendingTransaction.transactionHash)
-      );
+      this.blockchainDataProductOrder = <any> {
+        purchased: true
+      };
+      delete this.pendingTransaction;
     } else {
       this.pendingTransaction = foundTransaction;
     }
   }
 
-  async onApproveTransactionFinish(transactionReceipt: TransactionReceipt) {
-    if (transactionReceipt.status === TransactionStatus.SUCCESSFUL) {
-      const { publicKey } = await this.keyStoreDialogServiceSpy.getKeys({ publicKey: true });
-      const serializedKey = await this.repuxLibService.getInstance().serializePublicKey(publicKey);
-
-      this.commonDialogService.transaction(
-        () => this.dataProductService.purchaseDataProduct(this.dataProductAddress, serializedKey)
-      );
-    }
-
-    delete this.pendingApproveTransaction;
-  }
 
   buyDataProduct(): MatDialogRef<MarketplaceBeforeBuyConfirmationDialogComponent | ConfirmationDialogComponent> {
     if (!this.hasSufficentFunds(this.wallet.balance, this.dataProduct.price)) {
@@ -153,16 +126,27 @@ export class MarketplaceBuyProductButtonComponent implements OnInit, OnDestroy {
   }
 
   sendTransaction(): void {
-    this.tagManager.sendEvent(
+    this.tagManagerService.sendEvent(
       EventCategory.Buy,
       EventAction.Buy,
       this.dataProduct.title,
       this.dataProduct.price ? this.dataProduct.price.toString() : ''
     );
 
-    this.commonDialogService.transaction(
-      () => this.dataProductService.approveTokensTransferForDataProductPurchase(this.dataProductAddress)
+    const task = new FileBuyTask(
+      this.wallet.address,
+      this.dataProduct,
+      this.commonDialogService,
+      this.transactionService,
+      this.awaitingFinalisationService,
+      this.keyStoreDialogService,
+      this.repuxLibService,
+      this.dataProductService,
+      this.tagManagerService,
+      this.dialog
     );
+
+    this.taskManagerService.addTask(task);
   }
 
   getUserIsOwner() {
@@ -181,34 +165,6 @@ export class MarketplaceBuyProductButtonComponent implements OnInit, OnDestroy {
     if (this.transactionsSubscription) {
       this.transactionsSubscription.unsubscribe();
     }
-  }
-
-  private emitBuyConfirmedEvent(transactionReceipt: TransactionReceipt): void {
-    this.tagManager.sendEvent(
-      EventCategory.Buy,
-      EventAction.BuyConfirmed,
-      this.dataProduct.title,
-      this.dataProduct.price ? this.dataProduct.price.toString() : '',
-      transactionReceipt.gasUsed,
-      {
-        currencyCode: environment.analyticsCurrencySubstitute,
-        originalCurrency: environment.repux.currency.defaultName,
-        purchase: {
-          actionField: {
-            id: transactionReceipt.transactionHash,
-            revenue: this.dataProduct.price.toString(),
-          },
-          products: [ {
-            id: this.dataProduct.address,
-            name: this.dataProduct.title,
-            brand: this.dataProduct.ownerAddress,
-            category: this.dataProduct.category.join(', '),
-            price: this.dataProduct.price.toString(),
-            quantity: 1
-          } ]
-        }
-      }
-    );
   }
 
   private onWalletChange(wallet: Wallet): void {
