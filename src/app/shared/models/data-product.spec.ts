@@ -31,6 +31,7 @@ describe('DataProduct', () => {
         size: 100,
         ownerAddress: '0x1111',
         lastUpdateTimestamp: 100,
+        creationTimestamp: 100,
         daysToDeliver: 1,
         daysToRate: 1,
         fundsToWithdraw: '0',
@@ -58,7 +59,8 @@ describe('DataProduct', () => {
       expect(dataProduct.name).toBe('name');
       expect(dataProduct.size).toBe(100);
       expect(dataProduct.ownerAddress).toBe('0x1111');
-      expect(dataProduct.lastUpdate).toEqual(new Date(100));
+      expect(dataProduct.lastUpdate).toEqual(new Date(100000));
+      expect(dataProduct.creationDate).toEqual(new Date(100000));
       expect(dataProduct.daysToDeliver).toBe(1);
       expect(dataProduct.daysToRate).toBe(1);
       expect(dataProduct.fundsToWithdraw).toEqual(new BigNumber(0));

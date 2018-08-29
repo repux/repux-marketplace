@@ -22,6 +22,8 @@ class MarketplaceActionButtonsStubComponent {
 class NotificationsListItemStub {
   @Input() actions: string[];
   @Input() product: DataProduct;
+  @Input() showOrders: boolean;
+  @Input() showMyOrderData: boolean;
 }
 
 describe('NotificationsListComponent', () => {

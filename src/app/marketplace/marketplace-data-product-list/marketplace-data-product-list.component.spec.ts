@@ -250,7 +250,7 @@ describe('MarketplaceDataProductListComponent', () => {
       expect(table.querySelector('.mat-header-cell:nth-child(2)').getAttribute('mat-sort-header')).not.toBeNull();
       expect(table.querySelector('.mat-header-cell:nth-child(3)').textContent.trim()).toBe('Purchased');
       expect(table.querySelector('.mat-header-cell:nth-child(3)').getAttribute('mat-sort-header')).toBeNull();
-      expect(table.querySelector('.mat-header-cell:nth-child(4)').textContent.trim()).toBe('Earnings (REPUX)');
+      expect(table.querySelector('.mat-header-cell:nth-child(4)').textContent.trim()).toBe('Total Earnings (REPUX)');
       expect(table.querySelector('.mat-header-cell:nth-child(4)').getAttribute('mat-sort-header')).toBeNull();
       expect(table.querySelector('.mat-header-cell:nth-child(5)').textContent.trim()).toBe('Deposit (REPUX)  help_outline');
       expect(table.querySelector('.mat-header-cell:nth-child(5)').getAttribute('mat-sort-header')).toBeNull();

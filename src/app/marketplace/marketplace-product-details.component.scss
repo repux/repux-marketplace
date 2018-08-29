@@ -49,7 +49,7 @@
     justify-content: space-between;
     margin: 0 0 20px 0;
   }
-  
+
   &__description {
     margin: 0 0 32px 0;
   }
@@ -71,8 +71,11 @@
     margin: 0 0 32px 0;
 
     .mat-icon {
-      vertical-align: bottom;
-      margin: 0 0 0 -4px;
+      vertical-align: middle;
+
+      &:first-child {
+        margin: -2px 0 0 -4px;
+      }
     }
   }
 

@@ -19,6 +19,7 @@ describe('DataProductListService', () => {
   describe('#getDataProducts()', () => {
     it('should call search method on ElasticSearchService', () => {
       const lastUpdateTimestamp = 1532695485;
+      const creationTimestamp = 1532695485;
       const fundsToWithdraw = '0';
       const price = '0';
 
@@ -26,11 +27,13 @@ describe('DataProductListService', () => {
         price: new BigNumber(price),
         lastUpdate: new Date(lastUpdateTimestamp),
         lastUpdateTimestamp,
+        creationTimestamp,
         fundsToWithdraw: new BigNumber(fundsToWithdraw),
       }), new DataProduct().deserialize({
         price: new BigNumber(price),
         lastUpdate: new Date(lastUpdateTimestamp),
         lastUpdateTimestamp,
+        creationTimestamp,
         fundsToWithdraw: new BigNumber(fundsToWithdraw),
       }) ];
 
@@ -52,6 +55,7 @@ describe('DataProductListService', () => {
             _source: {
               price,
               lastUpdateTimestamp,
+              creationTimestamp,
               fundsToWithdraw
             }
           }, {
@@ -62,6 +66,7 @@ describe('DataProductListService', () => {
             _source: {
               price,
               lastUpdateTimestamp,
+              creationTimestamp,
               fundsToWithdraw
             }
           } ]
@@ -81,6 +86,7 @@ describe('DataProductListService', () => {
   describe('#getDataProductsWithBlockchainState()', () => {
     it('should call search method on ElasticSearchService and get state from blockchain for all products', () => {
       const lastUpdateTimestamp = 1532695485;
+      const creationTimestamp = 1532695485;
       const fundsToWithdraw = '0';
       const price = '0';
 
@@ -117,6 +123,7 @@ describe('DataProductListService', () => {
               address: '1',
               price,
               lastUpdateTimestamp,
+              creationTimestamp,
               fundsToWithdraw
             }
           }, {
@@ -128,6 +135,7 @@ describe('DataProductListService', () => {
               address: '2',
               price,
               lastUpdateTimestamp,
+              creationTimestamp,
               fundsToWithdraw
             }
           } ]

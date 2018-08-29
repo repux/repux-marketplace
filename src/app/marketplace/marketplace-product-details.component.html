@@ -43,9 +43,11 @@
     <section class="product-details__file-info">
       <mat-icon>attach_file</mat-icon>
       {{ product.name }} | {{ product.size | fileSize }} |
+      <mat-icon>today</mat-icon>
+      {{ product.creationDate | date }} |
       <a href=""
          (click)="$event.stopPropagation(); $event.preventDefault(); downloadEula(product.eula)">
-        {{product.eula.type | eulaType}} EULA</a>
+        {{product.eula.type | eulaType}}&nbsp;EULA</a>
     </section>
 
     <section *ngIf="product.fullDescription" class="product-details__detailed-description">
