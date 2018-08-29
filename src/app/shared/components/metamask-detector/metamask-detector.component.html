@@ -1,3 +1,3 @@
-<div *ngIf="status !== statuses.Ok" class="metamask-detector__banner">
+<div *ngIf="status && status !== statuses.Ok" class="metamask-detector__banner">
   <span class="mat-body">{{ message }}</span>
 </div>

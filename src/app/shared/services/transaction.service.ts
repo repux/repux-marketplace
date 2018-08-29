@@ -88,7 +88,7 @@ export class TransactionService implements OnDestroy {
   }
 
   onWalletChange(wallet: Wallet): void {
-    if (!wallet && this.wallet === wallet) {
+    if (!wallet || this.wallet === wallet) {
       return;
     }
 

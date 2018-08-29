@@ -59,8 +59,6 @@ export class AppComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.webpushNotificationService.init();
-
     (<any>window).Intercom('boot', {
       app_id: environment.intercomAppId
     });

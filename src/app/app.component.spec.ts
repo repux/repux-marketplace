@@ -19,9 +19,10 @@ import { DataProduct } from './shared/models/data-product';
 import Wallet from './shared/models/wallet';
 import { AwaitingFinalisationService } from './marketplace/services/awaiting-finalisation.service';
 import { of } from 'rxjs';
+import { WebpushNotificationService } from './services/webpush-notification.service';
 
 @Component({ selector: 'app-notifications-list-item', template: '' })
-class NotificationsListItemStub {
+class NotificationsListItemStubComponent {
   @Input() actions: string[];
   @Input() product: DataProduct;
   @Input() showOrders: boolean;
@@ -33,6 +34,7 @@ describe('AppComponent', () => {
   let unpublishedProductsServiceSpy;
   let pendingFinalisationServiceSpy;
   let awaitingFinalisationServiceSpy;
+  let webpushNotificationServiceSpy;
   let walletServiceSpy;
 
   beforeEach(async(() => {
@@ -42,6 +44,7 @@ describe('AppComponent', () => {
     pendingFinalisationServiceSpy = jasmine.createSpyObj('PendingFinalisationService', [ 'getProducts' ]);
     awaitingFinalisationServiceSpy = jasmine.createSpyObj('AwaitingFinalisationService', [ 'getProducts' ]);
     walletServiceSpy = jasmine.createSpyObj('WalletService', [ 'getWallet' ]);
+    webpushNotificationServiceSpy = jasmine.createSpyObj('WebpushNotificationService', [ 'getNotificationPermission' ]);
 
     walletServiceSpy.getWallet.and.returnValue({
       subscribe(callback) {
@@ -53,7 +56,7 @@ describe('AppComponent', () => {
       declarations: [
         AppComponent,
         NotificationsListComponent,
-        NotificationsListItemStub
+        NotificationsListItemStubComponent
       ],
       imports: [
         AppRoutingModule,
@@ -70,7 +73,8 @@ describe('AppComponent', () => {
         { provide: HttpClient, useValue: jasmine.createSpy() },
         { provide: PendingFinalisationService, useValue: pendingFinalisationServiceSpy },
         { provide: UnpublishedProductsService, useValue: unpublishedProductsServiceSpy },
-        { provide: AwaitingFinalisationService, useValue: awaitingFinalisationServiceSpy }
+        { provide: AwaitingFinalisationService, useValue: awaitingFinalisationServiceSpy },
+        { provide: WebpushNotificationService, useValue: webpushNotificationServiceSpy }
       ]
     }).compileComponents();
   }));
