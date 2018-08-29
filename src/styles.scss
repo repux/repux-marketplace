@@ -30,7 +30,6 @@ app-root {
 .mat-flat-button,
 .mat-stroked-button,
 .mat-raised-button {
-  text-transform: uppercase;
   border-radius: 4px !important;
 }
 
@@ -110,5 +109,11 @@ a {
     color: #6e6e6e;
     font-size: 16px;
     font-weight: 500;
+  }
+}
+
+.action-buttons {
+  button {
+    margin: 0 0 0 12px;
   }
 }

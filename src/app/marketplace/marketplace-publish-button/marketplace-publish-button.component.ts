@@ -14,8 +14,7 @@ import { TaskManagerService } from '../../services/task-manager.service';
 
 @Component({
   selector: 'app-marketplace-publish-button',
-  templateUrl: './marketplace-publish-button.component.html',
-  styleUrls: [ './marketplace-publish-button.component.scss' ]
+  templateUrl: './marketplace-publish-button.component.html'
 })
 export class MarketplacePublishButtonComponent implements OnInit, OnDestroy {
   @Input() dataProduct: DataProduct;

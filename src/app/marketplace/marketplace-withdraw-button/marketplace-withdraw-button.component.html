@@ -1,8 +1,8 @@
 <div *ngIf="wallet && userIsOwner && !fundsToWithdraw.isZero()">
   <span *ngIf="pendingTransaction">Withdrawing...</span>
   <button mat-stroked-button
-          color="accent"
+          color="primary"
           *ngIf="!pendingTransaction"
-          (click)="withdraw()">Withdraw all
+          (click)="withdraw()">Withdraw
   </button>
 </div>

@@ -1,35 +1,28 @@
 <div *ngIf="!loading" class="action-buttons">
   <app-marketplace-buy-product-button
-    class="action-buttons__button"
     *ngIf="availableActions.includes(actionButtonType.Buy)"
     [dataProduct]="dataProduct"
     [blockchainDataProductOrder]="blockchainDataProductOrder"></app-marketplace-buy-product-button>
 
   <app-marketplace-cancel-purchase-button
-    class="action-buttons__button"
     *ngIf="availableActions.includes(actionButtonType.CancelPurchase)"
     [dataProduct]="dataProduct"
     [blockchainDataProductOrder]="blockchainDataProductOrder"></app-marketplace-cancel-purchase-button>
 
   <app-marketplace-rate-order-button
-    class="action-buttons__button"
-    *ngIf="availableActions.includes(actionButtonType.Rate)"
     [dataProduct]="dataProduct"
     [blockchainDataProductOrder]="blockchainDataProductOrder"></app-marketplace-rate-order-button>
 
   <app-marketplace-publish-button
-    class="action-buttons__button"
     *ngIf="availableActions.includes(actionButtonType.Publish)"
     [dataProduct]="dataProduct"></app-marketplace-publish-button>
 
   <app-marketplace-unpublish-button
-    class="action-buttons__button"
     *ngIf="availableActions.includes(actionButtonType.Unpublish)"
     [dataProduct]="dataProduct"
     [blockchainDataProduct]="dataProduct.blockchainState"></app-marketplace-unpublish-button>
 
   <app-marketplace-withdraw-button
-    class="action-buttons__button"
     *ngIf="availableActions.includes(actionButtonType.Withdraw)"
     [dataProduct]="dataProduct"
     [blockchainDataProduct]="blockchainDataProduct"></app-marketplace-withdraw-button>

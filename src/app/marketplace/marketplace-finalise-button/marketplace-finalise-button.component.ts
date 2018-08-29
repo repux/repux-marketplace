@@ -19,8 +19,7 @@ import { KeyStoreDialogService } from '../../key-store/key-store-dialog.service'
 
 @Component({
   selector: 'app-marketplace-finalise-button',
-  templateUrl: './marketplace-finalise-button.component.html',
-  styleUrls: [ './marketplace-finalise-button.component.scss' ]
+  templateUrl: './marketplace-finalise-button.component.html'
 })
 export class MarketplaceFinaliseButtonComponent implements OnDestroy, OnInit {
   @Input() order: DataProductOrder;
