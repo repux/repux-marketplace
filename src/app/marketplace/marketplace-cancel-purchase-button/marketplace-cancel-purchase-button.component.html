@@ -2,7 +2,7 @@
   <span *ngIf="pendingTransaction">Canceling...</span>
 
   <button mat-stroked-button
-          color="warn"
+          color="accent"
           *ngIf="!pendingTransaction"
           (click)="cancelPurchase()">Cancel
   </button>

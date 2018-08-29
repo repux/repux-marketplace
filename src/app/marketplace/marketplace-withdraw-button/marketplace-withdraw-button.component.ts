@@ -10,13 +10,11 @@ import { DataProduct as BlockchainDataProduct, TransactionReceipt, TransactionSt
 import { Transaction, TransactionService } from '../../shared/services/transaction.service';
 import { ActionButtonType } from '../../shared/enums/action-button-type';
 import { BlockchainTransactionScope } from '../../shared/enums/blockchain-transaction-scope';
-import { TransactionEventType } from '../../shared/enums/transaction-event-type';
 import { CommonDialogService } from '../../shared/services/common-dialog.service';
 
 @Component({
   selector: 'app-marketplace-withdraw-button',
-  templateUrl: './marketplace-withdraw-button.component.html',
-  styleUrls: [ './marketplace-withdraw-button.component.scss' ]
+  templateUrl: './marketplace-withdraw-button.component.html'
 })
 export class MarketplaceWithdrawButtonComponent implements OnInit, OnDestroy, OnChanges {
   @Input() dataProduct: DataProduct;

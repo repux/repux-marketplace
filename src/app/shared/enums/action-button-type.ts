@@ -6,6 +6,5 @@ export enum ActionButtonType {
   Publish,
   Unpublish,
   Withdraw,
-  Finalise,
-  FinalisationConfirmation
+  Finalise
 }

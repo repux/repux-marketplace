@@ -14,8 +14,7 @@ import { ActionButtonType } from '../../shared/enums/action-button-type';
 
 @Component({
   selector: 'app-marketplace-unpublish-button',
-  templateUrl: './marketplace-unpublish-button.component.html',
-  styleUrls: [ './marketplace-unpublish-button.component.scss' ]
+  templateUrl: './marketplace-unpublish-button.component.html'
 })
 export class MarketplaceUnpublishButtonComponent implements OnInit, OnDestroy {
   @Input() dataProduct: DataProduct;
