@@ -21,8 +21,11 @@
     border-bottom: solid 1px #efefef;
 
     .mat-icon {
-      vertical-align: bottom;
-      margin: 0 0 0 -4px;
+      vertical-align: middle;
+
+      &:first-child {
+        margin: -2px 0 0 -4px;
+      }
     }
   }
 

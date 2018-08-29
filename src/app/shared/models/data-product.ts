@@ -24,6 +24,7 @@ export class DataProduct implements Deserializable<DataProduct> {
   disabled?: boolean;
   orders: DataProductOrder[] = [];
   lastUpdate: Date;
+  creationDate: Date;
   daysToDeliver: number;
   daysToRate: number;
   fundsToWithdraw: BigNumber;
@@ -35,7 +36,8 @@ export class DataProduct implements Deserializable<DataProduct> {
     Object.assign(this, input);
     this.price = (new BigNumber(input.price)).div(Math.pow(10, environment.repux.currency.precision));
     this.fundsToWithdraw = (new BigNumber(input.fundsToWithdraw)).div(Math.pow(10, environment.repux.currency.precision));
-    this.lastUpdate = new Date(input.lastUpdateTimestamp);
+    this.lastUpdate = new Date(input.lastUpdateTimestamp * 1000);
+    this.creationDate = new Date(input.creationTimestamp * 1000);
 
     this.orders = [];
     if (input.orders) {

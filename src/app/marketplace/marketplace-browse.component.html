@@ -24,12 +24,17 @@
 
         <p class="card-item__file-info mat-caption">
           <mat-icon>attach_file</mat-icon>
-          {{ product.name }} | {{ product.size | fileSize }} | <a href=""
-                                                                  (click)="$event.stopPropagation(); $event.preventDefault(); downloadEula(product.eula)">{{
-          product.eula.type | eulaType }} EULA</a>
+          {{ product.name }} | {{ product.size | fileSize }} |
+          <mat-icon>today</mat-icon>
+          {{ product.creationDate | date }} |
+          <a href=""
+             (click)="$event.stopPropagation(); $event.preventDefault(); downloadEula(product.eula)">
+            {{ product.eula.type | eulaType }}&nbsp;EULA</a>
         </p>
 
-        <mat-card-subtitle>{{ product.shortDescription | slice:0:200 }}{{ product.shortDescription.length > 200 ? '...' : '' }}</mat-card-subtitle>
+        <mat-card-subtitle>
+          {{ product.shortDescription | slice:0:200 }}{{ product.shortDescription.length > 200 ? '...' : '' }}
+        </mat-card-subtitle>
 
         <mat-card-content>
           <mat-chip-list>

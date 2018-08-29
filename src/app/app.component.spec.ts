@@ -24,6 +24,8 @@ import { of } from 'rxjs';
 class NotificationsListItemStub {
   @Input() actions: string[];
   @Input() product: DataProduct;
+  @Input() showOrders: boolean;
+  @Input() showMyOrderData: boolean;
 }
 
 describe('AppComponent', () => {
@@ -88,9 +90,9 @@ describe('AppComponent', () => {
   });
 
   it('should return total for unpublished, pending finalisation and awaiting finalisation products', done => {
-    unpublishedProductsServiceSpy.getProducts.and.returnValue(of([new DataProduct(), new DataProduct()]));
-    pendingFinalisationServiceSpy.getProducts.and.returnValue(of([new DataProduct()]));
-    awaitingFinalisationServiceSpy.getProducts.and.returnValue(of([new DataProduct()]));
+    unpublishedProductsServiceSpy.getProducts.and.returnValue(of([ new DataProduct(), new DataProduct() ]));
+    pendingFinalisationServiceSpy.getProducts.and.returnValue(of([ new DataProduct() ]));
+    awaitingFinalisationServiceSpy.getProducts.and.returnValue(of([ new DataProduct() ]));
 
     const fixture = TestBed.createComponent(AppComponent);
     const app = fixture.debugElement.componentInstance;
