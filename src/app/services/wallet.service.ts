@@ -20,9 +20,9 @@ export enum MetamaskStatus {
   providedIn: 'root'
 })
 export class WalletService implements OnDestroy {
-  private metamaskStatus = MetamaskStatus.Ok;
+  private metamaskStatus: MetamaskStatus;
   private rafReference: number;
-  private metamaskStatusSubject = new BehaviorSubject<MetamaskStatus>(MetamaskStatus.Ok);
+  private metamaskStatusSubject = new BehaviorSubject<MetamaskStatus>(undefined);
   private walletSubject = new BehaviorSubject<Wallet>(undefined);
   private currentFrame = 0;
   private checkFramesInterval = 100;

@@ -1,0 +1,9 @@
+<div *ngIf="walletStatus === walletStatuses.Ok && status !== statuses.Granted"
+     class="notifications-detector__banner">
+  <span class="mat-body">{{ message }}</span>
+  <button class="notifications-detector__button"
+          mat-stroked-button
+          color="accent"
+          (click)="howToAllow()">How to do it
+  </button>
+</div>

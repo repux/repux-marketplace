@@ -15,6 +15,10 @@ import { EulaTypePipe } from './pipes/eula-type.pipe';
 import { SafeHtmlPipe } from './pipes/safe-html.pipe';
 import { OrderDatePipe } from './pipes/order-date.pipe';
 import { PriceInputComponent } from './components/price-input/price-input.component';
+import { NotificationsDetectorComponent } from './components/notifications-detector/notifications-detector.component';
+import {
+  NotificationsSubscriptionInstructionComponent
+} from './components/notification-subscription-instruction/notifications-subscription-instruction.component';
 
 @NgModule({
   imports: [
@@ -30,7 +34,9 @@ import { PriceInputComponent } from './components/price-input/price-input.compon
     FileInputComponent,
     MaxFileSizeDirective,
     MetamaskDetectorComponent,
+    NotificationsDetectorComponent,
     ConfirmationDialogComponent,
+    NotificationsSubscriptionInstructionComponent,
     WalletInfoComponent,
     ArrayJoinPipe,
     FileSizePipe,
@@ -43,6 +49,7 @@ import { PriceInputComponent } from './components/price-input/price-input.compon
   exports: [
     FileInputComponent,
     MetamaskDetectorComponent,
+    NotificationsDetectorComponent,
     ConfirmationDialogComponent,
     WalletInfoComponent,
     ArrayJoinPipe,
@@ -54,7 +61,8 @@ import { PriceInputComponent } from './components/price-input/price-input.compon
     PriceInputComponent
   ],
   entryComponents: [
-    ConfirmationDialogComponent
+    ConfirmationDialogComponent,
+    NotificationsSubscriptionInstructionComponent
   ]
 })
 export class SharedModule {
