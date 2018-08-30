@@ -88,12 +88,12 @@ mat-header-cell {
   }
 }
 
-mat-row {
+.mat-row {
   &:not(.disabled) {
     cursor: pointer;
   }
 
-  &.disabled mat-cell:not(:last-child) {
+  &.disabled .mat-cell:not(:last-child) {
     opacity: 0.5;
   }
 }

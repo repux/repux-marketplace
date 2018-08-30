@@ -11,6 +11,7 @@ import { Transaction, TransactionService } from '../../shared/services/transacti
 import { ActionButtonType } from '../../shared/enums/action-button-type';
 import { BlockchainTransactionScope } from '../../shared/enums/blockchain-transaction-scope';
 import { CommonDialogService } from '../../shared/services/common-dialog.service';
+import { UnpublishedProductsService } from '../services/unpublished-products.service';
 
 @Component({
   selector: 'app-marketplace-withdraw-button',
@@ -34,7 +35,8 @@ export class MarketplaceWithdrawButtonComponent implements OnInit, OnDestroy, On
     private dataProductService: DataProductService,
     private tagManager: TagManagerService,
     private transactionService: TransactionService,
-    private commonDialogService: CommonDialogService
+    private commonDialogService: CommonDialogService,
+    private unpublishedProductsService: UnpublishedProductsService
   ) {
   }
 
@@ -48,6 +50,12 @@ export class MarketplaceWithdrawButtonComponent implements OnInit, OnDestroy, On
   onTransactionFinish(transactionReceipt: TransactionReceipt) {
     if (transactionReceipt.status === TransactionStatus.SUCCESSFUL) {
       this.fundsToWithdraw = new BigNumber(0);
+      this.blockchainDataProduct.fundsAccumulated = this.blockchainDataProduct.buyersDeposit;
+
+      if (this.blockchainDataProduct.disabled) {
+        this.addProductToUnpublishedProducts(this.dataProduct);
+      }
+
       this.tagManager.sendEvent(
         EventCategory.Sell,
         EventAction.WithdrawConfirmed,
@@ -90,7 +98,7 @@ export class MarketplaceWithdrawButtonComponent implements OnInit, OnDestroy, On
       EventCategory.Sell,
       EventAction.Withdraw,
       this.dataProduct.title,
-      this.dataProduct.fundsToWithdraw ? this.dataProduct.fundsToWithdraw.toString() : ''
+      this.fundsToWithdraw ? this.fundsToWithdraw.toString() : ''
     );
 
     this.commonDialogService.transaction(
@@ -106,6 +114,15 @@ export class MarketplaceWithdrawButtonComponent implements OnInit, OnDestroy, On
     if (this.transactionsSubscription) {
       this.transactionsSubscription.unsubscribe();
     }
+  }
+
+  addProductToUnpublishedProducts(dataProduct: DataProduct): void {
+    const product = Object.assign({}, dataProduct);
+    delete product.address;
+    delete product.blockchainState;
+    delete product.orders;
+
+    this.unpublishedProductsService.addProduct(product);
   }
 
   private onWalletChange(wallet: Wallet) {
