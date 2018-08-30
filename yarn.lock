@@ -5945,9 +5945,9 @@ repeating@^2.0.0:
   dependencies:
     truffle "^4.0.1"
 
-"repux-web3-api@git+ssh://git@github.com:repux/repux-web3-api.git#18cab96185a86a197ebe97528bbd6092cb835eee":
+"repux-web3-api@git+ssh://git@github.com:repux/repux-web3-api.git#2836ea83d1fc1ba13c318fc619971c7511e288af":
   version "1.5.1"
-  resolved "git+ssh://git@github.com:repux/repux-web3-api.git#18cab96185a86a197ebe97528bbd6092cb835eee"
+  resolved "git+ssh://git@github.com:repux/repux-web3-api.git#2836ea83d1fc1ba13c318fc619971c7511e288af"
   dependencies:
     bignumber.js "^7.2.0"
     fs-extra "^7.0.0"

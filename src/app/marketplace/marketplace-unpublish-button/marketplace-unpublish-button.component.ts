@@ -55,7 +55,9 @@ export class MarketplaceUnpublishButtonComponent implements OnInit, OnDestroy {
 
   onTransactionFinish(transactionReceipt: TransactionReceipt) {
     if (transactionReceipt.status === TransactionStatus.SUCCESSFUL) {
-      this.addProductToUnpublishedProducts(this.dataProduct);
+      if (!this.blockchainDataProduct.fundsAccumulated.minus(this.blockchainDataProduct.buyersDeposit).isGreaterThan(0)) {
+        this.addProductToUnpublishedProducts(this.dataProduct);
+      }
       this.blockchainDataProduct.disabled = true;
       this.tagManager.sendEvent(
         EventCategory.Sell,

@@ -11,16 +11,19 @@ import { CommonDialogService } from '../../shared/services/common-dialog.service
 import { Transaction, TransactionService } from '../../shared/services/transaction.service';
 import { BlockchainTransactionScope } from '../../shared/enums/blockchain-transaction-scope';
 import { ActionButtonType } from '../../shared/enums/action-button-type';
+import { UnpublishedProductsService } from '../services/unpublished-products.service';
 
 describe('MarketplaceWithdrawButtonComponent', () => {
   let component: MarketplaceWithdrawButtonComponent;
   let fixture: ComponentFixture<MarketplaceWithdrawButtonComponent>;
-  let dataProductServiceSpy, commonDialogServiceSpy, transactionServiceSpy;
+  let dataProductServiceSpy, unpublishedProductsServiceSpy, commonDialogServiceSpy, transactionServiceSpy;
   const ownerAddress = '0x0000000000000000000000000000000000000000';
   const dataProductAddress = '0x1111111111111111111111111111111111111111';
 
   beforeEach(fakeAsync(() => {
     dataProductServiceSpy = jasmine.createSpyObj('DataProductService', [ 'withdrawFundsFromDataProduct' ]);
+
+    unpublishedProductsServiceSpy = jasmine.createSpyObj('UnpublishedProductsService', [ 'addProduct' ]);
 
     commonDialogServiceSpy = jasmine.createSpyObj('CommonDialogService', [ 'transaction' ]);
     commonDialogServiceSpy.transaction.and.callFake(methodToCall => methodToCall());
@@ -42,6 +45,7 @@ describe('MarketplaceWithdrawButtonComponent', () => {
       ],
       providers: [
         { provide: DataProductService, useValue: dataProductServiceSpy },
+        { provide: UnpublishedProductsService, useValue: unpublishedProductsServiceSpy },
         { provide: CommonDialogService, useValue: commonDialogServiceSpy },
         { provide: TransactionService, useValue: transactionServiceSpy }
       ]
@@ -51,10 +55,16 @@ describe('MarketplaceWithdrawButtonComponent', () => {
     fixture = TestBed.createComponent(MarketplaceWithdrawButtonComponent);
     component = fixture.componentInstance;
 
+    component.blockchainDataProduct = <any> {
+      disabled: false,
+      fundsAccumulated: new BigNumber(100),
+      buyersDeposit: new BigNumber(0)
+    };
+
     component.dataProductAddress = dataProductAddress;
     component.dataProduct = <any> {
       address: dataProductAddress,
-      fundsToWithdraw: new BigNumber(1),
+      fundsToWithdraw: new BigNumber(100),
       ownerAddress,
       orders: []
     };
@@ -103,8 +113,33 @@ describe('MarketplaceWithdrawButtonComponent', () => {
 
       component.fundsToWithdraw = new BigNumber(100);
 
+      const addProductToUnpublishedProducts = jasmine.createSpy();
+      component.addProductToUnpublishedProducts = addProductToUnpublishedProducts;
+
       component.onTransactionFinish({ status: TransactionStatus.SUCCESSFUL } as TransactionReceipt);
 
+      expect(addProductToUnpublishedProducts.calls.count()).toBe(0);
+      expect(component.fundsToWithdraw).toEqual(new BigNumber(0));
+      expect(component.pendingTransaction).toBe(undefined);
+    });
+
+    it('should finalise transaction when transactionReceipt.status is successful and should call ' +
+      'addProductToUnpublishedProducts when disabled = true', () => {
+      component.blockchainDataProduct.disabled = true;
+      component.pendingTransaction = {
+        scope: BlockchainTransactionScope.DataProduct,
+        identifier: dataProductAddress,
+        blocksAction: ActionButtonType.Withdraw
+      } as Transaction;
+
+      component.fundsToWithdraw = new BigNumber(100);
+
+      const addProductToUnpublishedProducts = jasmine.createSpy();
+      component.addProductToUnpublishedProducts = addProductToUnpublishedProducts;
+
+      component.onTransactionFinish({ status: TransactionStatus.SUCCESSFUL } as TransactionReceipt);
+
+      expect(addProductToUnpublishedProducts.calls.count()).toBe(1);
       expect(component.fundsToWithdraw).toEqual(new BigNumber(0));
       expect(component.pendingTransaction).toBe(undefined);
     });

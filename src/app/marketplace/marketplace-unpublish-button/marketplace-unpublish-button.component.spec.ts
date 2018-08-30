@@ -56,7 +56,9 @@ describe('MarketplaceUnpublishButtonComponent', () => {
     component = fixture.componentInstance;
 
     component.blockchainDataProduct = <any> {
-      disabled: false
+      disabled: false,
+      fundsAccumulated: new BigNumber(10),
+      buyersDeposit: new BigNumber(10)
     };
 
     component.dataProductAddress = dataProductAddress;
@@ -115,6 +117,26 @@ describe('MarketplaceUnpublishButtonComponent', () => {
       component.onTransactionFinish({ status: TransactionStatus.SUCCESSFUL } as TransactionReceipt);
 
       expect(addProductToUnpublishedProducts.calls.count()).toBe(1);
+      expect(component.blockchainDataProduct.disabled).toBe(true);
+      expect(component.pendingTransaction).toBe(undefined);
+    });
+
+    it('should finalise transaction when transactionReceipt.status is successful and shouldn\'t call ' +
+      'addProductToUnpublishedProducts when fundsToWithdraw > 0', () => {
+      component.blockchainDataProduct.buyersDeposit = new BigNumber(0);
+
+      component.pendingTransaction = {
+        scope: BlockchainTransactionScope.DataProduct,
+        identifier: dataProductAddress,
+        blocksAction: ActionButtonType.Unpublish
+      } as Transaction;
+
+      const addProductToUnpublishedProducts = jasmine.createSpy();
+      component.addProductToUnpublishedProducts = addProductToUnpublishedProducts;
+
+      component.onTransactionFinish({ status: TransactionStatus.SUCCESSFUL } as TransactionReceipt);
+
+      expect(addProductToUnpublishedProducts.calls.count()).toBe(0);
       expect(component.blockchainDataProduct.disabled).toBe(true);
       expect(component.pendingTransaction).toBe(undefined);
     });
