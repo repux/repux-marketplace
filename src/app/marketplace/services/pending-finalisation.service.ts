@@ -116,7 +116,7 @@ export class PendingFinalisationService implements OnDestroy {
     }
 
     this._fetchSubscription = this._dataProductListService
-      .getDataProducts(getPendingFinalisationDataProductsQuery(wallet.address), '', environment.maxNotificationsProductsNumber).pipe(
+      .getDataProducts(getPendingFinalisationDataProductsQuery(wallet.address), {}, environment.maxNotificationsProductsNumber).pipe(
         pluck('hits')
       )
       .subscribe((result: DataProduct[]) => {

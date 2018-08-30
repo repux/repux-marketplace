@@ -72,7 +72,7 @@ export class ReadyToDownloadService implements OnDestroy {
     }
 
     this._fetchSubscription = this._dataProductListService
-      .getDataProducts(getReadyToDownloadDataProductsQuery(wallet.address), '', environment.maxNotificationsProductsNumber).pipe(
+      .getDataProducts(getReadyToDownloadDataProductsQuery(wallet.address), {}, environment.maxNotificationsProductsNumber).pipe(
         pluck('hits')
       )
       .subscribe((result: DataProduct[]) => this._productsSubject.next(result));

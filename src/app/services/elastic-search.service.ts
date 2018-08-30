@@ -11,10 +11,10 @@ export class ElasticSearchService<T extends Deserializable<T>> {
   constructor(private http: HttpClient, private recordType: new () => T) {
   }
 
-  search(type: string, query: Object = { bool: {} }, sort: string = '', size: number = 10,
+  search(type: string, query: Object = { bool: {} }, sort: Object = {}, size: number = 10,
          from: number = 0): Observable<EsResponse<T>> {
     return this.http.post(`${this.config.protocol}://${this.config.host}:${this.config.port}/${type}/_search` +
-      `?size=${size}&from=${from}&sort=${sort}&`, { query }).pipe(
+      `?size=${size}&from=${from}`, { query, sort }).pipe(
       map((data: { hits: EsResponse<any> }) => {
         data.hits.hits = data.hits.hits.map(hit => new this.recordType().deserialize(hit._source));
         return data.hits;

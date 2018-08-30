@@ -43,6 +43,7 @@ export class MarketplaceDataProductListComponent implements OnInit, OnChanges, O
   @Input() disableSorting = false;
   @Input() buyerAddress: string;
   @Input() dataProducts: DataProduct[];
+  @Input() defaultSort = {};
 
   public eulaType = EulaType;
   public esDataProducts: EsResponse<DataProduct>;
@@ -50,7 +51,7 @@ export class MarketplaceDataProductListComponent implements OnInit, OnChanges, O
   public pageSizeOptions = environment.repux.pageSizeOptions;
   public isLoadingResults = true;
   public query = [];
-  public sort: string;
+  public sort: Object = {};
   public size: number;
   public from: number;
   public textColumns: string[] = [
@@ -58,6 +59,12 @@ export class MarketplaceDataProductListComponent implements OnInit, OnChanges, O
     'title',
     'shortDescription',
     'fullDescription'
+  ];
+  public currencyColumns: string[] = [
+    'price',
+    'buyersDeposit',
+    'funds',
+    'fundsToWithdraw'
   ];
 
   private _dataProductsSubscription: Subscription;
@@ -113,13 +120,13 @@ export class MarketplaceDataProductListComponent implements OnInit, OnChanges, O
 
   sortChanged(sort: Sort): Promise<void> {
     if (!sort.active || sort.direction === '') {
-      delete this.sort;
+      this.sort = {};
       this.refreshData();
 
       return;
     }
 
-    this.sort = `${this.getColumn(sort.active)}:${sort.direction}`;
+    this.sort = { [ this.getColumn(sort.active) ]: { order: sort.direction } };
     return this.refreshData();
   }
 
@@ -127,6 +134,10 @@ export class MarketplaceDataProductListComponent implements OnInit, OnChanges, O
     if (this.dataProducts) {
       this.reloadRecords();
       return;
+    }
+
+    if (JSON.stringify(this.sort) === '{}' && this.defaultSort) {
+      this.sort = this.defaultSort;
     }
 
     const query = deepCopy(this.staticQuery);
@@ -208,6 +219,10 @@ export class MarketplaceDataProductListComponent implements OnInit, OnChanges, O
   private getColumn(columnName) {
     if (this.textColumns.includes(columnName)) {
       return columnName + '.keyword';
+    }
+
+    if (this.currencyColumns.includes(columnName)) {
+      return columnName + '.numeric';
     }
 
     return columnName;

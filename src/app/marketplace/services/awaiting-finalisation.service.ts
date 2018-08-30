@@ -75,7 +75,7 @@ export class AwaitingFinalisationService implements OnDestroy {
     }
 
     this._fetchSubscription = this._dataProductListService
-      .getDataProducts(getAwaitingFinalisationDataProductsQuery(wallet.address), '', environment.maxNotificationsProductsNumber).pipe(
+      .getDataProducts(getAwaitingFinalisationDataProductsQuery(wallet.address), {}, environment.maxNotificationsProductsNumber).pipe(
         pluck('hits')
       )
       .subscribe((result: DataProduct[]) => this._productsSubject.next(result));

@@ -24,6 +24,8 @@ export class MarketplaceReadyToDownloadComponent implements OnDestroy {
   ];
   public staticQuery = {};
 
+  public defaultSort = null;
+
   private _wallet: Wallet;
   private _walletSubscription: Subscription;
 
@@ -54,6 +56,14 @@ export class MarketplaceReadyToDownloadComponent implements OnDestroy {
     }
 
     this._wallet = wallet;
+
+    this.defaultSort = {
+      'orders.creationTimestamp': {
+        order: 'desc',
+        'nested_path': 'orders',
+        'nested_filter': { match: { 'orders.buyerAddress': this._wallet.address } }
+      }
+    };
     this.staticQuery = getReadyToDownloadDataProductsQuery(this._wallet.address);
   }
 }
