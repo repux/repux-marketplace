@@ -1,5 +1,10 @@
 <div class="list-search">
-  <input class="list-search__input" (keyup)="onTypeAhead($event.target.value)" placeholder="Search for a data">
+  <input
+    type="search"
+    class="list-search__input"
+    placeholder="Search for a data"
+    (keyup)="onTypeAhead($event.target.value)"
+    [(ngModel)]="filterValues.search">
   <mat-icon class="list-search__icon">search</mat-icon>
   <div class="list-search__filter-icon">
     <button mat-icon-button (click)="toggleFilter()">
@@ -9,6 +14,8 @@
 </div>
 
 <app-marketplace-list-filter
+  [categoryOptions]="categoriesList"
+  [sortingOptions]="sortingOptionsList"
   (categoryChange)="onCategoryChange($event)"
   (sortingOptionChange)="onSortingOptionChange($event)"
   [(isOpened)]="filterIsOpened"></app-marketplace-list-filter>
@@ -18,8 +25,11 @@
     <h3 class="list-header">Latest files</h3>
 
     <div class="card-list">
-      <mat-card *ngFor="let product of products.hits" class="card-item"
-                [routerLink]="product.address ? ['details', product.address] : null">
+      <mat-card
+        *ngFor="let product of products.hits"
+        class="card-item"
+        [routerLink]="product.address ? ['details', product.address] : null">
+
         <mat-card-title>{{ product.title }}</mat-card-title>
 
         <p class="card-item__file-info mat-caption">

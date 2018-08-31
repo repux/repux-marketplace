@@ -81,7 +81,6 @@
 
   &__filter-icon {
     padding: 0 6px;
-    margin: 0 0 0 16px;
     color: #999;
     border-left: 1px solid #e4e4e4;
   }
@@ -99,21 +98,14 @@
     }
   }
 
-  &__category-selector {
-    margin-right: 10px;
-  }
-
   &__icon {
     color: #999;
+    margin: 0 16px 0 0;
   }
 
   @media screen and (max-width: 700px) {
     &__icon {
       display: none;
-    }
-
-    &__category-selector {
-      max-width: 140px;
     }
   }
 }
