@@ -11,6 +11,7 @@ import { RepuxWeb3Service } from '../services/repux-web3.service';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { ActionButtonType } from '../shared/enums/action-button-type';
 import { EsResponse } from '../shared/models/es-response';
+import { SortingOptions } from './marketplace-list-filter/marketplace-list-filter.component';
 
 @Component({
   selector: 'app-marketplace-browse',
@@ -18,16 +19,17 @@ import { EsResponse } from '../shared/models/es-response';
   styleUrls: [ './marketplace-browse.component.scss' ]
 })
 export class MarketplaceBrowseComponent implements OnInit {
-  public pageSizeOptions = environment.repux.pageSizeOptions;
-  public currencyPrecision = environment.repux.currency.shortPrecision;
-  public dataProducts: DataProduct[];
-  public sort: string;
-  public size: number;
-  public from = 0;
-  public query = [];
-  public categoryFilter = [];
-  public products$: Observable<EsResponse<DataProduct>>;
-  public availableActions = [ ActionButtonType.Buy, ActionButtonType.Rate ];
+  pageSizeOptions = environment.repux.pageSizeOptions;
+  currencyPrecision = environment.repux.currency.shortPrecision;
+  dataProducts: DataProduct[];
+  sort = SortingOptions[0].sortBy;
+  size: number;
+  from = 0;
+  query = [];
+  categoryFilter = [];
+  products$: Observable<EsResponse<DataProduct>>;
+  availableActions = [ ActionButtonType.Buy, ActionButtonType.Rate ];
+  filterIsOpened = false;
 
   private inputChangeSubject = new BehaviorSubject<string>(undefined);
   private categoryChangeSubject = new BehaviorSubject<string[]>(undefined);
@@ -49,7 +51,6 @@ export class MarketplaceBrowseComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.refreshData();
     this.inputChangeSubject
       .pipe(
         debounceTime(500),
@@ -57,6 +58,7 @@ export class MarketplaceBrowseComponent implements OnInit {
         filter(value => typeof value !== 'undefined')
       )
       .subscribe(() => this.applyFilter());
+
     this.categoryChangeSubject
       .pipe(
         debounceTime(500),
@@ -64,10 +66,17 @@ export class MarketplaceBrowseComponent implements OnInit {
         filter(value => typeof value !== 'undefined')
       )
       .subscribe(() => this.applyFilter());
+
+    this.refreshData();
   }
 
   onCategoryChange(value: string[]) {
     this.categoryChangeSubject.next(value);
+  }
+
+  onSortingOptionChange(value: string) {
+    this.sort = value;
+    this.applyFilter();
   }
 
   onTypeAhead(value: string) {
@@ -121,6 +130,10 @@ export class MarketplaceBrowseComponent implements OnInit {
     }
 
     this.products$ = productsRaw$;
+  }
+
+  toggleFilter() {
+    this.filterIsOpened = !this.filterIsOpened;
   }
 }
 

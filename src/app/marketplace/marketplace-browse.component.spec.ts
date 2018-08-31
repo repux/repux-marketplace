@@ -2,7 +2,7 @@ import { MatDialog } from '@angular/material';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { MarketplaceBrowseComponent } from './marketplace-browse.component';
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { MaterialModule } from '../material.module';
 import { RouterTestingModule } from '@angular/router/testing';
 import { FileSizePipe } from '../shared/pipes/file-size.pipe';
@@ -23,14 +23,9 @@ class MarketplaceActionButtonsStubComponent {
   @Input() availableActions: ActionButtonType[];
 }
 
-@Component({ selector: 'app-marketplace-product-category-selector', template: '' })
-class MarketplaceProductCategorySelectorStubComponent {
-  @Input() showAllCheckbox: boolean;
-  @Input() placeholder: string;
-  @Input() noUnderline: boolean;
-  @Input() noFloatPlaceholder: boolean;
-  @Input() noPadding: boolean;
-  @Output() valueChange = new EventEmitter<string[]>();
+@Component({ selector: 'app-marketplace-list-filter', template: '' })
+class MarketplaceListFilerStub {
+  @Input() isOpened: boolean;
 }
 
 describe('MarketplaceBrowseComponent', () => {
@@ -54,7 +49,7 @@ describe('MarketplaceBrowseComponent', () => {
       declarations: [
         MarketplaceBrowseComponent,
         MarketplaceActionButtonsStubComponent,
-        MarketplaceProductCategorySelectorStubComponent,
+        MarketplaceListFilerStub,
         FileSizePipe,
         EulaTypePipe,
         CurrencyRepuxPipe
