@@ -12,11 +12,12 @@ import { Transaction, TransactionService } from '../../shared/services/transacti
 import { BlockchainTransactionScope } from '../../shared/enums/blockchain-transaction-scope';
 import { ActionButtonType } from '../../shared/enums/action-button-type';
 import { UnpublishedProductsService } from '../services/unpublished-products.service';
+import { WalletService } from '../../services/wallet.service';
 
 describe('MarketplaceWithdrawButtonComponent', () => {
   let component: MarketplaceWithdrawButtonComponent;
   let fixture: ComponentFixture<MarketplaceWithdrawButtonComponent>;
-  let dataProductServiceSpy, unpublishedProductsServiceSpy, commonDialogServiceSpy, transactionServiceSpy;
+  let dataProductServiceSpy, unpublishedProductsServiceSpy, commonDialogServiceSpy, transactionServiceSpy, walletServiceSpy;
   const ownerAddress = '0x0000000000000000000000000000000000000000';
   const dataProductAddress = '0x1111111111111111111111111111111111111111';
 
@@ -35,6 +36,12 @@ describe('MarketplaceWithdrawButtonComponent', () => {
       }
     });
 
+    walletServiceSpy = jasmine.createSpyObj('WalletService', [ 'updateBalance', 'getWallet' ]);
+    walletServiceSpy.getWallet.and.returnValue({
+      subscribe() {
+      }
+    });
+
     TestBed.configureTestingModule({
       declarations: [
         MarketplaceWithdrawButtonComponent
@@ -47,7 +54,8 @@ describe('MarketplaceWithdrawButtonComponent', () => {
         { provide: DataProductService, useValue: dataProductServiceSpy },
         { provide: UnpublishedProductsService, useValue: unpublishedProductsServiceSpy },
         { provide: CommonDialogService, useValue: commonDialogServiceSpy },
-        { provide: TransactionService, useValue: transactionServiceSpy }
+        { provide: TransactionService, useValue: transactionServiceSpy },
+        { provide: WalletService, useValue: walletServiceSpy }
       ]
     })
       .compileComponents();
@@ -73,7 +81,7 @@ describe('MarketplaceWithdrawButtonComponent', () => {
 
   describe('#ngOnInit()', () => {
     it('should call onWalletChange', async () => {
-      const wallet = new Wallet(ownerAddress, 0);
+      const wallet = new Wallet(ownerAddress, new BigNumber(0));
       const getWallet = jasmine.createSpy();
       getWallet.and.returnValue(from(Promise.resolve(wallet)));
       const onWalletChange = jasmine.createSpy();
@@ -90,14 +98,14 @@ describe('MarketplaceWithdrawButtonComponent', () => {
 
   describe('#onWalletChange()', () => {
     it('should set wallet', () => {
-      const wallet = new Wallet(ownerAddress, 0);
+      const wallet = new Wallet(ownerAddress, new BigNumber(0));
       component[ 'onWalletChange' ](wallet);
       expect(component[ 'wallet' ]).toBe(wallet);
       component[ 'onWalletChange' ](wallet);
       expect(component[ 'wallet' ]).toBe(wallet);
       component[ 'onWalletChange' ](null);
       expect(component[ 'wallet' ]).toBe(wallet);
-      const wallet2 = new Wallet(ownerAddress, 0);
+      const wallet2 = new Wallet(ownerAddress, new BigNumber(0));
       component[ 'onWalletChange' ](wallet2);
       expect(component[ 'wallet' ]).toBe(wallet2);
     });

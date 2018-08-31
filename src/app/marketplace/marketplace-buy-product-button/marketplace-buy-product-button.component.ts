@@ -143,6 +143,7 @@ export class MarketplaceBuyProductButtonComponent implements OnInit, OnDestroy {
       this.repuxLibService,
       this.dataProductService,
       this.tagManagerService,
+      this.walletService,
       this.dialog
     );
 
@@ -176,7 +177,7 @@ export class MarketplaceBuyProductButtonComponent implements OnInit, OnDestroy {
     this.userIsOwner = this.getUserIsOwner();
   }
 
-  private hasSufficentFunds(walletBalance: number, productPrice: BigNumber): boolean {
-    return new BigNumber(walletBalance).comparedTo(productPrice) >= 0;
+  private hasSufficentFunds(walletBalance: BigNumber, productPrice: BigNumber): boolean {
+    return walletBalance.comparedTo(productPrice) >= 0;
   }
 }

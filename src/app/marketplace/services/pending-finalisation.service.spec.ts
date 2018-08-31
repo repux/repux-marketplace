@@ -4,12 +4,13 @@ import { DataProduct } from '../../shared/models/data-product';
 import { from } from 'rxjs';
 import { Observable } from 'rxjs/internal/Observable';
 import { DataProductOrder } from '../../shared/models/data-product-order';
+import BigNumber from 'bignumber.js';
 
 describe('PendingFinalisationService', () => {
   let service: PendingFinalisationService;
   let walletServiceSpy, dataProductServiceSpy, dataProductListServiceSpy, myActiveListingsServiceSpy;
 
-  const wallet = new Wallet('0x00', 0);
+  const wallet = new Wallet('0x00', new BigNumber(0));
 
   const order = new DataProductOrder();
   order.buyerAddress = wallet.address;

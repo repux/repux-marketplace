@@ -5,6 +5,7 @@ import { MatDialogModule } from '@angular/material';
 import { from } from 'rxjs';
 import Wallet from '../shared/models/wallet';
 import { TaskType } from '../tasks/task-type';
+import BigNumber from 'bignumber.js';
 
 describe('TaskManagerService', () => {
   let matDialogSpy: { open: jasmine.Spy },
@@ -12,7 +13,7 @@ describe('TaskManagerService', () => {
   let service: TaskManagerService;
   let componentInstance;
   const walletAddress = '0x00';
-  const wallet = new Wallet(walletAddress, 1);
+  const wallet = new Wallet(walletAddress, new BigNumber(1));
 
   beforeEach(() => {
     walletServiceSpy = jasmine.createSpyObj('WalletService', [ 'getWallet' ]);

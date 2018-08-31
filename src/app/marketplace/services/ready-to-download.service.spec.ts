@@ -3,12 +3,13 @@ import Wallet from '../../shared/models/wallet';
 import { DataProduct } from '../../shared/models/data-product';
 import { from } from 'rxjs';
 import { Observable } from 'rxjs/internal/Observable';
+import BigNumber from 'bignumber.js';
 
 describe('ReadyToDownloadService', () => {
   let service: ReadyToDownloadService;
   let walletServiceSpy, dataProductServiceSpy, dataProductListServiceSpy;
 
-  const wallet = new Wallet('0x00', 0);
+  const wallet = new Wallet('0x00', new BigNumber(0));
   const dataProduct = new DataProduct();
 
   beforeEach(() => {

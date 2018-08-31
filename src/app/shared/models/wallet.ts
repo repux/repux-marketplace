@@ -1,8 +1,10 @@
+import BigNumber from 'bignumber.js';
+
 export default class Wallet {
   address: string;
-  balance: number;
+  balance: BigNumber;
 
-  constructor(address: string, balance: number) {
+  constructor(address: string, balance: BigNumber) {
     this.address = address;
     this.balance = balance;
   }

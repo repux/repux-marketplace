@@ -27,7 +27,7 @@ describe('DataProductService', () => {
       [ 'getWallet' ]
     );
     storageServiceSpy = jasmine.createSpyObj('StorageService', [ 'getItem', 'setItem' ]);
-    const wallet = new Wallet(walletAddress, 1);
+    const wallet = new Wallet(walletAddress, new BigNumber(1));
     walletServiceSpy.getWallet.and.returnValue({
       subscribe(callback) {
         callback(wallet);

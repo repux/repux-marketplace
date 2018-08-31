@@ -11,6 +11,7 @@ import { Observable } from 'rxjs/internal/Observable';
 import Wallet from '../../shared/models/wallet';
 import { WalletService } from '../../services/wallet.service';
 import { SettingsService } from '../services/settings.service';
+import BigNumber from 'bignumber.js';
 
 @Component({
   selector: 'app-settings-index',
@@ -19,6 +20,7 @@ import { SettingsService } from '../services/settings.service';
 })
 export class SettingsIndexComponent implements OnInit, OnDestroy {
   wallet$: Observable<Wallet>;
+  balance$: Observable<BigNumber>;
   public hasKeys = false;
   private subscription: Subscription;
 
@@ -47,6 +49,7 @@ export class SettingsIndexComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.wallet$ = this.walletService.getWallet();
+    this.balance$ = this.walletService.getBalance();
   }
 
   downloadKeys() {

@@ -4,7 +4,6 @@ import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import Wallet from '../../shared/models/wallet';
 import { from } from 'rxjs';
 import { MarketplaceFinaliseButtonComponent } from './marketplace-finalise-button.component';
-import BigNumber from 'bignumber.js';
 import { RepuxLibService } from '../../services/repux-lib.service';
 import { TaskManagerService } from '../../services/task-manager.service';
 import { DataProductService } from '../../services/data-product.service';
@@ -19,6 +18,7 @@ import { ActionButtonType } from '../../shared/enums/action-button-type';
 import { Transaction, TransactionService } from '../../shared/services/transaction.service';
 import { CommonDialogService } from '../../shared/services/common-dialog.service';
 import { KeyStoreDialogService } from '../../key-store/key-store-dialog.service';
+import BigNumber from 'bignumber.js';
 
 describe('MarketplaceFinaliseButtonComponent', () => {
   let component: MarketplaceFinaliseButtonComponent;
@@ -60,7 +60,7 @@ describe('MarketplaceFinaliseButtonComponent', () => {
       }
     });
 
-    walletServiceSpy.getWallet.and.returnValue(from(Promise.resolve(new Wallet(sellerAddress, 1))));
+    walletServiceSpy.getWallet.and.returnValue(from(Promise.resolve(new Wallet(sellerAddress, new BigNumber(1)))));
 
     dataProductServiceSpy.getOrderData.and.returnValue(Promise.resolve({
       address: orderAddress,
@@ -117,7 +117,7 @@ describe('MarketplaceFinaliseButtonComponent', () => {
 
   describe('#ngOnInit()', () => {
     it('should call onWalletChange', async () => {
-      const wallet = new Wallet(ownerAddress, 0);
+      const wallet = new Wallet(ownerAddress, new BigNumber(0));
       const getWallet = jasmine.createSpy();
       getWallet.and.returnValue(from(Promise.resolve(wallet)));
       const onWalletChange = jasmine.createSpy();
@@ -134,14 +134,14 @@ describe('MarketplaceFinaliseButtonComponent', () => {
 
   describe('#onWalletChange()', () => {
     it('should set wallet', () => {
-      const wallet = new Wallet(ownerAddress, 0);
+      const wallet = new Wallet(ownerAddress, new BigNumber(0));
       component[ 'onWalletChange' ](wallet);
       expect(component[ 'wallet' ]).toBe(wallet);
       component[ 'onWalletChange' ](wallet);
       expect(component[ 'wallet' ]).toBe(wallet);
       component[ 'onWalletChange' ](null);
       expect(component[ 'wallet' ]).toBe(wallet);
-      const wallet2 = new Wallet(ownerAddress, 0);
+      const wallet2 = new Wallet(ownerAddress, new BigNumber(0));
       component[ 'onWalletChange' ](wallet2);
       expect(component[ 'wallet' ]).toBe(wallet2);
     });

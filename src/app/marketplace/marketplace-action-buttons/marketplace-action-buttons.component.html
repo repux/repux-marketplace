@@ -7,6 +7,7 @@
   <app-marketplace-cancel-purchase-button
     *ngIf="availableActions.includes(actionButtonType.CancelPurchase)"
     [dataProduct]="dataProduct"
+    [blockchainDataProduct]="blockchainDataProduct"
     [blockchainDataProductOrder]="blockchainDataProductOrder"></app-marketplace-cancel-purchase-button>
 
   <app-marketplace-rate-order-button

@@ -12,6 +12,7 @@ import { BlockchainTransactionScope } from '../../shared/enums/blockchain-transa
 import { ActionButtonType } from '../../shared/enums/action-button-type';
 import { Transaction, TransactionService } from '../../shared/services/transaction.service';
 import { DataProductOrder as BlockchainDataProductOrder, TransactionStatus, TransactionReceipt } from 'repux-web3-api';
+import BigNumber from 'bignumber.js';
 
 describe('MarketplaceCancelPurchaseButtonComponent', () => {
   let component: MarketplaceCancelPurchaseButtonComponent;
@@ -27,7 +28,7 @@ describe('MarketplaceCancelPurchaseButtonComponent', () => {
       subscribe() {
       }
     });
-    walletServiceSpy = jasmine.createSpyObj('WalletService', [ 'getWallet' ]);
+    walletServiceSpy = jasmine.createSpyObj('WalletService', [ 'getWallet', 'updateBalance' ]);
     walletServiceSpy.getWallet.and.returnValue({
       subscribe() {
       }
@@ -116,6 +117,7 @@ describe('MarketplaceCancelPurchaseButtonComponent', () => {
       expect(awaitingFinalisationServiceSpy.removeProduct.calls.count()).toBe(1);
       expect(component.blockchainDataProductOrder).toBe(undefined);
       expect(component.pendingTransaction).toBe(undefined);
+      expect(walletServiceSpy.updateBalance.calls.count()).toBe(1);
     });
   });
 
@@ -178,7 +180,7 @@ describe('MarketplaceCancelPurchaseButtonComponent', () => {
 
   describe('#onWalletChange()', () => {
     it('should set wallet', () => {
-      const wallet = new Wallet(buyerAddress, 1);
+      const wallet = new Wallet(buyerAddress, new BigNumber(1));
 
       component[ 'onWalletChange' ](wallet);
       expect(component.wallet).toBe(wallet);

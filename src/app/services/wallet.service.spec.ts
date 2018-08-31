@@ -1,4 +1,6 @@
 import { MetamaskStatus, WalletService } from './wallet.service';
+import Wallet from '../shared/models/wallet';
+import BigNumber from 'bignumber.js';
 
 const balanceInEther = 1;
 
@@ -20,7 +22,7 @@ const repuxWeb3ApiMock = {
   },
 
   async getBalance() {
-    return balanceInEther;
+    return new BigNumber(balanceInEther);
   }
 };
 
@@ -76,8 +78,20 @@ describe('WalletService', () => {
       repuxWeb3ServiceSpy.getRepuxApiInstance.and.returnValue(repuxWeb3ApiMock);
       const wallet = await walletService.getWalletData();
       expect(wallet.address).toEqual(web3Mock.eth.accounts[ 0 ]);
-      expect(wallet.balance).toEqual(balanceInEther);
+      expect(wallet.balance).toEqual(new BigNumber(balanceInEther));
       expect(repuxWeb3ServiceSpy.getRepuxApiInstance.calls.count()).toBe(1);
+    });
+  });
+
+  describe('#updateBalance()', () => {
+    it('should update current wallet balance', async () => {
+      repuxWeb3ServiceSpy.isDefaultAccountAvailable.and.returnValue(true);
+      repuxWeb3ServiceSpy.getRepuxApiInstance.and.returnValue(repuxWeb3ApiMock);
+      walletService[ 'walletSubject' ].next(new Wallet(web3Mock.eth.accounts[ 0 ], new BigNumber(3)));
+
+      await walletService.updateBalance();
+
+      expect(walletService[ 'balanceSubject' ].getValue()).toEqual(new BigNumber(balanceInEther));
     });
   });
 });
