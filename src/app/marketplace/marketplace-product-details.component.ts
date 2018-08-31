@@ -9,7 +9,6 @@ import { DataProduct } from '../shared/models/data-product';
 import { Subscription } from 'rxjs/internal/Subscription';
 import { UserService } from '../shared/services/user.service';
 import { User } from '../shared/models/user';
-import { environment } from '../../environments/environment';
 import { ActionButtonType } from '../shared/enums/action-button-type';
 import { DataProductService } from '../services/data-product.service';
 import { WalletService } from '../services/wallet.service';

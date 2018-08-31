@@ -44,6 +44,7 @@ import {
   MarketplaceBeforeBuyConfirmationDialogComponent
 } from './marketplace-before-buy-confirmation-dialog/marketplace-before-buy-confirmation-dialog.component';
 import { MarketplaceMyFilesComponent } from './marketplace-my-files.component';
+import { MarketplaceListFilterComponent } from './marketplace-list-filter/marketplace-list-filter.component';
 
 @NgModule({
   imports: [
@@ -78,7 +79,8 @@ import { MarketplaceMyFilesComponent } from './marketplace-my-files.component';
     MarketplaceRatingComponent,
     MarketplaceTaskManagerComponent,
     MarketplaceBeforeBuyConfirmationDialogComponent,
-    MarketplaceMyFilesComponent
+    MarketplaceMyFilesComponent,
+    MarketplaceListFilterComponent
   ],
   exports: [
     MarketplaceBrowseComponent,
@@ -87,7 +89,8 @@ import { MarketplaceMyFilesComponent } from './marketplace-my-files.component';
     MarketplaceActionButtonsComponent,
     MarketplaceFinaliseButtonComponent,
     MarketplaceProductDetailsComponent,
-    MarketplaceTaskManagerComponent
+    MarketplaceTaskManagerComponent,
+    MarketplaceListFilterComponent
   ],
   entryComponents: [
     MarketplaceProductCreatorDialogComponent,

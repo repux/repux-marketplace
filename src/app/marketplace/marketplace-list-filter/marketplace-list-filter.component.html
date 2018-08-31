@@ -1,0 +1,47 @@
+<div [@visibilityChanged]="isOpened">
+  <div class="list-filter mat-typography">
+    <section class="list-filter__section">
+      <h4 class="list-filter__title">Categories</h4>
+      <ul class="list-filter__items">
+        <li
+          class="list-filter__item list-filter__item_selected"
+          [class.list-filter__item_selected]="categoriesSelectedAll"
+          (click)="toggleAllCategories()">
+        <span class="list-filter__item-label">
+          All categories
+        </span>
+          <mat-icon class="list-filter__item-icon">close</mat-icon>
+        </li>
+        <li
+          *ngFor="let category of categories"
+          (click)="toggleCategory(category)"
+          class="list-filter__item"
+          [class.list-filter__item_selected]="category.isSelected">
+        <span class="list-filter__item-label">
+          {{ category.label }}
+        </span>
+          <mat-icon class="list-filter__item-icon">close</mat-icon>
+        </li>
+      </ul>
+    </section>
+    <section class="list-filter__section">
+      <h4 class="list-filter__title">Sort by</h4>
+      <ul class="list-filter__items">
+        <li
+          *ngFor="let option of sortingOptions"
+          (click)="chooseSortingOption(option)"
+          class="list-filter__item"
+          [class.list-filter__item_selected]="option.isSelected">
+        <span class="list-filter__item-label">
+          {{ option.label }}
+        </span>
+          <mat-icon class="list-filter__item-icon">close</mat-icon>
+        </li>
+      </ul>
+    </section>
+
+    <button mat-icon-button class="list-filter__close-btn" (click)="close()">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+</div>

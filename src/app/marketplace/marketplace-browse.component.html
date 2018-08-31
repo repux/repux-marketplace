@@ -1,17 +1,17 @@
 <div class="list-search">
   <input class="list-search__input" (keyup)="onTypeAhead($event.target.value)" placeholder="Search for a data">
   <mat-icon class="list-search__icon">search</mat-icon>
-  <div class="list-search__accent-area">
-    <app-marketplace-product-category-selector
-      class="list-search__category-selector"
-      [showAllCheckbox]="true"
-      placeholder="All categories"
-      [noUnderline]="true"
-      [noFloatPlaceholder]="true"
-      [noPadding]="true"
-      (valueChange)="onCategoryChange($event)"></app-marketplace-product-category-selector>
+  <div class="list-search__filter-icon">
+    <button mat-icon-button (click)="toggleFilter()">
+      <mat-icon>tune</mat-icon>
+    </button>
   </div>
 </div>
+
+<app-marketplace-list-filter
+  (categoryChange)="onCategoryChange($event)"
+  (sortingOptionChange)="onSortingOptionChange($event)"
+  [(isOpened)]="filterIsOpened"></app-marketplace-list-filter>
 
 <div *ngIf="(products$ | async) as products; else showSpinner" class="mat-typography">
   <section *ngIf="products.hits.length; else showEmpty">
