@@ -1,17 +1,15 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { MarketplaceListFilterComponent } from './marketplace-list-filter.component';
+import { CategoryOption, MarketplaceListFilterComponent, SortingOption } from './marketplace-list-filter.component';
 import { MaterialModule } from '../../material.module';
 import { SharedModule } from '../../shared/shared.module';
-import { ProductCategoryService } from '../../services/product-category.service';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 
 describe('MarketplaceListFilterComponent', () => {
   let component: MarketplaceListFilterComponent;
   let fixture: ComponentFixture<MarketplaceListFilterComponent>;
-  let projectCategoryServiceStub: ProductCategoryService;
 
-  const categoriesList = [
+  const categoriesList: CategoryOption[] = [
     { label: 'category1', isSelected: false },
     { label: 'category2', isSelected: false },
     { label: 'category3', isSelected: false },
@@ -20,21 +18,18 @@ describe('MarketplaceListFilterComponent', () => {
     { label: 'category6', isSelected: false }
   ];
 
+  const sortingList: SortingOption[] = [
+    { label: 'sort by A', sortBy: 'a:asc', isSelected: false },
+    { label: 'sort by B', sortBy: 'b:desc', isSelected: false }
+  ];
+
   beforeEach(async(() => {
-    projectCategoryServiceStub = jasmine.createSpyObj('projectCategoryServiceStub', {
-      'getFlattenCategories': categoriesList.map(category => category.label)
-    });
-
-
     TestBed.configureTestingModule({
       declarations: [ MarketplaceListFilterComponent ],
       imports: [
         SharedModule,
         MaterialModule,
         NoopAnimationsModule
-      ],
-      providers: [
-        { provide: ProductCategoryService, useValue: projectCategoryServiceStub }
       ]
     })
       .compileComponents();
@@ -43,18 +38,18 @@ describe('MarketplaceListFilterComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(MarketplaceListFilterComponent);
     component = fixture.componentInstance;
+    component.categoryOptions = categoriesList;
+    component.sortingOptions = sortingList;
+
     spyOn(component.categoryChange, 'emit');
     spyOn(component.sortingOptionChange, 'emit');
+    spyOn(component.isOpenedChange, 'emit');
+
     fixture.detectChanges();
   });
 
   it('should create', () => {
     expect(component).toBeTruthy();
-  });
-
-  it('should load flatten categories on initialize', async () => {
-    await component.ngOnInit();
-    expect(component.categories).toEqual(categoriesList);
   });
 
   describe('#toggleAll()', () => {
@@ -66,9 +61,8 @@ describe('MarketplaceListFilterComponent', () => {
 
   describe('#toggleCategory()', () => {
     it('should emit an event with proper selection', async () => {
-      await component.ngOnInit();
 
-      const categories = component.categories;
+      const categories = component.categoryOptions;
 
       component.toggleCategory(categories[0]);
       expect(component.categoryChange.emit).toHaveBeenCalledWith(['category1']);
@@ -86,6 +80,13 @@ describe('MarketplaceListFilterComponent', () => {
       const options = component.sortingOptions;
       component.chooseSortingOption(options[0]);
       expect(component.sortingOptionChange.emit).toHaveBeenCalledWith(options[0].sortBy);
+    })
+  });
+
+  describe('#close()', () => {
+    it('should emit an event', () => {
+      component.close();
+      expect(component.isOpenedChange.emit).toHaveBeenCalledWith(false);
     })
   });
 });

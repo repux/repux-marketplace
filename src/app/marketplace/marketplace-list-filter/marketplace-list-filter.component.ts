@@ -1,35 +1,16 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { ProductCategoryService } from '../../services/product-category.service';
+import { Component, EventEmitter, Input, OnChanges, Output } from '@angular/core';
 import { animate, state, style, transition, trigger } from '@angular/animations';
 
-type Option = {
-  sortBy?: string,
+export type SortingOption = {
+  sortBy: string,
   label: string,
   isSelected: boolean
 }
 
-export const SortingOptions: Option[] = [
-  {
-    sortBy: 'creationTimestamp:desc',
-    label: 'Date added - latest',
-    isSelected: true
-  },
-  {
-    sortBy: 'creationTimestamp:asc',
-    label: 'Date added - oldest',
-    isSelected: false
-  },
-  {
-    sortBy: 'price.numeric:desc',
-    label: 'Price - highest',
-    isSelected: false
-  },
-  {
-    sortBy: 'price.numeric:asc',
-    label: 'Price - lowest',
-    isSelected: false
-  }
-];
+export type CategoryOption = {
+  label: string,
+  isSelected: boolean
+}
 
 @Component({
   selector: 'app-marketplace-list-filter',
@@ -37,7 +18,7 @@ export const SortingOptions: Option[] = [
   styleUrls: [ './marketplace-list-filter.component.scss' ],
   animations: [
     trigger('visibilityChanged', [
-      state('true' , style({
+      state('true', style({
         overflow: 'hidden',
         height: '*'
       })),
@@ -51,39 +32,38 @@ export const SortingOptions: Option[] = [
     ])
   ]
 })
-export class MarketplaceListFilterComponent implements OnInit {
+export class MarketplaceListFilterComponent implements OnChanges {
   @Input() isOpened: boolean;
+  @Input() categoryOptions: CategoryOption[];
+  @Input() sortingOptions: SortingOption[];
   @Output() isOpenedChange = new EventEmitter<boolean>();
   @Output() categoryChange = new EventEmitter<string[]>();
   @Output() sortingOptionChange = new EventEmitter<string>();
 
-  categories: Option[] = [];
   categoriesSelectedAll = true;
 
-  sortingOptions: Option[] = SortingOptions;
-
-  constructor(private productCategoryService: ProductCategoryService) {
+  constructor() {
   }
 
-  async ngOnInit() {
-    const categories = await this.productCategoryService.getFlattenCategories();
-    this.categories = [];
-    categories.forEach(category => this.categories.push({
-      label: category,
-      isSelected: false
-    }));
+  ngOnChanges(changes) {
+    if (changes.categoryOptions &&
+      changes.categoryOptions.currentValue &&
+      changes.categoryOptions.currentValue.find(category => category.isSelected)
+    ) {
+      this.categoriesSelectedAll = false;
+    }
   }
 
   toggleAllCategories() {
-    this.categories.forEach(category => category.isSelected = false);
+    this.categoryOptions.forEach(category => category.isSelected = false);
     this.categoriesSelectedAll = true;
     this.categoryChange.emit([])
   }
 
-  toggleCategory(choice: Option) {
+  toggleCategory(choice: CategoryOption) {
     choice.isSelected = !choice.isSelected;
 
-    const selection = this.categories
+    const selection = this.categoryOptions
       .filter(category => category.isSelected)
       .map(category => category.label);
 
@@ -91,7 +71,7 @@ export class MarketplaceListFilterComponent implements OnInit {
     this.categoryChange.emit(selection);
   }
 
-  chooseSortingOption(choice: Option) {
+  chooseSortingOption(choice: SortingOption) {
     this.sortingOptions.forEach(option => option.isSelected = false);
     choice.isSelected = !choice.isSelected;
     this.sortingOptionChange.emit(choice.sortBy);
