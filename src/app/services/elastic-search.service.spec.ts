@@ -23,7 +23,7 @@ describe('ElasticSearchService', () => {
 
       httpClientSpy.post.and.returnValue(defer(() => Promise.reject(errorResponse)));
 
-      service.search(type, '*', '', 10, 0)
+      service.search(type, '*', {}, 10, 0)
         .subscribe(
           data => fail('expected an error, not data'),
           error => expect(error.error).toContain(errorResponse.error)
@@ -47,7 +47,7 @@ describe('ElasticSearchService', () => {
         }
       })));
 
-      service.search(type, '*', '', 10, 0)
+      service.search(type, '*', {}, 10, 0)
         .subscribe(result => {
             expect(result.hits.length).toEqual(2, '2 products');
             expect(result.hits[ 0 ].price).toEqual(new BigNumber(1));

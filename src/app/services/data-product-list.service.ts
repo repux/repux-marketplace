@@ -20,11 +20,11 @@ export class DataProductListService {
     this.esService = new ElasticSearchService(this.http, DataProduct);
   }
 
-  getDataProducts(query?: Object, sort?: string, size?: number, from?: number): Observable<EsResponse<DataProduct>> {
+  getDataProducts(query?: Object, sort?: Object, size?: number, from?: number): Observable<EsResponse<DataProduct>> {
     return this.esService.search(DataProductListService.type, query, sort, size, from);
   }
 
-  getDataProductsWithBlockchainState(query?: Object, sort?: string, size?: number, from?: number)
+  getDataProductsWithBlockchainState(query?: Object, sort?: Object, size?: number, from?: number)
     : Observable<EsResponse<DataProduct>> {
     return this.getDataProducts(query, sort, size, from)
       .pipe(
@@ -65,7 +65,7 @@ export class DataProductListService {
         ]
       }
     };
-    return this.esService.search(DataProductListService.type, query, '', 1, 0).pipe(
+    return this.esService.search(DataProductListService.type, query, {}, 1, 0).pipe(
       pluck('hits'),
       map(obj => obj[ 0 ])
     );

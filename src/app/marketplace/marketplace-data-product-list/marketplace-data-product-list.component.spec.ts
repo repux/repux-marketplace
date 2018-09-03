@@ -119,13 +119,13 @@ describe('MarketplaceDataProductListComponent', () => {
     it('should set sort property sort argument has active and direction properties set', () => {
       component.sort = null;
       component.sortChanged({ active: 'name', direction: 'asc' });
-      expect(component.sort).toBe('name.keyword:asc');
+      expect(component.sort).toEqual({ 'name.keyword': { order: 'asc' } });
       component.sortChanged({ active: 'price', direction: 'asc' });
-      expect(component.sort).toBe('price:asc');
+      expect(component.sort).toEqual({ 'price.numeric': { order: 'asc' } });
       component.sortChanged({ active: null, direction: 'asc' });
-      expect(component.sort).toBeUndefined();
+      expect(component.sort).toEqual({});
       component.sortChanged({ active: 'name', direction: '' });
-      expect(component.sort).toBeUndefined();
+      expect(component.sort).toEqual({});
     });
 
     it('should call refreshData method', () => {
@@ -166,6 +166,36 @@ describe('MarketplaceDataProductListComponent', () => {
         expect(dataProductListServiceSpy.getDataProductsWithBlockchainState.calls.count()).toBe(1);
         expect(component.esDataProducts).toBe(expectedResponse);
       });
+
+    it('should change sort to defaultSort when user not specify any', async () => {
+      const expectedResponse: EsResponse<DataProduct> = {
+        total: 1,
+        max_score: 1,
+        hits: [ new DataProduct().deserialize({
+          _index: '1',
+          _source: {
+            price: 1,
+            orders: []
+          }
+        }) ]
+      };
+
+      component.query = [ 'QUERY' ];
+      component.defaultSort = { defaultSort: { order: 'asc' } };
+      component.sort = {};
+      component.size = 10;
+      component.from = 1;
+      dataProductListServiceSpy.getDataProductsWithBlockchainState.and.callFake((query, sort, size, from) => {
+        expect(query).toEqual({ bool: { must: [ { bool: { should: [ 'QUERY' ] } } ] } });
+        expect(sort).toBe(component.defaultSort);
+        expect(size).toBe(10);
+        expect(from).toBe(1);
+        return fromPromise(Promise.resolve(expectedResponse));
+      });
+      await component.refreshData();
+      expect(dataProductListServiceSpy.getDataProductsWithBlockchainState.calls.count()).toBe(1);
+      expect(component.esDataProducts).toBe(expectedResponse);
+    });
   });
 
   describe('#downloadEula()', () => {

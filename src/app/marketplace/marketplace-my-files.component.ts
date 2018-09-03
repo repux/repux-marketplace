@@ -7,7 +7,7 @@ import { ReadyToDownloadService } from './services/ready-to-download.service';
 @Component({
   selector: 'app-marketplace-my-files',
   templateUrl: './marketplace-my-files.component.html',
-  styleUrls: ['./marketplace-my-files.component.scss']
+  styleUrls: [ './marketplace-my-files.component.scss' ]
 })
 export class MarketplaceMyFilesComponent {
   navLinks = [
@@ -27,12 +27,12 @@ export class MarketplaceMyFilesComponent {
     private myActiveListingsService: MyActiveListingsService,
     private readyToDownloadService: ReadyToDownloadService,
   ) {
-    this.navLinks[0].notifications$ = this.myActiveListingsService.getProducts()
+    this.navLinks[ 0 ].notifications$ = this.myActiveListingsService.getProducts()
       .pipe(
         map(products => products.length)
       );
 
-    this.navLinks[1].notifications$ = this.readyToDownloadService.getProducts()
+    this.navLinks[ 1 ].notifications$ = this.readyToDownloadService.getProducts()
       .pipe(
         map(products => products.length)
       );

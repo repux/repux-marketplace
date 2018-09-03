@@ -54,7 +54,7 @@ export class MarketplaceBrowseComponent implements OnInit {
   products$: Observable<EsResponse<DataProduct>>;
   availableActions = [ ActionButtonType.Buy, ActionButtonType.Rate ];
   filterIsOpened = false;
-  filterValues: { sort: string, categories: string[], search: string } = { sort: '', categories: [], search: '' };
+  filterValues: { sort: {}, categories: string[], search: string } = { sort: {}, categories: [], search: '' };
   categoriesList: CategoryOption[];
   sortingOptionsList: SortingOption[];
 
@@ -174,7 +174,10 @@ export class MarketplaceBrowseComponent implements OnInit {
       query.bool.must.push({ bool: { should: this.categoryFilter } });
     }
 
-    let productsRaw$ = this.dataProductListService.getDataProducts(query, this.sort, this.size, this.from);
+    const [ sortField, sortOrder ] = this.sort.split(':');
+    const sort = { [ sortField ]: { order: sortOrder } };
+
+    let productsRaw$ = this.dataProductListService.getDataProducts(query, sort, this.size, this.from);
     const repuxWeb3Service = await this.repuxWeb3Service;
 
     if (await repuxWeb3Service.isWalletAvailable()) {
@@ -229,8 +232,8 @@ export class MarketplaceBrowseComponent implements OnInit {
       params.get('category')
         .split(',')
         .forEach(categoryIndex => {
-          if (this.categoriesList[categoryIndex]) {
-            const category = this.categoriesList[categoryIndex];
+          if (this.categoriesList[ categoryIndex ]) {
+            const category = this.categoriesList[ categoryIndex ];
             category.isSelected = true;
             categoriesFromParams.push(category.label);
           }

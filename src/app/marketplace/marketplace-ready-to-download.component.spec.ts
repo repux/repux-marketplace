@@ -15,6 +15,7 @@ class DataProductListStubComponent {
   @Input() displayedColumns: string[];
   @Input() staticQuery;
   @Input() buyerAddress: string;
+  @Input() defaultSort: Object;
 }
 
 describe('MarketplaceBuyReadyToDownloadComponent', () => {
@@ -57,6 +58,13 @@ describe('MarketplaceBuyReadyToDownloadComponent', () => {
       component[ '_onWalletChange' ](wallet);
       expect(component[ '_wallet' ]).toBe(wallet);
       expect(component.staticQuery).toEqual(getReadyToDownloadDataProductsQuery(buyerAddress));
+      expect(component.defaultSort).toEqual({
+        'orders.creationTimestamp': {
+          order: 'desc',
+          'nested_path': 'orders',
+          'nested_filter': { match: { 'orders.buyerAddress': buyerAddress } }
+        }
+      });
     });
   });
 });

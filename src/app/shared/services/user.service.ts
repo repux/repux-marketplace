@@ -26,7 +26,7 @@ export class UserService {
       }
     };
 
-    return this.esService.search(UserService.type, query, '', 1, 0).pipe(
+    return this.esService.search(UserService.type, query, {}, 1, 0).pipe(
       pluck('hits'),
       map(obj => obj[ 0 ])
     );

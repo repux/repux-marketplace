@@ -73,7 +73,7 @@ export class MyActiveListingsService implements OnDestroy {
     }
 
     this._fetchSubscription = this._dataProductListService
-      .getDataProducts(getCreatedDataProductsQuery(wallet.address), '', environment.maxNotificationsProductsNumber).pipe(
+      .getDataProducts(getCreatedDataProductsQuery(wallet.address), {}, environment.maxNotificationsProductsNumber).pipe(
         pluck('hits')
       )
       .subscribe((result: DataProduct[]) => this._productsSubject.next(result));
