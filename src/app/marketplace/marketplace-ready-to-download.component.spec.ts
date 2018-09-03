@@ -7,6 +7,7 @@ import { MarketplaceReadyToDownloadComponent } from './marketplace-ready-to-down
 import { MaterialModule } from '../material.module';
 import { getReadyToDownloadDataProductsQuery } from './services/ready-to-download.service';
 import { ActionButtonType } from '../shared/enums/action-button-type';
+import BigNumber from 'bignumber.js';
 
 @Component({ selector: 'app-data-product-list', template: '' })
 class DataProductListStubComponent {
@@ -51,7 +52,7 @@ describe('MarketplaceBuyReadyToDownloadComponent', () => {
 
   describe('#_onWalletChange()', () => {
     it('should set _wallet and staticQuery', () => {
-      const wallet = new Wallet(buyerAddress, 1);
+      const wallet = new Wallet(buyerAddress, new BigNumber(1));
 
       component[ '_onWalletChange' ](wallet);
       expect(component[ '_wallet' ]).toBe(wallet);

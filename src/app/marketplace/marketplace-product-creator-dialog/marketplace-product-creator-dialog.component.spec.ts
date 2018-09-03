@@ -23,6 +23,7 @@ import { TransactionService } from '../../shared/services/transaction.service';
 import { SettingsService } from '../../settings/services/settings.service';
 import { environment } from '../../../environments/environment';
 import { KeyStoreDialogService } from '../../key-store/key-store-dialog.service';
+import BigNumber from 'bignumber.js';
 
 describe('MarketplaceProductCreatorDialogComponent', () => {
   let tagManagerServiceSpy, repuxLibServiceSpy, dataProductServiceSpy, taskManagerServiceSpy, matDialogSpy, keyStoreDialogServiceSpy,
@@ -31,7 +32,7 @@ describe('MarketplaceProductCreatorDialogComponent', () => {
   let component: MarketplaceProductCreatorDialogComponent;
   let fixture: ComponentFixture<MarketplaceProductCreatorDialogComponent>;
 
-  const wallet = new Wallet('0x00', 1);
+  const wallet = new Wallet('0x00', new BigNumber(1));
 
   beforeEach(async(() => {
     tagManagerServiceSpy = jasmine.createSpyObj('TagManagerService', [ 'sendUserId', 'sendEvent' ]);

@@ -10,7 +10,6 @@ import { AwaitingFinalisationService } from '../services/awaiting-finalisation.s
 import { DataProductService } from '../../services/data-product.service';
 import { TagManagerService } from '../../shared/services/tag-manager.service';
 import { DataProduct } from '../../shared/models/data-product';
-import BigNumber from 'bignumber.js';
 import { CommonDialogService } from '../../shared/services/common-dialog.service';
 import {
   MarketplaceBeforeBuyConfirmationDialogComponent
@@ -23,8 +22,8 @@ import { KeyStoreDialogService } from '../../key-store/key-store-dialog.service'
 import { Task } from '../../tasks/task';
 import { TaskType } from '../../tasks/task-type';
 import { TaskManagerService } from '../../services/task-manager.service';
-import { MatDialogRef } from '@angular/material';
-import { ConfirmationDialogComponent } from '../../shared/components/confirmation-dialog/confirmation-dialog.component';
+import BigNumber from 'bignumber.js';
+import { WalletService } from '../../services/wallet.service';
 
 @Component({ selector: 'app-marketplace-download-product-button', template: '' })
 class DownloadProductButtonStubComponent {
@@ -34,7 +33,7 @@ class DownloadProductButtonStubComponent {
 describe('MarketplaceBuyProductButtonComponent', () => {
   let component: MarketplaceBuyProductButtonComponent;
   let fixture: ComponentFixture<MarketplaceBuyProductButtonComponent>;
-  let repuxLibServiceSpy, awaitingFinalisationServiceSpy, dataProductServiceSpy, tagManager, commonDialogServiceSpy,
+  let repuxLibServiceSpy, awaitingFinalisationServiceSpy, dataProductServiceSpy, tagManager, commonDialogServiceSpy, walletServiceSpy,
     keyStoreDialogServiceSpy, taskManagerServiceSpy;
   const dataProductAddress = '0x1111111111111111111111111111111111111111';
   const buyerAddress = '0x0000000000000000000000000000000000000000';
@@ -49,6 +48,12 @@ describe('MarketplaceBuyProductButtonComponent', () => {
     commonDialogServiceSpy.transaction.and.callFake(methodToCall => methodToCall());
     keyStoreDialogServiceSpy = jasmine.createSpyObj('KeyStoreDialogService', [ 'getKeys' ]);
     taskManagerServiceSpy = jasmine.createSpyObj('TaskManagerService', [ 'addTask' ]);
+
+    walletServiceSpy = jasmine.createSpyObj('WalletService', [ 'updateBalance', 'getWallet' ]);
+    walletServiceSpy.getWallet.and.returnValue({
+      subscribe() {
+      }
+    });
 
     TestBed.configureTestingModule({
       declarations: [
@@ -70,7 +75,8 @@ describe('MarketplaceBuyProductButtonComponent', () => {
         { provide: AwaitingFinalisationService, useValue: awaitingFinalisationServiceSpy },
         { provide: CommonDialogService, useValue: commonDialogServiceSpy },
         { provide: KeyStoreDialogService, useValue: keyStoreDialogServiceSpy },
-        { provide: TaskManagerService, useValue: taskManagerServiceSpy }
+        { provide: TaskManagerService, useValue: taskManagerServiceSpy },
+        { provide: WalletService, useValue: walletServiceSpy }
       ]
     })
       .compileComponents();
@@ -103,7 +109,7 @@ describe('MarketplaceBuyProductButtonComponent', () => {
 
   describe('#ngOnInit()', () => {
     it('should call onWalletChange', async () => {
-      const wallet = new Wallet('0x00', 0);
+      const wallet = new Wallet('0x00', new BigNumber(0));
       const getWallet = jasmine.createSpy();
       getWallet.and.returnValue(from(Promise.resolve(wallet)));
       const onWalletChange = jasmine.createSpy();
@@ -122,25 +128,25 @@ describe('MarketplaceBuyProductButtonComponent', () => {
     it('should call getUserIsOwner', () => {
       const getUserIsOwner = jasmine.createSpy();
       component.getUserIsOwner = getUserIsOwner;
-      const wallet = new Wallet('0x00', 0);
+      const wallet = new Wallet('0x00', new BigNumber(0));
       component[ 'onWalletChange' ](wallet);
       component[ 'onWalletChange' ](wallet);
       component[ 'onWalletChange' ](null);
-      component[ 'onWalletChange' ](new Wallet('0x01', 0));
+      component[ 'onWalletChange' ](new Wallet('0x01', new BigNumber(0)));
       expect(getUserIsOwner.calls.count()).toBe(2);
     });
   });
 
   describe('#buyDataProduct()', () => {
     it('should open confirmation dialog', () => {
-      component.wallet = new Wallet('0x00', 10);
+      component.wallet = new Wallet('0x00', new BigNumber(10));
       const dialogRef = component.buyDataProduct();
 
       expect(dialogRef.componentInstance instanceof MarketplaceBeforeBuyConfirmationDialogComponent).toBe(true);
     });
 
     it('should call alert function on commonDialogService', () => {
-      component.wallet = new Wallet('0x00', 0.5);
+      component.wallet = new Wallet('0x00', new BigNumber(0.5));
       component.buyDataProduct();
 
       expect(commonDialogServiceSpy.alert.calls.count()).toBe(1);
@@ -149,7 +155,7 @@ describe('MarketplaceBuyProductButtonComponent', () => {
 
   describe('#sendTransaction()', () => {
     it('should add task to taskManagerService', () => {
-      component.wallet = new Wallet('0x00', 0);
+      component.wallet = new Wallet('0x00', new BigNumber(0));
       component.sendTransaction();
 
       expect(taskManagerServiceSpy.addTask.calls.count()).toBe(1);
@@ -162,7 +168,7 @@ describe('MarketplaceBuyProductButtonComponent', () => {
 
   describe('#get finalised()', () => {
     it('should return true if user bought product and order is finalised', () => {
-      component.wallet = new Wallet(buyerAddress, 0);
+      component.wallet = new Wallet(buyerAddress, new BigNumber(0));
       component.blockchainDataProductOrder = <any> {
         finalised: true,
         purchased: true
@@ -181,7 +187,7 @@ describe('MarketplaceBuyProductButtonComponent', () => {
 
   describe('#get bought()', () => {
     it('should return true if bought product', () => {
-      component.wallet = new Wallet(buyerAddress, 0);
+      component.wallet = new Wallet(buyerAddress, new BigNumber(0));
       component.blockchainDataProductOrder = <any> {
         purchased: true
       };
@@ -197,7 +203,7 @@ describe('MarketplaceBuyProductButtonComponent', () => {
       component.wallet = null;
       expect(component.getUserIsOwner()).toBeFalsy();
 
-      component.wallet = new Wallet('0x00', 0);
+      component.wallet = new Wallet('0x00', new BigNumber(0));
       expect(component.getUserIsOwner()).toBeFalsy();
 
       component.productOwnerAddress = '0x00';

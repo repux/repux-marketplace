@@ -5,7 +5,7 @@ import BigNumber from 'bignumber.js';
 
 describe('FileBuyTask', () => {
   let fileBuyTask, commonDialogServiceSpy, transactionServiceSpy, awaitingFinalisationServiceSpy, keyStoreDialogServiceSpy,
-    repuxLibServiceSpy, dataProductServiceSpy, tagManagerServiceSpy, dialogSpy, getTransactionsSpy, taskManagerServiceSpy;
+    repuxLibServiceSpy, dataProductServiceSpy, tagManagerServiceSpy, dialogSpy, getTransactionsSpy, taskManagerServiceSpy, walletServiceSpy;
   const buyerAddress = '0x00';
   const dataProduct = <DataProduct> {
     address: '0x01',
@@ -50,6 +50,8 @@ describe('FileBuyTask', () => {
 
     taskManagerServiceSpy = jasmine.createSpyObj('TaskManagerService', [ 'onTaskEvent' ]);
 
+    walletServiceSpy = jasmine.createSpyObj('WalletService', [ 'updateBalance' ]);
+
     fileBuyTask = new FileBuyTask(
       buyerAddress,
       dataProduct,
@@ -60,6 +62,7 @@ describe('FileBuyTask', () => {
       repuxLibServiceSpy,
       dataProductServiceSpy,
       tagManagerServiceSpy,
+      walletServiceSpy,
       dialogSpy
     );
   });

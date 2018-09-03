@@ -20,6 +20,7 @@ import Wallet from './shared/models/wallet';
 import { AwaitingFinalisationService } from './marketplace/services/awaiting-finalisation.service';
 import { of } from 'rxjs';
 import { WebpushNotificationService } from './services/webpush-notification.service';
+import BigNumber from 'bignumber.js';
 
 @Component({ selector: 'app-notifications-list-item', template: '' })
 class NotificationsListItemStubComponent {
@@ -48,7 +49,7 @@ describe('AppComponent', () => {
 
     walletServiceSpy.getWallet.and.returnValue({
       subscribe(callback) {
-        callback(new Wallet('', 0));
+        callback(new Wallet('', new BigNumber(0)));
       }
     });
 

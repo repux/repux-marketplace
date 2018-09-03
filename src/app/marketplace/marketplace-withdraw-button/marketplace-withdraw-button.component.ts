@@ -56,6 +56,8 @@ export class MarketplaceWithdrawButtonComponent implements OnInit, OnDestroy, On
         this.addProductToUnpublishedProducts(this.dataProduct);
       }
 
+      this.walletService.updateBalance();
+
       this.tagManager.sendEvent(
         EventCategory.Sell,
         EventAction.WithdrawConfirmed,

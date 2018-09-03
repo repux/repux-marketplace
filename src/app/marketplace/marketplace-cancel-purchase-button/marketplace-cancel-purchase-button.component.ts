@@ -5,7 +5,12 @@ import { WalletService } from '../../services/wallet.service';
 import Wallet from '../../shared/models/wallet';
 import { ClockService } from '../../services/clock.service';
 import { Subscription } from 'rxjs/internal/Subscription';
-import { DataProductOrder as BlockchainDataProductOrder, TransactionReceipt, TransactionStatus } from 'repux-web3-api';
+import {
+  DataProductOrder as BlockchainDataProductOrder,
+  DataProduct as BlockchainDataProduct,
+  TransactionReceipt,
+  TransactionStatus
+} from 'repux-web3-api';
 import { AwaitingFinalisationService } from '../services/awaiting-finalisation.service';
 import { EventAction, EventCategory, TagManagerService } from '../../shared/services/tag-manager.service';
 import { Transaction, TransactionService } from '../../shared/services/transaction.service';
@@ -19,6 +24,7 @@ import { CommonDialogService } from '../../shared/services/common-dialog.service
 })
 export class MarketplaceCancelPurchaseButtonComponent implements OnInit, OnDestroy {
   @Input() dataProduct: DataProduct;
+  @Input() blockchainDataProduct: BlockchainDataProduct;
   @Input() blockchainDataProductOrder: BlockchainDataProductOrder;
 
   public dataProductAddress: string;
@@ -48,11 +54,7 @@ export class MarketplaceCancelPurchaseButtonComponent implements OnInit, OnDestr
   }
 
   get isDisabled(): boolean {
-    if (!this.dataProduct.blockchainState) {
-      return false;
-    }
-
-    return this.dataProduct.blockchainState.disabled;
+    return this.blockchainDataProduct && this.blockchainDataProduct.disabled;
   }
 
   ngOnInit() {
@@ -85,6 +87,8 @@ export class MarketplaceCancelPurchaseButtonComponent implements OnInit, OnDestr
         this.dataProduct.title,
         this.dataProduct.price ? this.dataProduct.price.toString() : ''
       );
+
+      this.walletService.updateBalance();
     }
 
     delete this.pendingTransaction;

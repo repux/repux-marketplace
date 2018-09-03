@@ -17,6 +17,7 @@ import { DataProductService } from '../services/data-product.service';
 import { EventAction, EventCategory, TagManagerService } from '../shared/services/tag-manager.service';
 import { environment } from '../../environments/environment';
 import { TransactionEventType } from '../shared/enums/transaction-event-type';
+import { WalletService } from '../services/wallet.service';
 
 export const STATUS = {
   APPROVING: 'Approving token transfer',
@@ -50,6 +51,7 @@ export class FileBuyTask implements Task {
     private repuxLibService: RepuxLibService,
     private dataProductService: DataProductService,
     private tagManagerService: TagManagerService,
+    private walletService: WalletService,
     private dialog: MatDialog
   ) {
     this._name = `Buying ${this._dataProduct.name}`;
@@ -144,6 +146,7 @@ export class FileBuyTask implements Task {
   onTransactionFinish(transactionReceipt: TransactionReceipt) {
     if (transactionReceipt.status === TransactionStatus.SUCCESSFUL) {
       this.awaitingFinalisationService.addProduct(this._dataProduct);
+      this.walletService.updateBalance();
       this.dialog.open(MarketplacePurchaseConfirmationDialogComponent);
       this.emitBuyConfirmedEvent(transactionReceipt);
 

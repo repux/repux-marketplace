@@ -2,9 +2,10 @@ import { Settings, SettingsService } from './settings.service';
 import { from } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import Wallet from '../../shared/models/wallet';
+import BigNumber from 'bignumber.js';
 
 describe('SettingsService()', () => {
-  const wallet = new Wallet('0x00', 0);
+  const wallet = new Wallet('0x00', new BigNumber(0));
 
   let service: SettingsService;
   let walletServiceSpy, storageServiceSpy;

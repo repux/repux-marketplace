@@ -12,6 +12,7 @@ import { BlockchainTransactionScope } from '../../shared/enums/blockchain-transa
 import { ActionButtonType } from '../../shared/enums/action-button-type';
 import { Transaction, TransactionService } from '../../shared/services/transaction.service';
 import { CommonDialogService } from '../../shared/services/common-dialog.service';
+import { WalletService } from '../../services/wallet.service';
 
 describe('MarketplaceUnpublishButtonComponent', () => {
   let component: MarketplaceUnpublishButtonComponent;
@@ -73,7 +74,7 @@ describe('MarketplaceUnpublishButtonComponent', () => {
 
   describe('#ngOnInit()', () => {
     it('should call onWalletChange', async () => {
-      const wallet = new Wallet(ownerAddress, 0);
+      const wallet = new Wallet(ownerAddress, new BigNumber(0));
       const getWallet = jasmine.createSpy();
       getWallet.and.returnValue(from(Promise.resolve(wallet)));
       const onWalletChange = jasmine.createSpy();
@@ -90,14 +91,14 @@ describe('MarketplaceUnpublishButtonComponent', () => {
 
   describe('#onWalletChange()', () => {
     it('should set wallet', () => {
-      const wallet = new Wallet(ownerAddress, 0);
+      const wallet = new Wallet(ownerAddress, new BigNumber(0));
       component[ 'onWalletChange' ](wallet);
       expect(component[ 'wallet' ]).toBe(wallet);
       component[ 'onWalletChange' ](wallet);
       expect(component[ 'wallet' ]).toBe(wallet);
       component[ 'onWalletChange' ](null);
       expect(component[ 'wallet' ]).toBe(wallet);
-      const wallet2 = new Wallet(ownerAddress, 0);
+      const wallet2 = new Wallet(ownerAddress, new BigNumber(0));
       component[ 'onWalletChange' ](wallet2);
       expect(component[ 'wallet' ]).toBe(wallet2);
     });

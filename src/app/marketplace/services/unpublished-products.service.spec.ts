@@ -1,12 +1,13 @@
 import { UnpublishedProductsService } from './unpublished-products.service';
 import { from } from 'rxjs';
 import Wallet from '../../shared/models/wallet';
+import BigNumber from 'bignumber.js';
 
 describe('UnpublishedProductsService', () => {
   let service: UnpublishedProductsService;
   let taskManagerServiceSpy, storageServiceSpy, walletServiceSpy;
   const sellerMetaHash = 'SELLER_META_HASH';
-  const wallet = new Wallet('0x00', 1);
+  const wallet = new Wallet('0x00', new BigNumber(1));
 
   beforeEach(() => {
     taskManagerServiceSpy = jasmine.createSpyObj('TaskManagerService', [ 'removeTask' ]);

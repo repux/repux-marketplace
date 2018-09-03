@@ -9,6 +9,7 @@ import { DataProductService } from '../../services/data-product.service';
 import { TagManagerService } from '../../shared/services/tag-manager.service';
 import { KeyStoreDialogService } from '../../key-store/key-store-dialog.service';
 import { TaskManagerService } from '../../services/task-manager.service';
+import BigNumber from 'bignumber.js';
 
 describe('MarketplaceDownloadProductButtonComponent', () => {
   let component: MarketplaceDownloadProductButtonComponent;
@@ -60,7 +61,7 @@ describe('MarketplaceDownloadProductButtonComponent', () => {
 
   describe('#ngOnInit()', () => {
     it('should call _onWalletChange', async () => {
-      const wallet = new Wallet('0x00', 0);
+      const wallet = new Wallet('0x00', new BigNumber(0));
       const getWallet = jasmine.createSpy();
       getWallet.and.returnValue(from(Promise.resolve(wallet)));
       const onWalletChange = jasmine.createSpy();
@@ -77,14 +78,14 @@ describe('MarketplaceDownloadProductButtonComponent', () => {
 
   describe('#_onWalletChange()', () => {
     it('should set _wallet', () => {
-      const wallet = new Wallet('0x00', 0);
+      const wallet = new Wallet('0x00', new BigNumber(0));
       component[ '_onWalletChange' ](wallet);
       expect(component[ '_wallet' ]).toBe(wallet);
       component[ '_onWalletChange' ](wallet);
       expect(component[ '_wallet' ]).toBe(wallet);
       component[ '_onWalletChange' ](null);
       expect(component[ '_wallet' ]).toBe(wallet);
-      const wallet2 = new Wallet('0x01', 0);
+      const wallet2 = new Wallet('0x01', new BigNumber(0));
       component[ '_onWalletChange' ](wallet2);
       expect(component[ '_wallet' ]).toBe(wallet2);
     });
@@ -101,7 +102,7 @@ describe('MarketplaceDownloadProductButtonComponent', () => {
       dataProductServiceSpy.getDataProductData.and.returnValue(Promise.resolve({
         owner: '0x00'
       }));
-      component[ '_wallet' ] = new Wallet('0x01', 0);
+      component[ '_wallet' ] = new Wallet('0x01', new BigNumber(0));
       dataProductServiceSpy.getOrderData.and.returnValue(Promise.resolve({
         buyerMetaHash
       }));
@@ -129,7 +130,7 @@ describe('MarketplaceDownloadProductButtonComponent', () => {
         owner: '0x00',
         sellerMetaHash
       }));
-      component[ '_wallet' ] = new Wallet('0x00', 0);
+      component[ '_wallet' ] = new Wallet('0x00', new BigNumber(0));
       const taskManagerService = jasmine.createSpyObj('TaskManagerService', [ 'addTask' ]);
       component[ '_taskManagerService' ] = taskManagerService;
 
