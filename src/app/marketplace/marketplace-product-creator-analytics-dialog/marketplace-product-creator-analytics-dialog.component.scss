@@ -1,0 +1,14 @@
+@import '../../../variables';
+
+.mat-dialog-content {
+  min-height: 140px;
+  min-width: 140px;
+}
+
+.mat-form-field {
+  width: 100%;
+}
+
+.error {
+  color: mat-color($app-warn);
+}

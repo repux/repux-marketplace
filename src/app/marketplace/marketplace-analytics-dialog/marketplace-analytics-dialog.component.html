@@ -1,0 +1,12 @@
+<form (ngSubmit)="authorize()">
+  <h2 mat-dialog-title>Add data from Google Analitycs</h2>
+  <mat-dialog-content class="mat-typography">
+    You will be redirected to Google Authorization page.<br>
+    Please give us permission to read data from your Google Analytics account.
+  </mat-dialog-content>
+
+  <mat-dialog-actions>
+    <button mat-stroked-button color="primary" type="button" (click)="closeDialog()">Cancel</button>
+    <button mat-flat-button color="primary">Authorize</button>
+  </mat-dialog-actions>
+</form>

@@ -45,6 +45,8 @@ import {
 } from './marketplace-before-buy-confirmation-dialog/marketplace-before-buy-confirmation-dialog.component';
 import { MarketplaceMyFilesComponent } from './marketplace-my-files.component';
 import { MarketplaceListFilterComponent } from './marketplace-list-filter/marketplace-list-filter.component';
+import { MarketplaceAnalyticsDialogComponent } from './marketplace-analytics-dialog/marketplace-analytics-dialog.component';
+import { MarketplaceProductCreatorAnalyticsDialogComponent } from './marketplace-product-creator-analytics-dialog/marketplace-product-creator-analytics-dialog.component';
 
 @NgModule({
   imports: [
@@ -80,7 +82,9 @@ import { MarketplaceListFilterComponent } from './marketplace-list-filter/market
     MarketplaceTaskManagerComponent,
     MarketplaceBeforeBuyConfirmationDialogComponent,
     MarketplaceMyFilesComponent,
-    MarketplaceListFilterComponent
+    MarketplaceListFilterComponent,
+    MarketplaceAnalyticsDialogComponent,
+    MarketplaceProductCreatorAnalyticsDialogComponent
   ],
   exports: [
     MarketplaceBrowseComponent,
@@ -90,14 +94,18 @@ import { MarketplaceListFilterComponent } from './marketplace-list-filter/market
     MarketplaceFinaliseButtonComponent,
     MarketplaceProductDetailsComponent,
     MarketplaceTaskManagerComponent,
-    MarketplaceListFilterComponent
+    MarketplaceListFilterComponent,
+    MarketplaceAnalyticsDialogComponent,
+    MarketplaceProductCreatorAnalyticsDialogComponent
   ],
   entryComponents: [
     MarketplaceProductCreatorDialogComponent,
     MarketplacePurchaseConfirmationDialogComponent,
     MarketplaceRateOrderDialogComponent,
     MarketplaceTaskManagerComponent,
-    MarketplaceBeforeBuyConfirmationDialogComponent
+    MarketplaceBeforeBuyConfirmationDialogComponent,
+    MarketplaceAnalyticsDialogComponent,
+    MarketplaceProductCreatorAnalyticsDialogComponent
   ]
 })
 export class MarketplaceModule {

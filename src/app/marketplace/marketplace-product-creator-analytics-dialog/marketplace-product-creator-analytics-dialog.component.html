@@ -1,0 +1,71 @@
+<form (ngSubmit)="generateReport()" *ngIf="status === statuses.ViewSelection">
+  <h2 mat-dialog-title>{{title}}</h2>
+  <div *ngIf="availableViews$ | async as availableViews; else loadingOrError">
+    <div *ngIf="availableViews.length">
+      <mat-dialog-content class="mat-typography">
+        <p>Choose one of the following views from which you want to import data.</p>
+
+        <mat-form-field>
+          <mat-select [value]="selectedView" (valueChange)="selectedView = $event">
+            <mat-option *ngFor="let view of availableViews" [value]="view">
+              {{ view.websiteUrl }} [{{view.name}}]
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+
+      </mat-dialog-content>
+      <mat-dialog-actions>
+        <button mat-stroked-button color="primary" type="button" (click)="closeDialog()">Cancel</button>
+        <button mat-flat-button color="primary">Generate report</button>
+      </mat-dialog-actions>
+    </div>
+
+    <div *ngIf="!availableViews.length">
+      <mat-dialog-content class="mat-typography">
+        <p>You have no views in your analytics account.</p>
+      </mat-dialog-content>
+      <mat-dialog-actions>
+        <button mat-stroked-button color="primary" type="button" (click)="closeDialog()">Close</button>
+      </mat-dialog-actions>
+    </div>
+  </div>
+
+  <ng-template #loadingOrError>
+    <mat-dialog-content class="mat-typography">
+      <div *ngIf="loadingError$ | async as error; else loading">
+        <p class="error">Google Analytics returned an error. Please try again.</p>
+        <p class="error">Reason: {{error.message}}</p>
+      </div>
+
+      <ng-template #loading>
+        <div class="spinner-wrapper">
+          <mat-spinner></mat-spinner>
+        </div>
+      </ng-template>
+    </mat-dialog-content>
+
+    <mat-dialog-actions>
+      <button mat-stroked-button color="primary" type="button" (click)="closeDialog()">Close</button>
+    </mat-dialog-actions>
+  </ng-template>
+</form>
+
+<div *ngIf="status === statuses.ReportGeneration">
+  <h2 mat-dialog-title>{{title}}</h2>
+  <mat-dialog-content>
+    <div class="spinner-wrapper">
+      <mat-spinner></mat-spinner>
+    </div>
+  </mat-dialog-content>
+
+  <mat-dialog-actions>
+    <button mat-stroked-button color="primary" type="button" (click)="closeDialog()">Close</button>
+  </mat-dialog-actions>
+</div>
+
+<app-marketplace-product-creator-dialog
+  *ngIf="status === statuses.FileUpload"
+  [dialogTitle]="title"
+  title="Google Analytics report"
+  [shortDescription]="shortDescription"
+  [file]="file"></app-marketplace-product-creator-dialog>

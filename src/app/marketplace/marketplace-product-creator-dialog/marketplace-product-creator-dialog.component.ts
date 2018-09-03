@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { environment } from '../../../environments/environment';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BigNumber } from 'bignumber.js';
@@ -29,6 +29,11 @@ import { KeyStoreDialogService } from '../../key-store/key-store-dialog.service'
   styleUrls: [ './marketplace-product-creator-dialog.component.scss' ]
 })
 export class MarketplaceProductCreatorDialogComponent implements OnInit, OnDestroy {
+  @Input() dialogTitle = 'Add data file to Marketplace';
+  @Input() title: string;
+  @Input() file: File;
+  @Input() shortDescription: string;
+
   public formGroup: FormGroup;
   public titleMinLength = 3;
   public titleMaxLength = 100;
@@ -92,6 +97,19 @@ export class MarketplaceProductCreatorDialogComponent implements OnInit, OnDestr
 
   async ngOnInit() {
     this.formGroup.controls[ 'eula' ].setValue(await createEulaSelection());
+
+    if (this.file) {
+      this.formGroup.controls[ 'file' ].setValue(this.file.name);
+      this.formGroup.controls[ 'file' ].disable();
+    }
+
+    if (this.title) {
+      this.formGroup.controls[ 'title' ].setValue(this.title);
+    }
+
+    if (this.shortDescription) {
+      this.formGroup.controls[ 'shortDescription' ].setValue(this.shortDescription);
+    }
   }
 
   async upload() {
@@ -123,7 +141,7 @@ export class MarketplaceProductCreatorDialogComponent implements OnInit, OnDestr
       this.formGroup.value.fullDescription,
       this.categoryInput.value,
       new BigNumber(this.formGroup.value.price),
-      this.fileInput.value[ 0 ],
+      (this.file) ? this.file : this.fileInput.value[ 0 ],
       this.settingsService.daysToDeliver,
       this.sampleFileInput.value,
       this.formGroup.value.eula,
