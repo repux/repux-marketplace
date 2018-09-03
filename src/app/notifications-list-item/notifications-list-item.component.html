@@ -10,9 +10,12 @@
       </div>
     </div>
     <p class="item__file-info">
-      {{ product.name }} | {{ product.size | fileSize }} | <a href=""
-                                                              (click)="$event.stopPropagation(); $event.preventDefault(); downloadEula(product.eula)">{{
-      product.eula.type | eulaType }} EULA</a>
+      {{ product.name }} |
+      {{ product.size | fileSize }} |
+      {{ product.creationDate | date }} |
+      <a href=""
+         (click)="$event.stopPropagation(); $event.preventDefault(); downloadEula(product.eula)">
+        {{product.eula.type | eulaType }} EULA</a>
     </p>
 
     <p *ngIf="showMyOrderData && myOrderData">
