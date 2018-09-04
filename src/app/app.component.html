@@ -231,10 +231,19 @@
       </a>
     </nav>
 
+    <mat-menu #appMenu="matMenu">
+      <button mat-menu-item (click)="openProductCreatorDialog()">File from my computer</button>
+      <button mat-menu-item (click)="openAnalyticsIntegrationDialog()">Data from Google Analitycs</button>
+    </mat-menu>
+
     <button
-      mat-flat-button color="primary" class="sell-data-btn"
-      (click)="openProductCreatorDialog()"
-      [disabled]="!wallet">Sell data
+      mat-flat-button
+      color="primary"
+      class="sell-data-btn"
+      [disabled]="!wallet"
+      [matMenuTriggerFor]="appMenu">
+      Sell Data
+      <mat-icon>arrow_drop_down</mat-icon>
     </button>
 
     <span class="toolbar-spacer"></span>
@@ -308,3 +317,5 @@
     </div>
   </mat-sidenav-content>
 </mat-sidenav-container>
+
+<router-outlet name="modal"></router-outlet>

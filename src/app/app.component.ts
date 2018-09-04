@@ -1,19 +1,22 @@
 import { Component, OnInit } from '@angular/core';
 import { WebpushNotificationService } from './services/webpush-notification.service';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
-import { map } from 'rxjs/operators';
+import { filter, map } from 'rxjs/operators';
 import { Observable, combineLatest } from 'rxjs';
 import { environment } from '../environments/environment';
 import { WalletService } from './services/wallet.service';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { OverlayContainer } from '@angular/cdk/overlay';
 import { TagManagerService } from './shared/services/tag-manager.service';
 import { MarketplaceProductCreatorDialogComponent } from './marketplace/marketplace-product-creator-dialog/marketplace-product-creator-dialog.component';
-import { MatDialog } from '@angular/material';
+import { MatDialog, MatDialogRef } from '@angular/material';
 import { UnpublishedProductsService } from './marketplace/services/unpublished-products.service';
 import { PendingFinalisationService } from './marketplace/services/pending-finalisation.service';
 import Wallet from './shared/models/wallet';
 import { AwaitingFinalisationService } from './marketplace/services/awaiting-finalisation.service';
+import { MarketplaceAnalyticsDialogComponent } from './marketplace/marketplace-analytics-dialog/marketplace-analytics-dialog.component';
+import { OAuthState } from './shared/enums/oauth-state';
+import { MarketplaceProductCreatorAnalyticsDialogComponent } from './marketplace/marketplace-product-creator-analytics-dialog/marketplace-product-creator-analytics-dialog.component';
 
 @Component({
   selector: 'app-root',
@@ -46,6 +49,7 @@ export class AppComponent implements OnInit {
 
   constructor(
     private router: Router,
+    private activatedRoute: ActivatedRoute,
     private breakpointObserver: BreakpointObserver,
     private webpushNotificationService: WebpushNotificationService,
     private walletService: WalletService,
@@ -75,10 +79,22 @@ export class AppComponent implements OnInit {
       }
       this.tasksTotal$ = this.countProducts();
     });
+
+    this.activatedRoute.fragment
+      .pipe(filter(fragment => fragment.includes('access_token')))
+      .subscribe(routeFragment => {
+        this.resolveOauthUrl(new URLSearchParams(routeFragment));
+    });
   }
 
   openProductCreatorDialog() {
     this.dialog.open(MarketplaceProductCreatorDialogComponent, {
+      disableClose: true
+    });
+  }
+
+  openAnalyticsIntegrationDialog() {
+    this.dialog.open(MarketplaceAnalyticsDialogComponent, {
       disableClose: true
     });
   }
@@ -92,5 +108,16 @@ export class AppComponent implements OnInit {
       .pipe(
         map(result => result.reduce((acc, current) => acc + current.length, 0))
       );
+  }
+
+  resolveOauthUrl(params: URLSearchParams) {
+    const state = parseInt(params.get('state'), 10);
+
+    if (state === OAuthState.AnalyticsIntegration) {
+      const dialogRef = this.dialog.open(MarketplaceProductCreatorAnalyticsDialogComponent, {
+        disableClose: true
+      });
+      dialogRef.componentInstance.accessToken = params.get('access_token');
+    }
   }
 }

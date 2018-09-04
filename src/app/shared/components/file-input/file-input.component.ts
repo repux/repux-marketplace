@@ -9,6 +9,7 @@ import { FormControl } from '@angular/forms';
 })
 export class FileInputComponent {
   @Input() required: boolean;
+  @Input() disabled = false;
   @Input() multiple = false;
   @Input() placeholder: string;
   @Input() value: FileList;

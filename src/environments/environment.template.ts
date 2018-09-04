@@ -65,5 +65,11 @@ export const environment = {
   webPushServer: {
     host: '${WEBPUSH_SERVER_HOST}' || 'http://localhost:3000',
     publicKey: '${WEBPUSH_SERVER_PUBLIC_KEY}' || 'BHG0pFCWLmtfofYay5cGDhVkIDH-rJR6ntTH0EK8Kvj0LEh91O0LkufHxKA29ap7lDA-FH11KfEMyP39V8550cM'
+  },
+  google: {
+    oauth: {
+      clientId: '${MARKETPLACE_GOOGLE_OAUTH_CLIENT_ID}' || '779505820358-8qekr2umfldr8gfbisu6cmu310f4aek0.apps.googleusercontent.com',
+      redirectUri: '${MARKETPLACE_GOOGLE_OAUTH_REDIRECT_URL}' || 'https://marketplace-stage-app.repux.io/marketplace'
+    }
   }
 };

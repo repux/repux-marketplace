@@ -52,10 +52,18 @@
 
   &__description {
     margin: 0 0 32px 0;
+
+    p {
+      white-space: pre;
+    }
   }
 
   &__detailed-description {
     margin: 0 0 32px 0;
+
+    p {
+      white-space: pre;
+    }
   }
 
   &__rating {
