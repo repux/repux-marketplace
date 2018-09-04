@@ -63,7 +63,7 @@ export const environment = {
     maxFileSize: parseInt('${METAINDEXER_IPFS_MAX_FILE_SIZE}', 10) || 10_485_760
   },
   webPushServer: {
-    host: '${WEBPUSH_SERVER_HOST}' || 'http://localhost:3000',
+    host: '${WEBPUSH_SERVER_HOST}' || 'https://localhost:3100',
     publicKey: '${WEBPUSH_SERVER_PUBLIC_KEY}' || 'BHG0pFCWLmtfofYay5cGDhVkIDH-rJR6ntTH0EK8Kvj0LEh91O0LkufHxKA29ap7lDA-FH11KfEMyP39V8550cM'
   },
   google: {
