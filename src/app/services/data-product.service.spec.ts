@@ -8,7 +8,7 @@ import { TransactionEventType } from '../shared/enums/transaction-event-type';
 
 describe('DataProductService', () => {
   let service: DataProductService;
-  let repuxWeb3ServiceSpy, walletServiceSpy, storageServiceSpy, websocketServiceSpy, transactionServiceSpy;
+  let repuxWeb3ServiceSpy, walletServiceSpy, websocketServiceSpy, transactionServiceSpy;
   const fileHash = 'FILE_HASH';
   const price = new BigNumber(100);
   const daysToDeliver = 1;
@@ -26,7 +26,7 @@ describe('DataProductService', () => {
       'WalletServiceSpy',
       [ 'getWallet' ]
     );
-    storageServiceSpy = jasmine.createSpyObj('StorageService', [ 'getItem', 'setItem' ]);
+
     const wallet = new Wallet(walletAddress, new BigNumber(1));
     walletServiceSpy.getWallet.and.returnValue({
       subscribe(callback) {
@@ -36,7 +36,7 @@ describe('DataProductService', () => {
     websocketServiceSpy = jasmine.createSpyObj('WebsocketService', [ 'onEvent' ]);
 
     transactionServiceSpy = jasmine.createSpyObj('TransactionService', [ 'handleTransaction' ]);
-    transactionServiceSpy.handleTransaction.and.callFake(async (subject, scope, identifier, blocksAction, transaction) => {
+    transactionServiceSpy.handleTransaction.and.callFake(async (subject, _scope, _identifier, _blocksAction, transaction) => {
       try {
         await transaction();
       } catch (error) {
@@ -49,7 +49,6 @@ describe('DataProductService', () => {
     service = new DataProductService(
       <any> repuxWeb3ServiceSpy,
       <any> walletServiceSpy,
-      <any> storageServiceSpy,
       <any> websocketServiceSpy,
       <any> transactionServiceSpy
     );

@@ -4,7 +4,6 @@ import { Subscription } from 'rxjs';
 import { DataProduct } from '../../shared/models/data-product';
 import { RepuxLibService } from '../../services/repux-lib.service';
 import { DataProductService } from '../../services/data-product.service';
-import { TaskManagerService } from '../../services/task-manager.service';
 import Wallet from '../../shared/models/wallet';
 import { WalletService } from '../../services/wallet.service';
 import { PendingFinalisationService } from '../services/pending-finalisation.service';
@@ -40,7 +39,6 @@ export class MarketplaceFinaliseButtonComponent implements OnDestroy, OnInit {
   constructor(
     private repuxLibService: RepuxLibService,
     private dataProductService: DataProductService,
-    private taskManagerService: TaskManagerService,
     private pendingFinalisationService: PendingFinalisationService,
     private walletService: WalletService,
     private tagManager: TagManagerService,
@@ -155,7 +153,7 @@ export class MarketplaceFinaliseButtonComponent implements OnDestroy, OnInit {
           this.displayReencryptionErrorMessage();
           reject();
         })
-        .on(EventType.FINISH, (eventType, result) => {
+        .on(EventType.FINISH, (_eventType, result) => {
           resolve(result);
         });
     });

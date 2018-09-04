@@ -46,6 +46,7 @@ import {
 import { MarketplaceMyFilesComponent } from './marketplace-my-files.component';
 import { MarketplaceListFilterComponent } from './marketplace-list-filter/marketplace-list-filter.component';
 import { MarketplaceAnalyticsDialogComponent } from './marketplace-analytics-dialog/marketplace-analytics-dialog.component';
+// tslint:disable-next-line:max-line-length
 import { MarketplaceProductCreatorAnalyticsDialogComponent } from './marketplace-product-creator-analytics-dialog/marketplace-product-creator-analytics-dialog.component';
 
 @NgModule({

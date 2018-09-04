@@ -1,21 +1,21 @@
 import { Component, OnInit } from '@angular/core';
-import { WebpushNotificationService } from './services/webpush-notification.service';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { filter, map } from 'rxjs/operators';
 import { Observable, combineLatest } from 'rxjs';
 import { environment } from '../environments/environment';
 import { WalletService } from './services/wallet.service';
-import { ActivatedRoute, Router } from '@angular/router';
-import { OverlayContainer } from '@angular/cdk/overlay';
+import { ActivatedRoute } from '@angular/router';
 import { TagManagerService } from './shared/services/tag-manager.service';
+// tslint:disable-next-line:max-line-length
 import { MarketplaceProductCreatorDialogComponent } from './marketplace/marketplace-product-creator-dialog/marketplace-product-creator-dialog.component';
-import { MatDialog, MatDialogRef } from '@angular/material';
+import { MatDialog } from '@angular/material';
 import { UnpublishedProductsService } from './marketplace/services/unpublished-products.service';
 import { PendingFinalisationService } from './marketplace/services/pending-finalisation.service';
 import Wallet from './shared/models/wallet';
 import { AwaitingFinalisationService } from './marketplace/services/awaiting-finalisation.service';
 import { MarketplaceAnalyticsDialogComponent } from './marketplace/marketplace-analytics-dialog/marketplace-analytics-dialog.component';
 import { OAuthState } from './shared/enums/oauth-state';
+// tslint:disable-next-line:max-line-length
 import { MarketplaceProductCreatorAnalyticsDialogComponent } from './marketplace/marketplace-product-creator-analytics-dialog/marketplace-product-creator-analytics-dialog.component';
 
 @Component({
@@ -48,12 +48,9 @@ export class AppComponent implements OnInit {
   ];
 
   constructor(
-    private router: Router,
     private activatedRoute: ActivatedRoute,
     private breakpointObserver: BreakpointObserver,
-    private webpushNotificationService: WebpushNotificationService,
     private walletService: WalletService,
-    private overlayContainer: OverlayContainer,
     private tagManager: TagManagerService,
     private dialog: MatDialog,
     private unpublishedProductsService: UnpublishedProductsService,
@@ -81,7 +78,7 @@ export class AppComponent implements OnInit {
     });
 
     this.activatedRoute.fragment
-      .pipe(filter(fragment => fragment.includes('access_token')))
+      .pipe(filter(fragment => fragment && fragment.includes('access_token')))
       .subscribe(routeFragment => {
         this.resolveOauthUrl(new URLSearchParams(routeFragment));
     });

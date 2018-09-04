@@ -1,33 +1,28 @@
-import { Injectable, OnDestroy } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { Task } from '../tasks/task';
-import { MarketplaceTaskManagerComponent } from '../marketplace/marketplace-task-manager/marketplace-task-manager.component';
-import { MatDialog, MatDialogRef } from '@angular/material';
 import { WalletService } from './wallet.service';
 import Wallet from '../shared/models/wallet';
 import { BehaviorSubject } from 'rxjs/internal/BehaviorSubject';
 import { Observable } from 'rxjs/internal/Observable';
-import { Subscription } from 'rxjs/internal/Subscription';
 import { FileUploadTask } from '../tasks/file-upload-task';
 import { TaskType } from '../tasks/task-type';
+import { Subject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
-export class TaskManagerService implements OnDestroy {
-  private dialogRef: MatDialogRef<MarketplaceTaskManagerComponent>;
+export class TaskManagerService {
   private wallet: Wallet;
+  private openManagerComponentSubject = new Subject();
   private tasksSubject = new BehaviorSubject<ReadonlyArray<Task>>([]);
   private foregroundTasksSubject = new BehaviorSubject<ReadonlyArray<Task>>([]);
-  private readonly walletSubscription: Subscription;
   private _tasks: Task[] = [];
 
-  constructor(
-    private dialog: MatDialog,
-    private walletService: WalletService) {
+  constructor(private walletService: WalletService) {
     this.addConfirmationPrompt();
-    this.walletSubscription = this.walletService.getWallet().subscribe(wallet => this.onWalletChange(wallet));
-    this.openDialog();
+    this.walletService.getWallet().subscribe(wallet => this.onWalletChange(wallet));
   }
+
 
   get tasks(): ReadonlyArray<Task> {
     return Object.freeze(Object.assign([], this._tasks));
@@ -41,12 +36,20 @@ export class TaskManagerService implements OnDestroy {
     return Object.freeze(Object.assign([], this._tasks.filter(task => task.walletAddress === this.wallet.address)));
   }
 
+  shouldOpenManager(): Observable<{}> {
+    return this.openManagerComponentSubject.asObservable();
+  }
+
+  openManager() {
+    this.openManagerComponentSubject.next();
+  }
+
   addTask(task: Task) {
     task.run(this);
     this._tasks.push(task);
     this.tasksSubject.next(this.tasks);
     this.foregroundTasksSubject.next(this.foregroundTasks);
-    this.dialogRef.componentInstance.openDialog();
+    this.openManager();
   }
 
   removeTask(task: Task) {
@@ -63,26 +66,6 @@ export class TaskManagerService implements OnDestroy {
     this.foregroundTasksSubject.next(this.foregroundTasks);
   }
 
-  openDialog() {
-    this.dialogRef = this.dialog.open(MarketplaceTaskManagerComponent, {
-      position: {
-        left: '20px',
-        bottom: '20px'
-      },
-      hasBackdrop: false,
-      disableClose: true,
-      panelClass: 'transparent-modal'
-    });
-
-    this.dialogRef.componentInstance.setTaskManagerService(this);
-    this.tasksSubject.next(this.tasks);
-    this.foregroundTasksSubject.next(this.foregroundTasks);
-
-    if (!this.foregroundTasks.length) {
-      this.dialogRef.componentInstance.closeDialog();
-    }
-  }
-
   hasUnfinishedTasks(): boolean {
     return this._tasks.filter(task => !task.finished).length > 0;
   }
@@ -93,12 +76,6 @@ export class TaskManagerService implements OnDestroy {
 
   getForegroundTasks(): Observable<ReadonlyArray<Task>> {
     return this.foregroundTasksSubject.asObservable();
-  }
-
-  ngOnDestroy() {
-    if (this.walletSubscription) {
-      this.walletSubscription.unsubscribe();
-    }
   }
 
   private onWalletChange(wallet: Wallet) {

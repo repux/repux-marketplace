@@ -1,8 +1,6 @@
 import { Injectable, OnDestroy } from '@angular/core';
 import { StorageService } from '../../services/storage.service';
 import { DataProduct } from '../../shared/models/data-product';
-import { TaskManagerService } from '../../services/task-manager.service';
-import { FileUploadTask } from '../../tasks/file-upload-task';
 import { BehaviorSubject } from 'rxjs/internal/BehaviorSubject';
 import { Observable } from 'rxjs/internal/Observable';
 import { WalletService } from '../../services/wallet.service';
@@ -20,7 +18,6 @@ export class UnpublishedProductsService implements OnDestroy {
   private walletSubscription: Subscription;
 
   constructor(
-    private taskManagerService: TaskManagerService,
     private storageService: StorageService,
     private walletService: WalletService) {
     this.walletSubscription = this.walletService.getWallet().subscribe(wallet => this.onWalletChange(wallet));

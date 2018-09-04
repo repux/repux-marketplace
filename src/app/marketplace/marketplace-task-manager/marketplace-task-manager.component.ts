@@ -1,4 +1,4 @@
-import { Component, OnDestroy } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs/internal/Subscription';
 import { Task } from '../../tasks/task';
 import { TaskError } from '../../tasks/task-error';
@@ -9,21 +9,33 @@ import { TaskManagerService } from '../../services/task-manager.service';
   templateUrl: './marketplace-task-manager.component.html',
   styleUrls: [ './marketplace-task-manager.component.scss' ]
 })
-export class MarketplaceTaskManagerComponent implements OnDestroy {
+export class MarketplaceTaskManagerComponent implements OnInit, OnDestroy {
   tasks: ReadonlyArray<Task> = [];
-
   taskError = TaskError;
-  opened = true;
+  opened = false;
 
-  private tasksSubscription: Subscription;
-  private _taskManagerService: TaskManagerService;
+  private subscriptions: Subscription[] = [];
 
-  get taskManagerService(): TaskManagerService {
-    return this._taskManagerService;
+  constructor(private taskManagerService: TaskManagerService) {
   }
 
-  get pendingTasks(): Task[] {
-    return this.tasks.filter(task => !task.finished);
+  ngOnInit() {
+    this.subscriptions.push(
+      this.taskManagerService.getForegroundTasks().subscribe(tasks => {
+        this.tasks = tasks;
+      })
+    );
+
+    this.subscriptions.push(
+      this.taskManagerService.shouldOpenManager().subscribe(() => this.openDialog())
+    );
+  }
+
+  ngOnDestroy() {
+    if (this.subscriptions.length) {
+      this.subscriptions.forEach(subscription => subscription.unsubscribe());
+      this.subscriptions = [];
+    }
   }
 
   closeDialog() {
@@ -34,26 +46,11 @@ export class MarketplaceTaskManagerComponent implements OnDestroy {
     this.opened = true;
   }
 
-  setTaskManagerService(taskManagerService: TaskManagerService) {
-    this._taskManagerService = taskManagerService;
-
-    this.unsubscribeTasks();
-    this.tasksSubscription = this.taskManagerService.getForegroundTasks().subscribe(tasks => {
-      this.tasks = tasks;
-    });
-  }
-
-  ngOnDestroy() {
-    this.unsubscribeTasks();
+  get pendingTasks(): Task[] {
+    return this.tasks.filter(task => !task.finished);
   }
 
   removeTask(task: Task) {
-    this._taskManagerService.removeTask(task);
-  }
-
-  private unsubscribeTasks() {
-    if (this.tasksSubscription) {
-      this.tasksSubscription.unsubscribe();
-    }
+    this.taskManagerService.removeTask(task);
   }
 }

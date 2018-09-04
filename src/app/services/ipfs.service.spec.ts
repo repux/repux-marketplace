@@ -1,7 +1,6 @@
 import { IpfsService } from './ipfs.service';
 import { environment } from '../../environments/environment';
 import { IpfsFile, IpfsFileContent } from 'ipfs-api';
-import { BlobDownloader } from '../shared/utils/blob-downloader';
 import { Buffer } from 'buffer';
 
 describe('IpfsService', () => {

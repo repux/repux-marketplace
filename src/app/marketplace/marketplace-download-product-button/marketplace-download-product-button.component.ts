@@ -92,7 +92,6 @@ export class MarketplaceDownloadProductButtonComponent implements OnDestroy, OnI
     const fileDownloadTask = new FileDownloadTask(
       this._wallet.address,
       this.dataProduct.address,
-      this._wallet.address,
       metaHash,
       privateKey,
       this.dataProduct.name,

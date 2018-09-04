@@ -25,7 +25,7 @@ const web3Mock = {
 const repuxWeb3ApiMock = {
   getDefaultAccount() {
     return new Promise(resolve => {
-      web3Mock.eth.getAccounts((error, accounts) => {
+      web3Mock.eth.getAccounts((_error, accounts) => {
         resolve(accounts);
       });
     });

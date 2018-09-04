@@ -90,26 +90,6 @@ describe('DataProductListService', () => {
       const fundsToWithdraw = '0';
       const price = '0';
 
-      const expectedDataProducts = [ new DataProduct().deserialize({
-        address: '1',
-        price: new BigNumber(price),
-        lastUpdate: new Date(lastUpdateTimestamp),
-        lastUpdateTimestamp,
-        fundsToWithdraw: new BigNumber(fundsToWithdraw),
-      }), new DataProduct().deserialize({
-        address: '2',
-        price: new BigNumber(price),
-        lastUpdate: new Date(lastUpdateTimestamp),
-        lastUpdateTimestamp,
-        fundsToWithdraw: new BigNumber(fundsToWithdraw),
-      }) ];
-
-      const expectedResult = {
-        total: 2,
-        max_score: 2,
-        hits: expectedDataProducts
-      };
-
       httpSpy.post.and.returnValue(from(Promise.resolve({
         hits: {
           total: 2,

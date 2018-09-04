@@ -1,4 +1,3 @@
-import { MatDialog } from '@angular/material';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { MarketplaceBrowseComponent } from './marketplace-browse.component';
@@ -27,7 +26,7 @@ class MarketplaceActionButtonsStubComponent {
 }
 
 @Component({ selector: 'app-marketplace-list-filter', template: '' })
-class MarketplaceListFilerStub {
+class MarketplaceListFilerStubComponent {
   @Input() isOpened: boolean;
   @Input() categoryOptions: CategoryOption[];
   @Input() sortingOptions: SortingOption[];
@@ -45,11 +44,9 @@ describe('MarketplaceBrowseComponent', () => {
 
   let component: MarketplaceBrowseComponent;
   let fixture: ComponentFixture<MarketplaceBrowseComponent>;
-  let matDialog;
   let dataProductListServiceSpy, repuxWeb3ServiceSpy, ipfsServiceSpy, projectCategoryServiceStub;
 
   beforeEach(async () => {
-    matDialog = jasmine.createSpyObj('MatDialog', [ 'open' ]);
     dataProductListServiceSpy = jasmine.createSpyObj('DataProductListService', [ 'getDataProducts', 'getBlockchainStateForDataProducts' ]);
     dataProductListServiceSpy.getDataProducts.and.callFake(() => {
       const response = new EsResponse();
@@ -67,7 +64,7 @@ describe('MarketplaceBrowseComponent', () => {
       declarations: [
         MarketplaceBrowseComponent,
         MarketplaceActionButtonsStubComponent,
-        MarketplaceListFilerStub,
+        MarketplaceListFilerStubComponent,
         FileSizePipe,
         EulaTypePipe,
         CurrencyRepuxPipe
@@ -113,5 +110,4 @@ describe('MarketplaceBrowseComponent', () => {
     await component.ngOnInit();
     expect(component.categoriesList).toEqual(categoriesList);
   });
-
 });

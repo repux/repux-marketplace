@@ -45,7 +45,7 @@ export class NotificationsListComponent implements OnInit {
       .pipe(
         map(result => {
           this.loading = false;
-          return result.reduce((acc, current) => acc + current.length, 0)
+          return result.reduce((acc, current) => acc + current.length, 0);
         })
       );
   }

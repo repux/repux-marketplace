@@ -9,9 +9,8 @@ import { SharedModule } from './shared/shared.module';
 import { MaterialModule } from './material.module';
 import { MarketplaceModule } from './marketplace/marketplace.module';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
-import {
-  MarketplaceProductCreatorDialogComponent
-} from './marketplace/marketplace-product-creator-dialog/marketplace-product-creator-dialog.component';
+// tslint:disable-next-line:max-line-length
+import { MarketplaceProductCreatorDialogComponent } from './marketplace/marketplace-product-creator-dialog/marketplace-product-creator-dialog.component';
 import { MatDialog } from '@angular/material';
 import { NotificationsListComponent } from './notifications-list/notifications-list.component';
 import { PendingFinalisationService } from './marketplace/services/pending-finalisation.service';

@@ -5,18 +5,17 @@ import BigNumber from 'bignumber.js';
 
 describe('UnpublishedProductsService', () => {
   let service: UnpublishedProductsService;
-  let taskManagerServiceSpy, storageServiceSpy, walletServiceSpy;
+  let storageServiceSpy, walletServiceSpy;
   const sellerMetaHash = 'SELLER_META_HASH';
   const wallet = new Wallet('0x00', new BigNumber(1));
 
   beforeEach(() => {
-    taskManagerServiceSpy = jasmine.createSpyObj('TaskManagerService', [ 'removeTask' ]);
     storageServiceSpy = jasmine.createSpyObj('StorageService', [ 'getItem', 'setItem' ]);
     walletServiceSpy = jasmine.createSpyObj('WalletService', [ 'getWallet' ]);
     storageServiceSpy.getItem.and.returnValue(null);
     walletServiceSpy.getWallet.and.returnValue(from(Promise.resolve(wallet)));
 
-    service = new UnpublishedProductsService(<any> taskManagerServiceSpy, <any> storageServiceSpy, <any> walletServiceSpy);
+    service = new UnpublishedProductsService(<any> storageServiceSpy, <any> walletServiceSpy);
   });
 
   describe('#onWalletChange()', () => {
@@ -71,10 +70,6 @@ describe('UnpublishedProductsService', () => {
 
   describe('#removeProduct()', () => {
     it('should remove product from config', () => {
-      const task = <any> {
-        sellerMetaHash
-      };
-      taskManagerServiceSpy[ 'tasks' ] = [ task ];
       const product = <any> {
         sellerMetaHash
       };

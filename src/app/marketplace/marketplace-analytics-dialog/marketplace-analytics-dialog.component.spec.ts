@@ -1,6 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MarketplaceAnalyticsDialogComponent } from './marketplace-analytics-dialog.component';
-import { KeysPasswordDialogComponent } from '../../key-store/keys-password-dialog/keys-password-dialog.component';
 import { MaterialModule } from '../../material.module';
 import { MatDialogRef } from '@angular/material';
 

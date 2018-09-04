@@ -1,9 +1,8 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { MarketplaceProductCreatorDialogComponent } from './marketplace-product-creator-dialog.component';
-import { MatDialog, MatDialogRef } from '@angular/material';
+import { MatDialogRef } from '@angular/material';
 import { TaskManagerService } from '../../services/task-manager.service';
 import { RepuxLibService } from '../../services/repux-lib.service';
-import { DataProductService } from '../../services/data-product.service';
 import { FormBuilder, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
@@ -15,7 +14,6 @@ import {
 } from '../marketplace-product-category-selector/marketplace-product-category-selector.component';
 import { TagManagerService } from '../../shared/services/tag-manager.service';
 import { IpfsService } from '../../services/ipfs.service';
-import { UnpublishedProductsService } from '../services/unpublished-products.service';
 import { MarketplaceEulaSelectorComponent } from '../marketplace-eula-selector/marketplace-eula-selector.component';
 import { from } from 'rxjs';
 import Wallet from '../../shared/models/wallet';
@@ -26,7 +24,7 @@ import { KeyStoreDialogService } from '../../key-store/key-store-dialog.service'
 import BigNumber from 'bignumber.js';
 
 describe('MarketplaceProductCreatorDialogComponent', () => {
-  let tagManagerServiceSpy, repuxLibServiceSpy, dataProductServiceSpy, taskManagerServiceSpy, matDialogSpy, keyStoreDialogServiceSpy,
+  let tagManagerServiceSpy, repuxLibServiceSpy, taskManagerServiceSpy, keyStoreDialogServiceSpy,
     matDialogRefSpy, unpublishedProductsServiceSpy, ipfsServiceSpy, walletServiceSpy, transactionServiceSpy, settingsServiceSpy;
   let formBuilder: FormBuilder;
   let component: MarketplaceProductCreatorDialogComponent;
@@ -42,14 +40,12 @@ describe('MarketplaceProductCreatorDialogComponent', () => {
       createFileUploader: jasmine.createSpy()
     });
 
-    dataProductServiceSpy = jasmine.createSpyObj('DataProductService', [ 'publishDataProduct' ]);
     taskManagerServiceSpy = jasmine.createSpyObj('TaskManagerService', [ 'addTask' ]);
     unpublishedProductsServiceSpy = jasmine.createSpyObj('UnpublishedProductsService', [ 'addProduct', 'removeProduct' ]);
     ipfsServiceSpy = jasmine.createSpyObj('IpfsService', [ 'uploadFile' ]);
     walletServiceSpy = jasmine.createSpyObj('WalletService', [ 'getWallet' ]);
     walletServiceSpy.getWallet.and.returnValue(from(Promise.resolve(wallet)));
     matDialogRefSpy = jasmine.createSpyObj('MatDialogRef', [ 'close', 'afterClosed' ]);
-    matDialogSpy = jasmine.createSpyObj('MatDialog', [ 'open' ]);
     transactionServiceSpy = jasmine.createSpyObj('TransactionServiceSpy', [ 'getTransactions' ]);
     transactionServiceSpy.getTransactions.and.returnValue({
       subscribe() {
@@ -82,7 +78,6 @@ describe('MarketplaceProductCreatorDialogComponent', () => {
         { provide: MatDialogRef, useValue: matDialogRefSpy },
         { provide: RepuxLibService, useValue: repuxLibServiceSpy },
         { provide: TaskManagerService, useValue: taskManagerServiceSpy },
-        { provide: DataProductService, useValue: dataProductServiceSpy },
         { provide: IpfsService, useValue: ipfsServiceSpy },
         { provide: TransactionService, useValue: transactionServiceSpy },
         { provide: SettingsService, useValue: settingsServiceSpy },
@@ -103,14 +98,12 @@ describe('MarketplaceProductCreatorDialogComponent', () => {
         tagManagerServiceSpy,
         formBuilder,
         repuxLibServiceSpy,
-        dataProductServiceSpy,
         taskManagerServiceSpy,
         unpublishedProductsServiceSpy,
         ipfsServiceSpy,
         walletServiceSpy,
         settingsServiceSpy,
         keyStoreDialogServiceSpy,
-        matDialogSpy,
         matDialogRefSpy,
         transactionServiceSpy
       );

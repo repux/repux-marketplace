@@ -13,6 +13,7 @@ import { Transaction, TransactionService } from '../../shared/services/transacti
 import { BlockchainTransactionScope } from '../../shared/enums/blockchain-transaction-scope';
 import { ActionButtonType } from '../../shared/enums/action-button-type';
 import { CommonDialogService } from '../../shared/services/common-dialog.service';
+// tslint:disable-next-line:max-line-length
 import { MarketplaceBeforeBuyConfirmationDialogComponent } from '../marketplace-before-buy-confirmation-dialog/marketplace-before-buy-confirmation-dialog.component';
 import { KeyStoreDialogService } from '../../key-store/key-store-dialog.service';
 import { FileBuyTask } from '../../tasks/file-buy-task';

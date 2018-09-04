@@ -5,7 +5,6 @@ import { DataProduct, DataProductOrder, DataProductUpdateAction, RepuxWeb3Api } 
 import { filter, map } from 'rxjs/internal/operators';
 import { WalletService } from './wallet.service';
 import Wallet from '../shared/models/wallet';
-import { StorageService } from './storage.service';
 import { Subscription } from 'rxjs/internal/Subscription';
 import BigNumber from 'bignumber.js';
 import { WebsocketEvent, WebsocketService } from './websocket.service';
@@ -26,7 +25,6 @@ export class DataProductService implements OnDestroy {
   constructor(
     private repuxWeb3Service: RepuxWeb3Service,
     private walletService: WalletService,
-    private storageService: StorageService,
     private websocketService: WebsocketService,
     private transactionService: TransactionService
   ) {
@@ -47,18 +45,6 @@ export class DataProductService implements OnDestroy {
 
   async getOrderData(dataProductAddress: string, buyerAddress: string): Promise<DataProductOrder> {
     return (await this.api).getDataProductOrder(dataProductAddress, buyerAddress);
-  }
-
-  async getBoughtDataProducts(): Promise<string[]> {
-    return (await this.api).getBoughtDataProducts();
-  }
-
-  async getBoughtAndFinalisedDataProducts(): Promise<string[]> {
-    return (await this.api).getBoughtAndFinalisedDataProducts();
-  }
-
-  async getCreatedDataProducts(): Promise<string[]> {
-    return (await this.api).getCreatedDataProducts();
   }
 
   async getAllDataProductOrders(dataProductAddress: string): Promise<DataProductOrder[]> {

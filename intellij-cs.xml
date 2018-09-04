@@ -37,5 +37,8 @@
   </codeStyleSettings>
   <codeStyleSettings language="TypeScript">
     <option name="SPACE_WITHIN_BRACKETS" value="true" />
+    <indentOptions>
+      <option name="INDENT_SIZE" value="2" />
+    </indentOptions>
   </codeStyleSettings>
 </code_scheme>

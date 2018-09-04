@@ -32,9 +32,12 @@ export class SettingsIndexComponent implements OnInit, OnDestroy {
     public settingsService: SettingsService
   ) {
     this.hasKeys = this.keyStoreService.hasKeys();
-    router.events.subscribe(s => {
+  }
+
+  ngOnInit(): void {
+    this.router.events.subscribe(s => {
       if (s instanceof NavigationEnd) {
-        const tree = router.parseUrl(router.url);
+        const tree = this.router.parseUrl(this.router.url);
         if (tree.fragment) {
           const element = document.querySelector('#' + tree.fragment);
           if (element) {
@@ -45,9 +48,7 @@ export class SettingsIndexComponent implements OnInit, OnDestroy {
         }
       }
     });
-  }
 
-  ngOnInit(): void {
     this.wallet$ = this.walletService.getWallet();
     this.balance$ = this.walletService.getBalance();
   }
