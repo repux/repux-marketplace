@@ -19,7 +19,7 @@ export class MarketplaceActionButtonsComponent implements OnDestroy, OnChanges {
 
   @Input() dataProduct: DataProduct;
 
-  blockchainDataProduct?: BlockchainDataProduct;
+  @Input() blockchainDataProduct?: BlockchainDataProduct;
 
   @Input() blockchainDataProductOrder?: BlockchainDataProductOrder;
 
@@ -65,7 +65,7 @@ export class MarketplaceActionButtonsComponent implements OnDestroy, OnChanges {
 
         if (this.dataProduct.blockchainState) {
           this.blockchainDataProduct = this.dataProduct.blockchainState;
-        } else {
+        } else if (!this.blockchainDataProduct) {
           this.blockchainDataProduct = await this._dataProductService.getDataProductData(this.dataProduct.address);
         }
       }

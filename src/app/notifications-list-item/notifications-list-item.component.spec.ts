@@ -7,16 +7,19 @@ import { Component, Input } from '@angular/core';
 import { DataProduct } from '../shared/models/data-product';
 import { IpfsService } from '../services/ipfs.service';
 import { EulaType } from 'repux-lib';
-
+import { ActionButtonType } from '../shared/enums/action-button-type';
+import { DataProduct as BlockchainDataProduct, DataProductOrder as BlockchainDataProductOrder } from 'repux-web3-api';
 
 @Component({ selector: 'app-marketplace-action-buttons', template: '' })
 class MarketplaceActionButtonsStubComponent {
   @Input() dataProduct: DataProduct;
-  @Input() availableActions: string[];
+  @Input() availableActions: ActionButtonType[];
+  @Input() blockchainDataProduct: BlockchainDataProduct;
+  @Input() blockchainDataProductOrder: BlockchainDataProductOrder;
 }
 
 @Component({ selector: 'app-notifications-list-orders', template: '' })
-class NotificationsListOrdersStub {
+class NotificationsListOrdersStubComponent {
   @Input() dataProduct: DataProduct;
   @Input() displayPendingOrders: boolean;
 }
@@ -24,7 +27,7 @@ class NotificationsListOrdersStub {
 describe('NotificationsListItemComponent', () => {
   let component: NotificationsListItemComponent;
   let fixture: ComponentFixture<NotificationsListItemComponent>;
-  let ipfsServiceSpy = jasmine.createSpyObj('IpfsService', [ 'downloadAndSave' ]);
+  const ipfsServiceSpy = jasmine.createSpyObj('IpfsService', [ 'downloadAndSave' ]);
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
@@ -34,7 +37,7 @@ describe('NotificationsListItemComponent', () => {
       ],
       declarations: [
         MarketplaceActionButtonsStubComponent,
-        NotificationsListOrdersStub,
+        NotificationsListOrdersStubComponent,
         NotificationsListItemComponent
       ],
       providers: [
@@ -53,6 +56,7 @@ describe('NotificationsListItemComponent', () => {
       price: '1000000000000000000',
       daysToDeliver: '1',
       fundsToWithdraw: '0',
+      creationTimestamp: 0,
       eula: {
         type: EulaType.OWNER,
         fileName: 'EULA',

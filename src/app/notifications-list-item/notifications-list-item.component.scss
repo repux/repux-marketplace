@@ -2,9 +2,20 @@
 
 .item {
   cursor: pointer;
-  padding: 16px;
-  display: flex;
-  justify-items: baseline;
+
+  &__removed-listing-notification {
+    background: mat-color($app-warn, 100);
+    border-bottom: 1px solid mat-color($app-warn, 200);
+    padding: 10px 16px;
+    color: mat-color($mat-light-theme-foreground, secondary-text);
+    text-align: center;
+  }
+
+  &__body {
+    padding: 16px;
+    display: flex;
+    justify-items: baseline;
+  }
 
   &__icon {
     margin: 16px 16px 0 0;
