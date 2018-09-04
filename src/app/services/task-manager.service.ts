@@ -70,6 +70,7 @@ export class TaskManagerService implements OnDestroy {
         bottom: '20px'
       },
       hasBackdrop: false,
+      disableClose: true,
       panelClass: 'transparent-modal'
     });
 
