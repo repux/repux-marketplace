@@ -1,0 +1,47 @@
+<div *ngIf="columns" class="mat-typography explorer">
+  <section class="explorer__collapsible" *ngFor="let key of columnsKeys;">
+    <h3 class="explorer__collapsible__header"
+        [class.opened]="openedColumns[key]" (click)="toggleColumn(key)">
+      <mat-icon *ngIf="!openedColumns[key]" class="explorer__collapsible__header__icon">add_circle</mat-icon>
+      <mat-icon *ngIf="openedColumns[key]" class="explorer__collapsible__header__icon">remove_circle</mat-icon>
+      {{key}}
+    </h3>
+
+    <mat-card [@visibilityChanged]="openedColumns[key]" class="explorer__collapsible__content">
+      <div class="explorer__collapsible__row">
+        <div class="explorer__collapsible__description">Dimensions</div>
+        <div class="explorer__collapsible__values">
+          <mat-checkbox *ngFor="let item of columns[key].DIMENSION"
+                        class="explorer__checkbox"
+                        (change)="changeDimensionSelection($event, item.id)"
+                        [disabled]="isInputDisabled(item.id)"
+                        [checked]="selectedDimensions.includes(item.id)">
+            {{item.id}}<br>
+            {{item.attributes.uiName}}
+          </mat-checkbox>
+          <div class="item__none" *ngIf="!columns[key].DIMENSION.length">
+            None
+          </div>
+        </div>
+      </div>
+      <div class="explorer__collapsible__row">
+        <div class="explorer__collapsible__description">Metrics</div>
+        <div class="explorer__collapsible__values">
+          <mat-checkbox *ngFor="let item of columns[key].METRIC"
+                        class="explorer__checkbox"
+                        (change)="changeMetricSelection($event, item.id)"
+                        [disabled]="isInputDisabled(item.id)"
+                        [checked]="selectedMetrics.includes(item.id)">
+            {{item.id}}<br>
+            {{item.attributes.uiName}}
+          </mat-checkbox>
+          <div class="explorer__item__none" *ngIf="!columns[key].METRIC.length">
+            None
+          </div>
+        </div>
+      </div>
+    </mat-card>
+  </section>
+</div>
+
+<div *ngIf="!columns" class="mat-typography loader">Loading dimensions and metrics...</div>

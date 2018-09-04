@@ -6,10 +6,12 @@ import {
   MarketplaceProductCreatorAnalyticsDialogComponent, MarketplaceProductCreatorAnalyticsDialogStatus
 } from './marketplace-product-creator-analytics-dialog.component';
 import { HttpClient } from '@angular/common/http';
-import { Component, Input } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { MatDialogRef } from '@angular/material';
 import { of } from 'rxjs';
+// tslint:disable-next-line:max-line-length
+import { DimensionsMetricsSelection } from '../marketplace-analytics-dimesions-metrics-explorer/marketplace-analytics-dimensions-metrics-explorer.component';
 
 @Component({ selector: 'app-marketplace-product-creator-dialog', template: '' })
 class MarketplaceProductCreatorDialogStubComponent {
@@ -17,6 +19,13 @@ class MarketplaceProductCreatorDialogStubComponent {
   @Input() title: string;
   @Input() file: File;
   @Input() shortDescription: string;
+}
+
+@Component({ selector: 'app-marketplace-analytics-dimensions-metrics-explorer', template: '' })
+class MarketplaceAnalyticsDimensionsMetricsExplorerStubComponent {
+  @Input() selectedMetrics: string[];
+  @Input() selectedDimensions: string[];
+  @Output() change = new EventEmitter<DimensionsMetricsSelection>();
 }
 
 describe('MarketplaceProductCreatorAnalyticsDialogComponent', () => {
@@ -41,7 +50,8 @@ describe('MarketplaceProductCreatorAnalyticsDialogComponent', () => {
     await TestBed.configureTestingModule({
       declarations: [
         MarketplaceProductCreatorAnalyticsDialogComponent,
-        MarketplaceProductCreatorDialogStubComponent
+        MarketplaceProductCreatorDialogStubComponent,
+        MarketplaceAnalyticsDimensionsMetricsExplorerStubComponent
       ],
       imports: [
         SharedModule,
@@ -98,15 +108,35 @@ describe('MarketplaceProductCreatorAnalyticsDialogComponent', () => {
       };
 
       component.selectedView = analyticsView;
+      component.metrics = [ 'example_metric_1', 'example_metric_2' ];
+      component.dimensions = [ 'example_dimension_1' ];
       httpClientSpy.post.and.returnValue(of(expectedReport));
 
       const generationDate = new Date();
       const report = await component.generateReport(generationDate);
 
-      console.log(JSON.stringify(report));
       expect(report).toEqual(expectedReport);
       expect(component.file).toBeDefined();
       expect(component.status).toBe(MarketplaceProductCreatorAnalyticsDialogStatus.FileUpload);
+      expect(httpClientSpy.post.calls.allArgs()[ 0 ][ 1 ]).toEqual({
+        reportRequests: [ {
+          viewId: analyticsView.id,
+          dateRanges: [
+            {
+              startDate: '30daysAgo',
+              endDate: 'yesterday'
+            }
+          ],
+          metrics: [ {
+            expression: 'example_metric_1'
+          }, {
+            expression: 'example_metric_2'
+          } ],
+          dimensions: [ {
+            name: 'example_dimension_1'
+          } ]
+        } ]
+      });
       expect(component.shortDescription).toBe(`Name: Google Analytics report
 Website: http://example.com
 Generation date: ${ generationDate.getTime() }
@@ -114,8 +144,8 @@ Rows number: 0
 Report parameters:
    startDate: 30daysAgo
    endDate: yesterday
-   metrics: ga:users
-   dimensions: ga:date`);
+   metrics: example_metric_1, example_metric_2
+   dimensions: example_dimension_1`);
     });
   });
 });

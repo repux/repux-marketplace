@@ -10,6 +10,14 @@
                           [required]="true"
                           [formControl]="formGroup.controls['file']"
                           ngDefaultControl></app-file-input>
+          <button mat-icon-button
+                  class="file-download"
+                  matTooltip="Download file"
+                  color="accent"
+                  *ngIf="file"
+                  (click)="downloadFile() && $event.preventDefault()">
+            <mat-icon>get_app</mat-icon>
+          </button>
         </div>
 
         <div class="field-row">
@@ -46,26 +54,29 @@
                                                      [formControl]="formGroup.controls['category']"
                                                      ngDefaultControl></app-marketplace-product-category-selector>
         </div>
-        <mat-form-field class="field-row">
-          <input matInput
-                 #titleInput
-                 [maxlength]="titleMaxLength"
-                 placeholder="Title"
-                 required
-                 formControlName="title">
-          <mat-hint align="end">{{titleInput.value.length}} / {{titleMaxLength}}</mat-hint>
-          <mat-error *ngIf="formGroup.controls['title'].hasError('required')">
-            Title is <strong>required</strong>
-          </mat-error>
-          <mat-error *ngIf="formGroup.controls['title'].hasError('minlength')">
-            Title should contain <strong>at least {{ titleMinLength }} characters</strong>
-          </mat-error>
-          <mat-error *ngIf="formGroup.controls['title'].hasError('maxlength')">
-            Title should contain <strong>at most {{ titleMaxLength }} characters</strong>
-          </mat-error>
-        </mat-form-field>
+        <div class="field-row">
+          <mat-form-field>
+            <input matInput
+                   #titleInput
+                   [maxlength]="titleMaxLength"
+                   placeholder="Title"
+                   required
+                   formControlName="title">
+            <mat-hint align="end">{{titleInput.value.length}} / {{titleMaxLength}}</mat-hint>
+            <mat-error *ngIf="formGroup.controls['title'].hasError('required')">
+              Title is <strong>required</strong>
+            </mat-error>
+            <mat-error *ngIf="formGroup.controls['title'].hasError('minlength')">
+              Title should contain <strong>at least {{ titleMinLength }} characters</strong>
+            </mat-error>
+            <mat-error *ngIf="formGroup.controls['title'].hasError('maxlength')">
+              Title should contain <strong>at most {{ titleMaxLength }} characters</strong>
+            </mat-error>
+          </mat-form-field>
+        </div>
 
-        <mat-form-field class="field-row">
+        <div class="field-row">
+          <mat-form-field>
         <textarea matInput
                   #shortDescriptionInput
                   [maxlength]="shortDescriptionMaxLength"
@@ -73,30 +84,33 @@
                   placeholder="Short description"
                   required
                   [formControl]="formGroup.controls['shortDescription']"></textarea>
-          <mat-hint align="end">{{shortDescriptionInput.value.length}} / {{shortDescriptionMaxLength}}</mat-hint>
-          <mat-error *ngIf="formGroup.controls['shortDescription'].hasError('required')">
-            Short description is <strong>required</strong>
-          </mat-error>
-          <mat-error *ngIf="formGroup.controls['shortDescription'].hasError('minlength')">
-            Short description should contain <strong>at least {{ shortDescriptionMinLength }} characters</strong>
-          </mat-error>
-          <mat-error *ngIf="formGroup.controls['shortDescription'].hasError('maxlength')">
-            Short description should contain <strong>at most {{ shortDescriptionMaxLength }} characters</strong>
-          </mat-error>
-        </mat-form-field>
+            <mat-hint align="end">{{shortDescriptionInput.value.length}} / {{shortDescriptionMaxLength}}</mat-hint>
+            <mat-error *ngIf="formGroup.controls['shortDescription'].hasError('required')">
+              Short description is <strong>required</strong>
+            </mat-error>
+            <mat-error *ngIf="formGroup.controls['shortDescription'].hasError('minlength')">
+              Short description should contain <strong>at least {{ shortDescriptionMinLength }} characters</strong>
+            </mat-error>
+            <mat-error *ngIf="formGroup.controls['shortDescription'].hasError('maxlength')">
+              Short description should contain <strong>at most {{ shortDescriptionMaxLength }} characters</strong>
+            </mat-error>
+          </mat-form-field>
+        </div>
 
-        <mat-form-field class="field-row">
-        <textarea matInput
-                  #longDescriptionInput
-                  [maxlength]="longDescriptionMaxLength"
-                  mat-autosize="true"
-                  placeholder="Full description"
-                  [formControl]="formGroup.controls['fullDescription']"></textarea>
-          <mat-hint align="end">{{longDescriptionInput.value.length}} / {{longDescriptionMaxLength}}</mat-hint>
-          <mat-error *ngIf="formGroup.controls['fullDescription'].hasError('maxlength')">
-            Long description should contain <strong>at most {{ longDescriptionMaxLength }} characters</strong>
-          </mat-error>
-        </mat-form-field>
+        <div class="field-row">
+          <mat-form-field>
+          <textarea matInput
+                    #longDescriptionInput
+                    [maxlength]="longDescriptionMaxLength"
+                    mat-autosize="true"
+                    placeholder="Full description"
+                    [formControl]="formGroup.controls['fullDescription']"></textarea>
+            <mat-hint align="end">{{longDescriptionInput.value.length}} / {{longDescriptionMaxLength}}</mat-hint>
+            <mat-error *ngIf="formGroup.controls['fullDescription'].hasError('maxlength')">
+              Long description should contain <strong>at most {{ longDescriptionMaxLength }} characters</strong>
+            </mat-error>
+          </mat-form-field>
+        </div>
       </div>
 
       <div class="col">

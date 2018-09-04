@@ -13,6 +13,17 @@
           </mat-select>
         </mat-form-field>
 
+        <p>Select dimensions and metrics which should be included in report.</p>
+
+        <div class="report-error" *ngIf="reportError">
+          {{reportError.message}}
+        </div>
+
+        <app-marketplace-analytics-dimensions-metrics-explorer
+          [selectedMetrics]="metrics"
+          [selectedDimensions]="dimensions"
+          (change)="onDimensionsMetricsChange($event)"></app-marketplace-analytics-dimensions-metrics-explorer>
+
       </mat-dialog-content>
       <mat-dialog-actions>
         <button mat-stroked-button color="primary" type="button" (click)="closeDialog()">Cancel</button>

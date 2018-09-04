@@ -5,7 +5,17 @@ form {
 }
 
 .field-row {
-  display: block;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  > :first-child {
+    flex: 1;
+  }
+}
+
+.file-download {
+  margin-right: -10px;
 }
 
 .mat-subheading-2 {

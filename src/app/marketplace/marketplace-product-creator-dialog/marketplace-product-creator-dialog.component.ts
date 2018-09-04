@@ -21,6 +21,7 @@ import Wallet from '../../shared/models/wallet';
 import { TransactionService } from '../../shared/services/transaction.service';
 import { SettingsService } from '../../settings/services/settings.service';
 import { KeyStoreDialogService } from '../../key-store/key-store-dialog.service';
+import { BlobDownloader } from '../../shared/utils/blob-downloader';
 
 @Component({
   selector: 'app-marketplace-product-creator-dialog',
@@ -151,6 +152,11 @@ export class MarketplaceProductCreatorDialogComponent implements OnInit, OnDestr
 
     this.taskManagerService.addTask(fileUploadTask);
     this.dialogRef.close(true);
+  }
+
+  downloadFile(): Promise<void> {
+    const downloader = new BlobDownloader();
+    return downloader.downloadBlob(URL.createObjectURL(this.file), this.file.name);
   }
 
   closeDialog() {
