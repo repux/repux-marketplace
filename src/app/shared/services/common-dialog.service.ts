@@ -71,6 +71,16 @@ export class CommonDialogService {
         );
         return;
       }
+
+      if (event.type === TransactionEventType.Dropped) {
+        closeCurrentDialog();
+        currentDialogRef = this.alert(
+          'Your transaction has been dropped and we cannot track it now.<br>' +
+          'It may be related to the increase of the gas price in MetaMask extension.',
+          'Transaction dropped'
+        );
+        return;
+      }
     });
 
     return observable;

@@ -1,4 +1,24 @@
+@import '../../../theme';
+
 .action-buttons {
   display: flex;
   justify-content: flex-end;
+}
+
+.dropped-transaction {
+  $root: &;
+
+  &__hover {
+    display: none;
+  }
+
+  &:hover {
+    #{$root}__hover {
+      display: inline;
+    }
+
+    #{$root}__normal {
+      display: none;
+    }
+  }
 }

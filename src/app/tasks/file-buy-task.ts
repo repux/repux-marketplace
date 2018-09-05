@@ -83,8 +83,15 @@ export class FileBuyTask implements Task {
     return this._dataProduct.address;
   }
 
-  run(taskManagerService: TaskManagerService): void {
+  async run(taskManagerService: TaskManagerService): Promise<void> {
     this._taskManagerService = taskManagerService;
+
+    const isApproved = await this.dataProductService.isTokensTransferForDataProductPurchaseApproved(this._dataProduct.address);
+
+    if (isApproved) {
+      this.onApproveTransactionFinish(<TransactionReceipt> { status: TransactionStatus.SUCCESSFUL });
+      return;
+    }
 
     this.commonDialogService.transaction(
       () => this.dataProductService.approveTokensTransferForDataProductPurchase(this._dataProduct.address)
@@ -94,7 +101,8 @@ export class FileBuyTask implements Task {
         return;
       }
 
-      if (transactionEvent.type === TransactionEventType.Rejected) {
+      if (transactionEvent.type === TransactionEventType.Rejected ||
+        transactionEvent.type === TransactionEventType.Dropped) {
         this._errors.push(transactionEvent.error.message);
         this.cancel();
       }
@@ -174,7 +182,8 @@ export class FileBuyTask implements Task {
           return;
         }
 
-        if (transactionEvent.type === TransactionEventType.Rejected) {
+        if (transactionEvent.type === TransactionEventType.Rejected ||
+          transactionEvent.type === TransactionEventType.Dropped) {
           this._errors.push(transactionEvent.error.message);
           this.cancel();
         }

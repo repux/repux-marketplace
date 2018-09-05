@@ -1,4 +1,13 @@
 <div *ngIf="!loading" class="action-buttons">
+  <button *ngIf="droppedTransaction"
+          color="warn"
+          mat-icon-button class="dropped-transaction"
+          (click)="removeDroppedTransactions()"
+          matTooltip="At least one of your transactions on this product is dropped and we cannot track it now. It may be related to the increase of the gas price in MetaMask extension. You can remove this error by clicking on it.">
+    <mat-icon class="dropped-transaction__normal">error_outline</mat-icon>
+    <mat-icon class="dropped-transaction__hover">close</mat-icon>
+  </button>
+
   <app-marketplace-buy-product-button
     *ngIf="availableActions.includes(actionButtonType.Buy)"
     [dataProduct]="dataProduct"

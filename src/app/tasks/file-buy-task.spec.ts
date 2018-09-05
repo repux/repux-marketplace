@@ -33,8 +33,9 @@ describe('FileBuyTask', () => {
     repuxLibServiceSpy = jasmine.createSpyObj('RepuxLibService', [ 'getInstance' ]);
 
     dataProductServiceSpy = jasmine.createSpyObj('DataProductService',
-      [ 'purchaseDataProduct', 'approveTokensTransferForDataProductPurchase' ]
+      [ 'purchaseDataProduct', 'approveTokensTransferForDataProductPurchase', 'isTokensTransferForDataProductPurchaseApproved' ]
     );
+    dataProductServiceSpy.isTokensTransferForDataProductPurchaseApproved.and.returnValue(Promise.resolve(false));
     dataProductServiceSpy.approveTokensTransferForDataProductPurchase.and.returnValue({
       subscribe() {
       }
@@ -68,11 +69,21 @@ describe('FileBuyTask', () => {
   });
 
   describe('#run()', () => {
-    it('should call dataProductService.approveTokensTransferForDataProductPurchase using commonDialogService.transaction', () => {
-      fileBuyTask.run(taskManagerServiceSpy);
+    it('should call dataProductService.approveTokensTransferForDataProductPurchase using commonDialogService.transaction', async () => {
+      await fileBuyTask.run(taskManagerServiceSpy);
 
       expect(dataProductServiceSpy.approveTokensTransferForDataProductPurchase.calls.count()).toBe(1);
       expect(dataProductServiceSpy.approveTokensTransferForDataProductPurchase.calls.allArgs()[ 0 ]).toEqual([ dataProduct.address ]);
+    });
+
+    it('should call onApproveTransactionFinish if isTokensTransferForDataProductPurchaseApproved return true', async () => {
+      const onApproveTransactionFinish = jasmine.createSpy();
+      dataProductServiceSpy.isTokensTransferForDataProductPurchaseApproved.and.returnValue(Promise.resolve(true));
+      fileBuyTask.onApproveTransactionFinish = onApproveTransactionFinish;
+
+      await fileBuyTask.run(taskManagerServiceSpy);
+
+      expect(onApproveTransactionFinish.calls.count()).toBe(1);
     });
   });
 
