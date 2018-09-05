@@ -69,12 +69,4 @@ describe('MarketplaceTaskManagerComponent', () => {
       expect(taskManagerService.removeTask.calls.count()).toBe(1);
     });
   });
-
-  describe('#ngOnDestroy()', () => {
-    it('should unsubscribe all subscriptions', () => {
-      component.ngOnInit();
-      // component.ngOnDestroy();
-      // expect(unsubscribe.calls.count()).toBe(1);
-    });
-  });
 });

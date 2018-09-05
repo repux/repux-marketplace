@@ -32,10 +32,8 @@ export class MarketplaceTaskManagerComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    if (this.subscriptions.length) {
-      this.subscriptions.forEach(subscription => subscription.unsubscribe());
-      this.subscriptions = [];
-    }
+    this.subscriptions.forEach(subscription => subscription.unsubscribe());
+    this.subscriptions = [];
   }
 
   closeDialog() {
