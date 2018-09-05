@@ -64,29 +64,29 @@ describe('MarketplaceListFilterComponent', () => {
 
       const categories = component.categoryOptions;
 
-      component.toggleCategory(categories[0]);
-      expect(component.categoryChange.emit).toHaveBeenCalledWith(['category1']);
-      component.toggleCategory(categories[5]);
-      expect(component.categoryChange.emit).toHaveBeenCalledWith(['category1', 'category6']);
-      component.toggleCategory(categories[5]);
-      expect(component.categoryChange.emit).toHaveBeenCalledWith(['category1']);
-      component.toggleCategory(categories[0]);
+      component.toggleCategory(categories[ 0 ]);
+      expect(component.categoryChange.emit).toHaveBeenCalledWith([ 'category1' ]);
+      component.toggleCategory(categories[ 5 ]);
+      expect(component.categoryChange.emit).toHaveBeenCalledWith([ 'category1', 'category6' ]);
+      component.toggleCategory(categories[ 5 ]);
+      expect(component.categoryChange.emit).toHaveBeenCalledWith([ 'category1' ]);
+      component.toggleCategory(categories[ 0 ]);
       expect(component.categoryChange.emit).toHaveBeenCalledWith([]);
-    })
+    });
   });
 
   describe('#chooseSortingOption()', () => {
     it('should emit an event with single selection', () => {
       const options = component.sortingOptions;
-      component.chooseSortingOption(options[0]);
-      expect(component.sortingOptionChange.emit).toHaveBeenCalledWith(options[0].sortBy);
-    })
+      component.chooseSortingOption(options[ 0 ]);
+      expect(component.sortingOptionChange.emit).toHaveBeenCalledWith(options[ 0 ].sortBy);
+    });
   });
 
   describe('#close()', () => {
     it('should emit an event', () => {
       component.close();
       expect(component.isOpenedChange.emit).toHaveBeenCalledWith(false);
-    })
+    });
   });
 });

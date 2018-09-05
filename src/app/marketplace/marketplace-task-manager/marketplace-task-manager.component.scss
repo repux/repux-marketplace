@@ -1,5 +1,12 @@
 @import '../../../theme.scss';
 
+:host {
+  z-index: 999;
+  position: fixed;
+  left: 40px;
+  bottom: 40px;
+}
+
 mat-dialog-content {
   padding: 0;
   margin: -24px;

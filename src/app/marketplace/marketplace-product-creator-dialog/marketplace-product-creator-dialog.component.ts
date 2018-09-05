@@ -6,8 +6,7 @@ import { FileUploadTask } from '../../tasks/file-upload-task';
 import { RepuxLibService } from '../../services/repux-lib.service';
 import { FileInputComponent } from '../../shared/components/file-input/file-input.component';
 import { TaskManagerService } from '../../services/task-manager.service';
-import { MatDialog, MatDialogRef } from '@angular/material';
-import { DataProductService } from '../../services/data-product.service';
+import { MatDialogRef } from '@angular/material';
 import { Subscription } from 'rxjs/internal/Subscription';
 import { UnpublishedProductsService } from '../services/unpublished-products.service';
 import {
@@ -41,7 +40,6 @@ export class MarketplaceProductCreatorDialogComponent implements OnInit, OnDestr
   public shortDescriptionMaxLength = 1023;
   public longDescriptionMaxLength = 10000;
   public maxFileSize: number = environment.ipfs.maxFileSize;
-  public repuxPrecision: number = environment.repux.currency.precision;
   public wallet: Wallet;
   @ViewChild('fileInput') fileInput: FileInputComponent;
   @ViewChild('sampleFileInput') sampleFileInput: FileInputComponent;
@@ -53,7 +51,6 @@ export class MarketplaceProductCreatorDialogComponent implements OnInit, OnDestr
     private tagManager: TagManagerService,
     private formBuilder: FormBuilder,
     private repuxLibService: RepuxLibService,
-    private dataProductService: DataProductService,
     private taskManagerService: TaskManagerService,
     private unpublishedProductsService: UnpublishedProductsService,
     private ipfsService: IpfsService,
@@ -61,7 +58,6 @@ export class MarketplaceProductCreatorDialogComponent implements OnInit, OnDestr
     private settingsService: SettingsService,
     private transactionService: TransactionService,
     private keyStoreDialogService: KeyStoreDialogService,
-    private dialog: MatDialog,
     public dialogRef: MatDialogRef<MarketplaceProductCreatorDialogComponent>) {
     this.walletSubscription = this.walletService.getWallet().subscribe(wallet => this.wallet = wallet);
 
@@ -147,9 +143,7 @@ export class MarketplaceProductCreatorDialogComponent implements OnInit, OnDestr
       this.formGroup.value.eula,
       -1,
       PurchaseType.ONE_TIME_PURCHASE,
-      this.dialog,
       this.repuxLibService,
-      this.dataProductService,
       this.unpublishedProductsService,
       this.ipfsService,
       this.transactionService

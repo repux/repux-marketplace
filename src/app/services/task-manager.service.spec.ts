@@ -1,46 +1,21 @@
 import { TaskManagerService } from './task-manager.service';
-import { TestBed } from '@angular/core/testing';
-import { MarketplaceTaskManagerComponent } from '../marketplace/marketplace-task-manager/marketplace-task-manager.component';
-import { MatDialogModule } from '@angular/material';
 import { from } from 'rxjs';
 import Wallet from '../shared/models/wallet';
 import { TaskType } from '../tasks/task-type';
 import BigNumber from 'bignumber.js';
 
 describe('TaskManagerService', () => {
-  let matDialogSpy: { open: jasmine.Spy },
-    walletServiceSpy: { getWallet: jasmine.Spy };
+  let walletServiceSpy: { getWallet: jasmine.Spy };
   let service: TaskManagerService;
-  let componentInstance;
   const walletAddress = '0x00';
   const wallet = new Wallet(walletAddress, new BigNumber(1));
 
   beforeEach(() => {
     walletServiceSpy = jasmine.createSpyObj('WalletService', [ 'getWallet' ]);
     walletServiceSpy.getWallet.and.returnValue(from(Promise.resolve(wallet)));
-    matDialogSpy = jasmine.createSpyObj('MatDialog', [ 'open' ]);
-    componentInstance = {
-      setTaskManagerService: jasmine.createSpy(),
-      openDialog: jasmine.createSpy(),
-      closeDialog: jasmine.createSpy(),
-      close: jasmine.createSpy()
-    };
-    matDialogSpy.open.and.returnValue({
-      componentInstance
-    });
-
-    service = new TaskManagerService(<any> matDialogSpy, <any> walletServiceSpy);
+    service = new TaskManagerService(<any> walletServiceSpy);
     window.addEventListener = () => {
     };
-
-    TestBed.configureTestingModule({
-      imports: [
-        MatDialogModule
-      ],
-      providers: [
-        { provide: MarketplaceTaskManagerComponent, useValue: {} }
-      ]
-    }).compileComponents();
   });
 
   describe('#get tasks()', () => {
@@ -72,7 +47,7 @@ describe('TaskManagerService', () => {
   });
 
   describe('#addTask()', () => {
-    it('should add task to tasks list, run it and call openDialog method', () => {
+    it('should add task to tasks list, run it and call openManager method', () => {
       service[ 'wallet' ] = wallet;
 
       const task = {
@@ -80,8 +55,10 @@ describe('TaskManagerService', () => {
         finished: true
       };
 
+      spyOn(service, 'openManager');
+
       service.addTask(<any> task);
-      expect(componentInstance.openDialog.calls.count()).toBe(1);
+      expect(service.openManager).toHaveBeenCalled();
       expect(task.run.calls.count()).toBe(1);
       expect(service.tasks.length).toEqual(1);
     });
@@ -94,17 +71,9 @@ describe('TaskManagerService', () => {
         next
       };
 
-      service.openDialog();
+      service.openManager();
       service.onTaskEvent();
-      expect(next.calls.count()).toBe(2);
-    });
-  });
-
-  describe('#openDialog()', () => {
-    it('should call open method on dialog object and setTaskManagerService componentInstance', () => {
-      service.openDialog();
-      expect(componentInstance.setTaskManagerService.calls.count()).toBe(2);
-      expect(matDialogSpy.open.calls.count()).toBe(2);
+      expect(next.calls.count()).toBe(1);
     });
   });
 

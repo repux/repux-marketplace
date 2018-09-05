@@ -6,8 +6,8 @@ import { DataProduct } from '../shared/models/data-product';
 import { Transaction, TransactionService } from '../shared/services/transaction.service';
 import { BlockchainTransactionScope } from '../shared/enums/blockchain-transaction-scope';
 import { ActionButtonType } from '../shared/enums/action-button-type';
-import { Subscription } from 'rxjs';
 import { TransactionReceipt, TransactionStatus } from 'repux-web3-api';
+// tslint:disable-next-line:max-line-length
 import { MarketplacePurchaseConfirmationDialogComponent } from '../marketplace/marketplace-purchase-confirmation-dialog/marketplace-purchase-confirmation-dialog.component';
 import { AwaitingFinalisationService } from '../marketplace/services/awaiting-finalisation.service';
 import { MatDialog } from '@angular/material';
@@ -36,8 +36,6 @@ export class FileBuyTask implements Task {
   private _finished = false;
   private _name: string;
   private _status: string;
-
-  private transactionsSubscription: Subscription;
   private pendingApproveTransaction: Transaction;
   private pendingTransaction: Transaction;
 
@@ -57,7 +55,7 @@ export class FileBuyTask implements Task {
     this._name = `Buying ${this._dataProduct.name}`;
     this._status = STATUS.APPROVING;
 
-    this.transactionsSubscription = this.transactionService.getTransactions()
+    this.transactionService.getTransactions()
       .subscribe(transactions => this.onTransactionsListChange(transactions));
   }
 

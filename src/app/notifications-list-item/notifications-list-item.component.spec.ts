@@ -66,6 +66,7 @@ describe('NotificationsListItemComponent', () => {
 
     fixture = TestBed.createComponent(NotificationsListItemComponent);
     component = fixture.componentInstance;
+    product.creationDate = new Date();
     component.product = product;
     fixture.detectChanges();
   });

@@ -12,8 +12,7 @@ export class UserService {
   private static type = 'user';
   private esService: ElasticSearchService<User>;
 
-  constructor(
-    private http: HttpClient) {
+  constructor(http: HttpClient) {
     this.esService = new ElasticSearchService<User>(http, User);
   }
 

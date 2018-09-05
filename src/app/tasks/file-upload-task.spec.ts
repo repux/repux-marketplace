@@ -2,18 +2,21 @@ import { FileUploadTask, STATUS } from './file-upload-task';
 import BigNumber from 'bignumber.js';
 import { EventType } from 'repux-lib';
 import { EulaSelection } from '../marketplace/marketplace-eula-selector/marketplace-eula-selector.component';
-import { IpfsService } from '../services/ipfs.service';
-import { RepuxLibService } from '../services/repux-lib.service';
-import { DataProductService } from '../services/data-product.service';
-import { UnpublishedProductsService } from '../marketplace/services/unpublished-products.service';
-import { MatDialog } from '@angular/material';
 import { EulaType, PurchaseType } from 'repux-lib';
 import { ActionButtonType } from '../shared/enums/action-button-type';
 
 describe('FileUploadTask()', () => {
-  let fileUploadTask: FileUploadTask, dataProductServiceSpy, repuxLibServiceSpy, fileUploader, fileUploaderUploadSpy,
-    fileUploaderOnSpy, taskManagerServiceSpy, uploaderEventHandlers, fileUploaderTerminateSpy, unpublishedProductsServiceSpy,
-    matDialogSpy, callTransaction, transactionResult, transactionServiceSpy, ipfsServiceSpy;
+  let fileUploadTask: FileUploadTask,
+    repuxLibServiceSpy,
+    fileUploader,
+    fileUploaderUploadSpy,
+    fileUploaderOnSpy,
+    taskManagerServiceSpy,
+    uploaderEventHandlers,
+    fileUploaderTerminateSpy,
+    unpublishedProductsServiceSpy,
+    transactionServiceSpy,
+    ipfsServiceSpy;
   const fileName = 'FILE_NAME';
   const publicKey = 'PUBLIC_KEY';
   const title = 'TITLE';
@@ -54,24 +57,8 @@ describe('FileUploadTask()', () => {
     repuxLibServiceSpy.getInstance.and.returnValue({
       createFileUploader: createFileUploaderSpy
     });
-    dataProductServiceSpy = jasmine.createSpyObj('DataProductService', [ 'publishDataProduct' ]);
     taskManagerServiceSpy = jasmine.createSpyObj('TaskManagerService', [ 'onTaskEvent' ]);
     unpublishedProductsServiceSpy = jasmine.createSpyObj('UnpublishedProductsService', [ 'addProduct', 'removeProduct' ]);
-    callTransaction = jasmine.createSpy();
-    matDialogSpy = jasmine.createSpyObj('MatDialog', [ 'open' ]);
-    transactionResult = true;
-    matDialogSpy.open.and.returnValue({
-      componentInstance: {
-        callTransaction
-      },
-      afterClosed() {
-        return {
-          subscribe(callback) {
-            callback(transactionResult);
-          }
-        };
-      }
-    });
     transactionServiceSpy = jasmine.createSpyObj('TransactionService', [ 'getTransactions' ]);
     transactionServiceSpy.getTransactions.and.returnValue({
       subscribe() {
@@ -97,9 +84,7 @@ describe('FileUploadTask()', () => {
       eulaSelection,
       maxNumberOfDownloads,
       type,
-      matDialogSpy,
       repuxLibServiceSpy,
-      dataProductServiceSpy,
       unpublishedProductsServiceSpy,
       ipfsServiceSpy,
       transactionServiceSpy
@@ -123,7 +108,6 @@ describe('FileUploadTask()', () => {
       expect(fileUploadTask[ '_uploader' ]).toBe(fileUploader);
       expect(fileUploadTask.name).toBe('Uploading ' + fileName);
       expect(fileUploadTask[ '_repuxLibService' ]).toBe(repuxLibServiceSpy);
-      expect(fileUploadTask[ '_dataProductService' ]).toBe(dataProductServiceSpy);
       expect(fileUploadTask[ '_unpublishedProductsService' ]).toBe(unpublishedProductsServiceSpy);
       expect(fileUploadTask[ '_ipfsService' ]).toBe(ipfsServiceSpy);
       expect(fileUploadTask[ 'transactionService' ]).toBe(transactionServiceSpy);

@@ -19,7 +19,7 @@ class MarketplaceActionButtonsStubComponent {
 }
 
 @Component({ selector: 'app-notifications-list-item', template: '' })
-class NotificationsListItemStub {
+class NotificationsListItemStubComponent {
   @Input() actions: string[];
   @Input() product: DataProduct;
   @Input() showOrders: boolean;
@@ -44,7 +44,7 @@ describe('NotificationsListComponent', () => {
       declarations: [
         MarketplaceActionButtonsStubComponent,
         NotificationsListComponent,
-        NotificationsListItemStub
+        NotificationsListItemStubComponent
       ],
       providers: [
         { provide: PendingFinalisationService, useValue: pendingFinalisationServiceSpy },

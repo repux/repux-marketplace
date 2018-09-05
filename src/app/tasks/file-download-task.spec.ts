@@ -37,7 +37,6 @@ describe('FileDownloadTask', () => {
     fileDownloadTask = new FileDownloadTask(
       buyerAddress,
       productAddress,
-      buyerAddress,
       fileHash,
       <any> privateKey,
       filename,
@@ -49,7 +48,6 @@ describe('FileDownloadTask', () => {
   describe('#constructor()', () => {
     it('should create downloader object', () => {
       expect(fileDownloadTask[ '_dataProductAddress' ]).toBe(productAddress);
-      expect(fileDownloadTask[ '_buyerAddress' ]).toBe(buyerAddress);
       expect(fileDownloadTask[ '_metaFileHash' ]).toBe(fileHash);
       expect(fileDownloadTask[ '_buyerPrivateKey' ]).toBe(privateKey);
       expect(fileDownloadTask[ '_repuxLibService' ]).toBe(repuxLibService);
@@ -100,7 +98,6 @@ describe('FileDownloadTask', () => {
       fileDownloadTask.run(<any> taskManagerService);
 
       downloaderEventHandler[ EventType.FINISH ](EventType.FINISH, result);
-      expect(fileDownloadTask[ '_result' ]).toEqual(result);
       expect(fileDownloadTask.progress).toEqual(100);
       expect(fileDownloadTask.needsUserAction).toBeFalsy();
       expect(fileDownloadTask.userActionName).toBeFalsy();

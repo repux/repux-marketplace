@@ -2,11 +2,9 @@ import { Task } from './task';
 import { BigNumber } from 'bignumber.js';
 import { RepuxLibService } from '../services/repux-lib.service';
 import { TaskManagerService } from '../services/task-manager.service';
-import { DataProductService } from '../services/data-product.service';
 import { TaskType } from './task-type';
 import { UnpublishedProductsService } from '../marketplace/services/unpublished-products.service';
 import { DataProduct } from '../shared/models/data-product';
-import { MatDialog } from '@angular/material';
 import { Attachment, Eula, EventType, FileMetaData, FileUploader, PurchaseType } from 'repux-lib';
 import { IpfsService } from '../services/ipfs.service';
 import { EulaSelection } from '../marketplace/marketplace-eula-selector/marketplace-eula-selector.component';
@@ -59,9 +57,7 @@ export class FileUploadTask implements Task {
     private _eulaSelection: EulaSelection,
     private _maxNumberOfDownloads: number,
     private _purchaseType: PurchaseType,
-    private _dialog: MatDialog,
     private _repuxLibService: RepuxLibService,
-    private _dataProductService: DataProductService,
     private _unpublishedProductsService: UnpublishedProductsService,
     private _ipfsService: IpfsService,
     private transactionService: TransactionService
@@ -117,15 +113,15 @@ export class FileUploadTask implements Task {
     this._sampleFile = await this.uploadSampleFiles(this._sampleFiles);
 
     this._uploader.upload(this._publicKey, this._file, this.createMetadata())
-      .on(EventType.PROGRESS, (eventType, progress) => {
+      .on(EventType.PROGRESS, (_eventType, progress) => {
         this._progress = progress * 100;
       })
-      .on(EventType.ERROR, (eventType, error) => {
+      .on(EventType.ERROR, (_eventType, error) => {
         this._finished = true;
         this._errors.push(error);
         this._status = STATUS.CANCELED;
       })
-      .on(EventType.FINISH, (eventType, result) => {
+      .on(EventType.FINISH, (_eventType, result) => {
         this._progress = 100;
         this._result = result;
         this._actionButton = ActionButtonType.Publish;

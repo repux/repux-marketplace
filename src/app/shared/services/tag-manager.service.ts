@@ -17,7 +17,7 @@ export enum EventAction {
   UnpublishConfirmed = 'Unpublish-confirmed',
   Buy = 'Buy',
   BuyConfirmed = 'Buy-confirmed',
-  FinalizeOrder= 'Finalize-order',
+  FinalizeOrder = 'Finalize-order',
   FinalizeOrderConfirmed = 'Finalize-order-confirmed',
   Withdraw = 'Withdraw',
   WithdrawConfirmed = 'Withdraw-confirmed',

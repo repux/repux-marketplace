@@ -3,7 +3,7 @@
 ## Installation
 Run `yarn` to download project dependencies, and then `yarn prebuild` to generate configuration template.
 
-## IDE
+## IDE Settings
 Informations below for IntelliJ IDEA apps (PHPStrom, WebStorm, etc.)
 
 ### EditorConfig

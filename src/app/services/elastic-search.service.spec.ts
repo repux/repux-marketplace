@@ -25,7 +25,7 @@ describe('ElasticSearchService', () => {
 
       service.search(type, '*', {}, 10, 0)
         .subscribe(
-          data => fail('expected an error, not data'),
+          _data => fail('expected an error, not data'),
           error => expect(error.error).toContain(errorResponse.error)
         );
     });

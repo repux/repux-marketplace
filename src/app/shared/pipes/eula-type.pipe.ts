@@ -5,7 +5,7 @@ import { EulaType } from 'repux-lib';
   name: 'eulaType'
 })
 export class EulaTypePipe implements PipeTransform {
-  transform(value: EulaType, args?: any): string {
+  transform(value: EulaType): string {
     const eulaTypeString = value.toString().toLowerCase();
     return eulaTypeString.charAt(0).toUpperCase() + eulaTypeString.slice(1);
   }

@@ -5,6 +5,8 @@ import { ActionButtonType } from '../../shared/enums/action-button-type';
 import { DataProduct } from '../../shared/models/data-product';
 import { Task } from '../../tasks/task';
 import { MaterialModule } from '../../material.module';
+import { TaskManagerService } from '../../services/task-manager.service';
+import { of } from 'rxjs';
 
 @Component({
   selector: 'app-marketplace-action-buttons',
@@ -22,12 +24,15 @@ describe('MarketplaceTaskManagerComponent', () => {
   const tasks = [ 'TASK' ];
 
   beforeEach(async(() => {
-    taskManagerService = jasmine.createSpyObj('TaskManagerService', [ 'removeTask', 'getForegroundTasks' ]);
-    taskManagerService.getForegroundTasks.and.returnValue({
-      subscribe(callback) {
-        callback(tasks);
-      }
-    });
+    taskManagerService = jasmine.createSpyObj('TaskManagerService', [
+      'removeTask',
+      'getForegroundTasks',
+      'shouldOpenManager',
+      'openManager'
+    ]);
+    taskManagerService.getForegroundTasks.and.returnValue(of(tasks));
+    taskManagerService.shouldOpenManager.and.returnValue(of());
+
     TestBed.configureTestingModule({
       declarations: [
         MarketplaceTaskManagerComponent,
@@ -35,9 +40,11 @@ describe('MarketplaceTaskManagerComponent', () => {
       ],
       imports: [
         MaterialModule
+      ],
+      providers: [
+        { provide: TaskManagerService, useValue: taskManagerService }
       ]
-    })
-      .compileComponents();
+    }).compileComponents();
   }));
 
   beforeEach(() => {
@@ -45,6 +52,7 @@ describe('MarketplaceTaskManagerComponent', () => {
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
+
 
   describe('#closeDialog()', () => {
     it('should set opened to false', () => {
@@ -54,44 +62,11 @@ describe('MarketplaceTaskManagerComponent', () => {
     });
   });
 
-  describe('#openDialog()', () => {
-    it('should set opened to true', () => {
-      component.opened = false;
-      component.openDialog();
-      expect(component.opened).toBe(true);
-    });
-  });
-
   describe('#removeTask()', () => {
     it('should call taskManagerService.removeTask', () => {
-      const task = { progress: 100 } as Task;
-      component.setTaskManagerService(taskManagerService);
-
+      const task = {} as Task;
       component.removeTask(task);
-
       expect(taskManagerService.removeTask.calls.count()).toBe(1);
-    });
-  });
-
-  describe('#setTaskMangerService()', () => {
-    it('should set taskManagerService', () => {
-      const unsubscribeTasks = jasmine.createSpy();
-      component[ 'unsubscribeTasks' ] = unsubscribeTasks;
-      component.setTaskManagerService(taskManagerService);
-      expect(component.taskManagerService).toBe(taskManagerService);
-      expect(component.tasks).toEqual(<any> tasks);
-      expect(unsubscribeTasks.calls.count()).toBe(1);
-    });
-  });
-
-  describe('#unsubscribeTasks()', () => {
-    it('should call unsubscribe when there is subscription', () => {
-      const unsubscribe = jasmine.createSpy();
-      component[ 'tasksSubscription' ] = <any> {
-        unsubscribe
-      };
-      component[ 'unsubscribeTasks' ]();
-      expect(unsubscribe.calls.count()).toBe(1);
     });
   });
 });

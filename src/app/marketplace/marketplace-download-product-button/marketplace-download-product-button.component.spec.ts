@@ -114,7 +114,6 @@ describe('MarketplaceDownloadProductButtonComponent', () => {
       expect(dataProductServiceSpy.getDataProductData.calls.count()).toBe(1);
       expect(dataProductServiceSpy.getOrderData.calls.count()).toBe(1);
       expect(fileDownloadTask[ '_dataProductAddress' ]).toBe(productAddress);
-      expect(fileDownloadTask[ '_buyerAddress' ]).toBe('0x01');
       expect(fileDownloadTask[ '_metaFileHash' ]).toBe(buyerMetaHash);
       expect(fileDownloadTask[ '_buyerPrivateKey' ]).toBe(keyPair.privateKey);
     });
@@ -138,7 +137,6 @@ describe('MarketplaceDownloadProductButtonComponent', () => {
       const fileDownloadTask = taskManagerService.addTask.calls.allArgs()[ 0 ][ 0 ];
       expect(dataProductServiceSpy.getDataProductData.calls.count()).toBe(1);
       expect(fileDownloadTask[ '_dataProductAddress' ]).toBe(productAddress);
-      expect(fileDownloadTask[ '_buyerAddress' ]).toBe('0x00');
       expect(fileDownloadTask[ '_metaFileHash' ]).toBe(sellerMetaHash);
       expect(fileDownloadTask[ '_buyerPrivateKey' ]).toBe(keyPair.privateKey);
     });

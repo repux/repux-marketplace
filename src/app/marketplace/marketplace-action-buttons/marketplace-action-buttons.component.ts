@@ -5,7 +5,6 @@ import { DataProductService } from '../../services/data-product.service';
 import { WalletService } from '../../services/wallet.service';
 import Wallet from '../../shared/models/wallet';
 import { Subscription } from 'rxjs';
-import { RepuxWeb3Service } from '../../services/repux-web3.service';
 import { BigNumber } from 'bignumber.js';
 import { ActionButtonType } from '../../shared/enums/action-button-type';
 
@@ -35,7 +34,6 @@ export class MarketplaceActionButtonsComponent implements OnDestroy, OnChanges {
 
   constructor(
     private _dataProductService: DataProductService,
-    private _repuxWeb3Service: RepuxWeb3Service,
     private _walletService: WalletService
   ) {
     this._walletSubscription = this._walletService.getWallet().subscribe(wallet => this._onWalletChange(wallet));
@@ -69,7 +67,6 @@ export class MarketplaceActionButtonsComponent implements OnDestroy, OnChanges {
           this.blockchainDataProduct = await this._dataProductService.getDataProductData(this.dataProduct.address);
         }
       }
-
       this.loading = false;
     }
   }

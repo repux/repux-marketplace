@@ -12,7 +12,6 @@ import { BlockchainTransactionScope } from '../../shared/enums/blockchain-transa
 import { ActionButtonType } from '../../shared/enums/action-button-type';
 import { Transaction, TransactionService } from '../../shared/services/transaction.service';
 import { CommonDialogService } from '../../shared/services/common-dialog.service';
-import { WalletService } from '../../services/wallet.service';
 
 describe('MarketplaceUnpublishButtonComponent', () => {
   let component: MarketplaceUnpublishButtonComponent;

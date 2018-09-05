@@ -1,7 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { Location } from '@angular/common';
 import { DataProductListService } from '../services/data-product-list.service';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { Observable } from 'rxjs/internal/Observable';
 import { Attachment, Eula } from 'repux-lib';
 import { IpfsService } from '../services/ipfs.service';
@@ -38,8 +37,6 @@ export class MarketplaceProductDetailsComponent implements OnInit, OnDestroy {
   private dataProductAddress: string;
 
   constructor(
-    private router: Router,
-    private location: Location,
     private activeRoute: ActivatedRoute,
     private dataProductService: DataProductService,
     private dataProductListService: DataProductListService,

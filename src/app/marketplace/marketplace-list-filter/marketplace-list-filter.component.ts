@@ -1,15 +1,15 @@
 import { Component, EventEmitter, Input, OnChanges, Output } from '@angular/core';
 import { animate, state, style, transition, trigger } from '@angular/animations';
 
-export type SortingOption = {
-  sortBy: string,
-  label: string,
-  isSelected: boolean
+export interface SortingOption {
+  sortBy: string;
+  label: string;
+  isSelected: boolean;
 }
 
-export type CategoryOption = {
-  label: string,
-  isSelected: boolean
+export interface CategoryOption {
+  label: string;
+  isSelected: boolean;
 }
 
 @Component({
@@ -57,7 +57,7 @@ export class MarketplaceListFilterComponent implements OnChanges {
   toggleAllCategories() {
     this.categoryOptions.forEach(category => category.isSelected = false);
     this.categoriesSelectedAll = true;
-    this.categoryChange.emit([])
+    this.categoryChange.emit([]);
   }
 
   toggleCategory(choice: CategoryOption) {

@@ -1,5 +1,4 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { RepuxLibService } from '../../services/repux-lib.service';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { KeyStoreService } from '../key-store.service';
 import { MatDialogRef } from '@angular/material';
@@ -27,7 +26,6 @@ export class KeysUpdateDialogComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private repuxLibService: RepuxLibService,
     private keyStoreService: KeyStoreService,
     private dialogRef: MatDialogRef<KeysUpdateDialogComponent>
   ) {

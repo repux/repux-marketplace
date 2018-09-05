@@ -16,7 +16,6 @@ export const STATUS = {
 export class FileDownloadTask implements Task {
   public readonly taskType = TaskType.DOWNLOAD;
   private _downloader: FileDownloader;
-  private _result: string;
   private _taskManagerService: TaskManagerService;
   private _progress: number;
   private _errors: string[] = [];
@@ -27,7 +26,6 @@ export class FileDownloadTask implements Task {
   constructor(
     public readonly walletAddress: string,
     private _dataProductAddress: string,
-    private _buyerAddress: string,
     private _metaFileHash: string,
     private _buyerPrivateKey: JsonWebKey,
     private fileName: string,
@@ -67,10 +65,10 @@ export class FileDownloadTask implements Task {
     this._taskManagerService = taskManagerService;
 
     this._downloader.download(this._buyerPrivateKey, this._metaFileHash)
-      .on(EventType.PROGRESS, (eventType, progress) => {
+      .on(EventType.PROGRESS, (_eventType, progress) => {
         this._progress = progress * 100;
       })
-      .on(EventType.ERROR, (eventType, error) => {
+      .on(EventType.ERROR, (_eventType, error) => {
         this._finished = true;
         this._errors.push(error);
         this._status = STATUS.CANCELED;
@@ -79,10 +77,9 @@ export class FileDownloadTask implements Task {
           this.displayDecryptionErrorMessage();
         }
       })
-      .on(EventType.FINISH, (eventType, result) => {
+      .on(EventType.FINISH, (_eventType, result) => {
         this._progress = 100;
         this._finished = true;
-        this._result = result;
         this._status = STATUS.FINISHED;
         new BlobDownloader().downloadBlob(result.fileURL, result.fileName);
       })
