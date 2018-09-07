@@ -19,6 +19,8 @@ import { NotificationsDetectorComponent } from './components/notifications-detec
 import {
   NotificationsSubscriptionInstructionComponent
 } from './components/notification-subscription-instruction/notifications-subscription-instruction.component';
+import { OrderRatingPipe } from './pipes/order-rating.pipe';
+import { RatingStarsComponent } from './components/rating-stars/rating-stars.component';
 
 @NgModule({
   imports: [
@@ -44,7 +46,9 @@ import {
     EulaTypePipe,
     SafeHtmlPipe,
     OrderDatePipe,
-    PriceInputComponent
+    PriceInputComponent,
+    OrderRatingPipe,
+    RatingStarsComponent
   ],
   exports: [
     FileInputComponent,
@@ -52,13 +56,15 @@ import {
     NotificationsDetectorComponent,
     ConfirmationDialogComponent,
     WalletInfoComponent,
+    PriceInputComponent,
+    RatingStarsComponent,
     ArrayJoinPipe,
     FileSizePipe,
     CurrencyRepuxPipe,
     EulaTypePipe,
     SafeHtmlPipe,
     OrderDatePipe,
-    PriceInputComponent
+    OrderRatingPipe
   ],
   entryComponents: [
     ConfirmationDialogComponent,

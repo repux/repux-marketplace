@@ -1,0 +1,24 @@
+.rating-stars {
+  &__content {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-end;
+  }
+
+  &__background-star {
+    opacity: 0.3;
+  }
+
+  &__foreground-star {
+    overflow: hidden;
+    position: absolute;
+    top: 0;
+    white-space: nowrap;
+  }
+
+  &__star {
+    position: relative;
+    height: 24px;
+  }
+}

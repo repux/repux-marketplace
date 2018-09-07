@@ -14,6 +14,7 @@ import { WalletService } from '../services/wallet.service';
 import Wallet from '../shared/models/wallet';
 import { DataProductOrder as BlockchainDataProductOrder } from 'repux-web3-api';
 import { ClockService } from '../services/clock.service';
+import BigNumber from 'bignumber.js';
 
 const DAY_IN_MILLISECONDS = 24 * 60 * 60 * 1000;
 
@@ -27,13 +28,12 @@ export class MarketplaceProductDetailsComponent implements OnInit, OnDestroy {
   owner$: Observable<User>;
   actionButtonType = ActionButtonType;
   availableActions = [ ActionButtonType.Buy, ActionButtonType.Rate ];
-  public wallet: Wallet;
-  public blockchainDataProductOrder: BlockchainDataProductOrder;
-  public daysToDeliverLeft: number;
+  wallet: Wallet;
+  blockchainDataProductOrder: BlockchainDataProductOrder;
+  daysToDeliverLeft: number;
+  sellerRating = new BigNumber(0);
 
-  private productSubscription: Subscription;
-  private walletSubscription: Subscription;
-  private clockSubscription: Subscription;
+  private subscriptions: Subscription[] = [];
   private dataProductAddress: string;
 
   constructor(
@@ -69,47 +69,47 @@ export class MarketplaceProductDetailsComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.walletSubscription = this.walletService.getWallet().subscribe(wallet => {
-      this.wallet = wallet;
+    this.subscriptions.push(
+      this.walletService.getWallet().subscribe(wallet => {
+        this.wallet = wallet;
 
-      if (this.dataProductAddress) {
-        this.loadBlockchainDataProductOrder();
-      }
-    });
+        if (this.dataProductAddress) {
+          this.loadBlockchainDataProductOrder();
+        }
+      })
+    );
 
     this.activeRoute.params.subscribe(routeParams => {
       this.dataProductAddress = routeParams.address;
       this.loadProduct(routeParams.address);
     });
 
-    this.clockSubscription = this.clockService.onEachHour().subscribe(date => {
-      this.daysToDeliverLeft = this.checkDaysToDeliverLeft(date);
-    });
+    this.subscriptions.push(
+      this.clockService.onEachHour().subscribe(date => {
+        this.daysToDeliverLeft = this.checkDaysToDeliverLeft(date);
+      })
+    );
   }
 
   ngOnDestroy(): void {
-    this.usnsubscribeFromProductSubscription();
-
-    if (this.walletSubscription) {
-      this.walletSubscription.unsubscribe();
-    }
-
-    if (this.clockSubscription) {
-      this.clockSubscription.unsubscribe();
-    }
+    this.subscriptions.forEach(subscription => subscription.unsubscribe());
+    this.subscriptions = [];
   }
 
   loadOwner(address: string): void {
-    this.owner$ = this.userService.getUser(address);
+    this.subscriptions.push(
+      this.userService.getUser(address).subscribe(owner => this.sellerRating = owner.sellerRating)
+    );
   }
 
   loadProduct(address: string): void {
     this.product$ = this.dataProductListService.getDataProduct(address);
 
-    this.usnsubscribeFromProductSubscription();
-    this.productSubscription = this.product$.subscribe(async (product: DataProduct) => {
-      this.loadOwner(product.ownerAddress);
-    });
+    this.subscriptions.push(
+      this.product$.subscribe(async (product: DataProduct) => {
+        this.loadOwner(product.ownerAddress);
+      })
+    );
 
     if (this.wallet) {
       this.loadBlockchainDataProductOrder();
@@ -124,9 +124,10 @@ export class MarketplaceProductDetailsComponent implements OnInit, OnDestroy {
     document.querySelector('.app-view').parentElement.scrollTop = 0;
   }
 
-  usnsubscribeFromProductSubscription() {
-    if (this.productSubscription) {
-      this.productSubscription.unsubscribe();
+  scrollIntoView(id: string) {
+    const element = document.querySelector(`#${id}`);
+    if (element){
+      element.scrollIntoView();
     }
   }
 }
