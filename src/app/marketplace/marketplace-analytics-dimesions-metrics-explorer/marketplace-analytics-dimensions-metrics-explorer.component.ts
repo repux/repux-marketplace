@@ -3,9 +3,9 @@ import analyticsConcepts from './marketplace-analytics-dimensions-metrics-concep
 import analyticsCubes from './marketplace-analytics-dimensions-metrics-cubes';
 import { map, pluck } from 'rxjs/operators';
 import { HttpClient } from '@angular/common/http';
-import { animate, state, style, transition, trigger } from '@angular/animations';
 import { MatCheckboxChange } from '@angular/material';
 import { Subscription } from 'rxjs';
+import foldingAnimation from '../../shared/animations/folding.animation';
 
 interface MatadataColumnAttributes {
   type: string;
@@ -33,21 +33,7 @@ export interface DimensionsMetricsSelection {
   selector: 'app-marketplace-analytics-dimensions-metrics-explorer',
   templateUrl: './marketplace-analytics-dimensions-metrics-explorer.component.html',
   styleUrls: [ './marketplace-analytics-dimensions-metrics-explorer.component.scss' ],
-  animations: [
-    trigger('visibilityChanged', [
-      state('true', style({
-        overflow: 'hidden',
-        height: '*'
-      })),
-      state('false', style({
-        opacity: '0',
-        overflow: 'hidden',
-        height: '0'
-      })),
-      transition('1 => 0', animate('300ms ease-in-out')),
-      transition('0 => 1', animate('300ms ease-in-out'))
-    ])
-  ]
+  animations: [ foldingAnimation ]
 })
 export class MarketplaceAnalyticsDimensionsMetricsExplorerComponent implements OnInit, OnDestroy {
   @Input() selectedDimensions: string[] = [];
@@ -138,12 +124,13 @@ export class MarketplaceAnalyticsDimensionsMetricsExplorerComponent implements O
   }
 
   private onColumnsLoaded(columns: any): void {
+    this.columns = columns;
+    this.onSelectionChange();
+
     this.openedColumns = {};
     this.columnsKeys.forEach((key: string) => this.openedColumns[ key ] = false);
     this.openedColumns[ 'User' ] = true;
     this.openedColumns[ 'Time' ] = true;
-    this.columns = columns;
-    this.onSelectionChange();
   }
 
   private prepareColumnsObject(items: MetadataColumn[]): Map<string, Map<string, MetadataColumn>> {

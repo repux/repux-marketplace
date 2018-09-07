@@ -2,8 +2,9 @@
   <section class="explorer__collapsible" *ngFor="let key of columnsKeys;">
     <h3 class="explorer__collapsible__header"
         [class.opened]="openedColumns[key]" (click)="toggleColumn(key)">
-      <mat-icon *ngIf="!openedColumns[key]" class="explorer__collapsible__header__icon">add_circle</mat-icon>
-      <mat-icon *ngIf="openedColumns[key]" class="explorer__collapsible__header__icon">remove_circle</mat-icon>
+      <mat-icon class="explorer__collapsible__header__icon">
+        {{openedColumns[key] ? 'remove_circle' : 'add_circle'}}
+      </mat-icon>
       {{key}}
     </h3>
 
