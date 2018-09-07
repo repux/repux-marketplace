@@ -18,15 +18,20 @@ export interface Transaction {
   blocksAction: ActionButtonType;
 }
 
+const DroppedTransactionError = 'Transaction dropped';
+
 @Injectable({
   providedIn: 'root'
 })
 export class TransactionService implements OnDestroy {
   private static readonly STORAGE_KEY = 'TransactionService';
 
+  private trackedTransactionHashes: string[] = [];
   private currentTransactions: Transaction[];
   private walletSubscription: Subscription;
   private wallet: Wallet;
+  private droppedTransactions: Transaction[];
+  private droppedTransactionsSubject = new BehaviorSubject<Transaction[]>([]);
   private currentTransactionsSubject = new BehaviorSubject<Transaction[]>([]);
 
   constructor(
@@ -38,7 +43,8 @@ export class TransactionService implements OnDestroy {
 
   addTransaction(transaction: Transaction): void {
     this.currentTransactions = [ ...this.currentTransactions, transaction ];
-    this.saveToStore(this.currentTransactions);
+    this.trackedTransactionHashes = [ ...this.trackedTransactionHashes, transaction.transactionHash ];
+    this.updateStore();
     this.currentTransactionsSubject.next(this.currentTransactions);
   }
 
@@ -46,15 +52,22 @@ export class TransactionService implements OnDestroy {
     return this.currentTransactionsSubject.asObservable();
   }
 
+  getDroppedTransactions(): Observable<Transaction[]> {
+    return this.droppedTransactionsSubject.asObservable();
+  }
+
   async handleTransaction(subject: BehaviorSubject<TransactionEvent>, scope: BlockchainTransactionScope, identifier: string,
                           blocksAction: ActionButtonType, transaction: () => Promise<string>): Promise<void> {
     let transactionHash;
+    let transactionObj;
 
     try {
       subject.next({ type: TransactionEventType.Created });
 
       transactionHash = await transaction();
-      this.addTransaction({ transactionHash, scope, identifier, blocksAction });
+      transactionObj = { transactionHash, scope, identifier, blocksAction };
+
+      this.addTransaction(transactionObj);
       subject.next({ type: TransactionEventType.Confirmed });
 
       const transactionReceipt = await this.getTransactionReceipt(transactionHash);
@@ -63,13 +76,19 @@ export class TransactionService implements OnDestroy {
         throw new Error('Unknown error');
       }
 
-      this.removeTransaction({ transactionHash, scope, identifier, blocksAction });
+      this.removeTransaction(transactionObj);
       subject.next({ type: TransactionEventType.Mined, receipt: transactionReceipt });
     } catch (error) {
       console.warn(error);
 
       if (transactionHash) {
-        this.removeTransaction({ transactionHash, scope, identifier, blocksAction });
+        this.removeTransaction(transactionObj);
+      }
+
+      if (error.message === DroppedTransactionError) {
+        this.addDroppedTransaction(transactionObj);
+        subject.next({ type: TransactionEventType.Dropped, error });
+        return;
       }
 
       subject.next({ type: TransactionEventType.Rejected, error });
@@ -93,15 +112,52 @@ export class TransactionService implements OnDestroy {
     }
 
     this.wallet = wallet;
-    this.currentTransactions = this.readFromStore();
+
+    const storedData = this.readFromStore();
+    this.currentTransactions = storedData.currentTransactions;
+    this.droppedTransactions = storedData.droppedTransactions;
+
     this.currentTransactionsSubject.next(this.currentTransactions);
+    this.droppedTransactionsSubject.next(this.droppedTransactions);
+    this.currentTransactions.forEach(transaction => this.trackOrphanedTransaction(transaction));
   }
 
   removeTransaction(transaction: Transaction): void {
     this.currentTransactions = this.currentTransactions
       .filter(_transaction => transaction.transactionHash !== _transaction.transactionHash);
-    this.saveToStore(this.currentTransactions);
+    this.trackedTransactionHashes.splice(this.trackedTransactionHashes.indexOf(transaction.transactionHash), 1);
+    this.updateStore();
     this.currentTransactionsSubject.next(this.currentTransactions);
+  }
+
+  removeDroppedTransactions(identifier: string) {
+    this.droppedTransactions = this.droppedTransactions.filter(transaction => transaction.identifier !== identifier);
+    this.updateStore();
+    this.droppedTransactionsSubject.next(this.droppedTransactions);
+  }
+
+  async trackOrphanedTransaction(transaction: Transaction): Promise<void> {
+    if (this.trackedTransactionHashes.includes(transaction.transactionHash)) {
+      return;
+    }
+
+    this.trackedTransactionHashes = [ ...this.trackedTransactionHashes, transaction.transactionHash ];
+
+    try {
+      await this.getTransactionReceipt(transaction.transactionHash);
+    } catch (error) {
+      if (error === DroppedTransactionError) {
+        this.addDroppedTransaction(transaction);
+      }
+    }
+
+    this.removeTransaction(transaction);
+  }
+
+  private addDroppedTransaction(transaction: Transaction) {
+    this.droppedTransactions = [ ...this.droppedTransactions, transaction ];
+    this.updateStore();
+    this.droppedTransactionsSubject.next(this.droppedTransactions);
   }
 
   private getStorageKey(walletAddress?: string): string {
@@ -111,17 +167,21 @@ export class TransactionService implements OnDestroy {
   private readFromStore(walletAddress?: string): any {
     const saved = this.storageService.getItem(this.getStorageKey(walletAddress));
 
-    if (saved) {
+    if (saved && saved.currentTransactions) {
       return saved;
     }
 
-    const data = [];
+    const data = { currentTransactions: [], droppedTransactions: [] };
     this.saveToStore(data);
 
     return data;
   }
 
-  private saveToStore(data: any, walletAddress?: string): void {
+  private updateStore(): void {
+    this.saveToStore({ currentTransactions: this.currentTransactions, droppedTransactions: this.droppedTransactions });
+  }
+
+  private saveToStore(data: { currentTransactions: Transaction[], droppedTransactions: Transaction[] }, walletAddress?: string): void {
     this.storageService.setItem(this.getStorageKey(walletAddress), data);
   }
 }
