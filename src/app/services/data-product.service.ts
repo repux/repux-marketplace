@@ -53,7 +53,6 @@ export class DataProductService implements OnDestroy {
 
   async getAllDataProductOrders(dataProductAddress: string): Promise<DataProductOrder[]> {
     const buyerAddresses = await (await this.api).getDataProductBuyersAddresses(dataProductAddress);
-
     return Promise.all(
       buyerAddresses.map(buyerAddress => this.getOrderData(dataProductAddress, buyerAddress))
     );

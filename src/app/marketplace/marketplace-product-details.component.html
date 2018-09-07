@@ -21,23 +21,8 @@
   <mat-card class="product-details mat-typography">
     <section class="product-details__title">
       <h1>{{ product.title }}</h1>
-    </section>
-
-    <section class="product-details__price-buy">
-      <div class="price">
-        <span class="price__prefix">REPUX</span>
-        <span class="price__value">{{ product.price.toString() | currencyRepux : '' }}</span>
-      </div>
-      <app-marketplace-action-buttons
-        [dataProduct]="product"
-        [availableActions]="availableActions"></app-marketplace-action-buttons>
-    </section>
-
-    <section class="product-details__description">
-      <p>{{ product.shortDescription }}</p>
-      <mat-chip-list>
-        <mat-chip *ngFor="let category of product.category" disabled>{{ category }}</mat-chip>
-      </mat-chip-list>
+      <app-rating-stars
+        [rating]="product.orders | orderRating"></app-rating-stars>
     </section>
 
     <section class="product-details__file-info">
@@ -50,6 +35,86 @@
         {{product.eula.type | eulaType}}&nbsp;EULA</a>
     </section>
 
+    <section class="product-details__price-buy">
+      <div class="price">
+        <span class="price__prefix">REPUX</span>
+        <span class="price__value">{{ product.price.toString() | currencyRepux : '' }}</span>
+      </div>
+      <app-marketplace-action-buttons
+        [dataProduct]="product"
+        [availableActions]="availableActions"></app-marketplace-action-buttons>
+    </section>
+
+    <section class="product-details__summary">
+      <a
+        *ngIf="sellerRating.toNumber() > 0"
+        (click)="scrollIntoView('seller-rating')"
+         class="product-details__summary-item product-details__summary-item_link">
+        <span class="product-details__summary-number">
+          {{ sellerRating.toNumber() | percent }}
+        </span>
+        <span class="product-details__summary-label">
+         Positive feedback
+        </span>
+      </a>
+
+      <div class="product-details__summary-item" *ngIf="sellerRating.toNumber() == 0">
+        <span class="product-details__summary-label">
+         No feedback yet
+        </span>
+      </div>
+
+      <a *ngIf="product.sampleFile?.length > 0"
+        (click)="scrollIntoView('sample-files')"
+        class="product-details__summary-item product-details__summary-item_link">
+        <span class="product-details__summary-number">
+          {{ product.sampleFile.length }}
+        </span>
+        <span class="product-details__summary-label" [ngPlural]="product.sampleFile.length">
+         Sample
+          <ng-template ngPluralCase="=1">file</ng-template>
+          <ng-template ngPluralCase="other">files</ng-template>
+        </span>
+      </a>
+
+      <div class="product-details__summary-item" *ngIf="!product.sampleFile">
+        <span class="product-details__summary-label">
+         No sample files provided
+        </span>
+      </div>
+
+      <div (click)="scrollIntoView('rules')"
+           class="product-details__summary-item product-details__summary-item_link">
+        <span class="product-details__summary-number">
+          {{ product.daysToDeliver }}
+        </span>
+        <span class="product-details__summary-label" [ngPlural]="product.daysToDeliver">
+          <ng-template ngPluralCase="=0">Days</ng-template>
+          <ng-template ngPluralCase="=1">Day</ng-template>
+          <ng-template ngPluralCase="other">Days</ng-template>
+          to deliver
+        </span>
+      </div>
+      <div class="product-details__summary-item">
+        <span class="product-details__summary-number">
+          {{ product.orders.length }}
+        </span>
+        <span class="product-details__summary-label" [ngPlural]="product.orders.length">
+          <ng-template ngPluralCase="=0">Times</ng-template>
+          <ng-template ngPluralCase="=1">Time</ng-template>
+          <ng-template ngPluralCase="other">Times</ng-template>
+          purchased
+        </span>
+      </div>
+    </section>
+
+    <section class="product-details__description">
+      <p>{{ product.shortDescription }}</p>
+      <mat-chip-list>
+        <mat-chip *ngFor="let category of product.category" disabled>{{ category }}</mat-chip>
+      </mat-chip-list>
+    </section>
+
     <section *ngIf="product.fullDescription" class="product-details__detailed-description">
       <h2>Detailed description
         <a href="" (click)="$event.preventDefault();scrollToTop()">Back to top</a>
@@ -57,28 +122,23 @@
       <p>{{ product.fullDescription }}</p>
     </section>
 
-    <section *ngIf="product.sampleFile?.length > 0" class="sample-files">
+    <section *ngIf="product.sampleFile?.length > 0" class="sample-files" id="sample-files">
       <h2>Sample files
         <a href="" (click)="$event.preventDefault();scrollToTop()">Back to top</a>
       </h2>
-      <mat-list class="sample-files__list">
-        <mat-list-item
+      <ul class="sample-files__list">
+        <li
           matRipple
           *ngFor="let file of product.sampleFile;"
           class="sample-files__list-item"
           (click)="downloadSampleFile($event, file)">
-          <div mat-line>
-            <div class="sample-files__line">
-              {{ file.fileName }}
-              <mat-icon>get_app</mat-icon>
-            </div>
-          </div>
-          <mat-divider></mat-divider>
-        </mat-list-item>
-      </mat-list>
+          {{ file.fileName }}
+          <mat-icon>get_app</mat-icon>
+        </li>
+      </ul>
     </section>
 
-    <section class="product-details__rules">
+    <section class="product-details__rules" id="rules">
       <h2>Rules
         <a href="" (click)="$event.preventDefault();scrollToTop()">Back to top</a>
       </h2>
@@ -93,13 +153,12 @@
       </p>
     </section>
 
-    <section class="product-details__rating">
+    <section class="product-details__rating" id="seller-rating">
       <h2>Seller rating
         <a href="" (click)="$event.preventDefault();scrollToTop()">Back to top</a>
       </h2>
       <app-marketplace-rating
-        *ngIf="(owner$ | async) as owner"
-        [rating]="owner.sellerRating"
+        [rating]="sellerRating"
         [orders]="product.orders"></app-marketplace-rating>
     </section>
 

@@ -10,7 +10,7 @@
         class="star"
         mat-icon-button
         color="accent"
-        *ngFor="let rate of availableRates;"
+        *ngFor="let rate of availableRates"
         [attr.data-value]="rate"
         [class.active]="rating.gte(rate)"
         (click)="setRating(rate)">
@@ -20,6 +20,6 @@
   </div>
 </mat-dialog-content>
 <mat-dialog-actions>
-  <button mat-stroked-button color="primary"mat-dialog-close>Not now</button>
-  <button mat-flat-button color="primary"[disabled]="rating.isZero()" (click)="closeWithSuccess()">Rate</button>
+  <button mat-stroked-button color="primary" mat-dialog-close>Not now</button>
+  <button mat-flat-button color="primary" [disabled]="rating.isZero()" (click)="closeWithSuccess()">Rate</button>
 </mat-dialog-actions>

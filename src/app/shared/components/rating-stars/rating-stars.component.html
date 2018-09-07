@@ -1,0 +1,10 @@
+<div class="rating-stars__content" matTooltip="Product rated: {{ rating | number : '1.1-1' }}">
+  <div class="rating-stars__star">
+    <div class="rating-stars__background-star">
+      <mat-icon color="accent" *ngFor="let rate of availableRates;">star_rate</mat-icon>
+    </div>
+    <div class="rating-stars__foreground-star" [style.width]="percentageRating + '%'">
+      <mat-icon color="accent" *ngFor="let rate of availableRates;">star_rate</mat-icon>
+    </div>
+  </div>
+</div>
