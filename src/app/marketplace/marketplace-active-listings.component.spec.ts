@@ -14,6 +14,7 @@ class DataProductListStubComponent {
   @Input() staticQuery: {};
   @Input() displayedColumns: string[];
   @Input() availableActions: ActionButtonType[];
+  @Input() defaultSort: {};
 }
 
 describe('MarketplaceSellMyActiveListingsComponent', () => {

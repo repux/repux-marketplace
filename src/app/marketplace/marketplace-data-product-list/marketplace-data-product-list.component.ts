@@ -44,7 +44,10 @@ export class MarketplaceDataProductListComponent implements OnInit, OnChanges, O
   @Input() buyerAddress: string;
   @Input() dataProducts: DataProduct[];
   @Input() defaultSort = {};
+  @Input() nestedSortFilters = {};
 
+  sortActive: string;
+  sortDirection: string;
   public eulaType = EulaType;
   public esDataProducts: EsResponse<DataProduct>;
   public dataSource: MatTableDataSource<DataProduct>;
@@ -136,9 +139,7 @@ export class MarketplaceDataProductListComponent implements OnInit, OnChanges, O
       return;
     }
 
-    if (JSON.stringify(this.sort) === '{}' && this.defaultSort) {
-      this.sort = this.defaultSort;
-    }
+    this.prepareSortingParameters();
 
     const query = deepCopy(this.staticQuery);
     if (!query.bool) {
@@ -233,5 +234,32 @@ export class MarketplaceDataProductListComponent implements OnInit, OnChanges, O
       this._dataProductsSubscription.unsubscribe();
       this._dataProductsSubscription = null;
     }
+  }
+
+  private prepareSortingParameters() {
+    if (this.defaultSort) {
+      const defaultSortKeys = Object.keys(this.defaultSort);
+
+      if (JSON.stringify(this.sort) === '{}') {
+        this.sort = this.defaultSort;
+
+        if (defaultSortKeys.length) {
+          this.sortActive = defaultSortKeys[ 0 ];
+          this.sortDirection = this.defaultSort[ defaultSortKeys[ 0 ] ].order;
+        }
+      }
+    }
+
+    const activeSortKeys = Object.keys(this.sort);
+    if (!activeSortKeys.length) {
+      return;
+    }
+
+    const activeSortFilters = this.nestedSortFilters[ activeSortKeys[ 0 ] ];
+    if (!activeSortFilters) {
+      return;
+    }
+
+    Object.assign(this.sort[ activeSortKeys[ 0 ] ], activeSortFilters);
   }
 }
