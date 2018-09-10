@@ -182,17 +182,26 @@ describe('MarketplaceDataProductListComponent', () => {
 
       component.query = [ 'QUERY' ];
       component.defaultSort = { defaultSort: { order: 'asc' } };
+      component.nestedSortFilters = { defaultSort: { nested_filter: 'SOME_FILTER', nested_path: 'SOME_PATH' } };
       component.sort = {};
       component.size = 10;
       component.from = 1;
       dataProductListServiceSpy.getDataProductsWithBlockchainState.and.callFake((query, sort, size, from) => {
         expect(query).toEqual({ bool: { must: [ { bool: { should: [ 'QUERY' ] } } ] } });
-        expect(sort).toBe(component.defaultSort);
+        expect(sort).toBe({
+          defaultSort: {
+            order: 'asc',
+            nested_filter: 'SOME_FILTER',
+            nested_path: 'SOME_PATH'
+          }
+        });
         expect(size).toBe(10);
         expect(from).toBe(1);
         return fromPromise(Promise.resolve(expectedResponse));
       });
       await component.refreshData();
+      expect(component.sortActive).toBe('defaultSort');
+      expect(component.sortDirection).toBe('asc');
       expect(dataProductListServiceSpy.getDataProductsWithBlockchainState.calls.count()).toBe(1);
       expect(component.esDataProducts).toBe(expectedResponse);
     });

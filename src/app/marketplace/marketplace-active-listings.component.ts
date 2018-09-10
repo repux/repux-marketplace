@@ -12,6 +12,7 @@ import { ActionButtonType } from '../shared/enums/action-button-type';
 })
 export class MarketplaceActiveListingsComponent implements OnDestroy {
   public displayedColumns = [
+    'creationTimestamp',
     'title',
     'price',
     'timesPurchased',
@@ -26,6 +27,8 @@ export class MarketplaceActiveListingsComponent implements OnDestroy {
     ActionButtonType.Unpublish
   ];
   public staticQuery = {};
+
+  public defaultSort = { creationTimestamp: { order: 'desc' } };
 
   private _wallet: Wallet;
   private _walletSubscription: Subscription;

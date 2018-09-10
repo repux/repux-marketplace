@@ -18,13 +18,18 @@ export class MarketplaceReadyToDownloadComponent implements OnDestroy {
   public displayedColumns = [
     'title',
     'price',
-    'orderDate',
+    'orders.creationTimestamp',
     'eula',
     'actions'
   ];
   public staticQuery = {};
 
-  public defaultSort = null;
+  public defaultSort = {
+    'orders.creationTimestamp': {
+      order: 'desc'
+    }
+  };
+  public nestedSortFilters = {};
 
   private _wallet: Wallet;
   private _walletSubscription: Subscription;
@@ -57,13 +62,13 @@ export class MarketplaceReadyToDownloadComponent implements OnDestroy {
 
     this._wallet = wallet;
 
-    this.defaultSort = {
+    this.nestedSortFilters = {
       'orders.creationTimestamp': {
-        order: 'desc',
         'nested_path': 'orders',
         'nested_filter': { match: { 'orders.buyerAddress': this._wallet.address } }
       }
     };
+
     this.staticQuery = getReadyToDownloadDataProductsQuery(this._wallet.address);
   }
 }
