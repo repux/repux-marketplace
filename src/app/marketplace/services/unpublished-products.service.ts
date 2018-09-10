@@ -1,5 +1,5 @@
 import { Injectable, OnDestroy } from '@angular/core';
-import { StorageService } from '../../services/storage.service';
+import { StorageService } from '../../shared/services/storage.service';
 import { DataProduct } from '../../shared/models/data-product';
 import { BehaviorSubject } from 'rxjs/internal/BehaviorSubject';
 import { Observable } from 'rxjs/internal/Observable';

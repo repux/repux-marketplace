@@ -219,6 +219,7 @@
         <use xlink:href="#repux-logotype"/>
       </svg>
       <span class="logotype__text">RepuX</span>
+      <span class="logotype__beta-text">test</span>
     </div>
 
     <nav *ngIf="!(isHandset$ | async)" class="navigation">
@@ -279,8 +280,10 @@
   </mat-toolbar-row>
 </mat-toolbar>
 
+
 <app-metamask-detector></app-metamask-detector>
 <app-notifications-detector></app-notifications-detector>
+<app-banner-testnet></app-banner-testnet>
 <app-marketplace-task-manager></app-marketplace-task-manager>
 
 <mat-sidenav-container class="sidenav-container">

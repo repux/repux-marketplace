@@ -14,6 +14,8 @@ import { MarketplaceRatingComponent } from './marketplace-rating/marketplace-rat
 import { EulaTypePipe } from '../shared/pipes/eula-type.pipe';
 import { ActionButtonType } from '../shared/enums/action-button-type';
 import { DataProductOrder as BlockchainDataProductOrder } from 'repux-web3-api';
+import { OrderRatingPipe } from '../shared/pipes/order-rating.pipe';
+import { RatingStarsComponent } from '../shared/components/rating-stars/rating-stars.component';
 
 @Component({ selector: 'app-marketplace-action-buttons', template: '' })
 class MarketplaceActionButtonsStubComponent {
@@ -36,6 +38,8 @@ describe('MarketplaceProductDetailsComponent', () => {
         FileSizePipe,
         CurrencyRepuxPipe,
         EulaTypePipe,
+        OrderRatingPipe,
+        RatingStarsComponent,
         MarketplaceProductDetailsComponent,
         MarketplaceRatingComponent
       ],

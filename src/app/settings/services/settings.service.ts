@@ -1,4 +1,4 @@
-import { StorageService } from '../../services/storage.service';
+import { StorageService } from '../../shared/services/storage.service';
 import { WalletService } from '../../services/wallet.service';
 import Wallet from '../../shared/models/wallet';
 import { BehaviorSubject, Observable, Subscription } from 'rxjs';
