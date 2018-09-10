@@ -75,7 +75,7 @@ export class WalletService implements OnDestroy {
       this.currentAccount = currentAccount;
       const wallet = await this.getWalletData();
       this.walletSubject.next(wallet);
-      this.balanceSubject.next(wallet.balance);
+      this.balanceSubject.next(wallet ? wallet.balance : null);
     }
 
     this.workerState = WorkerState.Ready;

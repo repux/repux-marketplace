@@ -1,0 +1,11 @@
+<div class="banner" *ngIf="show">
+  <p class="mat-typography banner__text">
+    This version of the platform is on Rinkeby Testnet and any transactions are not made using real coins.
+  </p>
+
+  <button
+    mat-stroked-button
+    class="banner__button"
+    (click)="dismiss()">Ok
+  </button>
+</div>

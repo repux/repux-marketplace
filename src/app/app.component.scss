@@ -48,10 +48,22 @@
 
 .logotype {
   display: flex;
+  align-items: center;
 
   &__text {
     margin: 0 0 0 12px;
     text-transform: uppercase;
+  }
+
+  &__beta-text {
+    margin: 0 0 0 8px;
+    font-size: 10px;
+    line-height: 13px;
+    text-transform: uppercase;
+    color: #fff;
+    padding: 4px 10px;
+    background-color: map-get($app-accent, 400);
+    border-radius: 20px;
   }
 }
 

@@ -188,7 +188,7 @@ describe('MarketplaceDataProductListComponent', () => {
       component.from = 1;
       dataProductListServiceSpy.getDataProductsWithBlockchainState.and.callFake((query, sort, size, from) => {
         expect(query).toEqual({ bool: { must: [ { bool: { should: [ 'QUERY' ] } } ] } });
-        expect(sort).toBe({
+        expect(sort).toEqual({
           defaultSort: {
             order: 'asc',
             nested_filter: 'SOME_FILTER',

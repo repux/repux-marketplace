@@ -19,6 +19,7 @@ import { NotificationsDetectorComponent } from './components/notifications-detec
 import {
   NotificationsSubscriptionInstructionComponent
 } from './components/notification-subscription-instruction/notifications-subscription-instruction.component';
+import { BannerTestnetComponent } from './components/banner-testnet/banner-testnet.component';
 import { OrderRatingPipe } from './pipes/order-rating.pipe';
 import { RatingStarsComponent } from './components/rating-stars/rating-stars.component';
 
@@ -48,7 +49,8 @@ import { RatingStarsComponent } from './components/rating-stars/rating-stars.com
     OrderDatePipe,
     PriceInputComponent,
     OrderRatingPipe,
-    RatingStarsComponent
+    RatingStarsComponent,
+    BannerTestnetComponent
   ],
   exports: [
     FileInputComponent,
@@ -64,7 +66,8 @@ import { RatingStarsComponent } from './components/rating-stars/rating-stars.com
     EulaTypePipe,
     SafeHtmlPipe,
     OrderDatePipe,
-    OrderRatingPipe
+    OrderRatingPipe,
+    BannerTestnetComponent
   ],
   entryComponents: [
     ConfirmationDialogComponent,

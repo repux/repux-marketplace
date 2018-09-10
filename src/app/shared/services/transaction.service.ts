@@ -2,7 +2,7 @@ import { Injectable, OnDestroy } from '@angular/core';
 import { RepuxWeb3Service } from '../../services/repux-web3.service';
 import { BlockchainTransactionScope } from '../enums/blockchain-transaction-scope';
 import { ActionButtonType } from '../enums/action-button-type';
-import { StorageService } from '../../services/storage.service';
+import { StorageService } from './storage.service';
 import { WalletService } from '../../services/wallet.service';
 import { Observable, Subscription } from 'rxjs';
 import Wallet from '../models/wallet';
