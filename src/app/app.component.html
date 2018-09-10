@@ -246,7 +246,7 @@
       Sell Data
       <mat-icon>arrow_drop_down</mat-icon>
     </button>
-
+    
     <span class="toolbar-spacer"></span>
     <app-wallet-info *ngIf="!(isHandset$ | async)"></app-wallet-info>
 
@@ -275,6 +275,7 @@
       <button mat-menu-item routerLink="settings" fragment="wallet">My wallet</button>
       <button mat-menu-item routerLink="settings" fragment="keys">Private & Public keys</button>
       <button mat-menu-item routerLink="settings" fragment="selling">Selling</button>
+      <a *ngIf="faucetUrl" mat-menu-item href="{{ faucetUrl }}" target="_blank">Get FREE RepuX</a>
       <a href="https://help.repux.io/" target="_blank" mat-menu-item>Help</a>
     </mat-menu>
   </mat-toolbar-row>

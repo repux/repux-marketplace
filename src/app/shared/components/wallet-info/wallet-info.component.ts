@@ -3,6 +3,7 @@ import Wallet from '../../models/wallet';
 import { WalletService } from '../../../services/wallet.service';
 import { Observable } from 'rxjs/internal/Observable';
 import BigNumber from 'bignumber.js';
+import { environment } from '../../../../environments/environment';
 
 @Component({
   selector: 'app-wallet-info',
@@ -12,6 +13,7 @@ import BigNumber from 'bignumber.js';
 export class WalletInfoComponent implements OnInit {
   wallet$: Observable<Wallet>;
   balance$: Observable<BigNumber>;
+  faucetUrl: String;
 
   constructor(private walletService: WalletService) {
   }
@@ -19,5 +21,6 @@ export class WalletInfoComponent implements OnInit {
   ngOnInit(): void {
     this.wallet$ = this.walletService.getWallet();
     this.balance$ = this.walletService.getBalance();
+    this.faucetUrl = environment.faucetUrl;
   }
 }

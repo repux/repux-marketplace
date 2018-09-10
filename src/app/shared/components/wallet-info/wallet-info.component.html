@@ -1,4 +1,10 @@
 <div *ngIf="wallet$ | async as wallet" class="wallet-info">
+  <div class="wallet-info__item" *ngIf="faucetUrl">
+    <a
+      class="mat-button mat-primary mat-stroked-button"
+      href="{{ faucetUrl }}"
+      target="_blank">Get FREE RepuX</a>
+  </div>
   <div class="wallet-info__item">
     <span class="wallet-info__label">Current balance</span>
     <span class="wallet-info__value" *ngIf="balance$ | async as balance">{{ balance | currencyRepux }}</span>
