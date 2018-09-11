@@ -48,8 +48,7 @@
     <section class="product-details__summary">
       <a
         *ngIf="sellerRating.toNumber() > 0"
-        (click)="scrollIntoView('seller-rating')"
-         class="product-details__summary-item product-details__summary-item_link">
+         class="product-details__summary-item">
         <span class="product-details__summary-number">
           {{ sellerRating.toNumber() | percent }}
         </span>
@@ -153,13 +152,11 @@
       </p>
     </section>
 
-    <section class="product-details__rating" id="seller-rating">
-      <h2>Seller rating
+    <section class="product-details__rating">
+      <h2>Product Rating Snapshot
         <a href="" (click)="$event.preventDefault();scrollToTop()">Back to top</a>
       </h2>
-      <app-marketplace-rating
-        [rating]="sellerRating"
-        [orders]="product.orders"></app-marketplace-rating>
+      <app-marketplace-rating [orders]="product.orders"></app-marketplace-rating>
     </section>
 
 

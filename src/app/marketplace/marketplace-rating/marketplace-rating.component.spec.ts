@@ -22,37 +22,6 @@ describe('MarketplaceRatingComponent', () => {
     fixture.detectChanges();
   });
 
-  describe('#get availableRates()', () => {
-    it('should return array of available rates from minRate to maxRate', () => {
-      component.minRate = 1;
-      component.maxRate = 5;
-
-      expect(component.availableRates).toEqual([ 1, 2, 3, 4, 5 ]);
-
-      component.minRate = 3;
-      component.maxRate = 6;
-
-      expect(component.availableRates).toEqual([ 3, 4, 5, 6 ]);
-    });
-  });
-
-  describe('#get percentageRating()', () => {
-    it('should calculate percentage rating properly', () => {
-      component.maxRate = 5;
-      component.rating = new BigNumber(5);
-      expect(component.percentageRating).toEqual(100);
-
-      component.rating = new BigNumber(0);
-      expect(component.percentageRating).toEqual(0);
-
-      component.rating = new BigNumber(3);
-      expect(component.percentageRating).toEqual(60);
-
-      component.maxRate = 6;
-      expect(component.percentageRating).toEqual(50);
-    });
-  });
-
   describe('#get ratingSnapshot()', () => {
     it('should return all ratings from orders', () => {
       component.orders = <any> [ {
