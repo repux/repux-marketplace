@@ -80,7 +80,8 @@ export class DataProductService implements OnDestroy {
       BlockchainTransactionScope.DataProduct,
       dataProductAddress,
       ActionButtonType.ApproveBeforeBuy,
-      async () => (await this.api).approveTokensTransferForDataProductPurchase(dataProductAddress)
+      async () => (await this.api).approveTokensTransferForDataProductPurchase(dataProductAddress),
+      true
     );
 
     return subject.asObservable();
