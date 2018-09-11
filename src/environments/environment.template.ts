@@ -71,5 +71,6 @@ export const environment = {
       clientId: '${MARKETPLACE_GOOGLE_OAUTH_CLIENT_ID}' || '779505820358-8qekr2umfldr8gfbisu6cmu310f4aek0.apps.googleusercontent.com',
       redirectUri: '${MARKETPLACE_GOOGLE_OAUTH_REDIRECT_URL}' || 'https://marketplace-stage-app.repux.io/marketplace'
     }
-  }
+  },
+  faucetUrl: '${MARKETPLACE_FAUCET_URL}'
 };

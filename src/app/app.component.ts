@@ -33,8 +33,8 @@ export class AppComponent implements OnInit {
     );
 
   tasksTotal$: Observable<number>;
-
   wallet: Wallet;
+  faucetUrl: String;
 
   navLinks = [
     {
@@ -75,6 +75,7 @@ export class AppComponent implements OnInit {
         this.wallet = wallet;
       }
       this.tasksTotal$ = this.countProducts();
+      this.faucetUrl = environment.faucetUrl;
     });
 
     this.activatedRoute.fragment
