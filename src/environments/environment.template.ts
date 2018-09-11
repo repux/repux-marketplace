@@ -26,6 +26,7 @@ export const environment = {
   themeName: 'default-theme',
   maxNotificationsProductsNumber: 100,
   websocketServer: '${MARKETPLACE_WEBSOCKET_URL}' || 'https://localhost:3002',
+  cookiePolicyUrl: '${MARKETPLACE_COOKIE_POLICY_URL}' || 'https://repux.io/cookie-policy.html',
   repux: {
     metaindexer: {
       protocol: '${MARKETPLACE_METAINDEXER_PROTOCOL}' || 'https',

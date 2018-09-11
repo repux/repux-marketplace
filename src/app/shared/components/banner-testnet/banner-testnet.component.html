@@ -1,8 +1,11 @@
-<div class="banner" *ngIf="show">
-  <p class="mat-typography banner__text">
-    This version of the platform is on Rinkeby Testnet and any transactions are not made using real coins.
-  </p>
+<div class="banner mat-typography" *ngIf="show">
+  <div class="banner__text">
+    <p>This version of the platform is on Rinkeby Testnet and any transactions are not made using real coins.</p>
 
+    <p><strong>THIS WEBSITE USES COOKIES.</strong> Cookies improve the user experience and help make this website
+      better. By continuing to use the site, you agree to
+      our <a [href]="cookiePolicyUrl" target="_blank">cookie policy</a></p>
+  </div>
   <button
     mat-stroked-button
     class="banner__button"

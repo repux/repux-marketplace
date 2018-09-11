@@ -1,8 +1,8 @@
 .banner {
-  background: linear-gradient(45deg, #7124e5 0%, #8100be 100%);
+  background: linear-gradient(45deg, #7124e5 0%, #E4007F 100%);
   display: flex;
   align-items: center;
-  padding: 12px 20px;
+  padding: 12px 20px 4px 20px;
 
   &__text {
     color: #fff;
@@ -11,6 +11,14 @@
 
   &__button {
     border-color: #fff;
+    color: #fff;
+  }
+
+  p {
+    margin: 0 0 8px 0;
+  }
+
+  a {
     color: #fff;
   }
 }

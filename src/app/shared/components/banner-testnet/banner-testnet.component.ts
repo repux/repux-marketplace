@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { StorageService } from '../../services/storage.service';
+import { environment } from '../../../../environments/environment';
 
 @Component({
   selector: 'app-banner-testnet',
@@ -9,6 +10,7 @@ import { StorageService } from '../../services/storage.service';
 export class BannerTestnetComponent implements OnInit {
   static storageKey = 'banner_testnet_dismissed';
   show = false;
+  cookiePolicyUrl = environment.cookiePolicyUrl;
 
   constructor(private storageService: StorageService) {
   }

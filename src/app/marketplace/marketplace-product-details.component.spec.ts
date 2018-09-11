@@ -41,7 +41,9 @@ describe('MarketplaceProductDetailsComponent', () => {
         OrderRatingPipe,
         RatingStarsComponent,
         MarketplaceProductDetailsComponent,
-        MarketplaceRatingComponent
+        MarketplaceRatingComponent,
+        OrderRatingPipe,
+        RatingStarsComponent
       ],
       imports: [
         RouterTestingModule,

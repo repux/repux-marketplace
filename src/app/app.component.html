@@ -203,6 +203,8 @@
   </g>
 </svg>
 
+<app-banner-testnet></app-banner-testnet>
+
 <mat-toolbar>
   <mat-toolbar-row>
     <button
@@ -246,7 +248,7 @@
       Sell Data
       <mat-icon>arrow_drop_down</mat-icon>
     </button>
-    
+
     <span class="toolbar-spacer"></span>
     <app-wallet-info *ngIf="!(isHandset$ | async)"></app-wallet-info>
 
@@ -275,16 +277,15 @@
       <button mat-menu-item routerLink="settings" fragment="wallet">My wallet</button>
       <button mat-menu-item routerLink="settings" fragment="keys">Private & Public keys</button>
       <button mat-menu-item routerLink="settings" fragment="selling">Selling</button>
+      <button mat-menu-item routerLink="settings" fragment="legal">Legal</button>
       <a *ngIf="faucetUrl" mat-menu-item href="{{ faucetUrl }}" target="_blank">Get FREE RepuX</a>
       <a href="https://help.repux.io/" target="_blank" mat-menu-item>Help</a>
     </mat-menu>
   </mat-toolbar-row>
 </mat-toolbar>
 
-
 <app-metamask-detector></app-metamask-detector>
 <app-notifications-detector></app-notifications-detector>
-<app-banner-testnet></app-banner-testnet>
 <app-marketplace-task-manager></app-marketplace-task-manager>
 
 <mat-sidenav-container class="sidenav-container">
