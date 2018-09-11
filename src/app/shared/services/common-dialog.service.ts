@@ -74,9 +74,23 @@ export class CommonDialogService {
 
       if (event.type === TransactionEventType.Dropped) {
         closeCurrentDialog();
+
+        if (event.transactionObject && event.transactionObject.isBuyFirstTransaction) {
+          currentDialogRef = this.alert(
+            'Your transaction has been dropped and we cannot track it now.<br>' +
+            'It may be related to the increase of the gas price in MetaMask extension.<br>' +
+            'Please wait until the second transaction is confirmed and click on the <strong>Buy</strong> button again,<br>' +
+            ' we will continue where you have left.',
+            'Transaction dropped'
+          );
+          return;
+        }
+
         currentDialogRef = this.alert(
           'Your transaction has been dropped and we cannot track it now.<br>' +
-          'It may be related to the increase of the gas price in MetaMask extension.',
+          'It may be related to the increase of the gas price in MetaMask extension.<br>' +
+          'Please wait until the second transaction is confirmed and we will get updated status from blockchain.<br>' +
+          'If still pending please refresh the page.',
           'Transaction dropped'
         );
         return;

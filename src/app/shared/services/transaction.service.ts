@@ -16,6 +16,7 @@ export interface Transaction {
   identifier: string;
   scope: BlockchainTransactionScope;
   blocksAction: ActionButtonType;
+  isBuyFirstTransaction: boolean;
 }
 
 const DroppedTransactionError = 'Transaction dropped';
@@ -57,18 +58,19 @@ export class TransactionService implements OnDestroy {
   }
 
   async handleTransaction(subject: BehaviorSubject<TransactionEvent>, scope: BlockchainTransactionScope, identifier: string,
-                          blocksAction: ActionButtonType, transaction: () => Promise<string>): Promise<void> {
+                          blocksAction: ActionButtonType, transaction: () => Promise<string>,
+                          isBuyFirstTransaction: boolean = false): Promise<void> {
     let transactionHash;
-    let transactionObj;
+    let transactionObject;
 
     try {
       subject.next({ type: TransactionEventType.Created });
 
       transactionHash = await transaction();
-      transactionObj = { transactionHash, scope, identifier, blocksAction };
+      transactionObject = { transactionHash, scope, identifier, blocksAction, isBuyFirstTransaction };
 
-      this.addTransaction(transactionObj);
-      subject.next({ type: TransactionEventType.Confirmed });
+      this.addTransaction(transactionObject);
+      subject.next({ type: TransactionEventType.Confirmed, transactionObject });
 
       const transactionReceipt = await this.getTransactionReceipt(transactionHash);
 
@@ -76,22 +78,22 @@ export class TransactionService implements OnDestroy {
         throw new Error('Unknown error');
       }
 
-      this.removeTransaction(transactionObj);
-      subject.next({ type: TransactionEventType.Mined, receipt: transactionReceipt });
+      this.removeTransaction(transactionObject);
+      subject.next({ type: TransactionEventType.Mined, receipt: transactionReceipt, transactionObject });
     } catch (error) {
       console.warn(error);
 
       if (transactionHash) {
-        this.removeTransaction(transactionObj);
+        this.removeTransaction(transactionObject);
       }
 
       if (error.message === DroppedTransactionError) {
-        this.addDroppedTransaction(transactionObj);
-        subject.next({ type: TransactionEventType.Dropped, error });
+        this.addDroppedTransaction(transactionObject);
+        subject.next({ type: TransactionEventType.Dropped, error, transactionObject });
         return;
       }
 
-      subject.next({ type: TransactionEventType.Rejected, error });
+      subject.next({ type: TransactionEventType.Rejected, error, transactionObject });
     }
 
     subject.complete();
