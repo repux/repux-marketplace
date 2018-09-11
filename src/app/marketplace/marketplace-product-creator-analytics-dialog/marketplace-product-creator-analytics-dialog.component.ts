@@ -3,6 +3,8 @@ import { MatDialogRef } from '@angular/material';
 import { HttpClient } from '@angular/common/http';
 import { Observable, of, Subject, Subscription } from 'rxjs';
 import { catchError, flatMap, pluck } from 'rxjs/operators';
+// tslint:disable-next-line:max-line-length
+import { DimensionsMetricsSelection } from '../marketplace-analytics-dimesions-metrics-explorer/marketplace-analytics-dimensions-metrics-explorer.component';
 
 export interface AnalyticsView {
   id: string;
@@ -32,6 +34,9 @@ export class MarketplaceProductCreatorAnalyticsDialogComponent implements OnInit
   selectedView: AnalyticsView;
   file: File;
   shortDescription: string;
+  reportError: Error;
+  metrics = [ 'ga:users' ];
+  dimensions = [ 'ga:date' ];
 
   private reportSubscription: Subscription;
   private reportRequest = {
@@ -42,17 +47,8 @@ export class MarketplaceProductCreatorAnalyticsDialogComponent implements OnInit
         endDate: 'yesterday'
       }
     ],
-    metrics: [
-      {
-        expression: 'ga:users',
-        alias: ''
-      }
-    ],
-    dimensions: [
-      {
-        name: 'ga:date'
-      }
-    ]
+    metrics: [],
+    dimensions: []
   };
 
   constructor(
@@ -96,6 +92,17 @@ export class MarketplaceProductCreatorAnalyticsDialogComponent implements OnInit
     this.status = MarketplaceProductCreatorAnalyticsDialogStatus.ReportGeneration;
     this.reportRequest.viewId = this.selectedView.id;
 
+    this.reportRequest.metrics = this.metrics.map(metric => {
+      return {
+        expression: metric
+      };
+    });
+    this.reportRequest.dimensions = this.dimensions.map(dimension => {
+      return {
+        name: dimension
+      };
+    });
+
     return new Promise((resolve, reject) => {
       this.reportSubscription = this.http.post(
         `https://analyticsreporting.googleapis.com/v4/reports:batchGet?access_token=${this.accessToken}`,
@@ -103,7 +110,11 @@ export class MarketplaceProductCreatorAnalyticsDialogComponent implements OnInit
       ).pipe(
         catchError((response: any) => {
           this.status = MarketplaceProductCreatorAnalyticsDialogStatus.ViewSelection;
-          this.loadingError$.next(response.error.error.errors[ 0 ]);
+          if (response.error.error.errors) {
+            this.loadingError$.next(response.error.error.errors[ 0 ]);
+          } else {
+            this.reportError = response.error.error;
+          }
           reject();
           return of();
         })
@@ -112,6 +123,11 @@ export class MarketplaceProductCreatorAnalyticsDialogComponent implements OnInit
         resolve(report);
       });
     });
+  }
+
+  onDimensionsMetricsChange(event: DimensionsMetricsSelection) {
+    this.metrics = event.metrics;
+    this.dimensions = event.dimensions;
   }
 
   private onReportGenerationFinish(report: any, generationDate: number): void {

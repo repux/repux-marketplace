@@ -1,0 +1,67 @@
+@import '../../../theme';
+
+.explorer {
+  &__collapsible {
+    &__header {
+      padding: 5px;
+      font-size: 1.2rem !important;
+      margin: 0 !important;
+      display: flex;
+      cursor: pointer;
+
+      &.opened {
+        color: mat-color($app-primary);
+      }
+
+      &__icon {
+        margin-right: 10px;
+      }
+    }
+
+    &__content {
+      padding: 0;
+      margin: 0 40px;
+    }
+
+    &__row {
+      display: flex;
+      flex-direction: row;
+      align-items: stretch;
+    }
+
+    &__description {
+      background: mat-color($mat-light-theme-background, status-bar);
+      min-width: 200px;
+      padding: 10px;
+      font-weight: bold;
+    }
+
+    &__values {
+      padding: 10px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      border-top: 1px solid mat-color($mat-light-theme-background, hover);
+    }
+  }
+
+  &__item {
+    &__none {
+      opacity: 0.5;
+      font-style: italic;
+      padding-left: 40px;
+    }
+  }
+
+  &__checkbox {
+    margin: 0 10px 10px;
+    color: mat-color($app-primary);
+  }
+}
+
+.loader {
+  opacity: 0.5;
+  font-style: italic;
+  text-align: center;
+}

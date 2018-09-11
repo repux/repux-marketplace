@@ -48,6 +48,8 @@ import { MarketplaceListFilterComponent } from './marketplace-list-filter/market
 import { MarketplaceAnalyticsDialogComponent } from './marketplace-analytics-dialog/marketplace-analytics-dialog.component';
 // tslint:disable-next-line:max-line-length
 import { MarketplaceProductCreatorAnalyticsDialogComponent } from './marketplace-product-creator-analytics-dialog/marketplace-product-creator-analytics-dialog.component';
+// tslint:disable-next-line:max-line-length
+import { MarketplaceAnalyticsDimensionsMetricsExplorerComponent } from './marketplace-analytics-dimesions-metrics-explorer/marketplace-analytics-dimensions-metrics-explorer.component';
 
 @NgModule({
   imports: [
@@ -85,7 +87,8 @@ import { MarketplaceProductCreatorAnalyticsDialogComponent } from './marketplace
     MarketplaceMyFilesComponent,
     MarketplaceListFilterComponent,
     MarketplaceAnalyticsDialogComponent,
-    MarketplaceProductCreatorAnalyticsDialogComponent
+    MarketplaceProductCreatorAnalyticsDialogComponent,
+    MarketplaceAnalyticsDimensionsMetricsExplorerComponent
   ],
   exports: [
     MarketplaceBrowseComponent,

@@ -9,6 +9,14 @@
   width: 100%;
 }
 
+.report-error {
+  background: mat-color($app-warn, 100);
+  padding: 10px 16px;
+  color: mat-color($mat-light-theme-foreground, secondary-text);
+  text-align: center;
+  margin-bottom: 10px;
+}
+
 .error {
   color: mat-color($app-warn);
 }
