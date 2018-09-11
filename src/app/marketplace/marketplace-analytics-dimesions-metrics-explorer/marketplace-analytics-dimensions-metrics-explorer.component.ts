@@ -5,7 +5,7 @@ import { map, pluck } from 'rxjs/operators';
 import { HttpClient } from '@angular/common/http';
 import { MatCheckboxChange } from '@angular/material';
 import { Subscription } from 'rxjs';
-import foldingAnimation from '../../shared/animations/folding.animation';
+import { foldingAnimation } from '../../shared/animations/folding.animation';
 
 interface MatadataColumnAttributes {
   type: string;
@@ -33,7 +33,7 @@ export interface DimensionsMetricsSelection {
   selector: 'app-marketplace-analytics-dimensions-metrics-explorer',
   templateUrl: './marketplace-analytics-dimensions-metrics-explorer.component.html',
   styleUrls: [ './marketplace-analytics-dimensions-metrics-explorer.component.scss' ],
-  animations: [ foldingAnimation ]
+  animations: [ foldingAnimation('visibilityChanged') ]
 })
 export class MarketplaceAnalyticsDimensionsMetricsExplorerComponent implements OnInit, OnDestroy {
   @Input() selectedDimensions: string[] = [];

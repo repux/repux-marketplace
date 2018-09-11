@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, OnChanges, Output } from '@angular/core';
-import foldingAnimation from '../../shared/animations/folding.animation';
+import { foldingAnimation } from '../../shared/animations/folding.animation';
 
 export interface SortingOption {
   sortBy: string;
@@ -16,7 +16,7 @@ export interface CategoryOption {
   selector: 'app-marketplace-list-filter',
   templateUrl: './marketplace-list-filter.component.html',
   styleUrls: [ './marketplace-list-filter.component.scss' ],
-  animations: [ foldingAnimation ]
+  animations: [ foldingAnimation('visibilityChanged') ]
 })
 export class MarketplaceListFilterComponent implements OnChanges {
   @Input() isOpened: boolean;
