@@ -22,7 +22,6 @@ import {
 import { BannerTestnetComponent } from './components/banner-testnet/banner-testnet.component';
 import { OrderRatingPipe } from './pipes/order-rating.pipe';
 import { RatingStarsComponent } from './components/rating-stars/rating-stars.component';
-import { BannerCookieComponent } from './components/banner-cookie/banner-cookie.component';
 
 @NgModule({
   imports: [
@@ -51,8 +50,7 @@ import { BannerCookieComponent } from './components/banner-cookie/banner-cookie.
     PriceInputComponent,
     OrderRatingPipe,
     RatingStarsComponent,
-    BannerTestnetComponent,
-    BannerCookieComponent
+    BannerTestnetComponent
   ],
   exports: [
     FileInputComponent,
@@ -69,8 +67,7 @@ import { BannerCookieComponent } from './components/banner-cookie/banner-cookie.
     SafeHtmlPipe,
     OrderDatePipe,
     OrderRatingPipe,
-    BannerTestnetComponent,
-    BannerCookieComponent
+    BannerTestnetComponent
   ],
   entryComponents: [
     ConfirmationDialogComponent,
