@@ -40,10 +40,10 @@ export const environment = {
     },
     eulaUrls: [ {
       type: EulaType.STANDARD,
-      url: '${MARKETPLACE_EULA_STANDARD}' || './assets/standard-eula_2018-07-23.txt',
+      url: '${MARKETPLACE_EULA_STANDARD}' || './assets/standard-eula_2018-09-11.docx',
     }, {
       type: EulaType.RESTRICTIVE,
-      url: '${MARKETPLACE_EULA_RESTRICTIVE}' || './assets/restrictive-eula_2018-07-23.txt',
+      url: '${MARKETPLACE_EULA_RESTRICTIVE}' || './assets/restrictive-eula_2018-09-11.docx',
     }, {
       type: EulaType.OWNER
     } ],
