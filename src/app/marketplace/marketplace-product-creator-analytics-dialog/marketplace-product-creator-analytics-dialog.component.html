@@ -15,14 +15,21 @@
 
         <p>Select dimensions and metrics which should be included in report.</p>
 
-        <div class="report-error" *ngIf="reportError">
-          {{reportError.message}}
-        </div>
+        <mat-radio-group (change)="changeExplorerVisible($event)" [value]="explorerVisible">
+          <mat-radio-button [value]="false">Default set</mat-radio-button>
+          <mat-radio-button [value]="true">Custom</mat-radio-button>
+        </mat-radio-group>
 
-        <app-marketplace-analytics-dimensions-metrics-explorer
-          [selectedMetrics]="metrics"
-          [selectedDimensions]="dimensions"
-          (change)="onDimensionsMetricsChange($event)"></app-marketplace-analytics-dimensions-metrics-explorer>
+        <div class="explorer" [class.visible]="explorerVisible">
+          <div class="report-error" *ngIf="reportError">
+            {{reportError.message}}
+          </div>
+
+          <app-marketplace-analytics-dimensions-metrics-explorer
+            [selectedMetrics]="metrics"
+            [selectedDimensions]="dimensions"
+            (change)="onDimensionsMetricsChange($event)"></app-marketplace-analytics-dimensions-metrics-explorer>
+        </div>
 
       </mat-dialog-content>
       <mat-dialog-actions>
