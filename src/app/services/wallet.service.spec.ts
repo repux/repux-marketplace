@@ -28,6 +28,7 @@ const repuxWeb3ApiMock = {
 
 let walletService;
 let repuxWeb3ServiceSpy;
+let clockServiceSpy;
 
 describe('WalletService', () => {
   beforeEach(() => {
@@ -35,9 +36,14 @@ describe('WalletService', () => {
       'RepuxWeb3Service',
       [ 'getRepuxApiInstance', 'getWeb3Instance', 'isProviderAvailable', 'isDefaultAccountAvailable', 'isNetworkCorrect' ]
     );
+    clockServiceSpy = jasmine.createSpyObj('ClockService', [ 'onEachMinute' ]);
+    clockServiceSpy.onEachMinute.and.returnValue({
+      subscribe() {
+      }
+    });
     const raf = window.requestAnimationFrame;
     window.requestAnimationFrame = undefined;
-    walletService = new WalletService(<any> repuxWeb3ServiceSpy);
+    walletService = new WalletService(<any> repuxWeb3ServiceSpy, <any> clockServiceSpy);
     window.requestAnimationFrame = raf;
   });
 

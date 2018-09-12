@@ -8,6 +8,7 @@ import { MaterialModule } from '../material.module';
 import { getCreatedDataProductsQuery } from './services/my-active-listings.service';
 import { ActionButtonType } from '../shared/enums/action-button-type';
 import BigNumber from 'bignumber.js';
+import { ClockService } from '../services/clock.service';
 
 @Component({ selector: 'app-data-product-list', template: '' })
 class DataProductListStubComponent {
@@ -20,11 +21,18 @@ class DataProductListStubComponent {
 describe('MarketplaceSellMyActiveListingsComponent', () => {
   let component: MarketplaceActiveListingsComponent;
   let fixture: ComponentFixture<MarketplaceActiveListingsComponent>;
-  let matDialog;
+  let matDialog,
+    clockServiceSpy;
   const ownerAddress = '0x0000000000000000000000000000000000000000';
 
   beforeEach(fakeAsync(() => {
     matDialog = jasmine.createSpyObj('MatDialog', [ 'open' ]);
+
+    clockServiceSpy = jasmine.createSpyObj('ClockService', [ 'onEachMinute' ]);
+    clockServiceSpy.onEachMinute.and.returnValue({
+      subscribe() {
+      }
+    });
 
     TestBed.configureTestingModule({
       declarations: [
@@ -36,7 +44,8 @@ describe('MarketplaceSellMyActiveListingsComponent', () => {
         NoopAnimationsModule
       ],
       providers: [
-        { provide: MatDialog, useValue: matDialog }
+        { provide: MatDialog, useValue: matDialog },
+        { provide: ClockService, useValue: clockServiceSpy }
       ]
     })
       .compileComponents();

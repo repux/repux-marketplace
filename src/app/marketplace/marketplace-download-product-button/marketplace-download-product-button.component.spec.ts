@@ -10,11 +10,12 @@ import { TagManagerService } from '../../shared/services/tag-manager.service';
 import { KeyStoreDialogService } from '../../key-store/key-store-dialog.service';
 import { TaskManagerService } from '../../services/task-manager.service';
 import BigNumber from 'bignumber.js';
+import { ClockService } from '../../services/clock.service';
 
 describe('MarketplaceDownloadProductButtonComponent', () => {
   let component: MarketplaceDownloadProductButtonComponent;
   let fixture: ComponentFixture<MarketplaceDownloadProductButtonComponent>;
-  let repuxLibServiceSpy, keyStoreDialogServiceSpy, dataProductServiceSpy, tagManagerSpy, taskManagerServiceSpy;
+  let repuxLibServiceSpy, keyStoreDialogServiceSpy, dataProductServiceSpy, tagManagerSpy, taskManagerServiceSpy, clockServiceSpy;
   const productAddress = '0x1111111111111111111111111111111111111111';
 
   beforeEach(fakeAsync(() => {
@@ -27,6 +28,11 @@ describe('MarketplaceDownloadProductButtonComponent', () => {
     dataProductServiceSpy = jasmine.createSpyObj('DataProductService', [ 'getDataProductData', 'getOrderData' ]);
     taskManagerServiceSpy = jasmine.createSpyObj('TaskManagerService', [ 'getTasks', 'addTask' ]);
     taskManagerServiceSpy.getTasks.and.returnValue({
+      subscribe() {
+      }
+    });
+    clockServiceSpy = jasmine.createSpyObj('ClockService', [ 'onEachMinute' ]);
+    clockServiceSpy.onEachMinute.and.returnValue({
       subscribe() {
       }
     });
@@ -44,7 +50,8 @@ describe('MarketplaceDownloadProductButtonComponent', () => {
         { provide: RepuxLibService, useValue: repuxLibServiceSpy },
         { provide: DataProductService, useValue: dataProductServiceSpy },
         { provide: KeyStoreDialogService, useValue: keyStoreDialogServiceSpy },
-        { provide: TaskManagerService, useValue: taskManagerServiceSpy }
+        { provide: TaskManagerService, useValue: taskManagerServiceSpy },
+        { provide: ClockService, useValue: clockServiceSpy }
       ]
     })
       .compileComponents();
