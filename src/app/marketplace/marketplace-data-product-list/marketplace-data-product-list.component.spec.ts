@@ -41,8 +41,8 @@ describe('MarketplaceDataProductListComponent', () => {
 
   beforeEach(async(() => {
     pendingFinalisationServiceSpy = jasmine.createSpyObj('PendingFinalisationService', [ 'findOrder' ]);
-    dataProductListServiceSpy = jasmine.createSpyObj('DataProductListService', [ 'getDataProductsWithBlockchainState' ]);
-    dataProductListServiceSpy.getDataProductsWithBlockchainState.and.callFake(() => {
+    dataProductListServiceSpy = jasmine.createSpyObj('DataProductListService', [ 'getDataProducts' ]);
+    dataProductListServiceSpy.getDataProducts.and.callFake(() => {
       const response = new EsResponse();
       response.hits = [];
       return fromPromise(Promise.resolve(response));
@@ -139,7 +139,7 @@ describe('MarketplaceDataProductListComponent', () => {
   });
 
   describe('#refreshData()', () => {
-    it('should call getDataProductsWithBlockchainState method on DataProductListService instance and assign result ' +
+    it('should call getDataProducts method on DataProductListService instance and assign result ' +
       'to esDataProducts and dataSource properties',
       async () => {
         const expectedResponse: EsResponse<DataProduct> = {
@@ -158,7 +158,7 @@ describe('MarketplaceDataProductListComponent', () => {
         component.sort = 'SORT';
         component.size = 10;
         component.from = 1;
-        dataProductListServiceSpy.getDataProductsWithBlockchainState.and.callFake((query, sort, size, from) => {
+        dataProductListServiceSpy.getDataProducts.and.callFake((query, sort, size, from) => {
           expect(query).toEqual({ bool: { must: [ { bool: { should: [ 'QUERY' ] } } ] } });
           expect(sort).toBe('SORT');
           expect(size).toBe(10);
@@ -166,7 +166,7 @@ describe('MarketplaceDataProductListComponent', () => {
           return fromPromise(Promise.resolve(expectedResponse));
         });
         await component.refreshData();
-        expect(dataProductListServiceSpy.getDataProductsWithBlockchainState.calls.count()).toBe(1);
+        expect(dataProductListServiceSpy.getDataProducts.calls.count()).toBe(1);
         expect(component.esDataProducts).toBe(expectedResponse);
       });
 
@@ -189,7 +189,7 @@ describe('MarketplaceDataProductListComponent', () => {
       component.sort = {};
       component.size = 10;
       component.from = 1;
-      dataProductListServiceSpy.getDataProductsWithBlockchainState.and.callFake((query, sort, size, from) => {
+      dataProductListServiceSpy.getDataProducts.and.callFake((query, sort, size, from) => {
         console.log(query);
 
         expect(query).toEqual({ bool: { must: [ { bool: { should: [ 'QUERY' ] } } ] } });
@@ -207,7 +207,7 @@ describe('MarketplaceDataProductListComponent', () => {
       await component.refreshData();
       expect(component.sortActive).toBe('defaultSort');
       expect(component.sortDirection).toBe('asc');
-      expect(dataProductListServiceSpy.getDataProductsWithBlockchainState.calls.count()).toBe(1);
+      expect(dataProductListServiceSpy.getDataProducts.calls.count()).toBe(1);
       expect(component.esDataProducts).toBe(expectedResponse);
     });
   });

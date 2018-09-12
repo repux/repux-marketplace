@@ -47,7 +47,7 @@ describe('MarketplaceBrowseComponent', () => {
   let dataProductListServiceSpy, repuxWeb3ServiceSpy, ipfsServiceSpy, projectCategoryServiceStub;
 
   beforeEach(async () => {
-    dataProductListServiceSpy = jasmine.createSpyObj('DataProductListService', [ 'getDataProducts', 'getBlockchainStateForDataProducts' ]);
+    dataProductListServiceSpy = jasmine.createSpyObj('DataProductListService', [ 'getDataProducts' ]);
     dataProductListServiceSpy.getDataProducts.and.callFake(() => {
       const response = new EsResponse();
       response.hits = [];
