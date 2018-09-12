@@ -1,10 +1,12 @@
-import { Component, Input, OnDestroy, OnInit } from '@angular/core';
-import { MatDialogRef } from '@angular/material';
+import { Component, Inject, Input, OnDestroy, OnInit } from '@angular/core';
+import { MatDialogRef, MatRadioChange } from '@angular/material';
 import { HttpClient } from '@angular/common/http';
 import { Observable, of, Subject, Subscription } from 'rxjs';
 import { catchError, flatMap, pluck } from 'rxjs/operators';
 // tslint:disable-next-line:max-line-length
 import { DimensionsMetricsSelection } from '../marketplace-analytics-dimesions-metrics-explorer/marketplace-analytics-dimensions-metrics-explorer.component';
+import { DatePipe } from '@angular/common';
+import { LOCALE_ID } from '@angular/core';
 
 export interface AnalyticsView {
   id: string;
@@ -35,8 +37,12 @@ export class MarketplaceProductCreatorAnalyticsDialogComponent implements OnInit
   file: File;
   shortDescription: string;
   reportError: Error;
-  metrics = [ 'ga:users' ];
-  dimensions = [ 'ga:date' ];
+  metrics: string[];
+  dimensions: string[];
+  explorerVisible = false;
+
+  deafultMetrics = [ 'ga:users' ];
+  defaultDimensions = [ 'ga:date' ];
 
   private reportSubscription: Subscription;
   private reportRequest = {
@@ -54,8 +60,10 @@ export class MarketplaceProductCreatorAnalyticsDialogComponent implements OnInit
   constructor(
     private dialogRef: MatDialogRef<MarketplaceProductCreatorAnalyticsDialogComponent>,
     private http: HttpClient,
+    @Inject(LOCALE_ID) private locale: string
   ) {
     this.status = MarketplaceProductCreatorAnalyticsDialogStatus.ViewSelection;
+    this.resetMetricsDimensions();
   }
 
   ngOnInit() {
@@ -77,6 +85,14 @@ export class MarketplaceProductCreatorAnalyticsDialogComponent implements OnInit
   ngOnDestroy() {
     if (this.reportSubscription) {
       this.reportSubscription.unsubscribe();
+    }
+  }
+
+  changeExplorerVisible(event: MatRadioChange) {
+    this.explorerVisible = event.value;
+
+    if (!this.explorerVisible) {
+      this.resetMetricsDimensions();
     }
   }
 
@@ -130,6 +146,11 @@ export class MarketplaceProductCreatorAnalyticsDialogComponent implements OnInit
     this.dimensions = event.dimensions;
   }
 
+  resetMetricsDimensions() {
+    this.metrics = this.deafultMetrics.slice(0);
+    this.dimensions = this.defaultDimensions.slice(0);
+  }
+
   private onReportGenerationFinish(report: any, generationDate: number): void {
     this.file = new File([ new Blob([ JSON.stringify(report) ]) ], `analytics-report-${generationDate}.json`);
     this.shortDescription = this.generateDescription(generationDate, this.reportRequest, report);
@@ -137,9 +158,11 @@ export class MarketplaceProductCreatorAnalyticsDialogComponent implements OnInit
   }
 
   private generateDescription(generationDate: number, request: any, report: any) {
+    const datePipe = new DatePipe(this.locale);
+
     return `Name: Google Analytics report
 Website: ${ this.selectedView.websiteUrl }
-Generation date: ${ generationDate }
+Generation date: ${ datePipe.transform(generationDate, 'short') }
 Rows number: ${ report.reports[ 0 ].data.rows.length }
 Report parameters:
    startDate: ${ request.dateRanges[ 0 ].startDate }

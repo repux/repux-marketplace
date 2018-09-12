@@ -12,6 +12,7 @@ import { MatDialogRef } from '@angular/material';
 import { of } from 'rxjs';
 // tslint:disable-next-line:max-line-length
 import { DimensionsMetricsSelection } from '../marketplace-analytics-dimesions-metrics-explorer/marketplace-analytics-dimensions-metrics-explorer.component';
+import { DatePipe } from '@angular/common';
 
 @Component({ selector: 'app-marketplace-product-creator-dialog', template: '' })
 class MarketplaceProductCreatorDialogStubComponent {
@@ -99,6 +100,7 @@ describe('MarketplaceProductCreatorAnalyticsDialogComponent', () => {
 
   describe('#generateReport()', () => {
     it('should call http.post to fetch report', async () => {
+      const datePipe = new DatePipe('en-US');
       const expectedReport = {
         reports: [ {
           data: {
@@ -139,7 +141,7 @@ describe('MarketplaceProductCreatorAnalyticsDialogComponent', () => {
       });
       expect(component.shortDescription).toBe(`Name: Google Analytics report
 Website: http://example.com
-Generation date: ${ generationDate.getTime() }
+Generation date: ${ datePipe.transform(generationDate.getTime(), 'short') }
 Rows number: 0
 Report parameters:
    startDate: 30daysAgo
