@@ -93,6 +93,8 @@ export class TransactionService implements OnDestroy {
         return;
       }
 
+      error = this.replaceKnownErrors(error);
+
       subject.next({ type: TransactionEventType.Rejected, error, transactionObject });
     }
 
@@ -185,5 +187,17 @@ export class TransactionService implements OnDestroy {
 
   private saveToStore(data: { currentTransactions: Transaction[], droppedTransactions: Transaction[] }, walletAddress?: string): void {
     this.storageService.setItem(this.getStorageKey(walletAddress), data);
+  }
+
+  private replaceKnownErrors(error: Error): Error {
+    if (error.message.includes('transaction underpriced')) {
+      return new Error('Transaction underpriced. Please increase gas price.');
+    }
+
+    if (error.message.includes('MetaMask Tx Signature')) {
+      return new Error('User denied transaction signature.');
+    }
+
+    return error;
   }
 }

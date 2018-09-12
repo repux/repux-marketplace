@@ -66,7 +66,7 @@ export class CommonDialogService {
         closeCurrentDialog();
         currentDialogRef = this.alert(
           'Something went wrong while confirming your transaction. Please try again.<br>Details: ' +
-          this.sanitizer.sanitize(SecurityContext.HTML, event.error),
+          this.sanitizer.sanitize(SecurityContext.HTML, event.error.message),
           'Transaction rejected'
         );
         return;
