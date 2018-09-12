@@ -12,11 +12,12 @@ import { BlockchainTransactionScope } from '../../shared/enums/blockchain-transa
 import { ActionButtonType } from '../../shared/enums/action-button-type';
 import { Transaction, TransactionService } from '../../shared/services/transaction.service';
 import { CommonDialogService } from '../../shared/services/common-dialog.service';
+import { ClockService } from '../../services/clock.service';
 
 describe('MarketplaceUnpublishButtonComponent', () => {
   let component: MarketplaceUnpublishButtonComponent;
   let fixture: ComponentFixture<MarketplaceUnpublishButtonComponent>;
-  let dataProductServiceSpy, unpublishedProductsServiceSpy, commonDialogServiceSpy, transactionServiceSpy;
+  let dataProductServiceSpy, unpublishedProductsServiceSpy, commonDialogServiceSpy, transactionServiceSpy, clockServiceSpy;
   const ownerAddress = '0x0000000000000000000000000000000000000000';
   const dataProductAddress = '0x1111111111111111111111111111111111111111';
 
@@ -35,6 +36,12 @@ describe('MarketplaceUnpublishButtonComponent', () => {
       }
     });
 
+    clockServiceSpy = jasmine.createSpyObj('ClockService', [ 'onEachMinute' ]);
+    clockServiceSpy.onEachMinute.and.returnValue({
+      subscribe() {
+      }
+    });
+
     TestBed.configureTestingModule({
       declarations: [
         MarketplaceUnpublishButtonComponent
@@ -47,7 +54,8 @@ describe('MarketplaceUnpublishButtonComponent', () => {
         { provide: DataProductService, useValue: dataProductServiceSpy },
         { provide: UnpublishedProductsService, useValue: unpublishedProductsServiceSpy },
         { provide: CommonDialogService, useValue: commonDialogServiceSpy },
-        { provide: TransactionService, useValue: transactionServiceSpy }
+        { provide: TransactionService, useValue: transactionServiceSpy },
+        { provide: ClockService, useValue: clockServiceSpy }
       ]
     })
       .compileComponents();

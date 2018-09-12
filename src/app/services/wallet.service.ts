@@ -4,6 +4,8 @@ import { RepuxWeb3Service } from './repux-web3.service';
 import { Observable } from 'rxjs/internal/Observable';
 import { BehaviorSubject } from 'rxjs/internal/BehaviorSubject';
 import BigNumber from 'bignumber.js';
+import { ClockService } from './clock.service';
+import { Subscription } from 'rxjs';
 
 enum WorkerState {
   Ready,
@@ -30,11 +32,17 @@ export class WalletService implements OnDestroy {
   private checkFramesInterval = 100;
   private workerState: WorkerState;
   private currentAccount: string;
+  private subscriptions: Subscription[] = [];
 
-  constructor(private repuxWeb3Service: RepuxWeb3Service) {
+  constructor(
+    private repuxWeb3Service: RepuxWeb3Service,
+    private clockService: ClockService
+  ) {
     if (requestAnimationFrame) {
       this.rafReference = requestAnimationFrame(this.detectionWorker.bind(this));
     }
+
+    this.subscriptions.push(this.clockService.onEachMinute().subscribe(() => this.updateBalance()));
   }
 
   async detectionWorker() {
@@ -143,6 +151,8 @@ export class WalletService implements OnDestroy {
     if (this.rafReference) {
       cancelAnimationFrame(this.rafReference);
     }
+
+    this.subscriptions.forEach(subscription => subscription.unsubscribe());
   }
 
   private async getWeb3Api() {
