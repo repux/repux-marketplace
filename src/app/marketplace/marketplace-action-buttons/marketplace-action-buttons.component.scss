@@ -1,5 +1,10 @@
 @import '../../../theme';
 
+:host {
+  position: relative;
+  min-height: 36px;
+}
+
 .action-buttons {
   display: flex;
   justify-content: flex-end;
@@ -21,4 +26,8 @@
       display: none;
     }
   }
+}
+
+.mat-spinner {
+  float: right;
 }

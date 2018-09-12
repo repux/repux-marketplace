@@ -26,6 +26,7 @@ export class MarketplaceActionButtonsComponent implements OnDestroy, OnChanges, 
   fundsToWithdraw?: BigNumber;
 
   loading = true;
+  blockchainDataFetched = false;
 
   actionButtonType = ActionButtonType;
 
@@ -78,7 +79,15 @@ export class MarketplaceActionButtonsComponent implements OnDestroy, OnChanges, 
   }
 
   private async _fetchDataFromBlockchain(): Promise<void> {
-    if (this.dataProduct && this._wallet) {
+    this.blockchainDataFetched = false;
+
+    if (!this._wallet) {
+      this.loading = false;
+
+      return;
+    }
+
+    if (this.dataProduct) {
       if (this.dataProduct.address) {
         this.loading = true;
 
@@ -93,6 +102,7 @@ export class MarketplaceActionButtonsComponent implements OnDestroy, OnChanges, 
         }
       }
       this.loading = false;
+      this.blockchainDataFetched = true;
     }
   }
 }

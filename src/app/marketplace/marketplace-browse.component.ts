@@ -7,7 +7,6 @@ import { environment } from '../../environments/environment';
 import { Eula } from 'repux-lib';
 import { IpfsService } from '../services/ipfs.service';
 import { PageEvent } from '@angular/material';
-import { RepuxWeb3Service } from '../services/repux-web3.service';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { ActionButtonType } from '../shared/enums/action-button-type';
 import { EsResponse } from '../shared/models/es-response';
@@ -74,7 +73,6 @@ export class MarketplaceBrowseComponent implements OnInit {
   constructor(
     private dataProductListService: DataProductListService,
     private ipfsService: IpfsService,
-    private repuxWeb3Service: RepuxWeb3Service,
     private productCategoryService: ProductCategoryService
   ) {
     this.size = this.pageSizeOptions[ 0 ];
@@ -179,14 +177,7 @@ export class MarketplaceBrowseComponent implements OnInit {
     const [ sortField, sortOrder ] = this.sort.split(':');
     const sort = { [ sortField ]: { order: sortOrder } };
 
-    let productsRaw$ = this.dataProductListService.getDataProducts(query, sort, this.size, this.from);
-    const repuxWeb3Service = await this.repuxWeb3Service;
-
-    if (await repuxWeb3Service.isWalletAvailable()) {
-      productsRaw$ = this.dataProductListService.getBlockchainStateForDataProducts(productsRaw$);
-    }
-
-    this.products$ = productsRaw$;
+    this.products$ = this.dataProductListService.getDataProducts(query, sort, this.size, this.from);
   }
 
   toggleFilter() {

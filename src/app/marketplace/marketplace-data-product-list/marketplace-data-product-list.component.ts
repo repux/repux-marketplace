@@ -161,7 +161,7 @@ export class MarketplaceDataProductListComponent implements OnInit, OnChanges, O
       this.isLoadingResults = true;
       this._unsubscribeDataProducts();
       this._dataProductsSubscription = this.dataProductListService
-        .getDataProductsWithBlockchainState(query, this.sort, this.size, this.from)
+        .getDataProducts(query, this.sort, this.size, this.from)
         .subscribe(esDataProducts => {
           this.esDataProducts = esDataProducts;
           this.reloadRecords();
