@@ -14,6 +14,7 @@ import { IpfsService } from '../../services/ipfs.service';
 import { ActionButtonType } from '../../shared/enums/action-button-type';
 import { BehaviorSubject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, filter } from 'rxjs/operators';
+import { urlSearchParamsToJSON } from '../../shared/utils/url';
 
 const DAY_IN_MILLISECONDS = 24 * 60 * 60 * 1000;
 
@@ -48,22 +49,22 @@ export class MarketplaceDataProductListComponent implements OnInit, OnChanges, O
 
   sortActive: string;
   sortDirection: string;
-  public eulaType = EulaType;
-  public esDataProducts: EsResponse<DataProduct>;
-  public dataSource: MatTableDataSource<DataProduct>;
-  public pageSizeOptions = environment.repux.pageSizeOptions;
-  public isLoadingResults = true;
-  public query = [];
-  public sort: Object = {};
-  public size: number;
-  public from: number;
-  public textColumns: string[] = [
+  eulaType = EulaType;
+  esDataProducts: EsResponse<DataProduct>;
+  dataSource: MatTableDataSource<DataProduct>;
+  pageSizeOptions = environment.repux.pageSizeOptions;
+  isLoadingResults = true;
+  query = [];
+  sort: Object = {};
+  size: number;
+  from: number;
+  textColumns: string[] = [
     'name',
     'title',
     'shortDescription',
     'fullDescription'
   ];
-  public currencyColumns: string[] = [
+  currencyColumns: string[] = [
     'price',
     'buyersDeposit',
     'funds',
@@ -72,6 +73,9 @@ export class MarketplaceDataProductListComponent implements OnInit, OnChanges, O
 
   private _dataProductsSubscription: Subscription;
   private inputChangeSubject = new BehaviorSubject<string>(undefined);
+
+  filterValues: { search: string } = { search: '' };
+  queryParams: Object;
 
   constructor(
     public dataProductListService: DataProductListService,
@@ -88,6 +92,8 @@ export class MarketplaceDataProductListComponent implements OnInit, OnChanges, O
         filter(value => typeof value !== 'undefined')
       )
       .subscribe(() => this.applyFilter());
+
+    this.readQueryParams();
   }
 
   ngOnChanges() {
@@ -96,12 +102,13 @@ export class MarketplaceDataProductListComponent implements OnInit, OnChanges, O
   }
 
   onTypeAhead(value: string) {
+    this.addQueryParam('search', value);
     this.inputChangeSubject.next(value);
   }
 
   applyFilter(): Promise<void> {
     const search = (this.inputChangeSubject.getValue() || '').trim().toLowerCase();
-
+    this.filterValues.search = search;
     this.query = [
       { regexp: { name: '.*"' + search + '".*' } },
       { regexp: { title: '.*"' + search + '".*' } },
@@ -207,6 +214,35 @@ export class MarketplaceDataProductListComponent implements OnInit, OnChanges, O
     event.stopPropagation();
 
     return this.ipfsService.downloadAndSave(eula.fileHash, eula.fileName);
+  }
+
+  addQueryParam(name: string, value: string) {
+    const url = new URL(window.location.toString());
+    const params = new URLSearchParams(url.search.slice(1));
+
+    if (params.has(name)) {
+      if (value) {
+        params.set(name, value);
+      } else {
+        params.delete(name);
+      }
+    } else {
+      params.append(name, value);
+    }
+
+    this.queryParams = urlSearchParamsToJSON(params);
+    window.history.replaceState({}, '', window.location.pathname + '?' + params);
+  }
+
+  readQueryParams() {
+    const url = new URL(window.location.toString());
+    const params = new URLSearchParams(url.search.slice(1));
+
+    if (params.has('search')) {
+      this.inputChangeSubject.next(params.get('search'));
+    }
+
+    this.queryParams = urlSearchParamsToJSON(params);
   }
 
   private _findOrderByCurrentBuyerAddress(dataProduct: DataProduct) {

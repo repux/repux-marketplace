@@ -110,6 +110,10 @@
   &__icon {
     color: #999;
     margin: 0 16px 0 0;
+
+    &_button {
+      cursor: pointer;
+    }
   }
 
   @media screen and (max-width: 700px) {

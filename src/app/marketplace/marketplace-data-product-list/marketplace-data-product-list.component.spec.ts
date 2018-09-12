@@ -14,6 +14,7 @@ import { PendingFinalisationService } from '../services/pending-finalisation.ser
 import { IpfsService } from '../../services/ipfs.service';
 import { EulaType } from 'repux-lib';
 import { ActionButtonType } from '../../shared/enums/action-button-type';
+import { FormsModule } from '@angular/forms';
 
 @Component({ selector: 'app-file-size', template: '{{bytes}}' })
 class MarketplaceFileSizeStubComponent {
@@ -57,6 +58,7 @@ describe('MarketplaceDataProductListComponent', () => {
       ],
       imports: [
         SharedModule,
+        FormsModule,
         MaterialModule,
         RouterTestingModule,
         NoopAnimationsModule
@@ -73,6 +75,7 @@ describe('MarketplaceDataProductListComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(MarketplaceDataProductListComponent);
     component = fixture.componentInstance;
+    component.readQueryParams = () => {};
     fixture.detectChanges();
   });
 
@@ -187,6 +190,8 @@ describe('MarketplaceDataProductListComponent', () => {
       component.size = 10;
       component.from = 1;
       dataProductListServiceSpy.getDataProductsWithBlockchainState.and.callFake((query, sort, size, from) => {
+        console.log(query);
+
         expect(query).toEqual({ bool: { must: [ { bool: { should: [ 'QUERY' ] } } ] } });
         expect(sort).toEqual({
           defaultSort: {
@@ -323,7 +328,7 @@ describe('MarketplaceDataProductListComponent', () => {
     it('should call onTypeAhead method when user changes search input value', () => {
       const onTypeAhead = spyOn(component, 'onTypeAhead');
       const element = fixture.debugElement.nativeElement.querySelector('input');
-      element.dispatchEvent(new CustomEvent('keyup'));
+      element.dispatchEvent(new Event('input'));
 
       expect(onTypeAhead.calls.count()).toBe(1, 'one call');
     });
