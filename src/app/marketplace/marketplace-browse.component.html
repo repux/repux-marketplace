@@ -1,11 +1,11 @@
 <div class="list-search">
   <input
-    type="search"
     class="list-search__input"
     placeholder="Search for a data"
-    (keyup)="onTypeAhead($event.target.value)"
-    [(ngModel)]="filterValues.search">
-  <mat-icon class="list-search__icon">search</mat-icon>
+    [(ngModel)]="filterValues.search"
+    (ngModelChange)="onTypeAhead($event)">
+  <mat-icon class="list-search__icon" *ngIf="!filterValues.search.length">search</mat-icon>
+  <mat-icon class="list-search__icon list-search__icon_button" *ngIf="filterValues.search.length" (click)="onTypeAhead('')">clear</mat-icon>
   <div class="list-search__filter-icon">
     <button mat-icon-button (click)="toggleFilter()">
       <mat-icon>tune</mat-icon>
@@ -28,8 +28,8 @@
       <mat-card
         *ngFor="let product of products.hits"
         class="card-item"
-        [routerLink]="product.address ? ['details', product.address] : null">
-
+        [routerLink]="product.address ? ['details', product.address] : null"
+        [queryParams]="queryParams">
         <mat-card-title>{{ product.title }}</mat-card-title>
 
         <p class="card-item__file-info mat-caption">
@@ -73,6 +73,7 @@
       [pageSizeOptions]="pageSizeOptions"></mat-paginator>
   </section>
 </div>
+
 <ng-template #showSpinner>
   <div class="spinner-wrapper">
     <mat-spinner></mat-spinner>

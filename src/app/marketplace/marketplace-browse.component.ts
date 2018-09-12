@@ -13,6 +13,7 @@ import { ActionButtonType } from '../shared/enums/action-button-type';
 import { EsResponse } from '../shared/models/es-response';
 import { CategoryOption, SortingOption } from './marketplace-list-filter/marketplace-list-filter.component';
 import { ProductCategoryService } from '../services/product-category.service';
+import { urlSearchParamsToJSON } from '../shared/utils/url';
 
 export const SortingOptions: SortingOption[] = [
   {
@@ -57,6 +58,7 @@ export class MarketplaceBrowseComponent implements OnInit {
   filterValues: { sort: {}, categories: string[], search: string } = { sort: {}, categories: [], search: '' };
   categoriesList: CategoryOption[];
   sortingOptionsList: SortingOption[];
+  queryParams: Object;
 
   private inputChangeSubject = new BehaviorSubject<string>(undefined);
   private categoryChangeSubject = new BehaviorSubject<string[]>(undefined);
@@ -205,6 +207,7 @@ export class MarketplaceBrowseComponent implements OnInit {
       params.append(name, value);
     }
 
+    this.queryParams = urlSearchParamsToJSON(params);
     window.history.replaceState({}, '', window.location.pathname + '?' + params);
   }
 
@@ -240,6 +243,8 @@ export class MarketplaceBrowseComponent implements OnInit {
         });
       this.categoryChangeSubject.next(categoriesFromParams);
     }
+
+    this.queryParams = urlSearchParamsToJSON(params);
 
     return filterNeedsToBeApplied;
   }

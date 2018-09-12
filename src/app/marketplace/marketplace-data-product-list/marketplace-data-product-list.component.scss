@@ -29,6 +29,10 @@ $shadow-color: rgba(0, 0, 0, .03);
     right: 8px;
     color: #999;
     margin: 0 12px;
+
+    &_button {
+      cursor: pointer;
+    }
   }
 
   @media screen and (max-width: 700px) {
