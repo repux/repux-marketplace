@@ -20,7 +20,7 @@ export const environment = {
   analyticsCurrencySubstitute: 'USD',
   production: isProduction,
   networkId: 1,
-  networkName: 'Main Ethereum Network',
+  networkName: 'Rinkeby Test Network',
   intercomAppId: '${MARKETPLACE_INTERCOM_APP_ID}' || 'od9ohq7y',
   gtmId: '${MARKETPLACE_GTM_ID}' || 'GTM-PG3BBGT',
   themeName: 'default-theme',
@@ -73,5 +73,5 @@ export const environment = {
       redirectUri: '${MARKETPLACE_GOOGLE_OAUTH_REDIRECT_URL}' || 'https://marketplace-stage-app.repux.io/marketplace'
     }
   },
-  faucetUrl: '${MARKETPLACE_FAUCET_URL}'
+  faucetUrl: '${MARKETPLACE_FAUCET_URL}' || 'http://localhost:3000'
 };

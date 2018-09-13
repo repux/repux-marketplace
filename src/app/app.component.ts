@@ -17,6 +17,7 @@ import { MarketplaceAnalyticsDialogComponent } from './marketplace/marketplace-a
 import { OAuthState } from './shared/enums/oauth-state';
 // tslint:disable-next-line:max-line-length
 import { MarketplaceProductCreatorAnalyticsDialogComponent } from './marketplace/marketplace-product-creator-analytics-dialog/marketplace-product-creator-analytics-dialog.component';
+import { IssueDemoTokensComponent } from './shared/components/issue-demo-tokens/issue-demo-tokens.component';
 
 @Component({
   selector: 'app-root',
@@ -34,7 +35,6 @@ export class AppComponent implements OnInit {
 
   tasksTotal$: Observable<number>;
   wallet: Wallet;
-  faucetUrl: String;
 
   navLinks = [
     {
@@ -75,7 +75,6 @@ export class AppComponent implements OnInit {
         this.wallet = wallet;
       }
       this.tasksTotal$ = this.countProducts();
-      this.faucetUrl = environment.faucetUrl;
     });
 
     this.activatedRoute.fragment
@@ -117,5 +116,9 @@ export class AppComponent implements OnInit {
       });
       dialogRef.componentInstance.accessToken = params.get('access_token');
     }
+  }
+
+  openDemoTokensIssueDialog() {
+    this.dialog.open(IssueDemoTokensComponent);
   }
 }

@@ -22,6 +22,7 @@ import {
 import { BannerTestnetComponent } from './components/banner-testnet/banner-testnet.component';
 import { OrderRatingPipe } from './pipes/order-rating.pipe';
 import { RatingStarsComponent } from './components/rating-stars/rating-stars.component';
+import { IssueDemoTokensComponent } from './components/issue-demo-tokens/issue-demo-tokens.component';
 
 @NgModule({
   imports: [
@@ -50,7 +51,8 @@ import { RatingStarsComponent } from './components/rating-stars/rating-stars.com
     PriceInputComponent,
     OrderRatingPipe,
     RatingStarsComponent,
-    BannerTestnetComponent
+    BannerTestnetComponent,
+    IssueDemoTokensComponent
   ],
   exports: [
     FileInputComponent,
@@ -60,6 +62,7 @@ import { RatingStarsComponent } from './components/rating-stars/rating-stars.com
     WalletInfoComponent,
     PriceInputComponent,
     RatingStarsComponent,
+    IssueDemoTokensComponent,
     ArrayJoinPipe,
     FileSizePipe,
     CurrencyRepuxPipe,
@@ -71,7 +74,8 @@ import { RatingStarsComponent } from './components/rating-stars/rating-stars.com
   ],
   entryComponents: [
     ConfirmationDialogComponent,
-    NotificationsSubscriptionInstructionComponent
+    NotificationsSubscriptionInstructionComponent,
+    IssueDemoTokensComponent
   ]
 })
 export class SharedModule {

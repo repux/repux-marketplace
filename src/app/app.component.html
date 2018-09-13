@@ -278,7 +278,7 @@
       <button mat-menu-item routerLink="settings" fragment="keys">Private & Public keys</button>
       <button mat-menu-item routerLink="settings" fragment="selling">Selling</button>
       <button mat-menu-item routerLink="settings" fragment="legal">Legal</button>
-      <a *ngIf="faucetUrl" mat-menu-item href="{{ faucetUrl }}" target="_blank">Get FREE RepuX</a>
+      <button mat-menu-item (click)="openDemoTokensIssueDialog()">Get FREE RepuX</button>
       <a href="https://help.repux.io/" target="_blank" mat-menu-item>Help</a>
     </mat-menu>
   </mat-toolbar-row>
