@@ -58,6 +58,7 @@ export class MarketplaceBrowseComponent implements OnInit {
   categoriesList: CategoryOption[];
   sortingOptionsList: SortingOption[];
   queryParams: Object;
+  etherscanUrl = environment.etherscanUrl;
 
   private inputChangeSubject = new BehaviorSubject<string>(undefined);
   private categoryChangeSubject = new BehaviorSubject<string[]>(undefined);

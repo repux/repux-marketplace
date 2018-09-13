@@ -16,6 +16,7 @@ import { ActionButtonType } from '../shared/enums/action-button-type';
 import { DataProductOrder as BlockchainDataProductOrder } from 'repux-web3-api';
 import { OrderRatingPipe } from '../shared/pipes/order-rating.pipe';
 import { RatingStarsComponent } from '../shared/components/rating-stars/rating-stars.component';
+import { BlockyIdenticonComponent } from '../shared/components/blocky-identicon/blocky-identicon.component';
 
 @Component({ selector: 'app-marketplace-action-buttons', template: '' })
 class MarketplaceActionButtonsStubComponent {
@@ -43,7 +44,8 @@ describe('MarketplaceProductDetailsComponent', () => {
         MarketplaceProductDetailsComponent,
         MarketplaceRatingComponent,
         OrderRatingPipe,
-        RatingStarsComponent
+        RatingStarsComponent,
+        BlockyIdenticonComponent
       ],
       imports: [
         RouterTestingModule,

@@ -15,6 +15,7 @@ import Wallet from '../shared/models/wallet';
 import { DataProductOrder as BlockchainDataProductOrder } from 'repux-web3-api';
 import { ClockService } from '../services/clock.service';
 import BigNumber from 'bignumber.js';
+import { environment } from '../../environments/environment';
 
 const DAY_IN_MILLISECONDS = 24 * 60 * 60 * 1000;
 
@@ -32,6 +33,7 @@ export class MarketplaceProductDetailsComponent implements OnInit, OnDestroy {
   blockchainDataProductOrder: BlockchainDataProductOrder;
   daysToDeliverLeft: number;
   sellerRating = new BigNumber(0);
+  etherscanUrl = environment.etherscanUrl;
 
   private subscriptions: Subscription[] = [];
   private dataProductAddress: string;
@@ -126,7 +128,7 @@ export class MarketplaceProductDetailsComponent implements OnInit, OnDestroy {
 
   scrollIntoView(id: string) {
     const element = document.querySelector(`#${id}`);
-    if (element){
+    if (element) {
       element.scrollIntoView();
     }
   }

@@ -23,6 +23,7 @@ import { BannerTestnetComponent } from './components/banner-testnet/banner-testn
 import { OrderRatingPipe } from './pipes/order-rating.pipe';
 import { RatingStarsComponent } from './components/rating-stars/rating-stars.component';
 import { IssueDemoTokensComponent } from './components/issue-demo-tokens/issue-demo-tokens.component';
+import { BlockyIdenticonComponent } from './components/blocky-identicon/blocky-identicon.component';
 
 @NgModule({
   imports: [
@@ -52,7 +53,8 @@ import { IssueDemoTokensComponent } from './components/issue-demo-tokens/issue-d
     OrderRatingPipe,
     RatingStarsComponent,
     BannerTestnetComponent,
-    IssueDemoTokensComponent
+    IssueDemoTokensComponent,
+    BlockyIdenticonComponent
   ],
   exports: [
     FileInputComponent,
@@ -70,7 +72,8 @@ import { IssueDemoTokensComponent } from './components/issue-demo-tokens/issue-d
     SafeHtmlPipe,
     OrderDatePipe,
     OrderRatingPipe,
-    BannerTestnetComponent
+    BannerTestnetComponent,
+    BlockyIdenticonComponent
   ],
   entryComponents: [
     ConfirmationDialogComponent,
