@@ -12,7 +12,7 @@
       <app-marketplace-download-product-button [dataProduct]="dataProduct"></app-marketplace-download-product-button>
     </div>
 
-    <span class="buy-button-replacement" *ngIf="!dataProduct.disabled && bought && !finalised"
+    <span class="buy-button-replacement" *ngIf="!blockchainDataProduct.disabled && bought && !finalised"
           matTooltip="You will be able to download this file after owner finalises the sale">
       Pending finalisation
     </span>
