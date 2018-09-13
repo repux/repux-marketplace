@@ -50,23 +50,6 @@
     </section>
 
     <section class="product-details__summary">
-      <a
-        *ngIf="sellerRating.toNumber() > 0"
-        class="product-details__summary-item">
-        <span class="product-details__summary-number">
-          {{ sellerRating.toNumber() | percent }}
-        </span>
-        <span class="product-details__summary-label">
-         Positive feedback
-        </span>
-      </a>
-
-      <div class="product-details__summary-item" *ngIf="sellerRating.toNumber() == 0">
-        <span class="product-details__summary-label">
-         No feedback yet
-        </span>
-      </div>
-
       <a *ngIf="product.sampleFile?.length > 0"
          (click)="scrollIntoView('sample-files')"
          class="product-details__summary-item product-details__summary-item_link">
@@ -100,9 +83,9 @@
       </div>
       <div class="product-details__summary-item">
         <span class="product-details__summary-number">
-          {{ product.orders.length }}
+          {{ finalisedOrders.length }}
         </span>
-        <span class="product-details__summary-label" [ngPlural]="product.orders.length">
+        <span class="product-details__summary-label" [ngPlural]="finalisedOrders.length">
           <ng-template ngPluralCase="=0">Times</ng-template>
           <ng-template ngPluralCase="=1">Time</ng-template>
           <ng-template ngPluralCase="other">Times</ng-template>
@@ -157,7 +140,7 @@
     </section>
 
     <section class="product-details__rating">
-      <h2>Product Rating Snapshot
+      <h2>Product rating snapshot
         <a href="" (click)="$event.preventDefault();scrollToTop()">Back to top</a>
       </h2>
       <app-marketplace-rating [orders]="product.orders"></app-marketplace-rating>
