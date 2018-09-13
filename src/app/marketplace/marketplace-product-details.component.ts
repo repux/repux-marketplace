@@ -6,16 +6,15 @@ import { Attachment, Eula } from 'repux-lib';
 import { IpfsService } from '../services/ipfs.service';
 import { DataProduct } from '../shared/models/data-product';
 import { Subscription } from 'rxjs/internal/Subscription';
-import { UserService } from '../shared/services/user.service';
-import { User } from '../shared/models/user';
 import { ActionButtonType } from '../shared/enums/action-button-type';
 import { DataProductService } from '../services/data-product.service';
 import { WalletService } from '../services/wallet.service';
 import Wallet from '../shared/models/wallet';
 import { DataProductOrder as BlockchainDataProductOrder } from 'repux-web3-api';
+import { DataProductOrder } from '../shared/models/data-product-order';
 import { ClockService } from '../services/clock.service';
 import BigNumber from 'bignumber.js';
-import { environment } from '../../environments/environment';
+import { tap } from 'rxjs/operators';
 
 const DAY_IN_MILLISECONDS = 24 * 60 * 60 * 1000;
 
@@ -26,14 +25,13 @@ const DAY_IN_MILLISECONDS = 24 * 60 * 60 * 1000;
 })
 export class MarketplaceProductDetailsComponent implements OnInit, OnDestroy {
   product$: Observable<DataProduct>;
-  owner$: Observable<User>;
   actionButtonType = ActionButtonType;
   availableActions = [ ActionButtonType.Buy, ActionButtonType.Rate ];
   wallet: Wallet;
   blockchainDataProductOrder: BlockchainDataProductOrder;
   daysToDeliverLeft: number;
   sellerRating = new BigNumber(0);
-  etherscanUrl = environment.etherscanUrl;
+  finalisedOrders: DataProductOrder[] = [];
 
   private subscriptions: Subscription[] = [];
   private dataProductAddress: string;
@@ -42,7 +40,6 @@ export class MarketplaceProductDetailsComponent implements OnInit, OnDestroy {
     private activeRoute: ActivatedRoute,
     private dataProductService: DataProductService,
     private dataProductListService: DataProductListService,
-    private userService: UserService,
     private ipfsService: IpfsService,
     private walletService: WalletService,
     private clockService: ClockService) {
@@ -91,6 +88,8 @@ export class MarketplaceProductDetailsComponent implements OnInit, OnDestroy {
         this.daysToDeliverLeft = this.checkDaysToDeliverLeft(date);
       })
     );
+
+    this.daysToDeliverLeft = this.checkDaysToDeliverLeft(new Date());
   }
 
   ngOnDestroy(): void {
@@ -98,28 +97,20 @@ export class MarketplaceProductDetailsComponent implements OnInit, OnDestroy {
     this.subscriptions = [];
   }
 
-  loadOwner(address: string): void {
-    this.subscriptions.push(
-      this.userService.getUser(address).subscribe(owner => this.sellerRating = owner.sellerRating)
-    );
-  }
-
   loadProduct(address: string): void {
-    this.product$ = this.dataProductListService.getDataProduct(address);
-
-    this.subscriptions.push(
-      this.product$.subscribe(async (product: DataProduct) => {
-        this.loadOwner(product.ownerAddress);
-      })
-    );
+    this.product$ = this.dataProductListService.getDataProduct(address)
+      .pipe(
+        tap((product: DataProduct) => this.finalisedOrders = product.orders.filter(order => order.finalised))
+      );
 
     if (this.wallet) {
       this.loadBlockchainDataProductOrder();
     }
   }
 
-  async loadBlockchainDataProductOrder() {
+  async loadBlockchainDataProductOrder(): Promise<void> {
     this.blockchainDataProductOrder = await this.dataProductService.getOrderData(this.dataProductAddress, this.wallet.address);
+    this.daysToDeliverLeft = this.checkDaysToDeliverLeft(new Date());
   }
 
   scrollToTop() {

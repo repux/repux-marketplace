@@ -6,6 +6,10 @@
   margin: 0 -1rem;
   grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
   grid-gap: 1rem;
+
+  @media screen and (max-width: 400px) {
+    grid-template-columns: initial;
+  }
 }
 
 .card-item {
