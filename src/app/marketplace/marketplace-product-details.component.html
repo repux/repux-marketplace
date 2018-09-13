@@ -25,6 +25,18 @@
         [rating]="product.orders | orderRating"></app-rating-stars>
     </section>
 
+    <section class="address">
+      <app-blocky-identicon class="address__identicon" [seed]="product.ownerAddress"></app-blocky-identicon>
+      <div class="address__number"><strong>Seller</strong>
+        <a [href]="etherscanUrl + '/address/' + product.ownerAddress"
+           (click)="$event.stopPropagation();"
+           target="_blank"
+           matTooltip="Click to view address on Etherscan">
+          {{product.ownerAddress}}
+        </a>
+      </div>
+    </section>
+
     <section class="product-details__file-info">
       <mat-icon>attach_file</mat-icon>
       {{ product.name }} | {{ product.size | fileSize }} |
@@ -48,7 +60,7 @@
     <section class="product-details__summary">
       <a
         *ngIf="sellerRating.toNumber() > 0"
-         class="product-details__summary-item">
+        class="product-details__summary-item">
         <span class="product-details__summary-number">
           {{ sellerRating.toNumber() | percent }}
         </span>
@@ -64,8 +76,8 @@
       </div>
 
       <a *ngIf="product.sampleFile?.length > 0"
-        (click)="scrollIntoView('sample-files')"
-        class="product-details__summary-item product-details__summary-item_link">
+         (click)="scrollIntoView('sample-files')"
+         class="product-details__summary-item product-details__summary-item_link">
         <span class="product-details__summary-number">
           {{ product.sampleFile.length }}
         </span>

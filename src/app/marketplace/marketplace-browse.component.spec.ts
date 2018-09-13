@@ -18,6 +18,7 @@ import { CurrencyRepuxPipe } from '../shared/pipes/currency-repux.pipe';
 import { CategoryOption, SortingOption } from './marketplace-list-filter/marketplace-list-filter.component';
 import { ProductCategoryService } from '../services/product-category.service';
 import { FormsModule } from '@angular/forms';
+import { BlockyIdenticonComponent } from '../shared/components/blocky-identicon/blocky-identicon.component';
 
 @Component({ selector: 'app-marketplace-action-buttons', template: '' })
 class MarketplaceActionButtonsStubComponent {
@@ -67,7 +68,8 @@ describe('MarketplaceBrowseComponent', () => {
         MarketplaceListFilerStubComponent,
         FileSizePipe,
         EulaTypePipe,
-        CurrencyRepuxPipe
+        CurrencyRepuxPipe,
+        BlockyIdenticonComponent
       ],
       imports: [
         FormsModule,

@@ -5,7 +5,9 @@
     [(ngModel)]="filterValues.search"
     (ngModelChange)="onTypeAhead($event)">
   <mat-icon class="list-search__icon" *ngIf="!filterValues.search.length">search</mat-icon>
-  <mat-icon class="list-search__icon list-search__icon_button" *ngIf="filterValues.search.length" (click)="onTypeAhead('')">clear</mat-icon>
+  <mat-icon class="list-search__icon list-search__icon_button" *ngIf="filterValues.search.length"
+            (click)="onTypeAhead('')">clear
+  </mat-icon>
   <div class="list-search__filter-icon">
     <button mat-icon-button (click)="toggleFilter()">
       <mat-icon>tune</mat-icon>
@@ -31,6 +33,18 @@
         [routerLink]="product.address ? ['details', product.address] : null"
         [queryParams]="queryParams">
         <mat-card-title>{{ product.title }}</mat-card-title>
+
+        <div class="address">
+          <app-blocky-identicon class="address__identicon" [seed]="product.ownerAddress"></app-blocky-identicon>
+          <div class="address__number"><strong>Seller</strong>
+            <a [href]="etherscanUrl + '/address/' + product.ownerAddress"
+               (click)="$event.stopPropagation();"
+               target="_blank"
+               matTooltip="Click to view address on Etherscan">
+              {{product.ownerAddress}}
+            </a>
+          </div>
+        </div>
 
         <p class="card-item__file-info mat-caption">
           <mat-icon>attach_file</mat-icon>

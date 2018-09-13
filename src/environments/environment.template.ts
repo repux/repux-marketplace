@@ -73,5 +73,6 @@ export const environment = {
       redirectUri: '${MARKETPLACE_GOOGLE_OAUTH_REDIRECT_URL}' || 'https://marketplace-stage-app.repux.io/marketplace'
     }
   },
-  faucetUrl: '${MARKETPLACE_FAUCET_URL}' || 'http://localhost:3000'
+  faucetUrl: '${MARKETPLACE_FAUCET_URL}' || 'http://localhost:3000',
+  etherscanUrl: '${MARKETPLACE_ETHERSCAN_URL}' || 'https://rinkeby.etherscan.io'
 };
