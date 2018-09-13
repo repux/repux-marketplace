@@ -5,6 +5,7 @@ import { environment } from '../../../../environments/environment.base';
 import { HttpClient } from '@angular/common/http';
 import { Subscription } from 'rxjs';
 import { WalletService } from '../../../services/wallet.service';
+import { finalize } from 'rxjs/operators';
 
 @Component({
   selector: 'app-issue-demo-tokens',
@@ -16,6 +17,7 @@ export class IssueDemoTokensComponent implements OnDestroy {
   private faucetUrl = environment.faucetUrl + '/issue-demo-token';
   private subscription: Subscription;
   error: string;
+  loading = false;
 
   constructor(
     private http: HttpClient,
@@ -43,8 +45,12 @@ export class IssueDemoTokensComponent implements OnDestroy {
       return;
     }
 
+    this.loading = true;
     this.subscription = this.http
       .post(this.faucetUrl, { recipientAddress: this.formGroup.value.walletAddress })
+      .pipe(
+        finalize(() => this.loading = false)
+      )
       .subscribe(
         response => {
           if (response) {
