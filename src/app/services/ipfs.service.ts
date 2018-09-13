@@ -4,7 +4,8 @@ import { IpfsFile, IpfsFileContent, IpfsFileHash } from 'ipfs-api';
 import { Buffer } from 'buffer';
 import { readFileAsArrayBuffer } from '../shared/utils/read-file-as-array-buffer';
 import { BlobDownloader } from '../shared/utils/blob-downloader';
-import IpfsApi from 'ipfs-api/dist';
+
+const IpfsApi = require('ipfs-api/dist');
 
 @Injectable({
   providedIn: 'root'
