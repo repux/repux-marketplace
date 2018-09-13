@@ -7,7 +7,9 @@
       (ngModelChange)="onTypeAhead($event)"
       placeholder="Search">
     <mat-icon class="list-search__icon" *ngIf="!filterValues.search.length">search</mat-icon>
-    <mat-icon class="list-search__icon list-search__icon_button" *ngIf="filterValues.search.length" (click)="onTypeAhead('')">clear</mat-icon>
+    <mat-icon class="list-search__icon list-search__icon_button" *ngIf="filterValues.search.length"
+              (click)="onTypeAhead('')">clear
+    </mat-icon>
   </div>
 
   <div class="data-container">
@@ -136,7 +138,7 @@
       <tr mat-row *matRowDef="let row; columns: displayedColumns;"
           [routerLink]="row.address ? ['details', row.address] : null"
           [queryParams]="queryParams"
-          [class.disabled]="row.blockchainState?.disabled"></tr>
+          [class.disabled]="row.disabled"></tr>
     </table>
   </div>
 

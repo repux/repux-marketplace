@@ -121,7 +121,6 @@ export class MarketplaceWithdrawButtonComponent implements OnInit, OnDestroy, On
   addProductToUnpublishedProducts(dataProduct: DataProduct): void {
     const product = Object.assign({}, dataProduct);
     delete product.address;
-    delete product.blockchainState;
     delete product.orders;
 
     this.unpublishedProductsService.addProduct(product);
