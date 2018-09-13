@@ -45,6 +45,7 @@
     "angular2-template-loader": "^0.6.2",
     "buffer": "5.1.0",
     "codelyzer": "~4.2.1",
+    "ipfs-api": "https://github.com/davo22/js-ipfs-api#fdfbed0",
     "jasmine-core": "~2.99.1",
     "jasmine-spec-reporter": "~4.2.1",
     "karma": "~1.7.1",

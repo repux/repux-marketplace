@@ -4,12 +4,7 @@ import { IpfsFile, IpfsFileContent, IpfsFileHash } from 'ipfs-api';
 import { Buffer } from 'buffer';
 import { readFileAsArrayBuffer } from '../shared/utils/read-file-as-array-buffer';
 import { BlobDownloader } from '../shared/utils/blob-downloader';
-
-declare global {
-  interface Window {
-    IpfsApi: any;
-  }
-}
+import IpfsApi from 'ipfs-api/dist';
 
 @Injectable({
   providedIn: 'root'
@@ -19,7 +14,7 @@ export class IpfsService {
   private blobDownloader: BlobDownloader;
 
   constructor() {
-    this.ipfs = new window.IpfsApi(environment.ipfs);
+    this.ipfs = new IpfsApi(environment.ipfs);
     this.blobDownloader = new BlobDownloader();
   }
 
