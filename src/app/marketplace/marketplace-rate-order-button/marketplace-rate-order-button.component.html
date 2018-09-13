@@ -4,6 +4,7 @@
   <button
     mat-stroked-button
     color="accent"
-    *ngIf="!pendingTransaction"
-    (click)="rateOrder()">Rate</button>
+    *ngIf="!pendingTransaction && !blockchainDataProduct.disabled"
+    (click)="rateOrder()">Rate
+  </button>
 </div>

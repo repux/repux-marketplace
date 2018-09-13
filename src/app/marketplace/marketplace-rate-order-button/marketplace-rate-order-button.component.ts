@@ -1,5 +1,10 @@
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
-import { DataProductOrder as BlockchainDataProductOrder, TransactionStatus, TransactionReceipt } from 'repux-web3-api';
+import {
+  DataProductOrder as BlockchainDataProductOrder,
+  TransactionStatus,
+  TransactionReceipt,
+  DataProduct as BlockchainDataProduct
+} from 'repux-web3-api';
 import { ClockService } from '../../services/clock.service';
 import { MatDialog } from '@angular/material';
 import { Subscription } from 'rxjs/internal/Subscription';
@@ -17,6 +22,7 @@ import { ActionButtonType } from '../../shared/enums/action-button-type';
 })
 export class MarketplaceRateOrderButtonComponent implements OnDestroy, OnInit {
   @Input() dataProduct;
+  @Input() blockchainDataProduct: BlockchainDataProduct;
   @Input() blockchainDataProductOrder: BlockchainDataProductOrder;
 
   public pendingTransaction: Transaction;
