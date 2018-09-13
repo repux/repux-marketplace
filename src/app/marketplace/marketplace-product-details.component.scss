@@ -34,13 +34,23 @@
     margin: 0 0 16px 0;
   }
 
+  &__identicon {
+    border-radius: 50%;
+    overflow: hidden;
+    display: block;
+    min-width: 32px;
+    min-height: 32px;
+    width: 32px;
+    height: 32px;
+    margin-right: 10px;
+  }
+
   &__title {
     display: flex;
-    justify-content: space-between;
     margin: 0 0 16px 0;
 
     h1 {
-      margin: 0;
+      margin: 0 auto 0 0;
     }
   }
 

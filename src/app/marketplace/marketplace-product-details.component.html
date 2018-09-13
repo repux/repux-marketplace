@@ -20,21 +20,13 @@
 
   <mat-card class="product-details mat-typography">
     <section class="product-details__title">
+      <app-blocky-identicon
+        class="product-details__identicon"
+        [seed]="product.ownerAddress"
+        matTooltip="Click here to view address on Etherscan: {{product.ownerAddress}}"></app-blocky-identicon>
       <h1>{{ product.title }}</h1>
       <app-rating-stars
         [rating]="product.orders | orderRating"></app-rating-stars>
-    </section>
-
-    <section class="address">
-      <app-blocky-identicon class="address__identicon" [seed]="product.ownerAddress"></app-blocky-identicon>
-      <div class="address__number"><strong>Seller</strong>
-        <a [href]="etherscanUrl + '/address/' + product.ownerAddress"
-           (click)="$event.stopPropagation();"
-           target="_blank"
-           matTooltip="Click to view address on Etherscan">
-          {{product.ownerAddress}}
-        </a>
-      </div>
     </section>
 
     <section class="product-details__file-info">

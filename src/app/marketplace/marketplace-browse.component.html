@@ -32,19 +32,17 @@
         class="card-item"
         [routerLink]="product.address ? ['details', product.address] : null"
         [queryParams]="queryParams">
-        <mat-card-title>{{ product.title }}</mat-card-title>
-
-        <div class="address">
-          <app-blocky-identicon class="address__identicon" [seed]="product.ownerAddress"></app-blocky-identicon>
-          <div class="address__number"><strong>Seller</strong>
-            <a [href]="etherscanUrl + '/address/' + product.ownerAddress"
-               (click)="$event.stopPropagation();"
-               target="_blank"
-               matTooltip="Click to view address on Etherscan">
-              {{product.ownerAddress}}
-            </a>
-          </div>
-        </div>
+        <mat-card-title>
+          <a [href]="etherscanUrl + '/address/' + product.ownerAddress"
+             (click)="$event.stopPropagation();"
+             target="_blank">
+            <app-blocky-identicon
+              class="card-item__identicon"
+              [seed]="product.ownerAddress"
+              matTooltip="Click here to view address on Etherscan: {{product.ownerAddress}}"></app-blocky-identicon>
+          </a>
+          <h1>{{ product.title }}</h1>
+        </mat-card-title>
 
         <p class="card-item__file-info mat-caption">
           <mat-icon>attach_file</mat-icon>
