@@ -188,14 +188,12 @@ describe('MarketplaceUnpublishButtonComponent', () => {
       const dataProduct = {
         price: new BigNumber(1),
         address: '0x00',
-        blockchainState: {},
         orders: []
       };
 
       component.addProductToUnpublishedProducts(<any> dataProduct);
       expect(dataProduct.price).toEqual(new BigNumber(1));
       expect(dataProduct.address).toBe('0x00');
-      expect(dataProduct.blockchainState).toEqual({});
       expect(dataProduct.orders).toEqual([]);
       expect(unpublishedProductsServiceSpy.addProduct.calls.count()).toBe(1);
       expect(unpublishedProductsServiceSpy.addProduct.calls.allArgs()[ 0 ][ 0 ]).toEqual({ price: new BigNumber(1) });

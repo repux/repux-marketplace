@@ -2,7 +2,6 @@ import { BigNumber } from 'bignumber.js';
 import { Deserializable } from './deserializable';
 import { environment } from '../../../environments/environment';
 import { DataProductOrder } from './data-product-order';
-import { DataProduct as BlockchainDataProduct } from 'repux-web3-api';
 import { Eula, Attachment } from 'repux-lib';
 
 export class DataProduct implements Deserializable<DataProduct> {
@@ -28,7 +27,6 @@ export class DataProduct implements Deserializable<DataProduct> {
   daysToDeliver: number;
   daysToRate: number;
   fundsToWithdraw: BigNumber;
-  blockchainState?: BlockchainDataProduct;
   eula: Eula;
   sampleFile: Attachment[];
 

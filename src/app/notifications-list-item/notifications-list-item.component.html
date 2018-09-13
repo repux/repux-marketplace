@@ -30,7 +30,7 @@
       <app-notifications-list-orders
         *ngIf="showOrders"
         [dataProduct]="product"
-        [displayPendingOrders]="!product.blockchainState?.disabled">
+        [displayPendingOrders]="!product.disabled">
       </app-notifications-list-orders>
 
       <div *ngIf="expanded" class="item__expandable">
