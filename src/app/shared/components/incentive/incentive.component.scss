@@ -1,0 +1,12 @@
+.mat-card {
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.mat-table {
+  width: 100%;
+}
+
+.mat-row:last-child td {
+  border-bottom: none;
+}

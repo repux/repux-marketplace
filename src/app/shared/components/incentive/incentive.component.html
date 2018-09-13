@@ -1,0 +1,27 @@
+<mat-card>
+  <mat-card-content>
+    <h3>
+      Users will get stakes based on the pool of REPUX tokens (i.e. 1000 REPUX tokens) for following actions/getting the
+      best scores:
+    </h3>
+
+    <table mat-table #table [dataSource]="scoring">
+      <ng-container matColumnDef="action">
+        <th mat-header-cell *matHeaderCellDef>Action/Score</th>
+        <td mat-cell *matCellDef="let scoring">{{scoring.action}}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="stakes">
+        <th mat-header-cell *matHeaderCellDef>Stakes</th>
+        <td mat-cell *matCellDef="let scoring">{{ scoring.score }}
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="['action', 'stakes']"></tr>
+      <tr mat-row *matRowDef="let row; columns: ['action', 'stakes'];"></tr>
+    </table>
+  </mat-card-content>
+</mat-card>
+
+
+

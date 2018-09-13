@@ -265,6 +265,12 @@
     </button>
 
     <button
+      mat-icon-button
+      routerLink="/incentive">
+      <mat-icon>card_giftcard</mat-icon>
+    </button>
+
+    <button
       *ngIf="!(tasksTotal$ | async)"
       mat-icon-button disabled>
       <mat-icon *ngIf="!(tasksTotal$ | async)">notifications</mat-icon>
