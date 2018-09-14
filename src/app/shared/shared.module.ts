@@ -25,6 +25,7 @@ import { RatingStarsComponent } from './components/rating-stars/rating-stars.com
 import { IssueDemoTokensComponent } from './components/issue-demo-tokens/issue-demo-tokens.component';
 import { BlockyIdenticonComponent } from './components/blocky-identicon/blocky-identicon.component';
 import { IncentiveComponent } from './components/incentive/incentive.component';
+import { EthTransactionLinkComponent } from './components/eth-transaction-link/eth-transaction-link.component';
 
 @NgModule({
   imports: [
@@ -56,7 +57,8 @@ import { IncentiveComponent } from './components/incentive/incentive.component';
     BannerTestnetComponent,
     IssueDemoTokensComponent,
     BlockyIdenticonComponent,
-    IncentiveComponent
+    IncentiveComponent,
+    EthTransactionLinkComponent
   ],
   exports: [
     FileInputComponent,
@@ -75,7 +77,8 @@ import { IncentiveComponent } from './components/incentive/incentive.component';
     OrderDatePipe,
     OrderRatingPipe,
     BannerTestnetComponent,
-    BlockyIdenticonComponent
+    BlockyIdenticonComponent,
+    EthTransactionLinkComponent
   ],
   entryComponents: [
     ConfirmationDialogComponent,

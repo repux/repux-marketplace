@@ -31,12 +31,12 @@ export class MarketplaceBuyProductButtonComponent implements OnInit, OnDestroy {
   @Input() blockchainDataProduct: BlockchainDataProduct;
   @Input() blockchainDataProductOrder: BlockchainDataProductOrder;
 
-  public wallet: Wallet;
-  public userIsOwner: boolean;
-  public dataProductAddress: string;
-  public productOwnerAddress: string;
-  public pendingTransaction?: Transaction;
-  public pendingApproveTransaction?: Transaction;
+  wallet: Wallet;
+  userIsOwner: boolean;
+  dataProductAddress: string;
+  productOwnerAddress: string;
+  pendingTransaction?: Transaction;
+  pendingApproveTransaction?: Transaction;
 
   private walletSubscription: Subscription;
   private transactionsSubscription: Subscription;
@@ -63,8 +63,8 @@ export class MarketplaceBuyProductButtonComponent implements OnInit, OnDestroy {
     return this.blockchainDataProductOrder && this.blockchainDataProductOrder.purchased;
   }
 
-  get hasPendingTransaction(): boolean {
-    return Boolean(this.pendingTransaction || this.pendingApproveTransaction);
+  get currentPendingTransaction(): Transaction {
+    return this.pendingTransaction || this.pendingApproveTransaction;
   }
 
   ngOnInit(): void {

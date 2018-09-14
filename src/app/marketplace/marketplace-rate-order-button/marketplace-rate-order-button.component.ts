@@ -25,8 +25,8 @@ export class MarketplaceRateOrderButtonComponent implements OnDestroy, OnInit {
   @Input() blockchainDataProduct: BlockchainDataProduct;
   @Input() blockchainDataProductOrder: BlockchainDataProductOrder;
 
-  public pendingTransaction: Transaction;
-  public selectedRating: BigNumber;
+  pendingTransaction: Transaction;
+  selectedRating: BigNumber;
 
   private date: Date;
   private dialogSubscription: Subscription;

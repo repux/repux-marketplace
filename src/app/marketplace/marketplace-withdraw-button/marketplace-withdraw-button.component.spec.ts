@@ -13,6 +13,7 @@ import { BlockchainTransactionScope } from '../../shared/enums/blockchain-transa
 import { ActionButtonType } from '../../shared/enums/action-button-type';
 import { UnpublishedProductsService } from '../services/unpublished-products.service';
 import { WalletService } from '../../services/wallet.service';
+import { EthTransactionLinkComponent } from '../../shared/components/eth-transaction-link/eth-transaction-link.component';
 
 describe('MarketplaceWithdrawButtonComponent', () => {
   let component: MarketplaceWithdrawButtonComponent;
@@ -44,7 +45,8 @@ describe('MarketplaceWithdrawButtonComponent', () => {
 
     TestBed.configureTestingModule({
       declarations: [
-        MarketplaceWithdrawButtonComponent
+        MarketplaceWithdrawButtonComponent,
+        EthTransactionLinkComponent
       ],
       imports: [
         MaterialModule,

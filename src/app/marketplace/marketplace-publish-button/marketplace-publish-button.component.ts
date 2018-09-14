@@ -18,9 +18,9 @@ import { TaskManagerService } from '../../services/task-manager.service';
 })
 export class MarketplacePublishButtonComponent implements OnInit, OnDestroy {
   @Input() dataProduct: DataProduct;
-  public dataProductAddress: string;
-  public wallet: Wallet;
-  public pendingTransaction?: Transaction;
+  dataProductAddress: string;
+  wallet: Wallet;
+  pendingTransaction?: Transaction;
 
   private transactionDialogSubscription: Subscription;
   private unpublishedProductsSubscription: Subscription;
@@ -36,10 +36,6 @@ export class MarketplacePublishButtonComponent implements OnInit, OnDestroy {
     private taskManagerService: TaskManagerService
   ) {
     this.unpublishedProductsSubscription = this.unpublishedProductsService.getProducts().subscribe(products => this.products = products);
-  }
-
-  get hasPendingTransaction(): boolean {
-    return Boolean(this.pendingTransaction);
   }
 
   get isUnpublished() {

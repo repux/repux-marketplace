@@ -14,6 +14,7 @@ import { BlockchainTransactionScope } from '../../shared/enums/blockchain-transa
 import { ActionButtonType } from '../../shared/enums/action-button-type';
 import { Transaction, TransactionService } from '../../shared/services/transaction.service';
 import { TaskManagerService } from '../../services/task-manager.service';
+import { EthTransactionLinkComponent } from '../../shared/components/eth-transaction-link/eth-transaction-link.component';
 
 describe('MarketplacePublishButtonComponent', () => {
   let component: MarketplacePublishButtonComponent;
@@ -49,7 +50,8 @@ describe('MarketplacePublishButtonComponent', () => {
 
     TestBed.configureTestingModule({
       declarations: [
-        MarketplacePublishButtonComponent
+        MarketplacePublishButtonComponent,
+        EthTransactionLinkComponent
       ],
       imports: [
         MaterialModule,

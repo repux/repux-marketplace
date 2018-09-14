@@ -1,7 +1,10 @@
 <div *ngIf="wallet">
-  <span *ngIf="hasPendingTransaction">Buying...</span>
+  <app-eth-transaction-link
+    *ngIf="currentPendingTransaction"
+    [transactionHash]="currentPendingTransaction.transactionHash"
+    label="Buying..."></app-eth-transaction-link>
 
-  <div *ngIf="!hasPendingTransaction">
+  <div *ngIf="!currentPendingTransaction">
     <button mat-stroked-button
             color="primary"
             *ngIf="!dataProduct.disabled && !userIsOwner && !bought"

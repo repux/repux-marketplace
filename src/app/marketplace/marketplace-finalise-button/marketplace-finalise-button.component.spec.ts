@@ -19,6 +19,7 @@ import { Transaction, TransactionService } from '../../shared/services/transacti
 import { CommonDialogService } from '../../shared/services/common-dialog.service';
 import { KeyStoreDialogService } from '../../key-store/key-store-dialog.service';
 import BigNumber from 'bignumber.js';
+import { EthTransactionLinkComponent } from '../../shared/components/eth-transaction-link/eth-transaction-link.component';
 
 describe('MarketplaceFinaliseButtonComponent', () => {
   let component: MarketplaceFinaliseButtonComponent;
@@ -74,7 +75,8 @@ describe('MarketplaceFinaliseButtonComponent', () => {
 
     TestBed.configureTestingModule({
       declarations: [
-        MarketplaceFinaliseButtonComponent
+        MarketplaceFinaliseButtonComponent,
+        EthTransactionLinkComponent
       ],
       imports: [
         MaterialModule,

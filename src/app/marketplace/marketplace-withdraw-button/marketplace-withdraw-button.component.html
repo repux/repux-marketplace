@@ -1,5 +1,9 @@
 <div *ngIf="wallet && userIsOwner && !fundsToWithdraw.isZero()">
-  <span *ngIf="pendingTransaction">Withdrawing...</span>
+  <app-eth-transaction-link
+    *ngIf="pendingTransaction"
+    [transactionHash]="pendingTransaction.transactionHash"
+    label="Withdrawing..."></app-eth-transaction-link>
+
   <button mat-stroked-button
           color="primary"
           *ngIf="!pendingTransaction"

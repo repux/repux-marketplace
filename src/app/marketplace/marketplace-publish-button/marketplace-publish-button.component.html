@@ -2,15 +2,18 @@
   <button mat-stroked-button
           color="accent"
           class="remove-button"
-          *ngIf="!hasPendingTransaction"
+          *ngIf="!currentPendingTransaction"
           (click)="remove()">Remove
   </button>
 
   <button mat-stroked-button
           color="primary"
-          *ngIf="!hasPendingTransaction"
+          *ngIf="!currentPendingTransaction"
           (click)="publish()">Publish
   </button>
 
-  <span *ngIf="hasPendingTransaction">Publishing...</span>
+  <app-eth-transaction-link
+    *ngIf="pendingTransaction"
+    [transactionHash]="pendingTransaction.transactionHash"
+    label="Publishing..."></app-eth-transaction-link>
 </div>

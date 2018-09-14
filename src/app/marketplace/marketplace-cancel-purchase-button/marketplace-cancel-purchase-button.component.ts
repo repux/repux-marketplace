@@ -27,11 +27,11 @@ export class MarketplaceCancelPurchaseButtonComponent implements OnInit, OnDestr
   @Input() blockchainDataProduct: BlockchainDataProduct;
   @Input() blockchainDataProductOrder: BlockchainDataProductOrder;
 
-  public dataProductAddress: string;
-  public wallet: Wallet;
-  public isAfterDeliveryDeadline: boolean;
-  public isAwaiting: boolean;
-  public pendingTransaction: Transaction;
+  dataProductAddress: string;
+  wallet: Wallet;
+  isAfterDeliveryDeadline: boolean;
+  isAwaiting: boolean;
+  pendingTransaction: Transaction;
 
   private clockSubscription: Subscription;
   private walletSubscription: Subscription;

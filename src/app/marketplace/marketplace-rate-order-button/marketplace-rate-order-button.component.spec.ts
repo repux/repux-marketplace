@@ -13,6 +13,7 @@ import { TransactionReceipt, TransactionStatus } from 'repux-web3-api';
 import { BlockchainTransactionScope } from '../../shared/enums/blockchain-transaction-scope';
 import { ActionButtonType } from '../../shared/enums/action-button-type';
 import { Transaction, TransactionService } from '../../shared/services/transaction.service';
+import { EthTransactionLinkComponent } from '../../shared/components/eth-transaction-link/eth-transaction-link.component';
 
 describe('MarketplaceRateOrderButton', () => {
   let component: MarketplaceRateOrderButtonComponent;
@@ -41,7 +42,8 @@ describe('MarketplaceRateOrderButton', () => {
     await TestBed.configureTestingModule({
       declarations: [
         MarketplaceRateOrderButtonComponent,
-        MarketplaceRateOrderDialogComponent
+        MarketplaceRateOrderDialogComponent,
+        EthTransactionLinkComponent
       ],
       imports: [
         MaterialModule,

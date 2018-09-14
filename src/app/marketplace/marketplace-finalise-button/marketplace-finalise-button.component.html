@@ -1,9 +1,13 @@
 <div *ngIf="wallet && userIsOwner && !order.finalised">
   <span *ngIf="pendingReencryption">Re-encrypting...</span>
-  <span *ngIf="pendingTransaction">Finalising...</span>
+  <app-eth-transaction-link
+    *ngIf="pendingTransaction"
+    [transactionHash]="pendingTransaction.transactionHash"
+    label="Finalising..."></app-eth-transaction-link>
 
   <button mat-stroked-button
           color="primary"
           *ngIf="!pendingReencryption && !pendingTransaction"
-          (click)="finalise()">Finalise</button>
+          (click)="finalise()">Finalise
+  </button>
 </div>

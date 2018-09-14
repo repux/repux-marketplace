@@ -21,11 +21,11 @@ export class MarketplaceWithdrawButtonComponent implements OnInit, OnDestroy, On
   @Input() dataProduct: DataProduct;
   @Input() blockchainDataProduct: BlockchainDataProduct;
 
-  public dataProductAddress: string;
-  public wallet: Wallet;
-  public userIsOwner: boolean;
-  public fundsToWithdraw = new BigNumber(0);
-  public pendingTransaction: Transaction;
+  dataProductAddress: string;
+  wallet: Wallet;
+  userIsOwner: boolean;
+  fundsToWithdraw = new BigNumber(0);
+  pendingTransaction: Transaction;
 
   private walletSubscription: Subscription;
   private transactionsSubscription: Subscription;
