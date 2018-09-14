@@ -1,5 +1,8 @@
 <div *ngIf="canRate">
-  <span *ngIf="pendingTransaction">Rating...</span>
+  <app-eth-transaction-link
+    *ngIf="pendingTransaction"
+    [transactionHash]="pendingTransaction.transactionHash"
+    label="Rating..."></app-eth-transaction-link>
 
   <button
     mat-stroked-button

@@ -1,5 +1,8 @@
 <div *ngIf="userIsBuyer && (isAfterDeliveryDeadline || isDisabled) && isAwaiting">
-  <span *ngIf="pendingTransaction">Canceling...</span>
+  <app-eth-transaction-link
+    *ngIf="pendingTransaction"
+    [transactionHash]="pendingTransaction.transactionHash"
+    label="Canceling..."></app-eth-transaction-link>
 
   <button mat-stroked-button
           color="accent"

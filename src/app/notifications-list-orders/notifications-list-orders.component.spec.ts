@@ -4,6 +4,7 @@ import { NotificationsListOrdersComponent } from './notifications-list-orders.co
 import { MarketplaceFinaliseButtonComponent } from '../marketplace/marketplace-finalise-button/marketplace-finalise-button.component';
 import { MaterialModule } from '../material.module';
 import { OrderDatePipe } from '../shared/pipes/order-date.pipe';
+import { EthTransactionLinkComponent } from '../shared/components/eth-transaction-link/eth-transaction-link.component';
 
 describe('NotificationsListOrdersComponent', () => {
   let component: NotificationsListOrdersComponent;
@@ -14,6 +15,7 @@ describe('NotificationsListOrdersComponent', () => {
       declarations: [
         NotificationsListOrdersComponent,
         MarketplaceFinaliseButtonComponent,
+        EthTransactionLinkComponent,
         OrderDatePipe
       ],
       imports: [

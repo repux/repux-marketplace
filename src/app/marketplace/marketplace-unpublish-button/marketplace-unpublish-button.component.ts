@@ -20,10 +20,10 @@ export class MarketplaceUnpublishButtonComponent implements OnInit, OnDestroy {
   @Input() dataProduct: DataProduct;
   @Input() blockchainDataProduct: BlockchainDataProduct;
 
-  public dataProductAddress: string;
-  public wallet: Wallet;
-  public userIsOwner: boolean;
-  public pendingTransaction?: Transaction;
+  dataProductAddress: string;
+  wallet: Wallet;
+  userIsOwner: boolean;
+  pendingTransaction?: Transaction;
 
   private walletSubscription: Subscription;
   private transactionsSubscription: Subscription;
@@ -36,10 +36,6 @@ export class MarketplaceUnpublishButtonComponent implements OnInit, OnDestroy {
     private commonDialogService: CommonDialogService,
     private transactionService: TransactionService
   ) {
-  }
-
-  get hasPendingTransaction(): boolean {
-    return Boolean(this.pendingTransaction);
   }
 
   ngOnInit() {

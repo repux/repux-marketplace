@@ -24,6 +24,7 @@ import { TaskType } from '../../tasks/task-type';
 import { TaskManagerService } from '../../services/task-manager.service';
 import BigNumber from 'bignumber.js';
 import { WalletService } from '../../services/wallet.service';
+import { EthTransactionLinkComponent } from '../../shared/components/eth-transaction-link/eth-transaction-link.component';
 
 @Component({ selector: 'app-marketplace-download-product-button', template: '' })
 class DownloadProductButtonStubComponent {
@@ -62,7 +63,8 @@ describe('MarketplaceBuyProductButtonComponent', () => {
         MarketplaceBeforeBuyConfirmationDialogComponent,
         CurrencyRepuxPipe,
         FileSizePipe,
-        ArrayJoinPipe
+        ArrayJoinPipe,
+        EthTransactionLinkComponent
       ],
       imports: [
         MaterialModule,
