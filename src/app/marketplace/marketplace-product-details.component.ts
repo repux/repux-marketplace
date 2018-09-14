@@ -15,6 +15,7 @@ import { DataProductOrder } from '../shared/models/data-product-order';
 import { ClockService } from '../services/clock.service';
 import BigNumber from 'bignumber.js';
 import { tap } from 'rxjs/operators';
+import { environment } from '../../environments/environment';
 
 const DAY_IN_MILLISECONDS = 24 * 60 * 60 * 1000;
 
@@ -32,6 +33,7 @@ export class MarketplaceProductDetailsComponent implements OnInit, OnDestroy {
   daysToDeliverLeft: number;
   sellerRating = new BigNumber(0);
   finalisedOrders: DataProductOrder[] = [];
+  etherscanUrl = environment.etherscanUrl;
 
   private subscriptions: Subscription[] = [];
   private dataProductAddress: string;
