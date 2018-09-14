@@ -7,6 +7,7 @@ import { SettingsIndexComponent } from './settings/settings-index/settings-index
 import { MarketplaceProductDetailsComponent } from './marketplace/marketplace-product-details.component';
 import { NotificationsListComponent } from './notifications-list/notifications-list.component';
 import { MarketplaceMyFilesComponent } from './marketplace/marketplace-my-files.component';
+import { IncentiveComponent } from './shared/components/incentive/incentive.component';
 
 const routes: Routes = [
   { path: '', redirectTo: '/marketplace', pathMatch: 'full' },
@@ -30,6 +31,7 @@ const routes: Routes = [
   { path: `my-files/active-listings/details/:address`, component: MarketplaceProductDetailsComponent },
   { path: `my-files/files-to-download/details/:address`, component: MarketplaceProductDetailsComponent },
   { path: 'notifications', component: NotificationsListComponent },
+  { path: 'incentive', component: IncentiveComponent },
   { path: 'settings', component: SettingsIndexComponent }
 ];
 
