@@ -1,20 +1,14 @@
 <mat-card>
   <mat-card-content>
-    <h3>We encourage you to take a look at our fully decentralised product, where you can buy and sell your data for REPUX tokens, before it goes live.</h3>
+    <section class="intro">
+      <h3>We encourage you to take a look at our fully decentralised product, where you can buy and sell your data for
+      free demo tokens, before it goes live.</h3>
+      <p>To make it more appealing we are giving a pool of <strong>real</strong></p>
 
-    <p>To make it more appealing we are giving a pool of real <strong>200.000 REPUX</strong> tokens to the contributors.</p>
+      <h1>200.000 REPUX</h1>
 
-    <p>Test takes place on Rinkeby network to save on gas prices but the tokens will be provided on the main Ethereum network (to the same wallet addresses used in test network).</p>
-
-    <p>Pool will be distributed according to the stakes obtained - in accordance to the list provided.</p>
-
-    <p>Stakes will be calculated for the products listed since Tue 18th of September 2018.</p>
-
-    <p><strong>Test ends at 2nd of October 2018.</strong></p>
-
-    <p>All calculations will be made on GMT time.</p>
-
-    <p>We're working on the automated leaderboard - for now please look here or enable push notifications to stay updated.</p>
+      <p><strong>Test ends at 2nd of October 2018.</strong></p>
+    </section>
 
     <table mat-table #table [dataSource]="scoring">
       <ng-container matColumnDef="action">
@@ -31,7 +25,16 @@
       <tr mat-row *matRowDef="let row; columns: ['action', 'stakes'];"></tr>
     </table>
 
-    <p>And remember this is test environment so be understanding and please keep in mind terms and conditions are valid so don't put any malicious content online or you'll get banned.</p>
+    <p>Promotion rules:</p>
+    <ul>
+      <li>Test takes place on Rinkeby network to save on gas prices but the tokens will be provided on the main Ethereum
+        network (to the same wallet addresses used in test network).
+      </li>
+      <li>Pool will be distributed according to the stakes obtained - in accordance to the list provided.</li>
+      <li>Stakes will be calculated for the products listed since Tue 18th of September 2018.</li>
+      <li>Do not put any malicious content online or you'll get banned.</li>
+    </ul>
+
   </mat-card-content>
 </mat-card>
 
