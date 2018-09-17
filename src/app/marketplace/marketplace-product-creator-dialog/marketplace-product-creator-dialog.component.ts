@@ -34,17 +34,20 @@ export class MarketplaceProductCreatorDialogComponent implements OnInit, OnDestr
   @Input() file: File;
   @Input() shortDescription: string;
 
-  public formGroup: FormGroup;
-  public titleMinLength = 3;
-  public titleMaxLength = 100;
-  public shortDescriptionMinLength = 3;
-  public shortDescriptionMaxLength = 1023;
-  public longDescriptionMaxLength = 10000;
-  public maxFileSize: number = environment.ipfs.maxFileSize;
-  public wallet: Wallet;
   @ViewChild('fileInput') fileInput: FileInputComponent;
   @ViewChild('sampleFileInput') sampleFileInput: FileInputComponent;
   @ViewChild('categoryInput') categoryInput: MarketplaceProductCategorySelectorComponent;
+
+  formGroup: FormGroup;
+  titleMinLength = 3;
+  titleMaxLength = 100;
+  shortDescriptionMinLength = 3;
+  shortDescriptionMaxLength = 1023;
+  longDescriptionMaxLength = 10000;
+  maxProductFileSize = environment.repux.maxProductFileSize;
+  maxFileSize = environment.ipfs.maxFileSize;
+  wallet: Wallet;
+
   private subscription: Subscription;
   private walletSubscription: Subscription;
 

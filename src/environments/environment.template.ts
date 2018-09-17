@@ -55,13 +55,14 @@ export const environment = {
     defaultDaysToDeliver: 14,
     maxDaysToRate: 30,
     minProductRate: 1,
-    maxProductRate: 5
+    maxProductRate: 5,
+    maxProductFileSize: parseInt('${MARKETPLACE_MAX_PRODUCT_FILE_SIZE}', 10) || 20_971_520
   },
   ipfs: {
     host: '${MARKETPLACE_IPFS_HOST}' || 'localhost',
     port: '${MARKETPLACE_IPFS_PORT}' || '5002',
     protocol: '${MARKETPLACE_IPFS_PROTOCOL}' || 'https',
-    maxFileSize: parseInt('${METAINDEXER_IPFS_MAX_FILE_SIZE}', 10) || 10_485_760
+    maxFileSize: parseInt('${METAINDEXER_IPFS_MAX_FILE_SIZE}', 10) || 2_097_152
   },
   webPushServer: {
     host: '${WEBPUSH_SERVER_HOST}' || 'https://localhost:3100',

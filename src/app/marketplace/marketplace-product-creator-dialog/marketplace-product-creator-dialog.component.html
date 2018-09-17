@@ -9,7 +9,8 @@
                           placeholder="File"
                           [required]="true"
                           [formControl]="formGroup.controls['file']"
-                          ngDefaultControl></app-file-input>
+                          ngDefaultControl
+                          [maxFileSize]="maxProductFileSize"></app-file-input>
           <button mat-icon-button
                   class="file-download"
                   matTooltip="Download file"
