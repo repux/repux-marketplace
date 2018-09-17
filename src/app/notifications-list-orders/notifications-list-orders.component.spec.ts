@@ -1,10 +1,9 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-
 import { NotificationsListOrdersComponent } from './notifications-list-orders.component';
-import { MarketplaceFinaliseButtonComponent } from '../marketplace/marketplace-finalise-button/marketplace-finalise-button.component';
 import { MaterialModule } from '../material.module';
 import { OrderDatePipe } from '../shared/pipes/order-date.pipe';
 import { EthTransactionLinkComponent } from '../shared/components/eth-transaction-link/eth-transaction-link.component';
+import { MarketplaceFinaliseButtonComponent } from '../marketplace/marketplace-finalise-button/marketplace-finalise-button.component';
 
 describe('NotificationsListOrdersComponent', () => {
   let component: NotificationsListOrdersComponent;
@@ -21,13 +20,15 @@ describe('NotificationsListOrdersComponent', () => {
       imports: [
         MaterialModule
       ]
-    })
-    .compileComponents();
+    }).compileComponents();
   }));
 
   beforeEach(() => {
     fixture = TestBed.createComponent(NotificationsListOrdersComponent);
     component = fixture.componentInstance;
+    component.blockchainDataProduct = <any> {
+      disabled: false
+    };
     fixture.detectChanges();
   });
 

@@ -9,6 +9,7 @@ import { IpfsService } from '../services/ipfs.service';
 import { EulaType } from 'repux-lib';
 import { ActionButtonType } from '../shared/enums/action-button-type';
 import { DataProduct as BlockchainDataProduct, DataProductOrder as BlockchainDataProductOrder } from 'repux-web3-api';
+import { DataProductService } from '../services/data-product.service';
 
 @Component({ selector: 'app-marketplace-action-buttons', template: '' })
 class MarketplaceActionButtonsStubComponent {
@@ -21,6 +22,7 @@ class MarketplaceActionButtonsStubComponent {
 @Component({ selector: 'app-notifications-list-orders', template: '' })
 class NotificationsListOrdersStubComponent {
   @Input() dataProduct: DataProduct;
+  @Input() blockchainDataProduct: BlockchainDataProduct;
   @Input() displayPendingOrders: boolean;
 }
 
@@ -28,6 +30,7 @@ describe('NotificationsListItemComponent', () => {
   let component: NotificationsListItemComponent;
   let fixture: ComponentFixture<NotificationsListItemComponent>;
   const ipfsServiceSpy = jasmine.createSpyObj('IpfsService', [ 'downloadAndSave' ]);
+  const dataProductServiceSpy = jasmine.createSpyObj('DataProductService', [ 'getDataProductData' ]);
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
@@ -41,10 +44,10 @@ describe('NotificationsListItemComponent', () => {
         NotificationsListItemComponent
       ],
       providers: [
-        { provide: IpfsService, useValue: ipfsServiceSpy }
+        { provide: IpfsService, useValue: ipfsServiceSpy },
+        { provide: DataProductService, useValue: dataProductServiceSpy }
       ]
-    })
-      .compileComponents();
+    }).compileComponents();
   }));
 
   beforeEach(() => {
@@ -68,6 +71,9 @@ describe('NotificationsListItemComponent', () => {
     component = fixture.componentInstance;
     product.creationDate = new Date();
     component.product = product;
+    component.blockchainDataProduct = <any> {
+      disabled: false
+    };
     fixture.detectChanges();
   });
 

@@ -1,4 +1,4 @@
-<div *ngIf="wallet && userIsOwner && !order.finalised">
+<div *ngIf="wallet && userIsOwner && !blockchainOrder.finalised && !blockchainDataProduct?.disabled">
   <span *ngIf="pendingReencryption">Re-encrypting...</span>
   <app-eth-transaction-link
     *ngIf="pendingTransaction"

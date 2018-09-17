@@ -113,32 +113,8 @@ describe('MarketplaceUnpublishButtonComponent', () => {
         blocksAction: ActionButtonType.Unpublish
       } as Transaction;
 
-      const addProductToUnpublishedProducts = jasmine.createSpy();
-      component.addProductToUnpublishedProducts = addProductToUnpublishedProducts;
-
       component.onTransactionFinish({ status: TransactionStatus.SUCCESSFUL } as TransactionReceipt);
 
-      expect(addProductToUnpublishedProducts.calls.count()).toBe(1);
-      expect(component.blockchainDataProduct.disabled).toBe(true);
-      expect(component.pendingTransaction).toBe(undefined);
-    });
-
-    it('should finalise transaction when transactionReceipt.status is successful and shouldn\'t call ' +
-      'addProductToUnpublishedProducts when fundsToWithdraw > 0', () => {
-      component.blockchainDataProduct.buyersDeposit = new BigNumber(0);
-
-      component.pendingTransaction = {
-        scope: BlockchainTransactionScope.DataProduct,
-        identifier: dataProductAddress,
-        blocksAction: ActionButtonType.Unpublish
-      } as Transaction;
-
-      const addProductToUnpublishedProducts = jasmine.createSpy();
-      component.addProductToUnpublishedProducts = addProductToUnpublishedProducts;
-
-      component.onTransactionFinish({ status: TransactionStatus.SUCCESSFUL } as TransactionReceipt);
-
-      expect(addProductToUnpublishedProducts.calls.count()).toBe(0);
       expect(component.blockchainDataProduct.disabled).toBe(true);
       expect(component.pendingTransaction).toBe(undefined);
     });
@@ -178,8 +154,12 @@ describe('MarketplaceUnpublishButtonComponent', () => {
 
   describe('#unpublish()', () => {
     it('should call dataProductService.cancelDataProductPurchase using commonDialogService.transaction', () => {
+      const addProductToUnpublishedProducts = jasmine.createSpy();
+      component.addProductToUnpublishedProducts = addProductToUnpublishedProducts;
+
       component.unpublish();
 
+      expect(addProductToUnpublishedProducts.calls.count()).toBe(1);
       expect(dataProductServiceSpy.disableDataProduct.calls.count()).toBe(1);
       expect(dataProductServiceSpy.disableDataProduct.calls.allArgs()[ 0 ]).toEqual([ dataProductAddress ]);
     });

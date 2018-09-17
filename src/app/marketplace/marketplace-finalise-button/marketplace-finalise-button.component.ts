@@ -10,7 +10,12 @@ import { PendingFinalisationService } from '../services/pending-finalisation.ser
 import { EventAction, EventCategory, TagManagerService } from '../../shared/services/tag-manager.service';
 import { CommonDialogService } from '../../shared/services/common-dialog.service';
 import { EventType, FileReencryptor } from 'repux-lib';
-import { TransactionReceipt, TransactionStatus, DataProductOrder as BlockchainDataProductOrder } from 'repux-web3-api';
+import {
+  TransactionReceipt,
+  TransactionStatus,
+  DataProductOrder as BlockchainDataProductOrder,
+  DataProduct as BlockchainDataProduct
+} from 'repux-web3-api';
 import { Transaction, TransactionService } from '../../shared/services/transaction.service';
 import { BlockchainTransactionScope } from '../../shared/enums/blockchain-transaction-scope';
 import { ActionButtonType } from '../../shared/enums/action-button-type';
@@ -23,6 +28,7 @@ import { KeyStoreDialogService } from '../../key-store/key-store-dialog.service'
 export class MarketplaceFinaliseButtonComponent implements OnDestroy, OnInit {
   @Input() order: DataProductOrder;
   @Input() dataProduct: DataProduct;
+  @Input() blockchainDataProduct: BlockchainDataProduct;
   @Output() success = new EventEmitter<DataProductOrder>();
 
   public wallet: Wallet;

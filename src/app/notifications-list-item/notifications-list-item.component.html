@@ -1,6 +1,7 @@
 <section class="item" (click)="toggle()">
   <div *ngIf="displayRemovedListingMessage" class="item__removed-listing-notification">
-    Unfortunately seller removed this listing, click on <strong>Cancel</strong> to get a refund of your {{currencyName}} tokens.
+    Unfortunately seller removed this listing, click on <strong>Cancel</strong> to get a refund of your {{currencyName}}
+    tokens.
   </div>
   <div class="item__body">
     <mat-icon class="item__icon">{{ expanded ? 'expand_less' : 'expand_more' }}</mat-icon>
@@ -23,19 +24,23 @@
       </p>
 
       <p *ngIf="showMyOrderData && myOrderData">
-        Item bought at <strong>{{ myOrderData.deliveryDeadline | orderDate : product.daysToDeliver | date : 'short' }}</strong>.
-        If Seller don’t confirm transaction till <strong>{{ myOrderData.deliveryDeadline | date : 'short' }}</strong>, then you can choose to cancel transaction and funds will be returned to your wallet.
+        Item bought at <strong>{{ myOrderData.deliveryDeadline | orderDate : product.daysToDeliver | date : 'short'
+        }}</strong>.
+        If Seller don’t confirm transaction till <strong>{{ myOrderData.deliveryDeadline | date : 'short' }}</strong>,
+        then you can choose to cancel transaction and funds will be returned to your wallet.
       </p>
 
       <app-notifications-list-orders
         *ngIf="showOrders"
         [dataProduct]="product"
-        [displayPendingOrders]="!product.disabled">
+        [blockchainDataProduct]="blockchainDataProduct"
+        [displayPendingOrders]="!blockchainDataProduct.disabled">
       </app-notifications-list-orders>
 
       <div *ngIf="expanded" class="item__expandable">
 
-        <p class="item__description">{{ product.shortDescription | slice:0:200 }}{{ product.shortDescription.length > 200 ? '...' : '' }}</p>
+        <p class="item__description">{{ product.shortDescription | slice:0:200 }}{{ product.shortDescription.length >
+          200 ? '...' : '' }}</p>
 
         <div class="item__categories">
           <mat-chip-list>
@@ -44,7 +49,8 @@
         </div>
 
         <h4 class="item__subtitle" *ngIf="product.fullDescription">Detailed description</h4>
-        <p class="item__description" *ngIf="product.fullDescription">{{ product.fullDescription | slice:0:400 }}{{ product.fullDescription.length > 400 ? '...' : '' }}</p>
+        <p class="item__description" *ngIf="product.fullDescription">{{ product.fullDescription | slice:0:400 }}{{
+          product.fullDescription.length > 400 ? '...' : '' }}</p>
       </div>
     </div>
 
