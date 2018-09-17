@@ -1,27 +1,30 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { WalletInfoComponent } from './wallet-info.component';
-import { CurrencyRepuxPipe } from '../../pipes/currency-repux.pipe';
+import { IncentiveDialogComponent } from './incentive-dialog.component';
 import { MaterialModule } from '../../../material.module';
+import { MatDialogRef } from '@angular/material';
 import { RouterTestingModule } from '@angular/router/testing';
 
-describe('WalletInfoComponent', () => {
-  let component: WalletInfoComponent;
-  let fixture: ComponentFixture<WalletInfoComponent>;
+describe('IncentiveDialogComponent', () => {
+  let component: IncentiveDialogComponent;
+  let fixture: ComponentFixture<IncentiveDialogComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ CurrencyRepuxPipe, WalletInfoComponent ],
       imports: [
         MaterialModule,
         RouterTestingModule
+      ],
+      declarations: [ IncentiveDialogComponent ],
+      providers: [
+        { provide: MatDialogRef, useValue: {} }
       ]
     })
-      .compileComponents();
+    .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(WalletInfoComponent);
+    fixture = TestBed.createComponent(IncentiveDialogComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

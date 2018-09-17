@@ -1,9 +1,20 @@
 <mat-card>
   <mat-card-content>
-    <h3>
-      Users will get stakes based on the pool of REPUX tokens (i.e. 1000 REPUX tokens) for following actions/getting the
-      best scores:
-    </h3>
+    <h3>We encourage you to take a look at our fully decentralised product, where you can buy and sell your data for REPUX tokens, before it goes live.</h3>
+
+    <p>To make it more appealing we are giving a pool of real <strong>200.000 REPUX</strong> tokens to the contributors.</p>
+
+    <p>Test takes place on Rinkeby network to save on gas prices but the tokens will be provided on the main Ethereum network (to the same wallet addresses used in test network).</p>
+
+    <p>Pool will be distributed according to the stakes obtained - in accordance to the list provided.</p>
+
+    <p>Stakes will be calculated for the products listed since Tue 18th of September 2018.</p>
+
+    <p><strong>Test ends at 2nd of October 2018.</strong></p>
+
+    <p>All calculations will be made on GMT time.</p>
+
+    <p>We're working on the automated leaderboard - for now please look here or enable push notifications to stay updated.</p>
 
     <table mat-table #table [dataSource]="scoring">
       <ng-container matColumnDef="action">
@@ -13,13 +24,14 @@
 
       <ng-container matColumnDef="stakes">
         <th mat-header-cell *matHeaderCellDef>Stakes</th>
-        <td mat-cell *matCellDef="let scoring">{{ scoring.score }}
-        </td>
+        <td mat-cell *matCellDef="let scoring"><strong>{{ scoring.score }}</strong></td>
       </ng-container>
 
       <tr mat-header-row *matHeaderRowDef="['action', 'stakes']"></tr>
       <tr mat-row *matRowDef="let row; columns: ['action', 'stakes'];"></tr>
     </table>
+
+    <p>And remember this is test environment so be understanding and please keep in mind terms and conditions are valid so don't put any malicious content online or you'll get banned.</p>
   </mat-card-content>
 </mat-card>
 
