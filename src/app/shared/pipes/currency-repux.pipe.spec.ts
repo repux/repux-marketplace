@@ -12,6 +12,7 @@ describe('CurrencyRepux', () => {
       expect(pipe.transform('10', '')).toBe(' 10.00');
       expect(pipe.transform('10.000006', 'REPUX', 5)).toBe('REPUX 10.00001');
       expect(pipe.transform('10.000000000100000000')).toBe('REPUX 10.0000000001');
+      expect(pipe.transform('10.111111111111111111', 'REPUX', 5, true)).toBe('REPUX 10.11111...');
     });
   });
 });

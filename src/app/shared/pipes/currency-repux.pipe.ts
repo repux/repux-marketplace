@@ -8,7 +8,7 @@ const minimumPrecision = 2;
 
 @Pipe({ name: 'currencyRepux' })
 export class CurrencyRepuxPipe implements PipeTransform {
-  transform(value: any, name: string = currencyName, precision: number = currencyPrecision): string {
+  transform(value: any, name: string = currencyName, precision: number = currencyPrecision, trailingDots = false): string {
     const number = new BigNumber(value);
     let string = number.toFormat(precision);
 
@@ -17,7 +17,9 @@ export class CurrencyRepuxPipe implements PipeTransform {
       string = string.substr(0, string.length - 1);
     }
 
-    return name + ' ' + string;
+    const displayDots = trailingDots && number.gt(number.toFixed(precision));
+
+    return name + ' ' + string + (displayDots ? '...' : '');
   }
 }
 

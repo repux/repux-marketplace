@@ -13,7 +13,9 @@
   </div>
   <div class="wallet-info__item">
     <span class="wallet-info__label">Current balance</span>
-    <span class="wallet-info__value" *ngIf="balance$ | async as balance">{{ balance | currencyRepux }}</span>
+    <span class="wallet-info__value" *ngIf="balance$ | async as balance">
+      {{ balance | currencyRepux : '' : currencyPrecision : true }}
+    </span>
   </div>
   <div class="wallet-info__item">
     <span class="wallet-info__label">Wallet address</span>
