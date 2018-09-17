@@ -5,6 +5,7 @@ import { Observable } from 'rxjs/internal/Observable';
 import BigNumber from 'bignumber.js';
 import { IssueDemoTokensComponent } from '../issue-demo-tokens/issue-demo-tokens.component';
 import { MatDialog } from '@angular/material';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-wallet-info',
@@ -17,7 +18,8 @@ export class WalletInfoComponent implements OnInit {
 
   constructor(
     private walletService: WalletService,
-    private dialog: MatDialog) {
+    private dialog: MatDialog,
+    private router: Router) {
   }
 
   ngOnInit(): void {
@@ -27,5 +29,9 @@ export class WalletInfoComponent implements OnInit {
 
   openDemoTokensIssueDialog() {
     this.dialog.open(IssueDemoTokensComponent);
+  }
+
+  goToPromotionPage() {
+    this.router.navigate(['/incentive']);
   }
 }

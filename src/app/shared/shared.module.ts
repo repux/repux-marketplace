@@ -26,6 +26,7 @@ import { IssueDemoTokensComponent } from './components/issue-demo-tokens/issue-d
 import { BlockyIdenticonComponent } from './components/blocky-identicon/blocky-identicon.component';
 import { IncentiveComponent } from './components/incentive/incentive.component';
 import { EthTransactionLinkComponent } from './components/eth-transaction-link/eth-transaction-link.component';
+import { IncentiveDialogComponent } from './components/incentive-dialog/incentive-dialog.component';
 
 @NgModule({
   imports: [
@@ -58,7 +59,8 @@ import { EthTransactionLinkComponent } from './components/eth-transaction-link/e
     IssueDemoTokensComponent,
     BlockyIdenticonComponent,
     IncentiveComponent,
-    EthTransactionLinkComponent
+    EthTransactionLinkComponent,
+    IncentiveDialogComponent
   ],
   exports: [
     FileInputComponent,
@@ -83,7 +85,8 @@ import { EthTransactionLinkComponent } from './components/eth-transaction-link/e
   entryComponents: [
     ConfirmationDialogComponent,
     NotificationsSubscriptionInstructionComponent,
-    IssueDemoTokensComponent
+    IssueDemoTokensComponent,
+    IncentiveDialogComponent
   ]
 })
 export class SharedModule {

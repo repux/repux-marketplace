@@ -1,9 +1,15 @@
 <div *ngIf="wallet$ | async as wallet" class="wallet-info">
   <div class="wallet-info__item">
     <button
+      mat-flat-button
+      color="accent"
+      (click)="goToPromotionPage()">Promotion</button>
+  </div>
+  <div class="wallet-info__item">
+    <button
       mat-stroked-button
       color="primary"
-      (click)="openDemoTokensIssueDialog()">Get FREE RepuX</button>
+      (click)="openDemoTokensIssueDialog()">Get FREE demo tokens</button>
   </div>
   <div class="wallet-info__item">
     <span class="wallet-info__label">Current balance</span>

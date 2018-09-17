@@ -216,13 +216,13 @@
       <mat-icon aria-label="Side nav toggle icon">menu</mat-icon>
     </button>
 
-    <div *ngIf="!(isHandset$ | async)" class="logotype">
+    <a routerLink="/marketplace" *ngIf="!(isHandset$ | async)" class="logotype">
       <svg width="32px" height="32px" viewBox="0 0 32 32" version="1.1" xmlns="http://www.w3.org/2000/svg">
         <use xlink:href="#repux-logotype"/>
       </svg>
       <span class="logotype__text">RepuX</span>
       <span class="logotype__beta-text">test</span>
-    </div>
+    </a>
 
     <nav *ngIf="!(isHandset$ | async)" class="navigation">
       <a class="navigation__item"
@@ -265,12 +265,6 @@
     </button>
 
     <button
-      mat-icon-button
-      routerLink="/incentive">
-      <mat-icon>card_giftcard</mat-icon>
-    </button>
-
-    <button
       *ngIf="!(tasksTotal$ | async)"
       mat-icon-button disabled>
       <mat-icon *ngIf="!(tasksTotal$ | async)">notifications</mat-icon>
@@ -280,11 +274,12 @@
       <mat-icon>more_vert</mat-icon>
     </button>
     <mat-menu #menu="matMenu">
+      <a routerLink="/incentive" mat-menu-item>Promotion</a>
       <button mat-menu-item routerLink="settings" fragment="wallet">My wallet</button>
       <button mat-menu-item routerLink="settings" fragment="keys">Private & Public keys</button>
       <button mat-menu-item routerLink="settings" fragment="selling">Selling</button>
       <button mat-menu-item routerLink="settings" fragment="legal">Legal</button>
-      <button mat-menu-item (click)="openDemoTokensIssueDialog()">Get FREE RepuX</button>
+      <button mat-menu-item (click)="openDemoTokensIssueDialog()">Get FREE demo tokens</button>
       <a href="https://help.repux.io/" target="_blank" mat-menu-item>Help</a>
     </mat-menu>
   </mat-toolbar-row>
