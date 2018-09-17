@@ -35,12 +35,12 @@ export class MarketplaceFinaliseButtonComponent implements OnDestroy, OnInit {
   public userIsOwner: boolean;
   public pendingTransaction?: Transaction;
   public pendingReencryption = false;
+  public blockchainOrder: BlockchainDataProductOrder;
 
   private keysSubscription: Subscription;
   private walletSubscription: Subscription;
   private transactionsSubscription: Subscription;
   private reencryptor: FileReencryptor;
-  private blockchainOrder: BlockchainDataProductOrder;
 
   constructor(
     private repuxLibService: RepuxLibService,
