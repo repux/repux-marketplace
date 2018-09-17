@@ -10,7 +10,9 @@
     <!-- Date Column -->
     <ng-container matColumnDef="date">
       <th mat-header-cell *matHeaderCellDef>Date</th>
-      <td mat-cell *matCellDef="let order">{{ order.deliveryDeadline | orderDate : dataProduct.daysToDeliver | date : 'short' }}</td>
+      <td mat-cell *matCellDef="let order">
+        {{ order.deliveryDeadline | orderDate : dataProduct.daysToDeliver | date : 'short' }}
+      </td>
     </ng-container>
 
     <!-- Delivery deadline Column -->
@@ -25,6 +27,7 @@
       <td mat-cell *matCellDef="let order">
         <div class="row">
           <app-marketplace-finalise-button [order]="order"
+                                           [blockchainDataProduct]="blockchainDataProduct"
                                            [dataProduct]="dataProduct"></app-marketplace-finalise-button>
         </div>
       </td>

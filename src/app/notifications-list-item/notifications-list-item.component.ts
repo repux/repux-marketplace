@@ -20,7 +20,7 @@ export class NotificationsListItemComponent implements OnInit, OnDestroy {
   @Input() actions: ActionButtonType[] = [];
   @Input() product: DataProduct;
   @Input() showOrders = true;
-  @Input() showMyOrderData: false;
+  @Input() showMyOrderData = false;
   expanded = false;
   myOrderData: BlockchainDataProductOrder;
   blockchainDataProduct: BlockchainDataProduct;
@@ -46,7 +46,9 @@ export class NotificationsListItemComponent implements OnInit, OnDestroy {
       this.subscription = this.walletService.getWallet().subscribe(async wallet => {
         this.myOrderData = await this.dataProductService.getOrderData(this.product.address, wallet.address);
       });
+    }
 
+    if (this.showMyOrderData || this.showOrders) {
       this.blockchainDataProduct = await this.dataProductService.getDataProductData(this.product.address);
     }
   }

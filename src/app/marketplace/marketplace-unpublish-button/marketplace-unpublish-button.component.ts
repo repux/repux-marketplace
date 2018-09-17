@@ -51,9 +51,6 @@ export class MarketplaceUnpublishButtonComponent implements OnInit, OnDestroy {
 
   onTransactionFinish(transactionReceipt: TransactionReceipt) {
     if (transactionReceipt.status === TransactionStatus.SUCCESSFUL) {
-      if (!this.blockchainDataProduct.fundsAccumulated.minus(this.blockchainDataProduct.buyersDeposit).isGreaterThan(0)) {
-        this.addProductToUnpublishedProducts(this.dataProduct);
-      }
       this.blockchainDataProduct.disabled = true;
       this.tagManager.sendEvent(
         EventCategory.Sell,
@@ -93,6 +90,8 @@ export class MarketplaceUnpublishButtonComponent implements OnInit, OnDestroy {
     this.commonDialogService.transaction(
       () => this.dataProductService.disableDataProduct(this.dataProductAddress)
     );
+
+    this.addProductToUnpublishedProducts(this.dataProduct);
   }
 
   ngOnDestroy() {

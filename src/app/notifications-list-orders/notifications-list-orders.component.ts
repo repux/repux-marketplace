@@ -1,6 +1,6 @@
 import { Component, Input, OnChanges } from '@angular/core';
 import { DataProduct } from '../shared/models/data-product';
-import { DataProductOrder as BlockchainDataProductOrder } from '../../../node_modules/repux-web3-api';
+import { DataProductOrder as BlockchainDataProductOrder, DataProduct as BlockchainDataProduct } from 'repux-web3-api';
 import { DataProductService } from '../services/data-product.service';
 
 @Component({
@@ -11,6 +11,7 @@ import { DataProductService } from '../services/data-product.service';
 export class NotificationsListOrdersComponent implements OnChanges {
   @Input() dataProduct: DataProduct;
 
+  @Input() blockchainDataProduct: BlockchainDataProduct;
   @Input() displayPendingOrders: boolean;
 
   blockchainOrders: BlockchainDataProductOrder[] = [];
