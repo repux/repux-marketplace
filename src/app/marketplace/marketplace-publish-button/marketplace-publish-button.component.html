@@ -2,13 +2,13 @@
   <button mat-stroked-button
           color="accent"
           class="remove-button"
-          *ngIf="!currentPendingTransaction"
+          *ngIf="!pendingTransaction"
           (click)="remove()">Remove
   </button>
 
   <button mat-stroked-button
           color="primary"
-          *ngIf="!currentPendingTransaction"
+          *ngIf="!pendingTransaction"
           (click)="publish()">Publish
   </button>
 
