@@ -1,3 +1,5 @@
+@import '../../../../variables';
+
 .mat-card {
   max-width: 600px;
   margin: 0 auto;
@@ -10,4 +12,12 @@
 
 .mat-row:last-child td {
   border-bottom: none;
+}
+
+.intro {
+  text-align: center;
+
+  h1 {
+    color: map-get($app-accent, 400);
+  }
 }
