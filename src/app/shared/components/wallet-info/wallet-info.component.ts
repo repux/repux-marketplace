@@ -6,6 +6,7 @@ import BigNumber from 'bignumber.js';
 import { IssueDemoTokensComponent } from '../issue-demo-tokens/issue-demo-tokens.component';
 import { MatDialog } from '@angular/material';
 import { Router } from '@angular/router';
+import { environment } from '../../../../environments/environment';
 
 @Component({
   selector: 'app-wallet-info',
@@ -15,6 +16,7 @@ import { Router } from '@angular/router';
 export class WalletInfoComponent implements OnInit {
   wallet$: Observable<Wallet>;
   balance$: Observable<BigNumber>;
+  currencyPrecision = environment.repux.currency.shortPrecision;
 
   constructor(
     private walletService: WalletService,
@@ -32,6 +34,6 @@ export class WalletInfoComponent implements OnInit {
   }
 
   goToPromotionPage() {
-    this.router.navigate(['/incentive']);
+    this.router.navigate([ '/incentive' ]);
   }
 }
