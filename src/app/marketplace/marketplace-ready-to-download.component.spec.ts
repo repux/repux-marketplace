@@ -54,7 +54,7 @@ describe('MarketplaceBuyReadyToDownloadComponent', () => {
 
   describe('#_onWalletChange()', () => {
     it('should set _wallet and staticQuery', () => {
-      const wallet = new Wallet(buyerAddress, new BigNumber(1));
+      const wallet = new Wallet(buyerAddress, new BigNumber(1), new BigNumber(1));
 
       component[ '_onWalletChange' ](wallet);
       expect(component[ '_wallet' ]).toBe(wallet);

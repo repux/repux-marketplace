@@ -30,7 +30,7 @@ describe('MarketplaceProductCreatorDialogComponent', () => {
   let component: MarketplaceProductCreatorDialogComponent;
   let fixture: ComponentFixture<MarketplaceProductCreatorDialogComponent>;
 
-  const wallet = new Wallet('0x00', new BigNumber(1));
+  const wallet = new Wallet('0x00', new BigNumber(1), new BigNumber(1));
 
   beforeEach(async(() => {
     tagManagerServiceSpy = jasmine.createSpyObj('TagManagerService', [ 'sendUserId', 'sendEvent' ]);

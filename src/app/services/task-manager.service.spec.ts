@@ -8,7 +8,7 @@ describe('TaskManagerService', () => {
   let walletServiceSpy: { getWallet: jasmine.Spy };
   let service: TaskManagerService;
   const walletAddress = '0x00';
-  const wallet = new Wallet(walletAddress, new BigNumber(1));
+  const wallet = new Wallet(walletAddress, new BigNumber(1), new BigNumber(1));
 
   beforeEach(() => {
     walletServiceSpy = jasmine.createSpyObj('WalletService', [ 'getWallet' ]);

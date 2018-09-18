@@ -20,7 +20,7 @@ import BigNumber from 'bignumber.js';
 })
 export class SettingsIndexComponent implements OnInit, OnDestroy {
   wallet$: Observable<Wallet>;
-  balance$: Observable<BigNumber>;
+  balance$: Observable<{ repux: BigNumber, eth: BigNumber }>;
   public hasKeys = false;
   private subscription: Subscription;
 

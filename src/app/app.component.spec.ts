@@ -66,7 +66,7 @@ describe('AppComponent', () => {
 
     walletServiceSpy.getWallet.and.returnValue({
       subscribe(callback) {
-        callback(new Wallet('', new BigNumber(0)));
+        callback(new Wallet('', new BigNumber(0), new BigNumber(1)));
       }
     });
 

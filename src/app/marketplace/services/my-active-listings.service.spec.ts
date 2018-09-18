@@ -9,7 +9,7 @@ describe('MyActiveListingsService', () => {
   let service: MyActiveListingsService;
   let walletServiceSpy, dataProductServiceSpy, dataProductListServiceSpy;
 
-  const wallet = new Wallet('0x00', new BigNumber(0));
+  const wallet = new Wallet('0x00', new BigNumber(0), new BigNumber(1));
   const dataProduct = new DataProduct();
 
   beforeEach(() => {

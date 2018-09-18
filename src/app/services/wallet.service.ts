@@ -25,7 +25,7 @@ export class WalletService implements OnDestroy {
   private rafReference: number;
   private metamaskStatusSubject = new BehaviorSubject<MetamaskStatus>(undefined);
   private walletSubject = new BehaviorSubject<Wallet>(undefined);
-  private balanceSubject = new BehaviorSubject<BigNumber>(undefined);
+  private balanceSubject = new BehaviorSubject<{ repux: BigNumber, eth: BigNumber }>(undefined);
   private currentFrame = 0;
   private checkFramesInterval = 100;
   private workerState: WorkerState;
@@ -64,7 +64,7 @@ export class WalletService implements OnDestroy {
       if (currentStatus === MetamaskStatus.Ok) {
         const wallet = await this.getWalletData();
         this.walletSubject.next(wallet);
-        this.balanceSubject.next(wallet.balance);
+        this.balanceSubject.next({ repux: wallet.balance, eth: wallet.ethBalance });
       } else {
         this.walletSubject.next(null);
         this.balanceSubject.next(null);
@@ -75,7 +75,11 @@ export class WalletService implements OnDestroy {
       this.currentAccount = currentAccount;
       const wallet = await this.getWalletData();
       this.walletSubject.next(wallet);
-      this.balanceSubject.next(wallet ? wallet.balance : null);
+      if (wallet) {
+        this.balanceSubject.next({ repux: wallet.balance, eth: wallet.ethBalance });
+      } else {
+        this.balanceSubject.next(null);
+      }
     }
 
     this.workerState = WorkerState.Ready;
@@ -107,7 +111,7 @@ export class WalletService implements OnDestroy {
     return this.walletSubject.asObservable();
   }
 
-  getBalance(): Observable<BigNumber> {
+  getBalance(): Observable<{ repux: BigNumber, eth: BigNumber }> {
     return this.balanceSubject.asObservable();
   }
 
@@ -119,8 +123,9 @@ export class WalletService implements OnDestroy {
 
     const defaultAccount = await web3Api.getDefaultAccount();
     const accountBalance = await web3Api.getBalance();
+    const accountEthBalance = await web3Api.getEthBalance();
 
-    return new Wallet(defaultAccount, accountBalance);
+    return new Wallet(defaultAccount, accountBalance, accountEthBalance);
   }
 
   async updateBalance(): Promise<void> {
@@ -135,8 +140,12 @@ export class WalletService implements OnDestroy {
     }
 
     const balance = await web3Api.getBalance();
+    const ethBalance = await web3Api.getEthBalance();
+
     wallet.balance = balance;
-    this.balanceSubject.next(balance);
+    wallet.ethBalance = ethBalance;
+
+    this.balanceSubject.next({ repux: balance, eth: ethBalance });
   }
 
   ngOnDestroy(): void {
