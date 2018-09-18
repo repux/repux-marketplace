@@ -3,7 +3,8 @@ import { environment } from '../../../../environments/environment';
 
 @Component({
   selector: 'app-eth-transaction-link',
-  templateUrl: './eth-transaction-link.component.html'
+  templateUrl: './eth-transaction-link.component.html',
+  styleUrls: [ './eth-transaction-link.component.scss' ]
 })
 export class EthTransactionLinkComponent {
   @Input() transactionHash: string;
