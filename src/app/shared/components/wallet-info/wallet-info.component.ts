@@ -15,7 +15,7 @@ import { environment } from '../../../../environments/environment';
 })
 export class WalletInfoComponent implements OnInit {
   wallet$: Observable<Wallet>;
-  balance$: Observable<BigNumber>;
+  balance$: Observable<{ repux: BigNumber, eth: BigNumber }>;
   currencyPrecision = environment.repux.currency.shortPrecision;
 
   constructor(

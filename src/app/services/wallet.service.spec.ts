@@ -23,6 +23,10 @@ const repuxWeb3ApiMock = {
 
   async getBalance() {
     return new BigNumber(balanceInEther);
+  },
+
+  async getEthBalance() {
+    return new BigNumber(balanceInEther);
   }
 };
 
@@ -87,11 +91,14 @@ describe('WalletService', () => {
     it('should update current wallet balance', async () => {
       repuxWeb3ServiceSpy.isDefaultAccountAvailable.and.returnValue(true);
       repuxWeb3ServiceSpy.getRepuxApiInstance.and.returnValue(repuxWeb3ApiMock);
-      walletService[ 'walletSubject' ].next(new Wallet(web3Mock.eth.accounts[ 0 ], new BigNumber(3)));
+      walletService[ 'walletSubject' ].next(new Wallet(web3Mock.eth.accounts[ 0 ], new BigNumber(3), new BigNumber(1)));
 
       await walletService.updateBalance();
 
-      expect(walletService[ 'balanceSubject' ].getValue()).toEqual(new BigNumber(balanceInEther));
+      expect(walletService[ 'balanceSubject' ].getValue()).toEqual({
+        repux: new BigNumber(balanceInEther),
+        eth: new BigNumber(balanceInEther)
+      });
     });
   });
 });

@@ -6,8 +6,7 @@
     "types": [
       "jasmine",
       "node",
-      "filesystem",
-      "repux-lib/typings"
+      "filesystem"
     ],
     "lib": [
       "es2015",

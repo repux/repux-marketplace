@@ -15,7 +15,7 @@ describe('TransactionService', () => {
   let storageServiceSpy;
   let walletServiceSpy;
 
-  const wallet = new Wallet('0x02', new BigNumber(0));
+  const wallet = new Wallet('0x02', new BigNumber(0), new BigNumber(1));
 
   beforeEach(() => {
     repuxWeb3ServiceSpy = jasmine.createSpyObj('RepuxWeb3Service', [ 'getRepuxApiInstance' ]);

@@ -10,7 +10,7 @@
           </mat-list-item>
           <mat-divider></mat-divider>
           <mat-list-item>
-            <h3 matLine *ngIf="balance$ | async as balance">{{ balance | currencyRepux }}</h3>
+            <h3 matLine *ngIf="balance$ | async as balance">{{ balance?.repux | currencyRepux }}</h3>
             <p matLine>Current balance</p>
           </mat-list-item>
         </mat-list>

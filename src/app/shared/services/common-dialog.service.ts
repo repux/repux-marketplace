@@ -5,15 +5,21 @@ import { TransactionEvent } from '../models/transaction-event';
 import { Observable } from 'rxjs';
 import { TransactionEventType } from '../enums/transaction-event-type';
 import { DomSanitizer } from '@angular/platform-browser';
+import { WalletService } from '../../services/wallet.service';
+import BigNumber from 'bignumber.js';
 
 @Injectable({
   providedIn: 'root'
 })
 export class CommonDialogService {
+  private balance: { repux: BigNumber, eth: BigNumber };
+
   constructor(
     private dialog: MatDialog,
-    private sanitizer: DomSanitizer
+    private sanitizer: DomSanitizer,
+    private walletService: WalletService
   ) {
+    this.walletService.getBalance().subscribe(balance => this.balance = balance);
   }
 
   alert(message: string, title: string = 'Warning', confirmButtonLabel: string = 'Ok', cancelButtonLabel: string = null)
@@ -30,7 +36,7 @@ export class CommonDialogService {
     return confirmationDialogRef;
   }
 
-  transaction(methodToCall: () => Observable<TransactionEvent>): Observable<TransactionEvent> {
+  async transaction(methodToCall: () => Observable<TransactionEvent>): Promise<Observable<TransactionEvent>> {
     let currentDialogRef;
 
     const closeCurrentDialog = () => {
@@ -38,6 +44,10 @@ export class CommonDialogService {
         currentDialogRef.close();
       }
     };
+
+    if (this.balance && this.balance.eth.eq(0)) {
+      await this.showInsufficientFundsWarning();
+    }
 
     const observable = methodToCall();
 
@@ -98,5 +108,29 @@ export class CommonDialogService {
     });
 
     return observable;
+  }
+
+  showInsufficientFundsWarning(): Promise<any> {
+    const currentDialogRef = this.alert(`
+        <p>
+          If you are getting the error, "Insufficient funds" in MetaMask,<br>
+          it means you do not have enough ETH in your account to cover the cost of gas.
+        </p>
+        <p>
+          Each transaction (even on the test network!) require gas and that gas is paid in ETH.<br>
+          You can think of this like a transaction fee.
+        </p>
+        <p>
+          Please check this guide on
+          <a href="http://help.repux.io/repux-marketplace-tutorial/how-to-start/how-to-get-free-test-ethereum"
+             target="_blank">
+              How to get test ETH for free.
+          </a>
+        </p>`,
+      'Warning',
+      'Got it!'
+    );
+
+    return currentDialogRef.afterClosed().toPromise();
   }
 }

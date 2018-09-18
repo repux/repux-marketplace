@@ -7,7 +7,7 @@ describe('UnpublishedProductsService', () => {
   let service: UnpublishedProductsService;
   let storageServiceSpy, walletServiceSpy;
   const sellerMetaHash = 'SELLER_META_HASH';
-  const wallet = new Wallet('0x00', new BigNumber(1));
+  const wallet = new Wallet('0x00', new BigNumber(1), new BigNumber(1));
 
   beforeEach(() => {
     storageServiceSpy = jasmine.createSpyObj('StorageService', [ 'getItem', 'setItem' ]);

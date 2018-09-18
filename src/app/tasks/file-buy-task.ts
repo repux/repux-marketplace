@@ -93,9 +93,11 @@ export class FileBuyTask implements Task {
       return;
     }
 
-    this.commonDialogService.transaction(
+    const transaction = await this.commonDialogService.transaction(
       () => this.dataProductService.approveTokensTransferForDataProductPurchase(this._dataProduct.address)
-    ).subscribe(transactionEvent => {
+    );
+
+    transaction.subscribe(transactionEvent => {
       if (transactionEvent.type === TransactionEventType.Confirmed) {
         this._status = STATUS.APPROVING_TRANSACTION;
         return;
@@ -174,9 +176,11 @@ export class FileBuyTask implements Task {
       const { publicKey } = await this.keyStoreDialogServiceSpy.getKeys({ publicKey: true });
       const serializedKey = await this.repuxLibService.getInstance().serializePublicKey(publicKey);
 
-      this.commonDialogService.transaction(
+      const transaction = await this.commonDialogService.transaction(
         () => this.dataProductService.purchaseDataProduct(this._dataProduct.address, serializedKey)
-      ).subscribe(transactionEvent => {
+      );
+
+      transaction.subscribe(transactionEvent => {
         if (transactionEvent.type === TransactionEventType.Confirmed) {
           this._status = STATUS.PURCHASING_TRANSACTION;
           return;

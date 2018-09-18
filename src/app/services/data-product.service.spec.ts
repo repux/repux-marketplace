@@ -27,7 +27,7 @@ describe('DataProductService', () => {
       [ 'getWallet' ]
     );
 
-    const wallet = new Wallet(walletAddress, new BigNumber(1));
+    const wallet = new Wallet(walletAddress, new BigNumber(1), new BigNumber(1));
     walletServiceSpy.getWallet.and.returnValue({
       subscribe(callback) {
         callback(wallet);

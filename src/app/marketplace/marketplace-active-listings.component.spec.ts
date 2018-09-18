@@ -50,14 +50,14 @@ describe('MarketplaceSellMyActiveListingsComponent', () => {
   describe('#_onWalletChange()', () => {
     it('should set wallet and staticQuery', () => {
       expect(component.staticQuery).toEqual(getCreatedDataProductsQuery(''));
-      const wallet = new Wallet(ownerAddress, new BigNumber(0));
+      const wallet = new Wallet(ownerAddress, new BigNumber(0), new BigNumber(1));
       component[ '_onWalletChange' ](wallet);
       expect(component[ '_wallet' ]).toBe(wallet);
       component[ '_onWalletChange' ](wallet);
       expect(component[ '_wallet' ]).toBe(wallet);
       component[ '_onWalletChange' ](null);
       expect(component[ '_wallet' ]).toBe(wallet);
-      const wallet2 = new Wallet(ownerAddress, new BigNumber(0));
+      const wallet2 = new Wallet(ownerAddress, new BigNumber(0), new BigNumber(1));
       component[ '_onWalletChange' ](wallet2);
       expect(component[ '_wallet' ]).toBe(wallet2);
       expect(component.staticQuery).toEqual(getCreatedDataProductsQuery(ownerAddress));

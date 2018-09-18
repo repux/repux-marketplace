@@ -182,7 +182,7 @@ describe('MarketplaceCancelPurchaseButtonComponent', () => {
 
   describe('#onWalletChange()', () => {
     it('should set wallet', () => {
-      const wallet = new Wallet(buyerAddress, new BigNumber(1));
+      const wallet = new Wallet(buyerAddress, new BigNumber(1), new BigNumber(1));
 
       component[ 'onWalletChange' ](wallet);
       expect(component.wallet).toBe(wallet);
