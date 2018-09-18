@@ -114,7 +114,9 @@ a {
 }
 
 .action-buttons {
-  button {
+  button, app-eth-transaction-link {
     margin: 0 0 0 12px;
+    height: 36px;
+    display: inline-block;
   }
 }
