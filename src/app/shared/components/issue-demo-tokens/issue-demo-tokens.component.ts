@@ -1,4 +1,4 @@
-import { Component, OnDestroy } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef } from '@angular/material';
 import { environment } from '../../../../environments/environment.base';
@@ -6,24 +6,27 @@ import { HttpClient } from '@angular/common/http';
 import { Subscription } from 'rxjs';
 import { WalletService } from '../../../services/wallet.service';
 import { finalize } from 'rxjs/operators';
+import { RepuxWeb3Service } from '../../../services/repux-web3.service';
 
 @Component({
   selector: 'app-issue-demo-tokens',
   templateUrl: './issue-demo-tokens.component.html',
   styleUrls: [ './issue-demo-tokens.component.scss' ]
 })
-export class IssueDemoTokensComponent implements OnDestroy {
+export class IssueDemoTokensComponent implements OnInit, OnDestroy {
   formGroup: FormGroup;
-  private faucetUrl = environment.faucetUrl + '/issue-demo-token';
-  private subscription: Subscription;
   error: string;
   loading = false;
+
+  private faucetUrl = environment.faucetUrl + '/issue-demo-token';
+  private subscription: Subscription;
 
   constructor(
     private http: HttpClient,
     private fb: FormBuilder,
     private dialogRef: MatDialogRef<IssueDemoTokensComponent>,
-    private walletService: WalletService
+    private walletService: WalletService,
+    private repuxWeb3Service: RepuxWeb3Service
   ) {
     this.formGroup = this.fb.group({
       walletAddress: [ '',
@@ -33,6 +36,13 @@ export class IssueDemoTokensComponent implements OnDestroy {
         ]
       ]
     });
+  }
+
+  async setAccountAddress(): Promise<void> {
+    const web3Service: RepuxWeb3Service = await this.repuxWeb3Service;
+    const repuxApi = await web3Service.getRepuxApiInstance();
+    const accountAddress = await repuxApi.getDefaultAccount();
+    this.formGroup.controls[ 'walletAddress' ].setValue(accountAddress);
   }
 
   generate() {
@@ -62,6 +72,10 @@ export class IssueDemoTokensComponent implements OnDestroy {
           this.formGroup.controls[ 'walletAddress' ].setErrors({ server: err.error });
         }
       );
+  }
+
+  ngOnInit(): Promise<void> {
+    return this.setAccountAddress();
   }
 
   ngOnDestroy() {

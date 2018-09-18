@@ -6,6 +6,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { MatDialogRef } from '@angular/material';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
+import { RepuxWeb3Service } from '../../../services/repux-web3.service';
 
 describe('IssueDemoTokensComponent', () => {
   let component: IssueDemoTokensComponent;
@@ -13,6 +14,12 @@ describe('IssueDemoTokensComponent', () => {
 
   beforeEach(async(() => {
     const matDialogRefSpy = jasmine.createSpyObj('MatDialogRef', [ 'close', 'afterClosed' ]);
+    const repuxWeb3ServiceSpy = jasmine.createSpyObj('RepuxWeb3Service', [ 'getInstance' ]);
+    repuxWeb3ServiceSpy.getInstance.and.returnValue(Promise.resolve({
+      getDefaultAccount() {
+      }
+    }));
+
     TestBed.configureTestingModule({
       imports: [
         MaterialModule,
@@ -23,10 +30,10 @@ describe('IssueDemoTokensComponent', () => {
       ],
       declarations: [ IssueDemoTokensComponent ],
       providers: [
-        { provide: MatDialogRef, useValue: matDialogRefSpy }
+        { provide: MatDialogRef, useValue: matDialogRefSpy },
+        { provide: RepuxWeb3Service, useValue: repuxWeb3ServiceSpy }
       ]
-    })
-    .compileComponents();
+    }).compileComponents();
   }));
 
   beforeEach(() => {
