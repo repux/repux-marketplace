@@ -1,12 +1,11 @@
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
-import { Eula } from 'repux-lib';
+import { Eula } from '@repux/repux-lib';
 import { IpfsService } from '../services/ipfs.service';
 import { DataProduct } from '../shared/models/data-product';
-import { DataProductOrder as BlockchainDataProductOrder } from 'repux-web3-api/src/data-product-order';
+import { DataProductOrder as BlockchainDataProductOrder, DataProduct as BlockchainDataProduct } from '@repux/repux-web3-api';
 import { DataProductService } from '../services/data-product.service';
 import { WalletService } from '../services/wallet.service';
 import { Subscription } from 'rxjs';
-import { DataProduct as BlockchainDataProduct } from 'repux-web3-api';
 import { environment } from '../../environments/environment';
 import { ActionButtonType } from '../shared/enums/action-button-type';
 

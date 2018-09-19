@@ -7,7 +7,7 @@ import { MarketplaceUnpublishButtonComponent } from './marketplace-unpublish-but
 import { MaterialModule } from '../../material.module';
 import { DataProductService } from '../../services/data-product.service';
 import { UnpublishedProductsService } from '../services/unpublished-products.service';
-import { TransactionReceipt, TransactionStatus } from 'repux-web3-api';
+import { TransactionReceipt, TransactionStatus } from '@repux/repux-web3-api';
 import { BlockchainTransactionScope } from '../../shared/enums/blockchain-transaction-scope';
 import { ActionButtonType } from '../../shared/enums/action-button-type';
 import { Transaction, TransactionService } from '../../shared/services/transaction.service';

@@ -1,5 +1,5 @@
 import { Pipe, PipeTransform } from '@angular/core';
-import { EulaType } from 'repux-lib';
+import { EulaType } from '@repux/repux-lib';
 
 @Pipe({
   name: 'eulaType'

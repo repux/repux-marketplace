@@ -1,5 +1,5 @@
 import { FileDownloadTask, STATUS } from './file-download-task';
-import { EventType } from 'repux-lib';
+import { EventType } from '@repux/repux-lib';
 
 describe('FileDownloadTask', () => {
   let fileDownloaderDownload, downloaderEventHandler, fileDownloaderOn, fileDownloaderTerminate, fileDownloader, repuxLibService,

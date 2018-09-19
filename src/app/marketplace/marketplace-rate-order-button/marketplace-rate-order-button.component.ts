@@ -4,7 +4,7 @@ import {
   TransactionStatus,
   TransactionReceipt,
   DataProduct as BlockchainDataProduct
-} from 'repux-web3-api';
+} from '@repux/repux-web3-api';
 import { ClockService } from '../../services/clock.service';
 import { MatDialog } from '@angular/material';
 import { Subscription } from 'rxjs/internal/Subscription';

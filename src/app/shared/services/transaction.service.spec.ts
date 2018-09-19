@@ -5,7 +5,7 @@ import { BehaviorSubject, of } from 'rxjs';
 import Wallet from '../models/wallet';
 import BigNumber from 'bignumber.js';
 import { TransactionEvent } from '../models/transaction-event';
-import { TransactionStatus } from 'repux-web3-api';
+import { TransactionStatus } from '@repux/repux-web3-api';
 import { TransactionEventType } from '../enums/transaction-event-type';
 
 describe('TransactionService', () => {

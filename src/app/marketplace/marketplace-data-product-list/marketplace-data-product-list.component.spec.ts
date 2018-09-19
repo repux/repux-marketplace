@@ -12,7 +12,7 @@ import { MaterialModule } from '../../material.module';
 import { RouterTestingModule } from '@angular/router/testing';
 import { PendingFinalisationService } from '../services/pending-finalisation.service';
 import { IpfsService } from '../../services/ipfs.service';
-import { EulaType } from 'repux-lib';
+import { EulaType } from '@repux/repux-lib';
 import { ActionButtonType } from '../../shared/enums/action-button-type';
 import { FormsModule } from '@angular/forms';
 

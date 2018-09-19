@@ -5,7 +5,7 @@ import { FormControl, FormsModule, ReactiveFormsModule, Validators } from '@angu
 import { HttpClientModule } from '@angular/common/http';
 import { MaterialModule } from '../../material.module';
 import { MatRadioChange } from '@angular/material';
-import { EulaType } from 'repux-lib';
+import { EulaType } from '@repux/repux-lib';
 import { environment } from '../../../environments/environment';
 import { readFileAsArrayBuffer } from '../../shared/utils/read-file-as-array-buffer';
 import { MaxFileSizeDirective } from '../../shared/components/file-input/max-file-size.directive';

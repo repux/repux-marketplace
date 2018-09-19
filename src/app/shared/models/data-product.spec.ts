@@ -1,6 +1,6 @@
 import { DataProduct } from './data-product';
 import { BigNumber } from 'bignumber.js';
-import { EulaType, Eula, Attachment } from 'repux-lib';
+import { EulaType, Eula, Attachment } from '@repux/repux-lib';
 
 describe('DataProduct', () => {
   describe('#deserialize()', () => {

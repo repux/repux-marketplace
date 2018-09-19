@@ -15,7 +15,7 @@ import {
 import { EventAction, EventCategory, TagManagerService } from '../../shared/services/tag-manager.service';
 import { IpfsService } from '../../services/ipfs.service';
 import { createEulaSelection } from '../marketplace-eula-selector/marketplace-eula-selector.component';
-import { PurchaseType } from 'repux-lib';
+import { PurchaseType } from '@repux/repux-lib';
 import { WalletService } from '../../services/wallet.service';
 import Wallet from '../../shared/models/wallet';
 import { TransactionService } from '../../shared/services/transaction.service';

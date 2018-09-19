@@ -6,7 +6,7 @@ import { DataProductListService } from '../../services/data-product-list.service
 import { DataProduct } from '../../shared/models/data-product';
 import { environment } from '../../../environments/environment';
 import { pluck } from 'rxjs/operators';
-import { DataProductUpdateAction } from 'repux-web3-api';
+import { DataProductUpdateAction } from '@repux/repux-web3-api';
 import { DataProductService } from '../../services/data-product.service';
 import { DataProductEvent } from '../../shared/models/data-product-event';
 

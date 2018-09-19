@@ -9,7 +9,7 @@ import Wallet from '../models/wallet';
 import { BehaviorSubject } from 'rxjs/internal/BehaviorSubject';
 import { TransactionEvent } from '../models/transaction-event';
 import { TransactionEventType } from '../enums/transaction-event-type';
-import { TransactionReceipt, TransactionStatus } from 'repux-web3-api';
+import { TransactionReceipt, TransactionStatus } from '@repux/repux-web3-api';
 
 export interface Transaction {
   transactionHash: string;

@@ -1,6 +1,6 @@
 import { Component, Input, OnChanges } from '@angular/core';
 import { DataProduct } from '../shared/models/data-product';
-import { DataProductOrder as BlockchainDataProductOrder, DataProduct as BlockchainDataProduct } from 'repux-web3-api';
+import { DataProductOrder as BlockchainDataProductOrder, DataProduct as BlockchainDataProduct } from '@repux/repux-web3-api';
 import { DataProductService } from '../services/data-product.service';
 
 @Component({

@@ -6,9 +6,9 @@ import { SharedModule } from '../shared/shared.module';
 import { Component, Input } from '@angular/core';
 import { DataProduct } from '../shared/models/data-product';
 import { IpfsService } from '../services/ipfs.service';
-import { EulaType } from 'repux-lib';
+import { EulaType } from '@repux/repux-lib';
 import { ActionButtonType } from '../shared/enums/action-button-type';
-import { DataProduct as BlockchainDataProduct, DataProductOrder as BlockchainDataProductOrder } from 'repux-web3-api';
+import { DataProduct as BlockchainDataProduct, DataProductOrder as BlockchainDataProductOrder } from '@repux/repux-web3-api';
 import { DataProductService } from '../services/data-product.service';
 
 @Component({ selector: 'app-marketplace-action-buttons', template: '' })

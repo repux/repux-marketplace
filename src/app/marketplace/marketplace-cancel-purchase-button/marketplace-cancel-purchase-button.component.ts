@@ -10,7 +10,7 @@ import {
   DataProduct as BlockchainDataProduct,
   TransactionReceipt,
   TransactionStatus
-} from 'repux-web3-api';
+} from '@repux/repux-web3-api';
 import { AwaitingFinalisationService } from '../services/awaiting-finalisation.service';
 import { EventAction, EventCategory, TagManagerService } from '../../shared/services/tag-manager.service';
 import { Transaction, TransactionService } from '../../shared/services/transaction.service';

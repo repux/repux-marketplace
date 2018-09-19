@@ -1,6 +1,6 @@
 import { FileBuyTask, STATUS } from './file-buy-task';
 import { DataProduct } from '../shared/models/data-product';
-import { TransactionReceipt, TransactionStatus } from 'repux-web3-api';
+import { TransactionReceipt, TransactionStatus } from '@repux/repux-web3-api';
 import BigNumber from 'bignumber.js';
 
 describe('FileBuyTask', () => {

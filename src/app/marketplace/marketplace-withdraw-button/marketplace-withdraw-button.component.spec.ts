@@ -6,7 +6,7 @@ import { MarketplaceWithdrawButtonComponent } from './marketplace-withdraw-butto
 import BigNumber from 'bignumber.js';
 import { MaterialModule } from '../../material.module';
 import { DataProductService } from '../../services/data-product.service';
-import { TransactionReceipt, TransactionStatus } from 'repux-web3-api';
+import { TransactionReceipt, TransactionStatus } from '@repux/repux-web3-api';
 import { CommonDialogService } from '../../shared/services/common-dialog.service';
 import { Transaction, TransactionService } from '../../shared/services/transaction.service';
 import { BlockchainTransactionScope } from '../../shared/enums/blockchain-transaction-scope';

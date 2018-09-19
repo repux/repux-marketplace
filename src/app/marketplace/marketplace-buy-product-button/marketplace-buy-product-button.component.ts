@@ -7,7 +7,7 @@ import Wallet from '../../shared/models/wallet';
 import { Subscription } from 'rxjs/internal/Subscription';
 import { DataProduct } from '../../shared/models/data-product';
 import { AwaitingFinalisationService } from '../services/awaiting-finalisation.service';
-import { DataProductOrder as BlockchainDataProductOrder, DataProduct as BlockchainDataProduct } from 'repux-web3-api';
+import { DataProductOrder as BlockchainDataProductOrder, DataProduct as BlockchainDataProduct } from '@repux/repux-web3-api';
 import { EventAction, EventCategory, TagManagerService } from '../../shared/services/tag-manager.service';
 import { Transaction, TransactionService } from '../../shared/services/transaction.service';
 import { BlockchainTransactionScope } from '../../shared/enums/blockchain-transaction-scope';

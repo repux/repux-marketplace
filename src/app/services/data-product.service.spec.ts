@@ -1,7 +1,7 @@
 import { DataProductService } from './data-product.service';
 import BigNumber from 'bignumber.js';
 import { Observable } from 'rxjs';
-import { DataProductUpdateAction, TransactionStatus, TransactionReceipt } from 'repux-web3-api';
+import { DataProductUpdateAction, TransactionStatus, TransactionReceipt } from '@repux/repux-web3-api';
 import Wallet from '../shared/models/wallet';
 import { TransactionEvent } from '../shared/models/transaction-event';
 import { TransactionEventType } from '../shared/enums/transaction-event-type';

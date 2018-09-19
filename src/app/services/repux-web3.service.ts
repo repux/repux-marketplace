@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { environment } from '../../environments/environment';
-import { RepuxWeb3Api } from 'repux-web3-api';
+import { RepuxWeb3Api } from '@repux/repux-web3-api';
 
 declare global {
   interface Window {
