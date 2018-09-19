@@ -6,7 +6,7 @@ import { DataProduct } from '../shared/models/data-product';
 import { Transaction, TransactionService } from '../shared/services/transaction.service';
 import { BlockchainTransactionScope } from '../shared/enums/blockchain-transaction-scope';
 import { ActionButtonType } from '../shared/enums/action-button-type';
-import { TransactionReceipt, TransactionStatus } from 'repux-web3-api';
+import { TransactionReceipt, TransactionStatus } from '@repux/repux-web3-api';
 // tslint:disable-next-line:max-line-length
 import { MarketplacePurchaseConfirmationDialogComponent } from '../marketplace/marketplace-purchase-confirmation-dialog/marketplace-purchase-confirmation-dialog.component';
 import { AwaitingFinalisationService } from '../marketplace/services/awaiting-finalisation.service';

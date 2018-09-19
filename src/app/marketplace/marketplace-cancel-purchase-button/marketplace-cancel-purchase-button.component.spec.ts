@@ -11,7 +11,7 @@ import { CommonDialogService } from '../../shared/services/common-dialog.service
 import { BlockchainTransactionScope } from '../../shared/enums/blockchain-transaction-scope';
 import { ActionButtonType } from '../../shared/enums/action-button-type';
 import { Transaction, TransactionService } from '../../shared/services/transaction.service';
-import { DataProductOrder as BlockchainDataProductOrder, TransactionStatus, TransactionReceipt } from 'repux-web3-api';
+import { DataProductOrder as BlockchainDataProductOrder, TransactionStatus, TransactionReceipt } from '@repux/repux-web3-api';
 import BigNumber from 'bignumber.js';
 import { EthTransactionLinkComponent } from '../../shared/components/eth-transaction-link/eth-transaction-link.component';
 

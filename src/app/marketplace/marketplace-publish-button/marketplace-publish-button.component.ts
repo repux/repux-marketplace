@@ -6,7 +6,7 @@ import { UnpublishedProductsService } from '../services/unpublished-products.ser
 import { Subscription } from 'rxjs/internal/Subscription';
 import { EventAction, EventCategory, TagManagerService } from '../../shared/services/tag-manager.service';
 import { CommonDialogService } from '../../shared/services/common-dialog.service';
-import { TransactionReceipt, TransactionStatus } from 'repux-web3-api';
+import { TransactionReceipt, TransactionStatus } from '@repux/repux-web3-api';
 import { Transaction, TransactionService } from '../../shared/services/transaction.service';
 import { BlockchainTransactionScope } from '../../shared/enums/blockchain-transaction-scope';
 import { ActionButtonType } from '../../shared/enums/action-button-type';

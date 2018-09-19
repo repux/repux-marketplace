@@ -1,4 +1,4 @@
-import { DataProductUpdateAction } from 'repux-web3-api';
+import { DataProductUpdateAction } from '@repux/repux-web3-api';
 
 export interface DataProductEvent {
   dataProductAddress: string;

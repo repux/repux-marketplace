@@ -1,8 +1,8 @@
 import { FileUploadTask, STATUS } from './file-upload-task';
 import BigNumber from 'bignumber.js';
-import { EventType } from 'repux-lib';
+import { EventType } from '@repux/repux-lib';
 import { EulaSelection } from '../marketplace/marketplace-eula-selector/marketplace-eula-selector.component';
-import { EulaType, PurchaseType } from 'repux-lib';
+import { EulaType, PurchaseType } from '@repux/repux-lib';
 import { ActionButtonType } from '../shared/enums/action-button-type';
 
 describe('FileUploadTask()', () => {

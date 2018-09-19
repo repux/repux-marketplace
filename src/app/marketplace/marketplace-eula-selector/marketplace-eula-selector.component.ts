@@ -1,6 +1,6 @@
 import { Component, Input } from '@angular/core';
 import { environment } from '../../../environments/environment';
-import { EulaType } from 'repux-lib';
+import { EulaType } from '@repux/repux-lib';
 import { FormControl, Validators } from '@angular/forms';
 import { MatRadioChange } from '@angular/material';
 import { BlobDownloader } from '../../shared/utils/blob-downloader';

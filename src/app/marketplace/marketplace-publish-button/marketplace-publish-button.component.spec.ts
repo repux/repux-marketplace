@@ -9,7 +9,7 @@ import { BehaviorSubject } from 'rxjs/internal/BehaviorSubject';
 import { DataProduct } from '../../shared/models/data-product';
 import { TagManagerService } from '../../shared/services/tag-manager.service';
 import { CommonDialogService } from '../../shared/services/common-dialog.service';
-import { TransactionReceipt, TransactionStatus } from 'repux-web3-api';
+import { TransactionReceipt, TransactionStatus } from '@repux/repux-web3-api';
 import { BlockchainTransactionScope } from '../../shared/enums/blockchain-transaction-scope';
 import { ActionButtonType } from '../../shared/enums/action-button-type';
 import { Transaction, TransactionService } from '../../shared/services/transaction.service';

@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { RepuxLib } from 'repux-lib';
+import { RepuxLib } from '@repux/repux-lib';
 import { IpfsService } from './ipfs.service';
 
 @Injectable({

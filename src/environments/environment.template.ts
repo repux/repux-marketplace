@@ -1,5 +1,5 @@
 import { BigNumber } from 'bignumber.js';
-import { EulaType } from 'repux-lib';
+import { EulaType } from '@repux/repux-lib';
 
 BigNumber.config({
   DECIMAL_PLACES: 40,

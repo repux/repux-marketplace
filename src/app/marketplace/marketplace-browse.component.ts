@@ -4,7 +4,7 @@ import { deepCopy } from '../shared/utils/deep-copy';
 import { DataProduct } from '../shared/models/data-product';
 import { debounceTime, distinctUntilChanged, filter } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
-import { Eula } from 'repux-lib';
+import { Eula } from '@repux/repux-lib';
 import { IpfsService } from '../services/ipfs.service';
 import { PageEvent } from '@angular/material';
 import { BehaviorSubject, Observable } from 'rxjs';

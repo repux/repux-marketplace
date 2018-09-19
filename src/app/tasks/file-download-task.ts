@@ -3,7 +3,7 @@ import { RepuxLibService } from '../services/repux-lib.service';
 import { TaskManagerService } from '../services/task-manager.service';
 import { BlobDownloader } from '../shared/utils/blob-downloader';
 import { TaskType } from './task-type';
-import { EventType, FileDownloader } from 'repux-lib';
+import { EventType, FileDownloader } from '@repux/repux-lib';
 import { TaskError } from './task-error';
 import { CommonDialogService } from '../shared/services/common-dialog.service';
 

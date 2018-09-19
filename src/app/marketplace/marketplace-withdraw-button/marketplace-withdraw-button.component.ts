@@ -6,7 +6,7 @@ import BigNumber from 'bignumber.js';
 import { DataProductService } from '../../services/data-product.service';
 import { Subscription } from 'rxjs/internal/Subscription';
 import { EventAction, EventCategory, TagManagerService } from '../../shared/services/tag-manager.service';
-import { DataProduct as BlockchainDataProduct, TransactionReceipt, TransactionStatus } from 'repux-web3-api';
+import { DataProduct as BlockchainDataProduct, TransactionReceipt, TransactionStatus } from '@repux/repux-web3-api';
 import { Transaction, TransactionService } from '../../shared/services/transaction.service';
 import { ActionButtonType } from '../../shared/enums/action-button-type';
 import { BlockchainTransactionScope } from '../../shared/enums/blockchain-transaction-scope';

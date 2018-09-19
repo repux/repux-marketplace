@@ -4,7 +4,7 @@ import { DataProductService } from '../../services/data-product.service';
 import { WalletService } from '../../services/wallet.service';
 import Wallet from '../../shared/models/wallet';
 import { Subscription } from 'rxjs/internal/Subscription';
-import { DataProduct as BlockchainDataProduct, TransactionReceipt, TransactionStatus } from 'repux-web3-api';
+import { DataProduct as BlockchainDataProduct, TransactionReceipt, TransactionStatus } from '@repux/repux-web3-api';
 import { EventAction, EventCategory, TagManagerService } from '../../shared/services/tag-manager.service';
 import { UnpublishedProductsService } from '../services/unpublished-products.service';
 import { CommonDialogService } from '../../shared/services/common-dialog.service';

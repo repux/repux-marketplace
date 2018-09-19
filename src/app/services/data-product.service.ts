@@ -1,7 +1,7 @@
 import { Injectable, OnDestroy } from '@angular/core';
 import { RepuxWeb3Service } from './repux-web3.service';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { DataProduct, DataProductOrder, DataProductUpdateAction, RepuxWeb3Api } from 'repux-web3-api';
+import { DataProduct, DataProductOrder, DataProductUpdateAction, RepuxWeb3Api } from '@repux/repux-web3-api';
 import { filter, map } from 'rxjs/internal/operators';
 import { WalletService } from './wallet.service';
 import Wallet from '../shared/models/wallet';

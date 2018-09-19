@@ -9,7 +9,7 @@ import { DataProduct } from '../../shared/models/data-product';
 import { deepCopy } from '../../shared/utils/deep-copy';
 import { Subscription } from 'rxjs/internal/Subscription';
 import { PendingFinalisationService } from '../services/pending-finalisation.service';
-import { Eula, EulaType } from 'repux-lib';
+import { Eula, EulaType } from '@repux/repux-lib';
 import { IpfsService } from '../../services/ipfs.service';
 import { ActionButtonType } from '../../shared/enums/action-button-type';
 import { BehaviorSubject } from 'rxjs';

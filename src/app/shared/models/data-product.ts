@@ -2,7 +2,7 @@ import { BigNumber } from 'bignumber.js';
 import { Deserializable } from './deserializable';
 import { environment } from '../../../environments/environment';
 import { DataProductOrder } from './data-product-order';
-import { Eula, Attachment } from 'repux-lib';
+import { Eula, Attachment } from '@repux/repux-lib';
 
 export class DataProduct implements Deserializable<DataProduct> {
   address?: string;

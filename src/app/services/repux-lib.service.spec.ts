@@ -1,5 +1,5 @@
 import { RepuxLibService } from './repux-lib.service';
-import { RepuxLib } from 'repux-lib';
+import { RepuxLib } from '@repux/repux-lib';
 
 describe('RepuxLibService', () => {
   let repuxLibService, ipfsServiceSpy;

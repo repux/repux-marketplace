@@ -9,13 +9,13 @@ import { WalletService } from '../../services/wallet.service';
 import { PendingFinalisationService } from '../services/pending-finalisation.service';
 import { EventAction, EventCategory, TagManagerService } from '../../shared/services/tag-manager.service';
 import { CommonDialogService } from '../../shared/services/common-dialog.service';
-import { EventType, FileReencryptor } from 'repux-lib';
+import { EventType, FileReencryptor } from '@repux/repux-lib';
 import {
   TransactionReceipt,
   TransactionStatus,
   DataProductOrder as BlockchainDataProductOrder,
   DataProduct as BlockchainDataProduct
-} from 'repux-web3-api';
+} from '@repux/repux-web3-api';
 import { Transaction, TransactionService } from '../../shared/services/transaction.service';
 import { BlockchainTransactionScope } from '../../shared/enums/blockchain-transaction-scope';
 import { ActionButtonType } from '../../shared/enums/action-button-type';
