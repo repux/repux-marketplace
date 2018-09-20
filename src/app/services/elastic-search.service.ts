@@ -21,4 +21,8 @@ export class ElasticSearchService<T extends Deserializable<T>> {
       })
     );
   }
+
+  searchRaw(type: string, data: any = {}): Observable<any> {
+    return this.http.post(`${this.config.protocol}://${this.config.host}:${this.config.port}/${type}/_search`, data);
+  }
 }

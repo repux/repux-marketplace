@@ -1,8 +1,26 @@
 @import '../../../../variables';
 
+.row {
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+  justify-content: stretch;
+}
+
 .mat-card {
-  max-width: 600px;
+  max-width: 1260px;
   margin: 0 auto;
+}
+
+.mat-card-content {
+  max-width: 600px;
+  width: 100%;
+
+  &:first-child {
+    padding-right: 30px;
+    margin-right: 30px;
+    border-right: 1px solid #e0e0e0;
+  }
 }
 
 .mat-table {
@@ -19,5 +37,36 @@
 
   h1 {
     color: map-get($app-accent, 400);
+  }
+}
+
+.leader-board {
+  h2 {
+    color: map-get($app-accent, 400);
+    text-align: center;
+  }
+}
+
+@media screen and (max-width: 1280px) {
+  .row {
+    flex-direction: column;
+  }
+
+  .mat-card {
+    max-width: 600px;
+  }
+
+  .mat-card-content {
+    &:first-child {
+      padding-right: inherit;
+      margin-right: inherit;
+      border-right: inherit;
+    }
+  }
+
+  .leader-board {
+    h2 {
+      margin-top: 60px;
+    }
   }
 }

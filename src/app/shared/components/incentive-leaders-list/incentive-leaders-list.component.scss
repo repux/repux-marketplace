@@ -1,0 +1,28 @@
+:host {
+  display: block;
+  margin: 50px 0;
+}
+
+.table-header {
+  margin: 0 24px;
+}
+
+table {
+  margin-top: 0;
+  width: 100%;
+}
+
+a {
+  display: flex;
+
+  app-blocky-identicon {
+    margin-right: 10px;
+    border-radius: 50%;
+    overflow: hidden;
+    display: block;
+    min-width: 16px;
+    min-height: 16px;
+    width: 16px;
+    height: 16px;
+  }
+}

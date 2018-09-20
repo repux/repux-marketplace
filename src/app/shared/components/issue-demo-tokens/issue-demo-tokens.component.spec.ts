@@ -14,8 +14,8 @@ describe('IssueDemoTokensComponent', () => {
 
   beforeEach(async(() => {
     const matDialogRefSpy = jasmine.createSpyObj('MatDialogRef', [ 'close', 'afterClosed' ]);
-    const repuxWeb3ServiceSpy = jasmine.createSpyObj('RepuxWeb3Service', [ 'getInstance' ]);
-    repuxWeb3ServiceSpy.getInstance.and.returnValue(Promise.resolve({
+    const repuxWeb3ServiceSpy = jasmine.createSpyObj('RepuxWeb3Service', [ 'getRepuxApiInstance' ]);
+    repuxWeb3ServiceSpy.getRepuxApiInstance.and.returnValue(Promise.resolve({
       getDefaultAccount() {
       }
     }));

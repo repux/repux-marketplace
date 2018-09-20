@@ -1,0 +1,38 @@
+<strong class="table-header">{{title}}</strong>
+<table mat-table [dataSource]="items">
+  <ng-container matColumnDef="seller">
+    <th mat-header-cell *matHeaderCellDef>Seller address</th>
+    <td mat-cell *matCellDef="let seller">
+      <a [href]="etherscanUrl + '/address/' + getSellerAddress(seller)"
+         (click)="$event.stopPropagation();"
+         target="_blank"
+         matTooltip="Click to view Seller address on Etherscan: {{getSellerAddress(seller)}}">
+        <app-blocky-identicon
+          [scale]="2"
+          class="card-item__identicon"
+          [seed]="getSellerAddress(seller)"></app-blocky-identicon>
+        {{getSellerAddress(seller)}}
+      </a>
+    </td>
+  </ng-container>
+
+  <ng-container matColumnDef="product">
+    <th mat-header-cell *matHeaderCellDef>Product</th>
+    <td mat-cell *matCellDef="let seller">
+      <a href="/marketplace/details/{{seller.product.address}}">{{seller.product.address | slice:0:10 }}...</a>
+    </td>
+  </ng-container>
+
+  <ng-container matColumnDef="purchasesNumber">
+    <th mat-header-cell *matHeaderCellDef>Purchases<br>number</th>
+    <td mat-cell *matCellDef="let seller"><strong>{{seller.product.finalisedOrdersNumber}}</strong></td>
+  </ng-container>
+
+  <ng-container matColumnDef="rating">
+    <th mat-header-cell *matHeaderCellDef>Rating</th>
+    <td mat-cell *matCellDef="let seller"><strong>{{seller.top_seller.value | number : '1.1-1' }}</strong></td>
+  </ng-container>
+
+  <tr mat-header-row *matHeaderRowDef="columns"></tr>
+  <tr mat-row *matRowDef="let row; columns: columns;"></tr>
+</table>
