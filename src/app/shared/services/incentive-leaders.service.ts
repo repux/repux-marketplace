@@ -2,8 +2,8 @@ import { Injectable } from '@angular/core';
 import { StorageService } from './storage.service';
 import { ElasticSearchService } from '../../services/elastic-search.service';
 import { HttpClient } from '@angular/common/http';
-import { BehaviorSubject, forkJoin, Observable, of, OperatorFunction } from 'rxjs';
-import { flatMap, map } from 'rxjs/operators';
+import { forkJoin, Observable, of, OperatorFunction } from 'rxjs';
+import { flatMap, map, tap } from 'rxjs/operators';
 import { DataProductListService } from '../../services/data-product-list.service';
 import { environment } from '../../../environments/environment';
 
@@ -13,6 +13,13 @@ interface StoredData {
   sellersWithHighestAverageRating: any[];
   sellersWithMostPopularFileToday: any[];
   sellersWithMostPopularFileYesterday: any[];
+}
+
+export interface DataObservables {
+  sellersWithMostPopularFiles$: Observable<any[]>;
+  sellersWithHighestAverageRating$: Observable<any[]>;
+  sellersWithMostPopularFileToday$: Observable<any[]>;
+  sellersWithMostPopularFileYesterday$: Observable<any[]>;
 }
 
 export const topRatedSellerQuery = {
@@ -132,34 +139,12 @@ export class IncentiveLeadersService {
   etherscanUrl = environment.etherscanUrl;
 
   private esService: ElasticSearchService<any>;
-  private sellersWithMostPopularFilesSubject = new BehaviorSubject<any[]>(undefined);
-  private sellersWithHighestAverageRatingSubject = new BehaviorSubject<any[]>(undefined);
-  private sellersWithMostPopularFileTodaySubject = new BehaviorSubject<any[]>(undefined);
-  private sellersWithMostPopularFileYesterdaySubject = new BehaviorSubject<any[]>(undefined);
 
   constructor(
     private readonly http: HttpClient,
     private readonly dataProductListService: DataProductListService,
     private readonly storageService: StorageService) {
     this.esService = new ElasticSearchService<any>(this.http, null);
-
-    this.initialize();
-  }
-
-  getSellersWithMostPopularFiles(): Observable<any[]> {
-    return this.sellersWithMostPopularFilesSubject.asObservable();
-  }
-
-  getSellersWithHighestAverageRating(): Observable<any[]> {
-    return this.sellersWithHighestAverageRatingSubject.asObservable();
-  }
-
-  getSellersWithMostPopularFileTodaySubject(): Observable<any[]> {
-    return this.sellersWithMostPopularFileTodaySubject.asObservable();
-  }
-
-  getSellersWithMostPopularFileYesterdaySubject(): Observable<any[]> {
-    return this.sellersWithMostPopularFileYesterdaySubject.asObservable();
   }
 
   private fetchFilePipe(groupName: string): OperatorFunction<any, {}[]> {
@@ -184,52 +169,61 @@ export class IncentiveLeadersService {
     });
   }
 
-  private initialize() {
+  fetchData(): DataObservables {
     const config = this.readFromStore();
 
-    if (!config.updateTimestamp || this.getReloadTimeout(config.updateTimestamp) < 0) {
-      this.fetchData();
-
-      return;
+    if (config.updateTimestamp && this.getReloadTimeout(config.updateTimestamp) > 0) {
+      return {
+        sellersWithMostPopularFiles$: of(config.sellersWithMostPopularFiles),
+        sellersWithHighestAverageRating$: of(config.sellersWithHighestAverageRating),
+        sellersWithMostPopularFileToday$: of(config.sellersWithMostPopularFileToday),
+        sellersWithMostPopularFileYesterday$: of(config.sellersWithMostPopularFileYesterday),
+      };
     }
 
-    this.sellersWithMostPopularFilesSubject.next(config.sellersWithMostPopularFiles);
-    this.sellersWithHighestAverageRatingSubject.next(config.sellersWithHighestAverageRating);
-    this.sellersWithMostPopularFileTodaySubject.next(config.sellersWithMostPopularFileToday);
-    this.sellersWithMostPopularFileYesterdaySubject.next(config.sellersWithMostPopularFileYesterday);
+    const sellersWithHighestAverageRating$ = this.esService.searchRaw('user', topRatedSellerQuery)
+      .pipe(
+        map(result => result.aggregations.group_by_seller.buckets),
+        tap( result => {
+          this.updateStore('sellersWithHighestAverageRatings', result);
+        })
+      );
 
-    this.setTimeout(config.updateTimestamp);
-  }
+    const sellersWithMostPopularFiles$ = this.esService.searchRaw('data_product', mostPopularFileSellersQuery)
+      .pipe(
+        map(result => {
+          result.aggregations.group_by_seller.buckets =
+            result.aggregations.group_by_seller.buckets.map(group => group.group_by_file.buckets[0]);
+          return result;
+        }),
+        this.fetchFilePipe('group_by_seller'),
+        tap(result => {
+          this.updateStore('sellersWithMostPopularFiles', result);
+        })
+      );
 
-  private async fetchData(): Promise<void> {
-    this.esService.searchRaw('user', topRatedSellerQuery)
-      .subscribe(result => {
-        this.sellersWithHighestAverageRatingSubject.next(result.aggregations.group_by_seller.buckets);
-        this.updateStore();
-      });
+    const sellersWithMostPopularFileToday$ = this.esService.searchRaw('data_product', mostPopularFileQuery('now-1d/d', 'now+1d/d'))
+      .pipe(
+        this.fetchFilePipe('group_by_file'),
+        tap(result => {
+          this.updateStore('sellersWithMostPopularFileToday', result);
+        })
+      );
 
-    this.esService.searchRaw('data_product', mostPopularFileSellersQuery)
-      .pipe(this.fetchFilePipe('group_by_seller'))
-      .subscribe(result => {
-        this.sellersWithMostPopularFilesSubject.next(result);
-        this.updateStore();
-      });
+    const sellersWithMostPopularFileYesterday$ = this.esService.searchRaw('data_product', mostPopularFileQuery('now-2d/d', 'now/d'))
+      .pipe(
+        this.fetchFilePipe('group_by_file'),
+        tap(result => {
+          this.updateStore('sellersWithMostPopularFileYesterday', result);
+        })
+      );
 
-    this.esService.searchRaw('data_product', mostPopularFileQuery('now-1d/d', 'now+1d/d'))
-      .pipe(this.fetchFilePipe('group_by_file'))
-      .subscribe(result => {
-        this.sellersWithMostPopularFileTodaySubject.next(result);
-        this.updateStore();
-      });
-
-    this.esService.searchRaw('data_product', mostPopularFileQuery('now-2d/d', 'now/d'))
-      .pipe(this.fetchFilePipe('group_by_file'))
-      .subscribe(result => {
-        this.sellersWithMostPopularFileYesterdaySubject.next(result);
-        this.updateStore();
-      });
-
-    this.setTimeout(IncentiveLeadersService.UPDATE_INTERVAL);
+    return {
+      sellersWithHighestAverageRating$,
+      sellersWithMostPopularFiles$,
+      sellersWithMostPopularFileToday$,
+      sellersWithMostPopularFileYesterday$
+    };
   }
 
   private getStorageKey(): string {
@@ -254,14 +248,11 @@ export class IncentiveLeadersService {
     return data;
   }
 
-  private updateStore(): void {
-    this.saveToStore({
-      updateTimestamp: Date.now(),
-      sellersWithMostPopularFiles: this.sellersWithMostPopularFilesSubject.getValue(),
-      sellersWithHighestAverageRating: this.sellersWithHighestAverageRatingSubject.getValue(),
-      sellersWithMostPopularFileToday: this.sellersWithMostPopularFileTodaySubject.getValue(),
-      sellersWithMostPopularFileYesterday: this.sellersWithMostPopularFileYesterdaySubject.getValue()
-    });
+  private updateStore(property: string, value: any): void {
+    const data = this.readFromStore();
+    data.updateTimestamp = Date.now();
+    data[property] = value;
+    this.saveToStore(data);
   }
 
   private saveToStore(data: StoredData): void {
@@ -270,9 +261,5 @@ export class IncentiveLeadersService {
 
   private getReloadTimeout(updateTimestamp: number): number {
     return updateTimestamp + IncentiveLeadersService.UPDATE_INTERVAL - Date.now();
-  }
-
-  private setTimeout(milliseconds: number): void {
-    setTimeout(() => this.fetchData(), this.getReloadTimeout(milliseconds));
   }
 }

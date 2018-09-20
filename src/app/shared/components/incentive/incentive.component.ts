@@ -24,10 +24,10 @@ const SCORING_DATA: { action: string, score: number }[] = [
 export class IncentiveComponent implements OnInit {
   scoring = SCORING_DATA;
 
-  $mostPopularFileSellers: Observable<any[]>;
-  $topRatedSellers: Observable<any[]>;
-  $mostPopularFileSellersToday: Observable<any[]>;
-  $mostPopularFileSellersYesterday: Observable<any[]>;
+  mostPopularFileSellers$: Observable<any[]>;
+  topRatedSellers$: Observable<any[]>;
+  mostPopularFileSellersToday$: Observable<any[]>;
+  mostPopularFileSellersYesterday$: Observable<any[]>;
 
   constructor(
     private incentiveLeadersService: IncentiveLeadersService
@@ -35,9 +35,10 @@ export class IncentiveComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.$mostPopularFileSellers = this.incentiveLeadersService.getSellersWithMostPopularFiles();
-    this.$topRatedSellers = this.incentiveLeadersService.getSellersWithHighestAverageRating();
-    this.$mostPopularFileSellersToday = this.incentiveLeadersService.getSellersWithMostPopularFileTodaySubject();
-    this.$mostPopularFileSellersYesterday = this.incentiveLeadersService.getSellersWithMostPopularFileYesterdaySubject();
+    const data = this.incentiveLeadersService.fetchData();
+    this.mostPopularFileSellers$ = data.sellersWithMostPopularFiles$;
+    this.topRatedSellers$ = data.sellersWithHighestAverageRating$;
+    this.mostPopularFileSellersToday$ = data.sellersWithMostPopularFileToday$;
+    this.mostPopularFileSellersYesterday$ = data.sellersWithMostPopularFileYesterday$;
   }
 }

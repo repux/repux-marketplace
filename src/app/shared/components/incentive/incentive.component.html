@@ -42,23 +42,23 @@
       <h2>Leader board</h2>
 
       <app-incentive-leaders-list
-        *ngIf="($mostPopularFileSellers | async) as mostPopularFileSellers"
+        *ngIf="(mostPopularFileSellers$ | async) as mostPopularFileSellers"
         [items]="mostPopularFileSellers"
         title="Sellers with most popular files (in overall)"></app-incentive-leaders-list>
 
       <app-incentive-leaders-list
-        *ngIf="($topRatedSellers | async) as topRatedSellers"
+        *ngIf="(topRatedSellers$ | async) as topRatedSellers"
         [items]="topRatedSellers"
         title="Seller with highest average rating (in overall)"
         [columns]="['seller', 'rating']"></app-incentive-leaders-list>
 
       <app-incentive-leaders-list
-        *ngIf="($mostPopularFileSellersToday | async) as mostPopularFileSellersToday"
+        *ngIf="(mostPopularFileSellersToday$ | async) as mostPopularFileSellersToday"
         [items]="mostPopularFileSellersToday"
         title="Seller with most popular file (today)"></app-incentive-leaders-list>
 
       <app-incentive-leaders-list
-        *ngIf="($mostPopularFileSellersYesterday | async) as mostPopularFileSellersYesterday"
+        *ngIf="(mostPopularFileSellersYesterday$ | async) as mostPopularFileSellersYesterday"
         [items]="mostPopularFileSellersYesterday"
         title="Seller with most popular file (won yesterday)"></app-incentive-leaders-list>
     </mat-card-content>
