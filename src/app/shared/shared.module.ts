@@ -27,6 +27,7 @@ import { BlockyIdenticonComponent } from './components/blocky-identicon/blocky-i
 import { IncentiveComponent } from './components/incentive/incentive.component';
 import { EthTransactionLinkComponent } from './components/eth-transaction-link/eth-transaction-link.component';
 import { IncentiveDialogComponent } from './components/incentive-dialog/incentive-dialog.component';
+import { IncentiveLeadersListComponent } from './components/incentive-leaders-list/incentive-leaders-list.component';
 
 @NgModule({
   imports: [
@@ -60,7 +61,8 @@ import { IncentiveDialogComponent } from './components/incentive-dialog/incentiv
     BlockyIdenticonComponent,
     IncentiveComponent,
     EthTransactionLinkComponent,
-    IncentiveDialogComponent
+    IncentiveDialogComponent,
+    IncentiveLeadersListComponent
   ],
   exports: [
     FileInputComponent,
@@ -80,7 +82,8 @@ import { IncentiveDialogComponent } from './components/incentive-dialog/incentiv
     OrderRatingPipe,
     BannerTestnetComponent,
     BlockyIdenticonComponent,
-    EthTransactionLinkComponent
+    EthTransactionLinkComponent,
+    IncentiveLeadersListComponent
   ],
   entryComponents: [
     ConfirmationDialogComponent,

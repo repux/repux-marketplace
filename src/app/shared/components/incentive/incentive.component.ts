@@ -1,4 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { IncentiveLeadersService } from '../../services/incentive-leaders.service';
+import { Observable } from 'rxjs';
 
 const SCORING_DATA: { action: string, score: number }[] = [
   { action: 'Seller with the most popular file - highest number of downloads (in overall)', score: 100 },
@@ -19,9 +21,24 @@ const SCORING_DATA: { action: string, score: number }[] = [
   templateUrl: './incentive.component.html',
   styleUrls: [ './incentive.component.scss' ]
 })
-export class IncentiveComponent {
+export class IncentiveComponent implements OnInit {
   scoring = SCORING_DATA;
 
-  constructor() {
+  mostPopularFileSellers$: Observable<any[]>;
+  topRatedSellers$: Observable<any[]>;
+  mostPopularFileSellersToday$: Observable<any[]>;
+  mostPopularFileSellersYesterday$: Observable<any[]>;
+
+  constructor(
+    private incentiveLeadersService: IncentiveLeadersService
+  ) {
+  }
+
+  ngOnInit() {
+    const data = this.incentiveLeadersService.fetchData();
+    this.mostPopularFileSellers$ = data.sellersWithMostPopularFiles$;
+    this.topRatedSellers$ = data.sellersWithHighestAverageRating$;
+    this.mostPopularFileSellersToday$ = data.sellersWithMostPopularFileToday$;
+    this.mostPopularFileSellersYesterday$ = data.sellersWithMostPopularFileYesterday$;
   }
 }
