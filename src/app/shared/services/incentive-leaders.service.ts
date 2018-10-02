@@ -47,7 +47,8 @@ export const mostPopularFileSellersQuery = {
   aggs: {
     group_by_seller: {
       terms: {
-        field: 'ownerAddress.keyword'
+        field: 'ownerAddress.keyword',
+        size: 1000000
       },
       aggs: {
         group_by_file: {
