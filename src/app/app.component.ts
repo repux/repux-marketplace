@@ -17,9 +17,6 @@ import { MarketplaceAnalyticsDialogComponent } from './marketplace/marketplace-a
 import { OAuthState } from './shared/enums/oauth-state';
 // tslint:disable-next-line:max-line-length
 import { MarketplaceProductCreatorAnalyticsDialogComponent } from './marketplace/marketplace-product-creator-analytics-dialog/marketplace-product-creator-analytics-dialog.component';
-import { IssueDemoTokensComponent } from './shared/components/issue-demo-tokens/issue-demo-tokens.component';
-import { IncentiveDialogComponent } from './shared/components/incentive-dialog/incentive-dialog.component';
-import { StorageService } from './shared/services/storage.service';
 
 @Component({
   selector: 'app-root',
@@ -57,8 +54,7 @@ export class AppComponent implements OnInit {
     private dialog: MatDialog,
     private unpublishedProductsService: UnpublishedProductsService,
     private pendingFinalisationService: PendingFinalisationService,
-    private awaitingFinalisationService: AwaitingFinalisationService,
-    private storageService: StorageService
+    private awaitingFinalisationService: AwaitingFinalisationService
   ) {
   }
 
@@ -84,11 +80,7 @@ export class AppComponent implements OnInit {
       .pipe(filter(fragment => fragment && fragment.includes('access_token')))
       .subscribe(routeFragment => {
         this.resolveOauthUrl(new URLSearchParams(routeFragment));
-    });
-
-    if (!this.storageService.getItem(IncentiveDialogComponent.storageKey)) {
-      setTimeout(() => this.dialog.open(IncentiveDialogComponent));
-    }
+      });
   }
 
   openProductCreatorDialog() {
@@ -123,9 +115,5 @@ export class AppComponent implements OnInit {
       });
       dialogRef.componentInstance.accessToken = params.get('access_token');
     }
-  }
-
-  openDemoTokensIssueDialog() {
-    this.dialog.open(IssueDemoTokensComponent);
   }
 }

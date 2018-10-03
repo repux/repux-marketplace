@@ -3,9 +3,6 @@ import Wallet from '../../models/wallet';
 import { WalletService } from '../../../services/wallet.service';
 import { Observable } from 'rxjs/internal/Observable';
 import BigNumber from 'bignumber.js';
-import { IssueDemoTokensComponent } from '../issue-demo-tokens/issue-demo-tokens.component';
-import { MatDialog } from '@angular/material';
-import { Router } from '@angular/router';
 import { environment } from '../../../../environments/environment';
 
 @Component({
@@ -19,21 +16,11 @@ export class WalletInfoComponent implements OnInit {
   currencyPrecision = environment.repux.currency.shortPrecision;
 
   constructor(
-    private walletService: WalletService,
-    private dialog: MatDialog,
-    private router: Router) {
+    private walletService: WalletService) {
   }
 
   ngOnInit(): void {
     this.wallet$ = this.walletService.getWallet();
     this.balance$ = this.walletService.getBalance();
-  }
-
-  openDemoTokensIssueDialog() {
-    this.dialog.open(IssueDemoTokensComponent);
-  }
-
-  goToPromotionPage() {
-    this.router.navigate([ '/incentive' ]);
   }
 }

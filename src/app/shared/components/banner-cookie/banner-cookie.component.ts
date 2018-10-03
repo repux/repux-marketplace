@@ -3,12 +3,12 @@ import { StorageService } from '../../services/storage.service';
 import { environment } from '../../../../environments/environment';
 
 @Component({
-  selector: 'app-banner-testnet',
-  templateUrl: './banner-testnet.component.html',
-  styleUrls: [ './banner-testnet.component.scss' ]
+  selector: 'app-banner-cookie',
+  templateUrl: './banner-cookie.component.html',
+  styleUrls: [ './banner-cookie.component.scss' ]
 })
-export class BannerTestnetComponent implements OnInit {
-  static storageKey = 'banner_testnet_dismissed';
+export class BannerCookieComponent implements OnInit {
+  static storageKey = 'banner_cookie_dismissed';
   show = false;
   cookiePolicyUrl = environment.cookiePolicyUrl;
 
@@ -16,7 +16,7 @@ export class BannerTestnetComponent implements OnInit {
   }
 
   ngOnInit() {
-    const isDismissed = this.storageService.getItem(BannerTestnetComponent.storageKey);
+    const isDismissed = this.storageService.getItem(BannerCookieComponent.storageKey);
     if (!isDismissed) {
       this.show = true;
     }
@@ -24,6 +24,6 @@ export class BannerTestnetComponent implements OnInit {
 
   dismiss() {
     this.show = false;
-    this.storageService.setItem(BannerTestnetComponent.storageKey, 1);
+    this.storageService.setItem(BannerCookieComponent.storageKey, 1);
   }
 }

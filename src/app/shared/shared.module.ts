@@ -19,14 +19,11 @@ import { NotificationsDetectorComponent } from './components/notifications-detec
 import {
   NotificationsSubscriptionInstructionComponent
 } from './components/notification-subscription-instruction/notifications-subscription-instruction.component';
-import { BannerTestnetComponent } from './components/banner-testnet/banner-testnet.component';
+import { BannerCookieComponent } from './components/banner-cookie/banner-cookie.component';
 import { OrderRatingPipe } from './pipes/order-rating.pipe';
 import { RatingStarsComponent } from './components/rating-stars/rating-stars.component';
-import { IssueDemoTokensComponent } from './components/issue-demo-tokens/issue-demo-tokens.component';
 import { BlockyIdenticonComponent } from './components/blocky-identicon/blocky-identicon.component';
-import { IncentiveComponent } from './components/incentive/incentive.component';
 import { EthTransactionLinkComponent } from './components/eth-transaction-link/eth-transaction-link.component';
-import { IncentiveDialogComponent } from './components/incentive-dialog/incentive-dialog.component';
 import { IncentiveLeadersListComponent } from './components/incentive-leaders-list/incentive-leaders-list.component';
 
 @NgModule({
@@ -56,12 +53,9 @@ import { IncentiveLeadersListComponent } from './components/incentive-leaders-li
     PriceInputComponent,
     OrderRatingPipe,
     RatingStarsComponent,
-    BannerTestnetComponent,
-    IssueDemoTokensComponent,
+    BannerCookieComponent,
     BlockyIdenticonComponent,
-    IncentiveComponent,
     EthTransactionLinkComponent,
-    IncentiveDialogComponent,
     IncentiveLeadersListComponent
   ],
   exports: [
@@ -72,7 +66,6 @@ import { IncentiveLeadersListComponent } from './components/incentive-leaders-li
     WalletInfoComponent,
     PriceInputComponent,
     RatingStarsComponent,
-    IssueDemoTokensComponent,
     ArrayJoinPipe,
     FileSizePipe,
     CurrencyRepuxPipe,
@@ -80,16 +73,13 @@ import { IncentiveLeadersListComponent } from './components/incentive-leaders-li
     SafeHtmlPipe,
     OrderDatePipe,
     OrderRatingPipe,
-    BannerTestnetComponent,
+    BannerCookieComponent,
     BlockyIdenticonComponent,
-    EthTransactionLinkComponent,
-    IncentiveLeadersListComponent
+    EthTransactionLinkComponent
   ],
   entryComponents: [
     ConfirmationDialogComponent,
-    NotificationsSubscriptionInstructionComponent,
-    IssueDemoTokensComponent,
-    IncentiveDialogComponent
+    NotificationsSubscriptionInstructionComponent
   ]
 })
 export class SharedModule {
