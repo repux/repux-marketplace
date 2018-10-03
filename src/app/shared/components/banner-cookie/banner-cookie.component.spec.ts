@@ -1,20 +1,20 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { BannerTestnetComponent } from './banner-testnet.component';
+import { BannerCookieComponent } from './banner-cookie.component';
 
 describe('BannerTestnetComponent', () => {
-  let component: BannerTestnetComponent;
-  let fixture: ComponentFixture<BannerTestnetComponent>;
+  let component: BannerCookieComponent;
+  let fixture: ComponentFixture<BannerCookieComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ BannerTestnetComponent ]
+      declarations: [ BannerCookieComponent ]
     })
-    .compileComponents();
+      .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(BannerTestnetComponent);
+    fixture = TestBed.createComponent(BannerCookieComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

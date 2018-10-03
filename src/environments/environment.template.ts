@@ -20,7 +20,7 @@ export const environment = {
   analyticsCurrencySubstitute: 'USD',
   production: isProduction,
   networkId: 1,
-  networkName: 'Rinkeby Test Network',
+  networkName: 'Main Ethereum Network',
   intercomAppId: '${MARKETPLACE_INTERCOM_APP_ID}' || 'od9ohq7y',
   gtmId: '${MARKETPLACE_GTM_ID}' || 'GTM-PG3BBGT',
   themeName: 'default-theme',
@@ -75,5 +75,5 @@ export const environment = {
     }
   },
   faucetUrl: '${MARKETPLACE_FAUCET_URL}' || 'http://localhost:3000',
-  etherscanUrl: '${MARKETPLACE_ETHERSCAN_URL}' || 'https://rinkeby.etherscan.io'
+  etherscanUrl: '${MARKETPLACE_ETHERSCAN_URL}' || 'https://etherscan.io'
 };

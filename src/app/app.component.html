@@ -203,7 +203,7 @@
   </g>
 </svg>
 
-<app-banner-testnet></app-banner-testnet>
+<app-banner-cookie></app-banner-cookie>
 
 <mat-toolbar>
   <mat-toolbar-row>
@@ -221,7 +221,6 @@
         <use xlink:href="#repux-logotype"/>
       </svg>
       <span class="logotype__text">RepuX</span>
-      <span class="logotype__beta-text">test</span>
     </a>
 
     <nav *ngIf="!(isHandset$ | async)" class="navigation">
@@ -279,7 +278,6 @@
       <button mat-menu-item routerLink="settings" fragment="keys">Private & Public keys</button>
       <button mat-menu-item routerLink="settings" fragment="selling">Selling</button>
       <button mat-menu-item routerLink="settings" fragment="legal">Legal</button>
-      <button mat-menu-item (click)="openDemoTokensIssueDialog()">Get FREE demo tokens</button>
       <a href="https://help.repux.io/" target="_blank" mat-menu-item>Help</a>
     </mat-menu>
   </mat-toolbar-row>
